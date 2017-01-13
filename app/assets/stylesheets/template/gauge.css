@@ -1,0 +1,187 @@
+
+.gauge {
+
+	border:1px transparent solid;
+
+	width:100%;
+
+	min-height:194px;
+
+	position: relative;
+        
+        padding:75px 0px 0px 20px;
+
+}
+
+.gauge.green {
+    
+    background: url(../../images/common/gauge/green_back.png) no-repeat 62% 1px;
+    
+}
+
+.gauge.blue {
+    
+    background: url(../../images/common/gauge/blue_back.png) no-repeat 62% 1px;
+    
+}
+
+.gauge.red {
+    
+    background: url(../../images/common/gauge/red_back.png) no-repeat 62% 1px;
+    
+}
+pricing
+.gauge h1 {
+
+	z-index:20;
+
+	font-family: "Museo-300", Helvetica, Arial, sans-serif;
+
+	font-size:35px;
+
+	margin:0px;
+
+}
+
+.gauge span {
+
+	z-index:10;
+
+	font-family: "Museo-300", Helvetica, Arial, sans-serif;
+
+	font-size:12px;
+
+	color:#8B95A5;
+
+	display:block;
+
+	line-height:16px;
+        
+        text-align: center;
+
+}
+
+.gauge.green h1 {
+
+	color:#33B3AB;
+        
+        text-align:center;
+
+}
+
+.gauge .top {
+
+	display: block;
+
+	width:100%;
+
+	height:50%;
+
+	top:1px;
+
+	left:0px;
+
+	position:absolute;
+
+	overflow: hidden;
+
+}
+
+.gauge .top div {
+
+	width:100%;
+
+	background: url(../../images/common/gauge/gauge_over.png) no-repeat 38px 0px;
+
+	height:100%;
+
+	position: absolute;
+
+}
+
+.gauge .bottom {
+
+	display: block;
+
+	width: 100%;
+
+	height: 50%;
+
+	bottom: 0px;
+
+	right: 23px;
+
+	overflow: hidden;
+
+	position: absolute;
+
+}
+
+
+.gauge .bottom div {
+
+	width:100%;
+
+	background: url(../../images/common/gauge/gauge_over.png) no-repeat bottom right;
+
+	height:100%;
+
+	position: absolute;
+
+}
+
+
+.gauge.green .bottom div {  background: url(../../images/common/gauge/green_front.png) no-repeat bottom right; }
+
+.gauge.red .bottom div {  background: url(../../images/common/gauge/red_front.png) no-repeat bottom right; }
+
+.gauge.blue .bottom div {  background: url(../../images/common/gauge/blue_front.png) no-repeat bottom right; }
+
+
+
+.gauge.green .top div {  background: url(../../images/common/gauge/green_front.png) no-repeat 38px 0px; }
+
+.gauge.red .top div {  background: url(../../images/common/gauge/red_front.png) no-repeat 38px 0px; }
+
+.gauge.blue .top div {  background: url(../../images/common/gauge/blue_front.png) no-repeat 38px 0px;  }
+
+
+.gauge h1 {
+    
+    color:#647886;
+    
+    margin-top:5px;
+    
+    font-size:34px;
+    
+}
+
+.gauge.red h1 {
+
+    color:#647886;
+
+    text-align:center;
+    
+    font-size:34px;
+
+}
+
+.gauge.purple h1 {
+
+    color:#647886;
+
+    text-align:center;
+    
+    font-size:34px;
+
+}
+
+.gauge.blue h1 {
+
+    color:#647886;
+
+    text-align:center;
+    
+    font-size:34px;
+
+}

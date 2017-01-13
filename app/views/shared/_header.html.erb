@@ -1,0 +1,42 @@
+<style>
+  .logo{
+      padding: 0px;margin:0px;float: left;
+      height: 87px;margin-top: 2px;
+  }
+</style>
+<div id="header">
+  <div class="container">
+    <div class="row" >
+      <div class="grey"></div>
+      <a class="col-xs-3 logo pull-left" href="<%= root_url %>">
+        <%#= image_tag('common/logo.png', :class => "logo") %>
+      </a>
+
+      <div class="col-xs-9 pull-left">
+
+        <div class="col-xs-3 avatar pull-right">
+          <a href="<%= "users/login" %>">
+            <div class="mask"></div>
+            <%= image_tag('common/guest_image.png') %>
+          </a>
+
+          <% if @current_user.blank? %>
+              <strong>Welcome!</strong>
+              <a>Please login below</a>
+          <% else %>
+              <span><%= @current_user.username%>@NRB HQ</span>
+              <a href="/login" ><u>Logout</u></a>
+        <% end %>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+
+<div id="main-menu" class="small">
+  <div class="container">
+    <div class="row">
+    </div>
+  </div>
+</div>
