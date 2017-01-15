@@ -7,26 +7,24 @@ class User < CouchRest::Model::Base
   def username
     self['username']
   end
-
-  #def username=(value)
-   # self['_id'] = value
-  #end
   property :username , String
   property :first_name, String
   property :last_name, String
   property :password_hash, String
+  property :last_password_date, Time, :default => Time.now
+  property :password_attempt, Integer, :default => 0
+  property :login_attempt, Integer, :default => 0
   property :email, String
   property :active, TrueClass, :default => true
   property :notify, TrueClass, :default => false
   property :role, String
   property :site_code, String
   property :creator, String
-  property :created_at, String
-  property :updated_at, String
-  # property :password_hashed_already, TrueClass, :default => false
   property :plain_password, String
   property :un_or_block_reason, String
+  property :signature, String
   property :_rev, String
+
 
   timestamps!
 
@@ -34,6 +32,10 @@ class User < CouchRest::Model::Base
 
   def has_role?(role_name)
     self.current_user.role == role_name ? true : false
+  end
+
+  def activities_by_level(level)
+    Role.by_level_and_role.key([level, self.role]).last.activities  rescue []
   end
 
   design do
@@ -86,13 +88,14 @@ class User < CouchRest::Model::Base
 
   def self.create(params)
     user = User.new()
-    user.username = params[:user]['username']
-    user.plain_password = params[:user]['password']
-    user.first_name = params[:user]['first_name']
-    user.last_name = params[:user]['last_name']
-    user.role = params[:user]['role']
-    user.site_code = Site.current_code
-    user.email = params[:user]['email']
+    user.username = (params[:username] rescue nil || params[:user]['username'] rescue nil)
+    user.plain_password = params[:plain_password] rescue nil || params[:user]['password'] rescue nil
+    user.plain_password = params[:user]['password'] if params[:plain_password].blank?
+    user.first_name = (params[:first_name] rescue nil || params[:user]['first_name'] rescue nil)
+    user.last_name = (params[:last_name] rescue nil || params[:user]['last_name'] rescue nil)
+    user.role = (params[:role] rescue nil || params[:user]['role'] rescue nil)
+    user.site_code = "HQ"
+    user.email = (params[:email] rescue nil || params[:user]['email'] rescue nil)
     user.save
     return user
   end

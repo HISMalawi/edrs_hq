@@ -76,11 +76,18 @@
      }
     .tab-pane li a :not(.glyphicon){
        color: darkslategray;
+       cursor: pointer;
     }
 
     .glyphicon {
         font-size: 50px;
-        padding: 20px;
+        margin: 20px;
+    }
+
+    .tab-icon{
+        width: 50px;
+        height: 50px;
+        margin: 20px;
     }
 
   </style>
@@ -149,31 +156,31 @@
               <div class="tab-content">
                 <div class="tab-pane active" id="sites">
                   <ul class="nav-list list-inline">
-                    <li><a href="#"><img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Running.png"><span>Add Site</span></a></li>
-                    <li><a href="#"><img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Basketball.png"><span>Edit Site</span></a></li>
-                    <li><a href="#"><img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Football.png"><span>View Sites</span></a></li>
-                    <li><a href="#"><img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Soccer.png"><span>Void Sites</span></a></li>
+                    <li><a href="#"><%= image_tag('add.png', :class=>"tab-icon") %><span>Add Site</span></a></li>
+                    <li><a href="#"><%= image_tag('pencil.png', :class=>"tab-icon") %><span>Edit Site</span></a></li>
+                    <li><a href="#"><%= image_tag('preview.png', :class=>"tab-icon") %><span>View Sites</span></a></li>
+                    <li><a href="#"><%= image_tag('voids.png', :class=>"tab-icon") %><span>Void Sites</span></a></li>
                   </ul>
                 </div>
                 <div class="tab-pane" id="users">
                   <ul class="nav-list list-inline">
-                    <li><a href="#"><img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Running.png"><span>Add User</span></a></li>
-                    <li><a href="#"><img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Basketball.png"><span>Edit User</span></a></li>
-                    <li><a href="#"><img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Football.png"><span>Block User</span></a></li>
-                    <li><a href="#"><img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Soccer.png"><span>Unblock User</span></a></li>
-                    <li><a href="#"><img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Football.png"><span>View Users</span></a></li>
+                    <li><a href="/users/new"> <%= image_tag('add_person.png', :class=>"tab-icon") %><span>Add User</span></a></li>
+                    <li><a href="/search_user?title=Search+for+user+to+edit&cat=edit"><%= image_tag('pencil.png', :class=>"tab-icon") %><span>Edit User</span></a></li>
+                    <li><a href="/search_user?title=Search+for+user+to+block&cat=block'"><%= image_tag('block.png', :class=>"tab-icon") %><span>Block User</span></a></li>
+                    <li><a href="#"><%= image_tag('active.png', :class=>"tab-icon") %><span>Unblock User</span></a></li>
+                    <li><a href="#"><%= image_tag('users.png', :class=>"tab-icon") %><span>View Users</span></a></li>
                   </ul>
                 </div>
                 <div class="tab-pane" id="settings">
                   <ul class="nav-list list-inline">
-                    <li><a href="#"><img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Running.png"><span>Paper Size</span></a></li>
-                    <li><a href="#"><img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Basketball.png"><span>Signature</span></a></li>
+                    <li><a href="#"><%= image_tag('papersize.png', :class=>"tab-icon") %><span>Paper Size</span></a></li>
+                    <li><a href="#"><%= image_tag('signatures.jpeg', :class=>"tab-icon") %><span>Signature</span></a></li>
                   </ul>
                 </div>
                 <div class="tab-pane" id="my_account">
                   <ul class="nav-list list-inline">
-                    <li><a href="#"><img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Basketball.png"><span>View Details</span></a></li>
-                    <li><a href="#"><img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Football.png"><span>Password</span></a></li>
+                    <li><a href="#"><%= image_tag('preview.png', :class=>"tab-icon") %><span>View Details</span></a></li>
+                    <li><a href="#"><%= image_tag('password.png', :class=>"tab-icon") %><span>Password</span></a></li>
                   </ul>
                 </div>
               </div>
@@ -263,7 +270,9 @@
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
-<div class="container">
+<div class="container main-container" style="
+        box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.19);
+        height: 610px;padding-top: 5px; overflow: auto;width: 80%;">
     <%= yield %>
 </div>
 

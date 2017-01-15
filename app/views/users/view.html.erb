@@ -1,0 +1,234 @@
+<style>
+    img {
+        margin-right: 8px;
+    }
+</style>
+
+<table width="100%" style="margin-top: 20px;">
+  <tr>
+    <th colspan="4" style="text-align: center !important; padding: 10px !important; font-size: 18px;">
+      <%= (!params["title"].blank? ? params["title"] : "Search for user") %>
+    </th>
+  </tr>
+  <tr style="font-weight: bold; background-color: #666; color: #eee; font-size: 16px;">
+    <td>
+      Name
+    </td>
+    <td style="width: 200px; border-left: 1px solid #eee;">
+      Username
+    </td>
+    <td style="width: 250px; border-left: 1px solid #eee;">
+      Role
+    </td>
+    <td colspan="2" style="width: 150px; border-left: 1px solid #eee;">
+      Status
+    </td>
+  </tr>
+  <tr>
+    <td colspan="5">
+      <div id="stats" style="width: 100%; overflow: auto;">
+
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td style="width: 200px;">
+      &nbsp;
+    </td>
+    <td style="width: 150px;">
+      &nbsp;
+    </td>
+    <td style="width: 147px;">
+      &nbsp;
+    </td>
+    <td style="width: 13px;">
+      &nbsp;
+    </td>
+  </tr>
+</table>
+
+<script>
+
+    "use strict"
+
+    function ajaxCall(target, url) {
+
+        if (target == undefined || target == null || url == undefined || url == null) {
+
+            return;
+
+        }
+
+        var httpRequest;
+        if (window.XMLHttpRequest) {
+            httpRequest = new XMLHttpRequest();
+        }
+
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+
+                var json = JSON.parse(httpRequest.responseText);
+
+                target.innerHTML = "";
+
+                var table = document.createElement("table");
+                table.border = 1;
+                table.style.width = "100%";
+                target.appendChild(table);
+
+                var tbody = document.createElement("tbody");
+                table.appendChild(tbody);
+
+                for (var i = 0; i < json.length; i++) {
+
+                    var tr = document.createElement("tr");
+                    tr.style.cursor = "pointer";
+                    tr.style.backgroundColor = (i % 2 > 0 ? "#eee" : "");
+                    tr.setAttribute("parity", (i % 2 > 0 ? "odd" : "even"));
+
+                    tr.setAttribute("tag", json[i]["username"]);
+
+                    tr.onmouseover = function () {
+
+                        this.style.backgroundColor = "lightblue";
+
+                        this.style.color = "#000";
+
+                    }
+
+                    tr.onmouseout = function () {
+
+                        this.style.backgroundColor = (this.getAttribute("parity") == "odd" ? "#eee" : "");
+
+                        this.style.color = "#333";
+
+                    }
+
+                    tr.onclick = function () {
+
+                        <% case params["cat"] %>
+                        <% when "edit" %>
+
+                        if("<%= @user.username %>" != this.getAttribute("tag")) {
+
+                            window.location = "/users/" + this.getAttribute("tag") + "/edit";
+
+                        } else {
+
+                            window.location = "/users/" + this.getAttribute("tag") + "?cat=" + "<%= params["cat"] %>";
+
+                        }
+
+                        <% else %>
+                        if("<%= @user.username %>" != this.getAttribute("tag")) {
+
+                            window.location = "/users/" + this.getAttribute("tag") + "?cat=" + "<%= params["cat"] %>";
+
+                        } else {
+
+                            window.location = "/users/" + this.getAttribute("tag") + "?cat=" + "view";
+
+                        }
+
+                        <% end %>
+
+                    }
+
+                    tbody.appendChild(tr);
+
+                    var td1 = document.createElement("td");
+                    td1.style.textAlign = "left";
+                    td1.style.padding = "5px";
+                    td1.innerHTML = json[i]["name"];
+
+                    tr.appendChild(td1);
+
+                    var td2 = document.createElement("td");
+                    td2.style.textAlign = "center";
+                    td2.style.width = "200px";
+                    td2.style.padding = "5px";
+                    td2.innerHTML = json[i]["username"];
+
+                    tr.appendChild(td2);
+
+                    var td4 = document.createElement("td");
+                    td4.style.textAlign = "center";
+                    td4.style.width = "250px";
+                    td4.style.padding = "5px";
+                    td4.innerHTML = json[i]["roles"];
+
+                    tr.appendChild(td4);
+
+                    var td3 = document.createElement("td");
+                    td3.style.textAlign = "center";
+                    td3.style.width = (json.length > 10 ? "147px" : "160px");
+                    td3.style.padding = "5px";
+                    td3.innerHTML = (json[i]["active"] ? "ACTIVE" : "IN-ACTIVE");
+
+                    tr.appendChild(td3);
+
+                }
+
+            }
+        }
+        httpRequest.open("GET", url, true);
+        httpRequest.send();
+
+    }
+
+    setTimeout(function () {
+        var oldHandler = resize;
+
+        resize = function (e) {
+
+            if (oldHandler) {
+
+                oldHandler();
+
+                if (__$("toolbar")) {
+
+                    __$("toolbar").style.height = (window.innerHeight - 150) + "px";
+
+                }
+
+                if (__$("content")) {
+
+                    __$("content").style.height = (window.innerHeight - 150) + "px";
+
+                    __$("content").style.width = (window.innerWidth - 500) + "px";
+
+                }
+
+                if (__$("stats")) {
+
+                    __$("stats").style.height = (window.innerHeight - 250) + "px";
+
+                }
+
+            }
+
+        }
+
+        resize();
+
+    }, 50);
+
+    <% case params["cat"] %>
+    <% when "block" %>
+
+    ajaxCall(__$('stats'), '/query_active_users');
+
+    <% when "unblock" %>
+
+    ajaxCall(__$('stats'), '/query_blocked_users');
+
+    <% else %>
+
+    ajaxCall(__$("stats"), "/query_users");
+
+    <% end %>
+
+</script>
