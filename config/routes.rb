@@ -24,6 +24,9 @@ Rails.application.routes.draw do
   get "/users/edit"
   patch "/users/edit"
 
+  ################## cases routes ############################
+  get '/open_cases' => 'case#open'
+  ############################################################
 
 
 

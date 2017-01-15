@@ -37,6 +37,8 @@ gem 'rqrcode'
 
 gem 'rmagick'
 
+gem "faker", "~> 1.6.6"
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
