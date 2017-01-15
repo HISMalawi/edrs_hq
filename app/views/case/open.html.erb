@@ -1,26 +1,30 @@
 <script>
 
-
-var initCases = [];
 var dataTable = null;
 
 function addRows(data) {
-  counter = 0;
-  for (var i = 0; i < initCases.length; i++) {
+  people = JSON.parse(data);
+  
+  for (var i = 0; i < people.length; i++) {
     /*first_name = patients[i]['given_name'];
     last_name = patients[i]['family_name'];
     gender = patients[i]["gender"];*/
-    dob = initCases[i]["dob"];
+    dob = people[i]["dob"];
     /*age = patients[i]["age"];
     patient_id = patients[i]["patient_id"];
     account_number = patients[i]["account_number"];*/
     dataTable.api().row.add([null, null,null,null,null, dob, null]).draw();
 
-    counter++
   }
+
+  if(people.length > 0) {
+    current_page ++;
+    getCases();
+  }
+
 }
 
-var current_page = parseInt(<%=@page%>);
+var current_page = parseInt(<%=(@page.to_i rescue 0)%>);
 
 function getCases() {                                                      
 
@@ -36,7 +40,7 @@ function getCases() {
       if(results == 'undefined' || results == '' || results == '"not validate"') {                           
         return;                                                               
       }else{                                                                  
-        dataTable.fnClearTable();
+        //dataTable.fnClearTable();
         addRows(results);                                                           
       }                                                                       
     }                                                                         
@@ -46,10 +50,6 @@ function getCases() {
   xmlhttp.send();                                                             
 }
 
-
-function loadData() {
-  addRows();
-}
 
 </script>
 
@@ -81,11 +81,5 @@ function initDataTable(){
 
 
 initDataTable();
-
-<%(@cases || []).map do |person|%>
-  initCases.push({dob: "<%= person.birthdate %>" })
-<%end%>
-
-loadData();
-
+getCases();
 </script>
