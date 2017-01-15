@@ -26,6 +26,7 @@ Rails.application.routes.draw do
 
   ################## cases routes ############################
   get '/open_cases' => 'case#open'
+  get 'add_more_open_cases/:page_number' => 'case#more_open_cases'
   ############################################################
 
 
