@@ -10,8 +10,6 @@ Rails.application.config.assets.version = '1.0'
 # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
 # Rails.application.config.assets.precompile += %w( search.js )
 Rails.application.config.assets.precompile += %w( DataTables/* )
-Rails.application.config.assets.precompile += %w( Highcharts-4.0.4/* )
-Rails.application.config.assets.precompile += %w( Highstock-2.0.4/* )
 
 Rails.application.config.assets.precompile += %w( coords.js )
 Rails.application.config.assets.precompile += %w( districts.js )

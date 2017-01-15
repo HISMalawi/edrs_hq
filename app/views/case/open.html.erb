@@ -1,5 +1,7 @@
 <script>
 
+
+var initCases = [];
 var dataTable = null;
 
 function addRows(data) {
@@ -18,7 +20,7 @@ function addRows(data) {
   }
 }
 
-var current_page = parseInit(<%=@page%>);
+var current_page = parseInt(<%=@page%>);
 
 function getCases() {                                                      
 
@@ -44,8 +46,6 @@ function getCases() {
   xmlhttp.send();                                                             
 }
 
-
-var initCases = [];
 
 function loadData() {
   addRows();
