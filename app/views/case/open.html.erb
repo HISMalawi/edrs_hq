@@ -1,0 +1,91 @@
+<script>
+
+var dataTable = null;
+
+function addRows(data) {
+  counter = 0;
+  for (var i = 0; i < initCases.length; i++) {
+    /*first_name = patients[i]['given_name'];
+    last_name = patients[i]['family_name'];
+    gender = patients[i]["gender"];*/
+    dob = initCases[i]["dob"];
+    /*age = patients[i]["age"];
+    patient_id = patients[i]["patient_id"];
+    account_number = patients[i]["account_number"];*/
+    dataTable.api().row.add([null, null,null,null,null, dob, null]).draw();
+
+    counter++
+  }
+}
+
+var current_page = parseInit(<%=@page%>);
+
+function getCases() {                                                      
+
+  if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari  
+    xmlhttp=new XMLHttpRequest();                                             
+  }else{// code for IE6, IE5                                                  
+    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");                           
+  }
+                                                                           
+  xmlhttp.onreadystatechange=function() {                                     
+    if (xmlhttp.readyState==4 && xmlhttp.status==200) {                       
+      var results = xmlhttp.responseText;                                     
+      if(results == 'undefined' || results == '' || results == '"not validate"') {                           
+        return;                                                               
+      }else{                                                                  
+        dataTable.fnClearTable();
+        addRows(results);                                                           
+      }                                                                       
+    }                                                                         
+  }                                                                           
+
+  xmlhttp.open("GET","/add_more_open_cases/"+current_page,true);           
+  xmlhttp.send();                                                             
+}
+
+
+var initCases = [];
+
+function loadData() {
+  addRows();
+}
+
+</script>
+
+<table id="open_cases">
+  <thead>
+    <tr>
+      <th>Serial number</th>
+      <th>Death rgistration number</th>
+      <th>First name</th>
+      <th>Middle name</th>
+      <th>Last name</th>
+      <th>DOB</th>
+      <th>Gender</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+
+  <tfoot>
+  </tfoot>
+</table> 
+
+
+<script>
+
+function initDataTable(){          
+  dataTable = jQuery('#open_cases').dataTable();                                                  
+}
+
+
+initDataTable();
+
+<%(@cases || []).map do |person|%>
+  initCases.push({dob: "<%= person.birthdate %>" })
+<%end%>
+
+loadData();
+
+</script>
