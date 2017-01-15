@@ -11,3 +11,10 @@ Rails.application.config.assets.version = '1.0'
 # Rails.application.config.assets.precompile += %w( search.js )
 Rails.application.config.assets.precompile += %w( DataTables/* )
 Rails.application.config.assets.precompile += %w( Highcharts-4.0.4/* )
+Rails.application.config.assets.precompile += %w( Highstock-2.0.4/* )
+
+Rails.application.config.assets.precompile += %w( coords.js )
+Rails.application.config.assets.precompile += %w( districts.js )
+Rails.application.config.assets.precompile += %w( sites_by_zones.js )
+Rails.application.config.assets.precompile += %w( zones.js )
+Rails.application.config.assets.precompile += %w( district_offsets.js )
