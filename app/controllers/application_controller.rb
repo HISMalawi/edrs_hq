@@ -6,6 +6,9 @@ class ApplicationController < ActionController::Base
 
   before_filter :check_user, :except => ['login', 'logout']
 
+  def has_role(role)
+    current_user.activities_by_level("HQ").include?(role.strip)
+  end
 
 	protected
   def check_user

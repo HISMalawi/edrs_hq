@@ -8,6 +8,25 @@ Rails.application.routes.draw do
 
   get "/logout" => "users#logout"
 
+  get "/view_users" => "users#view"
+  get "/query_users" => "users#query"
+  get "/search_user" => "users#search"
+  get "/users/new"
+  post "/users/create"
+  get "/search_user" => "users#search"
+  get "/search_by_username/:id" => "users#search_by_username"
+  get "/search_by_username" => "users#search_by_username"
+  get "/username_availability" => "users#username_availability"
+  get "/block_user/:id" => "users#block_user"
+  get "/unblock_user/:id" => "users#unblock_user"
+  get "/block" => "users#block"
+  get "/unblock" => "users#unblock"
+  get "/users/edit"
+  patch "/users/edit"
+
+
+
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
