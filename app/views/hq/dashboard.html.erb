@@ -17,9 +17,23 @@
         </div>
       </div>
     </td>
-    <td colspan="3">
-      <div id="cell0_0" style="width: 100%; height: 100%; text-align: center; float: right; border: 1px solid #ccc;">
-        &nbsp;
+    <td colspan="2" style="width: 65%;">
+      <div id="cell0_0" style="width: 99.5%; height: 100%; text-align: center; float: right; border: 1px solid #ccc;">
+        <%= column_chart [
+                       [(Date.today - 1.month).strftime("%b"), 3],
+                       [(Date.today - 2.month).strftime("%b"), 4],
+                       [(Date.today - 3.month).strftime("%b"), 5],
+                       [(Date.today - 4.month).strftime("%b"), 6],
+                       [(Date.today - 5.month).strftime("%b"), 7],
+                       [(Date.today - 6.month).strftime("%b"), 7],
+                       [(Date.today - 7.month).strftime("%b"), 8],
+                       [(Date.today - 8.month).strftime("%b"), 10],
+                       [(Date.today - 9.month).strftime("%b"), 11],
+                       [(Date.today - 10.month).strftime("%b"), 9],
+                       [(Date.today - 11.month).strftime("%b"), 9],
+                       [(Date.today - 12.month).strftime("%b"), 9],
+                       [Date.today.strftime("%b"), 2]
+                     ]%>
       </div>
     </td>
   </tr>
