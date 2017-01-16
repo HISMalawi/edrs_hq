@@ -36,6 +36,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    aescrypt (1.0.0)
     arel (6.0.4)
     autoprefixer-rails (6.5.1)
       execjs
@@ -183,6 +184,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  aescrypt
   barby
   bcrypt-ruby
   bootstrap-sass (~> 3.3, >= 3.3.6)
