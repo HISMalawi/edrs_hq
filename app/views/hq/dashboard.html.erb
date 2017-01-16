@@ -4,9 +4,7 @@
 <script src="/assets/zones.js"></script>
 <script src="/assets/district_offsets.js"></script>
 <style>
-    rect{
-        background-color: red !important;
-    }
+
 </style>
 
 <script>
@@ -17,8 +15,15 @@
     <% [(today - 11.months),  (today - 10.months), (today - 9.months), (today - 8.months),
         (today - 7.months), (today - 6.months), (today - 5.months), (today - 4.months),
         (today - 3.months), (today - 2.months), (today - 1.months), (today)] .each do |date|
+
+        status = ["DC APPROVED"]
         month = date.strftime("%b`%y")
-        count = PersonRecordStatus.by_record_status_and_created_at.startkey(date.beginning_of_month).endkey(date.end_of_month).each.count
+        count = 0.0
+        status.each do |state|
+            start = state + "_" + date.beginning_of_month.strftime("%Y-%m-%d")
+            endd = state + "_" + date.end_of_month.strftime("%Y-%m-%d")
+            count = count + PersonRecordStatus.by_record_status_and_created_at.startkey(start).endkey(endd).each.count
+        end
     %>
         graph_categories.push('<%= month%>');
         graph_data.push(parseInt('<%= count%>'));
@@ -29,7 +34,7 @@
 
 <table width="100%" border="0" style="border: 1px solid #ccc;">
   <tr>
-    <td rowspan="2" style="width: 34%;">
+    <td rowspan="2" style="width: 32%;">
       <div id="c_map" style="width: 100%; height: 600px; text-align: center; float: left;  border: 1px solid #ccc;">
         <object id="map" type="image/svg+xml" data="/assets/Malawi.svg" style="height: 100%; width: 100%;"></object>
         <div id="national" style="width: 200px; height: 200px; margin-top: -205px; text-align: center; background-color: #fff;
@@ -45,12 +50,8 @@
     </td>
   </tr>
   <tr style="border-top: 1px solid gray">
-    <td style="">
-      <div id="cell1_0" style="height: 100%;text-align: center; border: 1px solid #ccc;border: none;">
 
-      </div>
-    </td>
-    <td style="height: 60%; width: 37%;">
+    <td colspan="2" style="height: 60%; width: 100%;">
       <div id="cell1_1" style="height: 100%; text-align: center; border: 1px solid #ccc;">
         <table class="table table-condensed  table-striped stat" >
           <tr class="table-row">
@@ -62,7 +63,7 @@
           </tr>
           <tr class="table-row">
             <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3">Newly Received (HQ)</td>
-            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3">0</td>
+            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3"><%= PersonRecordStatus.by_record_status.key("DC APPROVED").each.count%></td>
           </tr>
           <tr class="table-row">
             <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3">Print-Que (HQ)</td>
