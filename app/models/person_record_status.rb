@@ -30,6 +30,18 @@ class PersonRecordStatus < CouchRest::Model::Base
                   }
                 }"
 
+    view :by_record_status_and_created_at,
+         :map => "function(doc) {
+                  if (doc['type'] == 'PersonRecordStatus' && doc['voided'] ==false) {
+                      var date = new Date(doc['created_at']);
+                      var year = date.getFullYear();
+                      var month = date.getMonth() + 1;
+                      var day = date.getDate();
+                      var str = '' + year + '-' + (month > 9 ? month : ('0' + month)) + '-' + (day > 9 ? day : ('0' + day));
+                    	emit(doc['status'] + '_' + str, 1);
+                  }
+                }"
+
 	end
 
 	def person

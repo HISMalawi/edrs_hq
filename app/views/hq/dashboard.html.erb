@@ -18,7 +18,7 @@
         (today - 7.months), (today - 6.months), (today - 5.months), (today - 4.months),
         (today - 3.months), (today - 2.months), (today - 1.months), (today)] .each do |date|
         month = date.strftime("%b`%y")
-        count = Person.by_created_at.startkey(date.beginning_of_month).endkey(date.end_of_month).each.count
+        count = PersonRecordStatus.by_record_status_and_created_at.startkey(date.beginning_of_month).endkey(date.end_of_month).each.count
     %>
         graph_categories.push('<%= month%>');
         graph_data.push(parseInt('<%= count%>'));
