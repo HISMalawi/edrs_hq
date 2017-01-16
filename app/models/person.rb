@@ -26,68 +26,45 @@ class Person < CouchRest::Model::Base
 
   before_save NameCodes.new("informant_middle_name")
 
-  before_save EncryptionWrapper.new("first_name")
-  after_save EncryptionWrapper.new("first_name")
-  after_initialize EncryptionWrapper.new("first_name")
+  after_initialize :decrypt_data
 
-  before_save EncryptionWrapper.new("middle_name")
-  after_save EncryptionWrapper.new("middle_name")
-  after_initialize EncryptionWrapper.new("middle_name")
+  before_create :encrypt_data
 
-  before_save EncryptionWrapper.new("last_name")
-  after_save EncryptionWrapper.new("last_name")
-  after_initialize EncryptionWrapper.new("last_name")
+  def decrypt_data
+    encryptable = ["first_name","last_name",
+                   "middle_name","last_name",
+                   "mother_first_name","mother_last_name",
+                   "mother_middle_name","mother_id_number",
+                   "father_id_number","father_first_name",
+                   "father_last_name","father_middle_name",
+                   "father_id_number","informant_first_name","informant_last_name",
+                   "informant_middle_name"]
+    (self.attributes || []).each do |attribute|
 
+      next unless encryptable.include? attribute[0]
 
-  before_save EncryptionWrapper.new("mother_first_name")
-  after_save EncryptionWrapper.new("mother_first_name")
-  after_initialize EncryptionWrapper.new("mother_first_name")
+      self.send("#{attribute[0]}=", (attribute[1].decrypt rescue attribute[1])) unless attribute[1].blank?
+    end
+  end
 
-  before_save EncryptionWrapper.new("mother_middle_name")
-  after_save EncryptionWrapper.new("mother_middle_name")
-  after_initialize EncryptionWrapper.new("mother_middle_name")
+  def encrypt_data
+    encryptable = ["first_name","last_name",
+                   "middle_name","last_name",
+                   "mother_first_name","mother_last_name",
+                   "mother_middle_name","mother_id_number",
+                   "father_id_number","father_first_name",
+                   "father_last_name","father_middle_name",
+                   "father_id_number","informant_first_name","informant_last_name",
+                   "informant_middle_name"]
+    (self.attributes || []).each do |attribute|
 
-  before_save EncryptionWrapper.new("mother_last_name")
-  after_save EncryptionWrapper.new("mother_last_name")
-  after_initialize EncryptionWrapper.new("mother_last_name")
+      next unless encryptable.include? attribute[0]
 
-  before_save EncryptionWrapper.new("mother_id_number")
-  after_save EncryptionWrapper.new("mother_id_number")
-  after_initialize EncryptionWrapper.new("mother_id_number")
+      self.send("#{attribute[0]}=", attribute[1].encrypt) unless attribute[1].blank?
+    end
+  end
 
-
-  before_save EncryptionWrapper.new("father_first_name")
-  after_save EncryptionWrapper.new("father_first_name")
-  after_initialize EncryptionWrapper.new("father_first_name")
-
-  before_save EncryptionWrapper.new("father_middle_name")
-  after_save EncryptionWrapper.new("father_middle_name")
-  after_initialize EncryptionWrapper.new("father_middle_name")
-
-  before_save EncryptionWrapper.new("father_last_name")
-  after_save EncryptionWrapper.new("father_last_name")
-  after_initialize EncryptionWrapper.new("father_last_name")
-
-  before_save EncryptionWrapper.new("father_id_number")
-  after_save EncryptionWrapper.new("father_id_number")
-  after_initialize EncryptionWrapper.new("father_id_number")
-
-
-  before_save EncryptionWrapper.new("informant_first_name")
-  after_save EncryptionWrapper.new("informant_first_name")
-  after_initialize EncryptionWrapper.new("informant_first_name")
-
-  before_save EncryptionWrapper.new("informant_middle_name")
-  after_save EncryptionWrapper.new("informant_middle_name")
-  after_initialize EncryptionWrapper.new("informant_middle_name")
-
-  before_save EncryptionWrapper.new("informant_last_name")
-  after_save EncryptionWrapper.new("informant_last_name")
-  after_initialize EncryptionWrapper.new("informant_last_name")
-
-  before_save EncryptionWrapper.new("informant_id_number")
-  after_save EncryptionWrapper.new("informant_id_number")
-  after_initialize EncryptionWrapper.new("informant_id_number")
+  before_save :set_facility_code,:set_district_code
 
   #Person methods
   def person_id=(value)
@@ -98,27 +75,46 @@ class Person < CouchRest::Model::Base
     self['_id']
   end
 
-  def self.update_state(id, status, audit_status) 
-	 
-	person = Person.find(id)
-	raise "Person with ID: #{id} not found".to_s if person.blank?
 
-	status = status
-	audit_status = audit_status
-	audit_reason = "Admin request"
+  def self.update_state(id, status, audit_status)
 
-	user = User.find("admin") 
-	name = user.first_name + " " + user.last_name
+    person = Person.find(id)
+    raise "Person with ID: #{id} not found".to_s if person.blank?
 
-	person.status = status
-	person.status_changed_by = name
-	person.save
+    status = status
+    audit_status = audit_status
+    audit_reason = "Admin request"
 
-	audit = Audit.new()
-	audit["record_id"] = person.id
-	audit["audit_type"] = audit_status
-	audit["reason"] = audit_reason
-	audit.save
+    user = User.find("admin")
+    name = user.first_name + " " + user.last_name
+
+    person.status = status
+    person.status_changed_by = name
+    person.save
+
+    audit = Audit.new()
+    audit["record_id"] = person.id
+    audit["audit_type"] = audit_status
+    audit["reason"] = audit_reason
+    audit.save
+  end
+
+  def set_facility_code
+
+    if CONFIG['site_type'] =="facility"
+
+      self.facility_code = CONFIG["facility_code"]
+
+    else
+      self.facility_code = nil
+    end
+
+  end
+
+  def set_district_code
+
+    self.district_code = CONFIG["district_code"]
+
   end
 
   #Person properties
@@ -129,12 +125,10 @@ class Person < CouchRest::Model::Base
   property :last_name_code, String
   property :middle_name_code, String
   property :gender, String
-  property :birthdate, String
+  property :birthdate, Time
   property :birthdate_estimated, String
-  property :date_of_death, String
+  property :date_of_death, Time
   property :birth_certificate_number, String
-  property :created_by, String
-  property :date_created, String
   property :citizenship, String
   property :place_of_death, String
   property :hospital_of_death_name, String
@@ -284,9 +278,12 @@ class Person < CouchRest::Model::Base
 
   property :acknowledgement_of_receipt_date, Time
 
-  property :facility_serial_number, String
+  #facility related information
+  property :facility_code, String
+  property :district_code, String
 
-  property :creator, String
+  property :date_created, String
+  property :created_by, String
   property :changed_by, String
 
   property :_deleted, TrueClass, :default => false
@@ -296,9 +293,9 @@ class Person < CouchRest::Model::Base
 
   design do
     view :by__id
-    
+
     view :by_created_at
-    
+
     view :by_updated_at
 
     view :by_name,
@@ -311,7 +308,7 @@ class Person < CouchRest::Model::Base
     view :by_first_name_code
 
     view :by_last_name_code
-    
+
 
     view :by_specific_birthdate,
          :map => "function(doc) {
@@ -612,6 +609,10 @@ class Person < CouchRest::Model::Base
                 }"
 
     view :by_approved
+
+    filter :facility_sync, "function(doc,req) {return req.query.facility_code == doc.facility_code}"
+
+    filter :district_sync, "function(doc,req) {return req.query.district_code == doc.district_code}"
 
   end
 
