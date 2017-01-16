@@ -4,11 +4,13 @@
 <script src="/assets/zones.js"></script>
 <script src="/assets/district_offsets.js"></script>
 <style>
-
+    rect{
+        background-color: red !important;
+    }
 </style>
 <table width="100%" border="0" style="border: 1px solid #ccc;">
   <tr>
-    <td rowspan="2" style="width: 30%;">
+    <td rowspan="2" style="width: 250px !important;">
       <div id="c_map" style="width: 100%; height: 600px; text-align: center; float: left;  border: 1px solid #ccc;">
         <object id="map" type="image/svg+xml" data="/assets/Malawi.svg" style="height: 100%; width: 100%;"></object>
         <div id="national" style="width: 200px; height: 200px; margin-top: -205px; text-align: center; background-color: #fff;
@@ -19,20 +21,20 @@
     </td>
     <td colspan="2" style="width: 65%;">
       <div id="cell0_0" style="width: 99.5%; height: 100%; text-align: center; float: right; border: 1px solid #ccc;">
+
         <%= column_chart [
-                       [(Date.today - 1.month).strftime("%b"), 3],
-                       [(Date.today - 2.month).strftime("%b"), 4],
-                       [(Date.today - 3.month).strftime("%b"), 5],
-                       [(Date.today - 4.month).strftime("%b"), 6],
-                       [(Date.today - 5.month).strftime("%b"), 7],
-                       [(Date.today - 6.month).strftime("%b"), 7],
-                       [(Date.today - 7.month).strftime("%b"), 8],
-                       [(Date.today - 8.month).strftime("%b"), 10],
-                       [(Date.today - 9.month).strftime("%b"), 11],
-                       [(Date.today - 10.month).strftime("%b"), 9],
-                       [(Date.today - 11.month).strftime("%b"), 9],
-                       [(Date.today - 12.month).strftime("%b"), 9],
-                       [Date.today.strftime("%b"), 2]
+                       [(Date.today - 11.months).strftime("%b, %y"), 3],
+                       [(Date.today - 10.months).strftime("%b, %y"), 3],
+                       [(Date.today - 9.months).strftime("%b, %y"), 4],
+                       [(Date.today - 8.months).strftime("%b, %y"), 5],
+                       [(Date.today - 7.months).strftime("%b, %y"), 6],
+                       [(Date.today - 6.months).strftime("%b, %y"), 7],
+                       [(Date.today - 5.months).strftime("%b, %y"), 8],
+                       [(Date.today - 4.months).strftime("%b, %y"), 8],
+                       [(Date.today - 3.months).strftime("%b, %y"), 9],
+                       [(Date.today - 2.months).strftime("%b, %y"), 10],
+                       [(Date.today - 1.months).strftime("%b, %y"), 11],
+                       [(Date.today -0.months).strftime("%b, %y"), 12]
                      ]%>
       </div>
     </td>

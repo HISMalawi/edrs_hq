@@ -50,7 +50,6 @@ GEM
       sass (>= 3.3.4)
     builder (3.2.2)
     byebug (9.0.6)
-    chartkick (2.2.2)
     chronic (0.10.2)
     coffee-rails (4.1.1)
       coffee-script (>= 2.2.0)
@@ -78,6 +77,8 @@ GEM
       i18n (~> 0.5)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
+    highcharts-rails (4.2.5)
+      railties (>= 3.1)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     i18n (0.7.0)
@@ -186,10 +187,10 @@ DEPENDENCIES
   bcrypt-ruby
   bootstrap-sass (~> 3.3, >= 3.3.6)
   byebug
-  chartkick
   coffee-rails (~> 4.1.0)
   couchrest_model
   faker (~> 1.6.6)
+  highcharts-rails
   jbuilder (~> 2.0)
   jquery-rails
   passenger (= 5.0.6)
