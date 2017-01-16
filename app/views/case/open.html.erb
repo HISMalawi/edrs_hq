@@ -10,10 +10,21 @@ function addRows(data) {
     last_name = people[i]['last_name'];
     gender = people[i]["gender"];
     dob = people[i]["dob"];
-    /*age = patients[i]["age"];
-    patient_id = patients[i]["patient_id"];
-    account_number = patients[i]["account_number"];*/
-    dataTable.api().row.add([null, null, first_name, null, last_name, dob, gender]).draw();
+    person_id = people[i]["person_id"];
+    spam = document.createElement("spam");
+
+    var btn = document.createElement("input");
+      btn.setAttribute("type", "button");
+      btn.setAttribute("value", "View");
+      btn.setAttribute("class", "btn btn-info btn-small");
+      btn.setAttribute("person_id", person_id);
+      btn.setAttribute("onclick", ("window.location = '/view_cases/"  + person_id + "'"));
+      spam.appendChild(btn);
+
+      /*age = patients[i]["age"];
+      patient_id = patients[i]["patient_id"];
+      account_number = patients[i]["account_number"];*/
+    dataTable.api().row.add([null, null, first_name, null, last_name, dob, gender, spam.innerHTML]).draw();
 
   }
 
@@ -57,12 +68,14 @@ function getCases() {
   <thead>
     <tr>
       <th>Serial number</th>
-      <th>Death rgistration number</th>
+      <th>Death entry number</th>
       <th>First name</th>
       <th>Middle name</th>
       <th>Last name</th>
       <th>DOB</th>
       <th>Gender</th>
+
+      <th>&nbsp;</th>
     </tr>
   </thead>
   <tbody>
