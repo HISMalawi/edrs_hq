@@ -1,6 +1,4 @@
 class Role < CouchRest::Model::Base
-  use_database "local"
-
   property :role, String
   property :level, String
   property :activities, []

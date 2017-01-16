@@ -8,9 +8,28 @@
         background-color: red !important;
     }
 </style>
+
+<script>
+    var graph_categories = [];
+    var graph_data = [];
+
+    <% today = DateTime.now %>
+    <% [(today - 11.months),  (today - 10.months), (today - 9.months), (today - 8.months),
+        (today - 7.months), (today - 6.months), (today - 5.months), (today - 4.months),
+        (today - 3.months), (today - 2.months), (today - 1.months), (today)] .each do |date|
+        month = date.strftime("%b`%y")
+        count = Person.by_created_at.startkey(date.beginning_of_month).endkey(date.end_of_month).each.count
+    %>
+        graph_categories.push('<%= month%>');
+        graph_data.push(parseInt('<%= count%>'));
+    <% end %>
+
+
+</script>
+
 <table width="100%" border="0" style="border: 1px solid #ccc;">
   <tr>
-    <td rowspan="2" style="width: 250px !important;">
+    <td rowspan="2" style="width: 34%;">
       <div id="c_map" style="width: 100%; height: 600px; text-align: center; float: left;  border: 1px solid #ccc;">
         <object id="map" type="image/svg+xml" data="/assets/Malawi.svg" style="height: 100%; width: 100%;"></object>
         <div id="national" style="width: 200px; height: 200px; margin-top: -205px; text-align: center; background-color: #fff;
@@ -19,23 +38,9 @@
         </div>
       </div>
     </td>
-    <td colspan="2" style="width: 65%;">
-      <div id="cell0_0" style="width: 99.5%; height: 100%; text-align: center; float: right; border: 1px solid #ccc;">
+    <td colspan="2" style="padding-left: 5%">
+      <div id="cell0_0" style="width: 95%; height: 255px; text-align: center; border: 1px solid #ccc;">
 
-        <%= column_chart [
-                       [(Date.today - 11.months).strftime("%b, %y"), 3],
-                       [(Date.today - 10.months).strftime("%b, %y"), 3],
-                       [(Date.today - 9.months).strftime("%b, %y"), 4],
-                       [(Date.today - 8.months).strftime("%b, %y"), 5],
-                       [(Date.today - 7.months).strftime("%b, %y"), 6],
-                       [(Date.today - 6.months).strftime("%b, %y"), 7],
-                       [(Date.today - 5.months).strftime("%b, %y"), 8],
-                       [(Date.today - 4.months).strftime("%b, %y"), 8],
-                       [(Date.today - 3.months).strftime("%b, %y"), 9],
-                       [(Date.today - 2.months).strftime("%b, %y"), 10],
-                       [(Date.today - 1.months).strftime("%b, %y"), 11],
-                       [(Date.today -0.months).strftime("%b, %y"), 12]
-                     ]%>
       </div>
     </td>
   </tr>
@@ -1798,6 +1803,59 @@
      }, 50000);*/
 
     setDefaults();
+
+       $(function () {
+            Highcharts.chart('cell0_0', {
+                chart: {
+                    type: 'column',
+                    height: null,margin: null
+                },
+                title: {
+                    text: 'Death Registrations - Past 12 months'
+                },
+                legend: {
+                    enabled: false
+                },
+                subtitle: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: graph_categories,
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Number of registrations'
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+
+                tooltip: {
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                            '<td style="padding:0"><b>{point.y:.0f}</b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: 'Registrations',
+                    data: graph_data
+                }]
+            });
+        });
+
+
+
 
 
 

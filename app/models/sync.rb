@@ -1,6 +1,5 @@
 require 'couchrest_model'
 class Sync < CouchRest::Model::Base
-	use_database "sync"
 	property :person_id, String
 	property :dc_sync_status, TrueClass, :default => false
 	property :hq_sync_status, TrueClass, :default => false
