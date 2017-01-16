@@ -38,8 +38,6 @@ gem 'rqrcode'
 
 gem 'rmagick'
 
-gem "faker", "~> 1.6.6"
-
 gem 'aescrypt'
 
 # Use ActiveModel has_secure_password
