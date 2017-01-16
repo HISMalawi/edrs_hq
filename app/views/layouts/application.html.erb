@@ -5,6 +5,14 @@
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
+  
+  <script>
+    history.pushState(null, null, null);
+    window.addEventListener('popstate', function(event) {
+      history.pushState(null, null, null);
+    })
+  </script> 
+
   <style>
     .small{
         box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.19);

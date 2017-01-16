@@ -75,11 +75,15 @@ function getCases() {
 
 <script>
 
-function initDataTable(){          
-  dataTable = jQuery('#open_cases').dataTable();                                                  
+function initDataTable(){        
+  try {  
+    dataTable = jQuery('#open_cases').dataTable();                                                  
+  }catch(e){
+    location.reload(); 
+  }
+  getCases();
 }
 
 
-initDataTable();
-getCases();
+setTimeout(initDataTable(), 2000);
 </script>
