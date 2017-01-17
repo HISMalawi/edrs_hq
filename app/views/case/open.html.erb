@@ -1,0 +1,102 @@
+<script>
+
+var dataTable = null;
+
+function addRows(data) {
+  people = JSON.parse(data);
+  
+  for (var i = 0; i < people.length; i++) {
+    first_name = people[i]['first_name'];
+    last_name = people[i]['last_name'];
+    gender = people[i]["gender"];
+    dob = people[i]["dob"];
+    person_id = people[i]["person_id"];
+    spam = document.createElement("spam");
+
+    var btn = document.createElement("input");
+      btn.setAttribute("type", "button");
+      btn.setAttribute("value", "View");
+      btn.setAttribute("class", "btn btn-info btn-small");
+      btn.setAttribute("person_id", person_id);
+      btn.setAttribute("onclick", ("window.location = '/view_cases/"  + person_id + "'"));
+      spam.appendChild(btn);
+
+      /*age = patients[i]["age"];
+      patient_id = patients[i]["patient_id"];
+      account_number = patients[i]["account_number"];*/
+    dataTable.api().row.add([null, null, first_name, null, last_name, dob, gender, spam.innerHTML]).draw();
+
+  }
+
+  if(people.length > 0) {
+    current_page ++;
+    getCases();
+  }
+
+}
+
+var current_page = parseInt(<%=(@page.to_i rescue 0)%>);
+
+function getCases() {                                                      
+
+  if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari  
+    xmlhttp=new XMLHttpRequest();                                             
+  }else{// code for IE6, IE5                                                  
+    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");                           
+  }
+                                                                           
+  xmlhttp.onreadystatechange=function() {                                     
+    if (xmlhttp.readyState==4 && xmlhttp.status==200) {                       
+      var results = xmlhttp.responseText;                                     
+      if(results == 'undefined' || results == '' || results == '"not validate"') {                           
+        return;                                                               
+      }else{                                                                  
+        //dataTable.fnClearTable();
+        addRows(results);                                                           
+      }                                                                       
+    }                                                                         
+  }                                                                           
+
+  xmlhttp.open("GET","/add_more_open_cases/"+current_page,true);           
+  xmlhttp.send();                                                             
+}
+
+
+</script>
+
+<table id="open_cases">
+  <thead>
+    <tr>
+      <th>Serial number</th>
+      <th>Death entry number</th>
+      <th>First name</th>
+      <th>Middle name</th>
+      <th>Last name</th>
+      <th>DOB</th>
+      <th>Gender</th>
+
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+
+  <tfoot>
+  </tfoot>
+</table> 
+
+
+<script>
+
+function initDataTable(){        
+  try {  
+    dataTable = jQuery('#open_cases').dataTable();                                                  
+  }catch(e){
+    location.reload(); 
+  }
+  getCases();
+}
+
+
+setTimeout(initDataTable(), 2000);
+</script>

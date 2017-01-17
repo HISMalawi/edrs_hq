@@ -1,0 +1,57 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 09.08.2015., 05:00:36
+    Author     : kreso
+*/
+
+table {
+    
+    border:1px #D6D6D6 solid;
+    
+    width:100%;
+    
+}
+
+table thead {
+    
+    background:#F7F7F7;
+    
+    border-bottom:1px #D6D6D6 solid;
+    
+}
+
+table tr td {
+    
+    border:1px #D6D6D6 solid;
+    
+}
+
+table thead tr td {
+    
+    padding:17px 19px;
+    
+    font-family:Museo-300, sans;
+    
+    color:#676F78;
+    
+}
+
+table tbody tr td {
+    
+    padding:17px 19px;
+    
+    font-family:Museo-300, sans;
+    
+}
+
+table tbody tr:nth-child(even) {
+    
+    color:#1991A9;
+     
+    background:#E7EFF4;
+    
+}

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EDRS</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+  
+  <script>
+    history.pushState(null, null, null);
+    window.addEventListener('popstate', function(event) {
+      history.pushState(null, null, null);
+    })
+  </script> 
+
+  <style>
+    .small{
+        box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    .navbar-brand {
+        width: 70px;
+        height: 50px;
+        background-size: 50px;
+    }
+
+
+
+    .nav-tabs {
+        display: inline-block;
+        border-bottom: 1px solid #d3d3d3;
+        padding-top: 10px;
+        margin-bottom: 25px;
+        font-weight: bold;
+    }
+    .nav-tabs a{
+        color: darkslategray;
+    }
+    .nav-tabs > li.active > a,
+    .nav-tabs > li > a:hover,
+    .nav-tabs > li > a:focus{
+        color: darkgoldenrod;
+    }
+    .nav-tabs > li > a,
+    .nav-tabs > li > a:hover,
+    .nav-tabs > li > a:focus,
+    .nav-tabs > li.active > a,
+    .nav-tabs > li.active > a:hover,
+    .nav-tabs > li.active > a:focus {
+        border-radius: 0;
+        text-transform: uppercase;
+    }
+
+    .nav-list { border: 1px solid #eee; }
+    .nav-list > li {
+        padding: 20px 15px 15px;
+        border-left: 1px solid #eee;
+    }
+    .nav-list > li:last-child { border-right: 1px solid #eee; }
+    .nav-list > li > a:hover { text-decoration: none; }
+    .nav-list > li > a > span {
+        display: block;
+        font-weight: bold;
+    }
+
+    .mega-dropdown { position: static !important; }
+    .mega-dropdown-menu {
+        padding: 20px 15px 15px;
+        text-align: center;
+        width: 100%;
+    }
+    .dropdown-toggle{
+        color: black;
+    }
+    nav{
+        border-bottom: 1px solid darkred !important;
+    }
+    .tab-pane{
+        padding-bottom: 35px;min-height: 50vh;
+    }
+    .tab-pane li{
+        min-width: 165px;
+        border-bottom: 1px solid #d3d3d3;
+     }
+    .tab-pane li a :not(.glyphicon){
+       color: darkslategray;
+       cursor: pointer;
+    }
+
+    .glyphicon {
+        font-size: 50px;
+        margin: 20px;
+    }
+
+    .tab-icon{
+        width: 50px;
+        height: 50px;
+        margin: 20px;
+    }
+    .tab-icon:hover{
+        background: lightblue;
+    }
+
+  </style>
+
+
+  <script>
+      $(document).ready(function(){
+          $(".dropdown").hover(
+                  function() {
+                      $('.dropdown-menu', this).stop( true, true ).slideDown("fast");
+                      $(this).toggleClass('open');
+                  },
+                  function() {
+                      $('.dropdown-menu', this).stop( true, true ).slideUp("fast");
+                      $(this).toggleClass('open');
+                  }
+          );
+      });
+  </script>
+
+</head>
+<body>
+
+<%= render 'shared/header' %>
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-megadropdown-tabs">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#"></a>
+    </div>
+    <% if !session[:user_id].blank? %>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-megadropdown-tabs" style="margin-right: 100px !important;">
+
+      <ul class="nav navbar-nav navbar-right" >
+        <li>
+          <a onmousedown="window.parent.location = '/' " style="cursor: pointer; color: darkslategray;margin-left: 20px;">Home<span></span></a>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown mega-dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color: darkslategray;margin-left: 20px;">Profile <span class="caret"></span></a>
+          <div class="dropdown-menu mega-dropdown-menu">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+              <li class="active"><a href="#sites" role="tab" data-toggle="tab">Sites</a></li>
+              <li><a href="#users" role="tab" data-toggle="tab">Users</a></li>
+              <li><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>
+              <li><a href="#my_account" role="tab" data-toggle="tab">My Account</a></li>
+            </ul>
+
+            <div class="container-fluid">
+              <!-- Tab panes -->
+              <div class="tab-content">
+                <div class="tab-pane active" id="sites">
+                  <ul class="nav-list list-inline">
+                    <li><a href="#"><%= image_tag('add.png', :class=>"tab-icon") %><span>Add Site</span></a></li>
+                    <li><a href="#"><%= image_tag('pencil.png', :class=>"tab-icon") %><span>Edit Site</span></a></li>
+                    <li><a href="#"><%= image_tag('preview.png', :class=>"tab-icon") %><span>View Sites</span></a></li>
+                    <li><a href="#"><%= image_tag('voids.png', :class=>"tab-icon") %><span>Void Sites</span></a></li>
+                  </ul>
+                </div>
+                <div class="tab-pane" id="users">
+                  <ul class="nav-list list-inline">
+                    <li><a href="/users/new"> <%= image_tag('add_person.png', :class=>"tab-icon") %><span>Add User</span></a></li>
+                    <li><a href="/search_user?title=Search+for+user+to+edit&cat=edit"><%= image_tag('pencil.png', :class=>"tab-icon") %><span>Edit User</span></a></li>
+                    <li><a href="/search_user?title=Search+for+user+to+block&cat=block'"><%= image_tag('block.png', :class=>"tab-icon") %><span>Block User</span></a></li>
+                    <li><a href="#"><%= image_tag('active.png', :class=>"tab-icon") %><span>Unblock User</span></a></li>
+                    <li><a href="#"><%= image_tag('users.png', :class=>"tab-icon") %><span>View Users</span></a></li>
+                  </ul>
+                </div>
+                <div class="tab-pane" id="settings">
+                  <ul class="nav-list list-inline">
+                    <li><a href="#"><%= image_tag('papersize.png', :class=>"tab-icon") %><span>Paper Size</span></a></li>
+                    <li><a href="#"><%= image_tag('signatures.jpeg', :class=>"tab-icon") %><span>Signature</span></a></li>
+                  </ul>
+                </div>
+                <div class="tab-pane" id="my_account">
+                  <ul class="nav-list list-inline">
+                    <li><a href="#"><%= image_tag('preview.png', :class=>"tab-icon") %><span>View Details</span></a></li>
+                    <li><a href="#"><%= image_tag('password.png', :class=>"tab-icon") %><span>Password</span></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </li>
+        <li class="dropdown mega-dropdown"></li>
+        <li class="dropdown mega-dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color: darkslategray;margin-left: 20px;">Tasks<span class="caret"></span></a>
+          <div class="dropdown-menu mega-dropdown-menu">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+              <li class="active"><a href="#manage_cases" role="tab" data-toggle="tab">Manage Cases</a></li>
+              <li><a href="#re_opened_cases" role="tab" data-toggle="tab">Re-Opened Cases</a></li>
+              <li><a href="#manage_duplicates" role="tab" data-toggle="tab">Manage Duplicates</a></li>
+              <li><a href="#view_requests" role="tab" data-toggle="tab">View Requests</a></li>
+              <li><a href="#print_outs" role="tab" data-toggle="tab">Print-outs</a></li>
+              <li><a href="#reports" role="tab" data-toggle="tab">Reports</a></li>
+            </ul>
+            <div class="container-fluid">
+              <!-- Tab panes -->
+              <div class="tab-content">
+                <div class="tab-pane active" id="manage_cases">
+                  <ul class="nav-list list-inline">
+                    <li><a onmousedown="window.parent.location = '/open_cases'"><span class="glyphicon glyphicon-folder-open"></span><span>View Cases</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Printed Cases</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Incomplete Cases</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Rejected Cases</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Dispatched Certificates</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Conflict Cases</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Re-Approved Cases</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approved Then Rejected</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Reject Cases</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Void Cases</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Voided Cases</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve for Re-printing</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve Potential Duplicates</span></a></li>
+                  </ul>
+                </div>
+
+                <div class="tab-pane" id="re_opened_cases">
+                  <ul class="nav-list list-inline">
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Local Cases</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Remote Cases</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Re-open Cases</span></a></li>
+                  </ul>
+                </div>
+                <div class="tab-pane" id="manage_duplicates">
+                  <ul class="nav-list list-inline">
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Potential</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Can Confirm</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Confirmed</span></a></li>
+                  </ul>
+                </div>
+                <div class="tab-pane" id="view_requests">
+                  <ul class="nav-list list-inline">
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>View Requests</span></a></li>
+                  </ul>
+                </div>
+                <div class="tab-pane" id="print_outs">
+                  <ul class="nav-list list-inline">
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve Printing</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Print Certificates</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Re-Print Certificates</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>View Dispatch Print Outs</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve Re-printing</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Verify Certificates</span></a></li>
+                  </ul>
+                </div>
+                <div class="tab-pane" id="reports">
+                  <ul class="nav-list list-inline">
+                    <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Printed Certicates List</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Reported Births</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Registered Births</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Approved at HQ</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Voided Records</span></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </li>
+      </ul>
+
+    </div><!-- /.navbar-collapse -->
+
+    <% end %>
+  </div><!-- /.container-fluid -->
+</nav>
+<div class="container main-container" style="
+        box-shadow: 6px 9px 5px 0px rgba(0,0,0,0.75);
+        height: 610px;padding-top: 5px; overflow: auto;width: 80%;">
+
+  <%if controller.controller_name == 'case' %>
+    <%#=javascript_include_tag "DataTables/jquery" %>                          
+    <%=javascript_include_tag "DataTables/prototype" %>                          
+    <script>jQuery.noConflict();</script>
+    <%=javascript_include_tag "DataTables/jquery.dataTables.min" %>
+
+    <%= stylesheet_link_tag "DataTables/demo_table_jui" %>                                     
+    <%= stylesheet_link_tag "DataTables/jquery.dataTables" %>                                     
+  <%end%>
+          
+    <%= yield %>
+</div>
+
+</body>
+</html>

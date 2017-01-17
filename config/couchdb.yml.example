@@ -1,0 +1,23 @@
+development: &development
+  protocol: 'http'
+  host: localhost
+  port: 5984 
+  prefix: 
+  suffix: 
+  username: 
+  password: 
+  crtkey: 
+  facility_code:
+  district_code:
+  print_user:
+  print_password:
+  printer_name:
+
+test:
+  <<: *development
+  suffix: test
+
+production:
+  <<: *development
+  protocol: 'http'
+  suffix:
