@@ -135,7 +135,7 @@
       </button>
       <a class="navbar-brand" href="#"></a>
     </div>
-
+    <% if !session[:user_id].blank? %>
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-megadropdown-tabs" style="margin-right: 100px !important;">
 
@@ -274,6 +274,8 @@
       </ul>
 
     </div><!-- /.navbar-collapse -->
+
+    <% end %>
   </div><!-- /.container-fluid -->
 </nav>
 <div class="container main-container" style="

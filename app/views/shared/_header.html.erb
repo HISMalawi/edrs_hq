@@ -5,16 +5,16 @@
   }
 </style>
 <div id="header">
-  <div class="container">
-    <div class="row" >
-      <div class="grey"></div>
-      <a class="col-xs-3 logo pull-left" href="<%= root_url %>">
-        <%#= image_tag('common/logo.png', :class => "logo") %>
+  <div class="container" style="width: 100%;">
+    <div class="row">
+      <a class="col-xs-5 " href="<%= root_url %>" style=" padding-right: 0px;height: 100px;"
+      onclick = "window.parent.location = '/'">
+        <h3>Electronic Death Registration<h5><b>eDRS</b></h5></h3>
       </a>
 
-      <div class="col-xs-9 pull-left">
+      <div class="col-xs-7 pull-left">
 
-        <div class="col-xs-3 avatar pull-right">
+        <div class="col-xs-4 avatar pull-right">
           <a href="<%= "users/login" %>">
             <div class="mask pull-right"></div>
             <%= image_tag('coa.png') %>
