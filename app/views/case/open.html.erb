@@ -90,7 +90,10 @@ function getCases() {
 
 function initDataTable(){        
   try {  
-    dataTable = jQuery('#open_cases').dataTable();                                                  
+    dataTable = jQuery('#open_cases').dataTable({
+      "bJQueryUI": true,
+      "sPaginationType": "full_numbers"  
+    });                                                  
   }catch(e){
     location.reload(); 
   }
