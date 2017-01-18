@@ -105,18 +105,18 @@
 
 
   <script>
-      $(document).ready(function(){
-          $(".dropdown").hover(
-                  function() {
-                      $('.dropdown-menu', this).stop( true, true ).slideDown("fast");
-                      $(this).toggleClass('open');
-                  },
-                  function() {
-                      $('.dropdown-menu', this).stop( true, true ).slideUp("fast");
-                      $(this).toggleClass('open');
-                  }
-          );
-      });
+  $(document).ready(function(){
+    $(".dropdown").hover(
+      function() {
+        $('.dropdown-menu', this).stop( true, true ).slideDown("fast");
+        $(this).toggleClass('open');
+      },
+      function() {
+        $('.dropdown-menu', this).stop( true, true ).slideUp("fast");
+        $(this).toggleClass('open');
+      }
+  );
+  });
   </script>
 
 </head>
@@ -284,9 +284,9 @@
 
   <%if controller.controller_name == 'case' %>
     <%#=javascript_include_tag "DataTables/prototype" %>                          
-    <script>jQuery.noConflict();</script>
     <%=javascript_include_tag "DataTables/jquery.dataTables.min" %>
     <%= stylesheet_link_tag "DataTables/jquery.dataTables" %>                                     
+    <%= stylesheet_link_tag "DataTables/demo_table_jui" %>                                     
   <%end%>
           
     <%= yield %>
