@@ -25,7 +25,9 @@
     }
 
 
-
+    .tab-content{
+        min-height: 25vh;
+    }
     .nav-tabs {
         display: inline-block;
         border-bottom: 1px solid #d3d3d3;
@@ -151,42 +153,74 @@
           <div class="dropdown-menu mega-dropdown-menu">
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
-              <li class="active"><a href="#sites" role="tab" data-toggle="tab">Sites</a></li>
-              <li><a href="#users" role="tab" data-toggle="tab">Users</a></li>
-              <li><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>
-              <li><a href="#my_account" role="tab" data-toggle="tab">My Account</a></li>
+
+              <% if has_role( "Activate User") || has_role("Deactivate User") || has_role("Create User") || has_role( "Update User") || has_role("View Users") %>
+                <li><a href="#users" role="tab" data-toggle="tab">Users</a></li>
+              <% end %>
+
+              <% if has_role("Manage Sites") %>
+                  <li class=""><a href="#sites" role="tab" data-toggle="tab">Sites</a></li>
+              <% end %>
+
+              <% if has_role("Create User") %>
+                    <li><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>
+              <% end %>
+
+              <% if has_role("Change own password") %>
+                <li><a href="#my_account" role="tab" data-toggle="tab">My Account</a></li>
+              <% end %>
             </ul>
 
             <div class="container-fluid">
               <!-- Tab panes -->
               <div class="tab-content">
-                <div class="tab-pane active" id="sites">
+                <div class="tab-pane" id="sites">
                   <ul class="nav-list list-inline">
-                    <li><a href="#"><%= image_tag('add.png', :class=>"tab-icon") %><span>Add Site</span></a></li>
-                    <li><a href="#"><%= image_tag('pencil.png', :class=>"tab-icon") %><span>Edit Site</span></a></li>
-                    <li><a href="#"><%= image_tag('preview.png', :class=>"tab-icon") %><span>View Sites</span></a></li>
-                    <li><a href="#"><%= image_tag('voids.png', :class=>"tab-icon") %><span>Void Sites</span></a></li>
+                    <% if has_role("Manage Sites") %>
+                        <li><a href="#"><%= image_tag('add.png', :class=>"tab-icon") %><span>Add Site</span></a></li>
+                        <li><a href="#"><%= image_tag('pencil.png', :class=>"tab-icon") %><span>Edit Site</span></a></li>
+                        <li><a href="#"><%= image_tag('preview.png', :class=>"tab-icon") %><span>View Sites</span></a></li>
+                        <li><a href="#"><%= image_tag('voids.png', :class=>"tab-icon") %><span>Void Sites</span></a></li>
+                    <% end %>
                   </ul>
                 </div>
                 <div class="tab-pane" id="users">
                   <ul class="nav-list list-inline">
-                    <li><a href="/users/new"> <%= image_tag('add_person.png', :class=>"tab-icon") %><span>Add User</span></a></li>
-                    <li><a href="/search_user?title=Search+for+user+to+edit&cat=edit"><%= image_tag('pencil.png', :class=>"tab-icon") %><span>Edit User</span></a></li>
-                    <li><a href="/search_user?title=Search+for+user+to+block&cat=block'"><%= image_tag('block.png', :class=>"tab-icon") %><span>Block User</span></a></li>
-                    <li><a href="#"><%= image_tag('active.png', :class=>"tab-icon") %><span>Unblock User</span></a></li>
-                    <li><a href="#"><%= image_tag('users.png', :class=>"tab-icon") %><span>View Users</span></a></li>
+                    <% if has_role("Create User") %>
+                        <li><a href="/users/new"> <%= image_tag('add_person.png', :class=>"tab-icon") %><span>Add User</span></a></li>
+                    <% end %>
+
+                    <% if has_role("View Users") %>
+                        <li><a href="/search_user?title=Search+for+user+to+edit&cat=edit"><%= image_tag('pencil.png', :class=>"tab-icon") %><span>Edit User</span></a></li>
+                    <% end %>
+
+                    <% if has_role("Deactivate User") %>
+                        <li><a href="/search_user?title=Search+for+user+to+block&cat=block'"><%= image_tag('block.png', :class=>"tab-icon") %><span>Block User</span></a></li>
+                    <% end %>
+
+                    <% if has_role( "Activate User")%>
+                        <li><a href="#"><%= image_tag('active.png', :class=>"tab-icon") %><span>Unblock User</span></a></li>
+                    <% end %>
+
+                    <% if has_role("View Users") %>
+                        <li><a href="#"><%= image_tag('users.png', :class=>"tab-icon") %><span>View Users</span></a></li>
+                    <% end %>
                   </ul>
                 </div>
                 <div class="tab-pane" id="settings">
                   <ul class="nav-list list-inline">
-                    <li><a href="#"><%= image_tag('papersize.png', :class=>"tab-icon") %><span>Paper Size</span></a></li>
-                    <li><a href="#"><%= image_tag('signatures.jpeg', :class=>"tab-icon") %><span>Signature</span></a></li>
+                    <% if has_role("Create User") %>
+                        <li><a href="#"><%= image_tag('papersize.png', :class=>"tab-icon") %><span>Paper Size</span></a></li>
+                        <li><a href="#"><%= image_tag('signatures.jpeg', :class=>"tab-icon") %><span>Signature</span></a></li>
+                    <% end %>
                   </ul>
                 </div>
                 <div class="tab-pane" id="my_account">
                   <ul class="nav-list list-inline">
-                    <li><a href="#"><%= image_tag('preview.png', :class=>"tab-icon") %><span>View Details</span></a></li>
-                    <li><a href="#"><%= image_tag('password.png', :class=>"tab-icon") %><span>Password</span></a></li>
+                    <% if has_role("Change own password") %>
+                        <li><a href="#"><%= image_tag('preview.png', :class=>"tab-icon") %><span>View Details</span></a></li>
+                        <li><a href="#"><%= image_tag('password.png', :class=>"tab-icon") %><span>Password</span></a></li>
+                    <% end %>
                   </ul>
                 </div>
               </div>
@@ -200,31 +234,81 @@
           <div class="dropdown-menu mega-dropdown-menu">
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
-              <li class="active"><a href="#manage_cases" role="tab" data-toggle="tab">Manage Cases</a></li>
-              <li><a href="#re_opened_cases" role="tab" data-toggle="tab">Re-Opened Cases</a></li>
-              <li><a href="#manage_duplicates" role="tab" data-toggle="tab">Manage Duplicates</a></li>
-              <li><a href="#view_requests" role="tab" data-toggle="tab">View Requests</a></li>
-              <li><a href="#print_outs" role="tab" data-toggle="tab">Print-outs</a></li>
-              <li><a href="#reports" role="tab" data-toggle="tab">Reports</a></li>
+              <% if has_role("View a record") || has_role("View closed cases") || has_role("Open a closed case") || has_role("Reject a record") || has_role("Void outstanding records") || has_role("Manage incomplete records")%>
+                <li class=""><a href="#manage_cases" role="tab" data-toggle="tab">Manage Cases</a></li>
+              <% end %>
+
+              <% if has_role("Make ammendments")
+                #THIS SECTION IS FOR SPECIAL CASES
+              %>
+              <% end %>
+
+              <% if has_role("Open a closed case")%>
+                <li><a href="#re_opened_cases" role="tab" data-toggle="tab">Re-Opened Cases</a></li>
+              <% end %>
+
+              <% if has_role("Manage duplicates") %>
+               <li><a href="#manage_duplicates" role="tab" data-toggle="tab">Manage Duplicates</a></li>
+              <% end %>
+
+              <% if has_role("Make ammendments") %>
+                <li><a href="#view_requests" role="tab" data-toggle="tab">View Requests</a></li>
+              <% end %>
+
+              <% if has_role("Authorise printing") || has_role("Authorise printing of a certificate") || has_role("Assess certificate quality")%>
+                <li><a href="#print_outs" role="tab" data-toggle="tab">Print-outs</a></li>
+              <% end %>
+
+              <% if has_role("Authorise printing") || has_role( "Activate User") || has_role("Deactivate User") || has_role("Create User") || has_role( "Update User") || has_role("View Users")%>
+                <li><a href="#reports" role="tab" data-toggle="tab">Reports</a></li>
+              <% end %>
+
             </ul>
             <div class="container-fluid">
               <!-- Tab panes -->
               <div class="tab-content">
-                <div class="tab-pane active" id="manage_cases">
+                <div class="tab-pane" id="manage_cases">
                   <ul class="nav-list list-inline">
-                    <li><a onmousedown="window.parent.location = '/open_cases'"><span class="glyphicon glyphicon-folder-open"></span><span>View Cases</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Printed Cases</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Incomplete Cases</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Rejected Cases</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Dispatched Certificates</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Conflict Cases</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Re-Approved Cases</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approved Then Rejected</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Reject Cases</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Void Cases</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Voided Cases</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve for Re-printing</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve Potential Duplicates</span></a></li>
+
+                    <% if has_role("View a record")%>
+                        <li><a onmousedown="window.parent.location = '/open_cases'"><span class="glyphicon glyphicon-folder-open"></span><span>View Cases</span></a></li>
+                    <% end %>
+
+                    <% if has_role("View closed cases")%>
+                        <li><a href="/"><span class="glyphicon glyphicon-folder-open"></span><span>Printed Cases</span></a></li>
+                    <% end %>
+
+                    <% if has_role("Manage incomplete records") %>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Incomplete Cases</span></a></li>
+                    <% end %>
+
+                    <% if has_role("Manage incomplete records") %>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Rejected Cases</span></a></li>
+                    <% end %>
+
+                    <% if has_role("View closed cases")%>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Dispatched Certificates</span></a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Conflict Cases</span></a></li>
+                    <% end %>
+
+                    <% if has_role("Manage incomplete records") %>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Re-Approved Cases</span></a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approved Then Rejected</span></a></li>
+                    <% end %>
+
+                    <% if has_role("Reject a record")%>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Reject Cases</span></a></li>
+                    <% end %>
+
+                    <% if has_role("Void outstanding records")%>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Void Cases</span></a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Voided Cases</span></a></li>
+                    <% end %>
+
+                    <% if has_role("View closed cases")%>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve for Re-printing</span></a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve Potential Duplicates</span></a></li>
+                    <% end %>
                   </ul>
                 </div>
 
@@ -237,33 +321,47 @@
                 </div>
                 <div class="tab-pane" id="manage_duplicates">
                   <ul class="nav-list list-inline">
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Potential</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Can Confirm</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Confirmed</span></a></li>
+                    <% if has_role("Manage duplicates") %>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Potential</span></a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Can Confirm</span></a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Confirmed</span></a></li>
+                    <% end %>
                   </ul>
                 </div>
                 <div class="tab-pane" id="view_requests">
                   <ul class="nav-list list-inline">
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>View Requests</span></a></li>
+                    <% if has_role("Make ammendments") %>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>View Requests</span></a></li>
+                    <% end %>
                   </ul>
                 </div>
                 <div class="tab-pane" id="print_outs">
                   <ul class="nav-list list-inline">
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve Printing</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Print Certificates</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Re-Print Certificates</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>View Dispatch Print Outs</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve Re-printing</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Verify Certificates</span></a></li>
+                    <% if has_role("Authorise printing") %>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve Printing</span></a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Print Certificates</span></a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Re-Print Certificates</span></a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>View Dispatch Print Outs</span></a></li>
+                    <% end %>
+
+                    <% if has_role("Authorise reprinting of a certificate")%>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve Re-printing</span></a></li>
+                    <% end %>
+
+                    <% if has_role(("Assess certificate quality"))%>
+                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Verify Certificates</span></a></li>
+                    <% end %>
                   </ul>
                 </div>
                 <div class="tab-pane" id="reports">
                   <ul class="nav-list list-inline">
-                    <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Printed Certicates List</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Reported Births</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Registered Births</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Approved at HQ</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Voided Records</span></a></li>
+                    <% if has_role("Authorise printing") || has_role( "Activate User") || has_role("Deactivate User") || has_role("Create User") || has_role( "Update User") || has_role("View Users")%>
+                        <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Printed Certicates List</span></a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Reported Births</span></a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Registered Births</span></a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Approved at HQ</span></a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Voided Records</span></a></li>
+                    <% end %>
                   </ul>
                 </div>
               </div>
@@ -272,7 +370,13 @@
           </div>
         </li>
       </ul>
-
+      <% unless has_role("Create User")%>
+        <ul class="nav navbar-nav navbar-right" >
+          <li>
+            <a onmousedown="window.parent.location = '/' " style="cursor: pointer; color: darkslategray;margin-left: 20px;">Search<span></span></a>
+          </li>
+        </ul>
+      <% end %>
     </div><!-- /.navbar-collapse -->
 
     <% end %>

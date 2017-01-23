@@ -355,3 +355,190 @@
 		}
     
 </script>
+<script type="text/javascript">
+
+    function showMsg(msg, height, width, action) {
+
+        showShield(undefined, true);
+
+        if (!__$("shield")) {
+
+            showShield(undefined, true);
+
+        }
+
+        var popup = document.createElement("div");
+        popup.id = "popup";
+        popup.style.position = "absolute";
+        popup.style.minHeight = (height == undefined ? "150px" : height);
+        popup.style.top = "20%";
+        popup.style.width = (width == undefined ? "330px" : width);
+        popup.style.left = ((window.innerWidth - 330) / 2) + "px";
+        popup.style.backgroundColor = "#eee";
+        popup.style.zIndex = 1300;
+        popup.style.border = "2px outset #eee";
+        popup.style.borderRadius = "8px";
+        popup.style.padding = "3px";
+
+        document.body.appendChild(popup);
+
+        var table = document.createElement("table");
+        table.width = "100%";
+        table.style.fontSize = "14px";
+
+        popup.appendChild(table);
+
+        var tbody = document.createElement("tbody");
+
+        table.appendChild(tbody);
+
+        var tr1 = document.createElement("tr");
+
+        tbody.appendChild(tr1);
+
+        var th = document.createElement("th");
+        th.innerHTML = "Info";
+        th.style.backgroundColor = "darkgray";
+        th.style.color = "black";
+        th.style.borderTopLeftRadius = "8px";
+        th.style.borderTopRightRadius = "8px";
+        th.colSpan = "2";
+        th.style.padding = "5px";
+
+        tr1.appendChild(th);
+
+        var tr2 = document.createElement("tr");
+
+        tbody.appendChild(tr2);
+
+        var td1_1 = document.createElement("td");
+        td1_1.colSpan = "2";
+        td1_1.style.padding = "5px";
+        td1_1.style.paddingTop = "15px";
+        td1_1.style.paddingBottom = "15px";
+        td1_1.align = "center";
+        td1_1.innerHTML = msg;
+        td1_1.style.lineHeight = "120%";
+        td1_1.style.fontSize = "14px";
+
+        tr2.appendChild(td1_1);
+
+        var tr3 = document.createElement("tr");
+
+        tbody.appendChild(tr3);
+
+        var td2_2 = document.createElement("td");
+        td2_2.align = "center";
+        td2_2.style.padding = "10px";
+        td2_2.colSpan = "2";
+
+        tr3.appendChild(td2_2);
+
+        var btnYes = document.createElement("button");
+        btnYes.className = "blue";
+        btnYes.innerHTML = "OK";
+        btnYes.style.width = "50px";
+        btnYes.style.cursor = "pointer";
+        btnYes.style.fontSize = "14px";
+        btnYes.style.minHeight = "30px";
+        btnYes.setAttribute("act", action);
+
+        td2_2.appendChild(btnYes);
+
+        btnYes.onmousedown = function () {
+
+            if(this.getAttribute("act") != null){
+
+                eval(this.getAttribute("act"));
+
+            }
+
+            if (__$("popup")) {
+
+                document.body.removeChild(__$("popup"));
+
+            }
+
+            if (__$("shield")) {
+
+                document.body.removeChild(__$("shield"));
+
+            }
+
+        }
+
+    }
+
+
+
+    function showShield(action, clickCloses) {
+
+        if (clickCloses == undefined) {
+
+            clickCloses = true;
+
+        }
+
+        if (__$("shield")) {
+
+            if (__$("popup")) {
+
+                document.body.removeChild(__$("popup"));
+
+            }
+
+            if (__$("popupkeyboard")) {
+
+                if (action != undefined) {
+
+                    eval(action);
+
+                }
+
+                document.body.removeChild(__$('popupkeyboard'));
+
+            }
+
+            document.body.removeChild(__$("shield"));
+
+        } else {
+
+            var shield = document.createElement("div");
+            shield.style.position = "absolute";
+            shield.style.backgroundColor = "rgba(0,0,0,0.07)";
+            shield.style.top = "0px";
+            shield.style.left = "0px";
+            shield.style.width = "100%";
+            shield.style.height = "100%";
+            shield.id = "shield";
+
+            if (action != undefined) {
+
+                shield.setAttribute("action", action);
+
+            }
+
+            if (clickCloses) {
+
+                shield.onmousedown = function () {
+
+                    if (this.getAttribute("action") != null) {
+                        showShield(this.getAttribute("action"));
+                    } else {
+                        showShield();
+                    }
+
+                }
+
+            }
+
+            document.body.appendChild(shield);
+
+        }
+
+    }
+
+    function __$(id){
+        return document.getElementById(id);
+    }
+</script>

@@ -49,8 +49,7 @@ class UsersController < ApplicationController
     filtered = user_params.dup
 
     filtered.delete("_rev")
-
-    @user = User.by_username(filtered[:username])
+    @user = User.by_username.key(filtered[:username]).first
 
     if @user.blank?
       @user = User.new(filtered)
