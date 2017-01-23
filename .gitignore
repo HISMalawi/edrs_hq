@@ -25,3 +25,5 @@ nbproject/
 *.swp
 /public/uploads/*
 Gemfile.lock
+.pem
+
