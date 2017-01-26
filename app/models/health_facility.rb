@@ -1,26 +1,33 @@
 require 'couchrest_model'
 
 class HealthFacility < CouchRest::Model::Base
-  
-  def facility_code=(value)
-    self['_id']=value.to_s
-  end
 
-  def facility_code
-    self['_id']
-  end
-
+  property :district_id,String
+  property :facility_code, String
   property :name, String
-  property :short_name, String
-  property :district,String
-  
+  property :zone,String
+  property :facility_type, String
+  property :f_type, String
+  property :latitude,String
+  property :longitude,String
+
   timestamps!
-  
+
   design do
-      view :by__id
-      view :by_name
-      view :by_short_name
-      view :by_district
+    view :by__id
+    view :by_name
+    view :by_facility_code
+    view :by_facility_type
+    view :by_f_type
+    view :by_district_id,
+         :map=>"function(doc){
+                    if(doc.type == 'HealthFacility'){
+                        emit(doc.district_id,{name : doc.name, created_at : doc.created_at})
+                    }
+           }"
+    view :by_district_id_and_name
+    view :by_zone
+    view :by_latitude_and_longitude
   end
-  
+
 end

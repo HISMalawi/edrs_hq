@@ -76,13 +76,13 @@ class UsersController < ApplicationController
     @section = "Edit User"
     @targeturl = "/view_users"
 
-
     if request.patch?
       @user = User.by_username.key(params[:id]).last rescue nil
       if !@user.blank? && params[:user][:password].present? && params[:user][:password].length > 1
 
         @user.update_attributes(:plain_password => params[:user][:password], :first_name => params[:user][:first_name],
                                 :last_name => params[:user][:last_name],
+                                :role =>  params[:user][:role],
                                 :password_attempt => 0, :last_password_date => Time.now)
         Audit.create(record_id: @user.id, audit_type: "Audit", level: "User", reason: "Updated user password")
         redirect_to "/search_user?title=Search+for+user+to+edit&cat=edit"

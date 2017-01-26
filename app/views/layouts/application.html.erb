@@ -27,7 +27,10 @@
 
     .tab-content{
         min-height: 25vh;
+        max-height: 65vh;
+        overflow-y: auto;
     }
+
     .nav-tabs {
         display: inline-block;
         border-bottom: 1px solid #d3d3d3;
@@ -89,7 +92,7 @@
        cursor: pointer;
     }
 
-    .glyphicon {
+    nav .glyphicon {
         font-size: 50px;
         margin: 20px;
     }
@@ -148,6 +151,12 @@
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
+        <% unless has_role("Create User")%>
+            <li class="dropdown mega-dropdown" onmousedown="window.parent.location = '/search'">
+                <a class="dropdown-toggle" data-toggle="dropdown" style="cursor: pointer; color: darkslategray;margin-left: 20px;">Search</a>
+            </li>
+        <% end %>
+
         <li class="dropdown mega-dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color: darkslategray;margin-left: 20px;">Profile <span class="caret"></span></a>
           <div class="dropdown-menu mega-dropdown-menu">
@@ -228,7 +237,6 @@
 
           </div>
         </li>
-        <li class="dropdown mega-dropdown"></li>
         <li class="dropdown mega-dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color: darkslategray;margin-left: 20px;">Tasks<span class="caret"></span></a>
           <div class="dropdown-menu mega-dropdown-menu">
@@ -271,11 +279,11 @@
                   <ul class="nav-list list-inline">
 
                     <% if has_role("View a record")%>
-                        <li><a onmousedown="window.parent.location = '/open_cases'"><span class="glyphicon glyphicon-folder-open"></span><span>View Cases</span></a></li>
+                        <li><a onmousedown="window.parent.location = '/open_cases'"> <span class="glyphicon glyphicon-folder-open"></span><span>View Cases</span></a></li>
                     <% end %>
 
                     <% if has_role("View closed cases")%>
-                        <li><a href="/"><span class="glyphicon glyphicon-folder-open"></span><span>Printed Cases</span></a></li>
+                        <li><a   onmousedown="window.parent.location = '/closed_cases'"><span class="glyphicon glyphicon-folder-open"></span><span>Printed Cases</span></a></li>
                     <% end %>
 
                     <% if has_role("Manage incomplete records") %>
@@ -287,8 +295,8 @@
                     <% end %>
 
                     <% if has_role("View closed cases")%>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Dispatched Certificates</span></a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Conflict Cases</span></a></li>
+                        <li><a  onmousedown="window.parent.location = '/dispatched'" ><span class="glyphicon glyphicon-folder-open"></span><span>Dispatched Certificates</span></a></li>
+                        <li><a  onmousedown="window.parent.location = '/conflict'"><span class="glyphicon glyphicon-folder-open"></span><span>Conflict Cases</span></a></li>
                     <% end %>
 
                     <% if has_role("Manage incomplete records") %>
@@ -297,7 +305,7 @@
                     <% end %>
 
                     <% if has_role("Reject a record")%>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Reject Cases</span></a></li>
+                        <li><a onmousedown="window.parent.location = '/dm_reject'"><span class="glyphicon glyphicon-folder-open"></span><span>Reject Cases</span></a></li>
                     <% end %>
 
                     <% if has_role("Void outstanding records")%>
@@ -306,17 +314,17 @@
                     <% end %>
 
                     <% if has_role("View closed cases")%>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve for Re-printing</span></a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve Potential Duplicates</span></a></li>
+                        <li><a  onmousedown="window.parent.location = '/approve_for_reprinting'"><span class="glyphicon glyphicon-folder-open"></span><span>Approve for Re-printing</span></a></li>
+                        <li><a onmousedown="window.parent.location = '/approve_potential_duplicates'"><span class="glyphicon glyphicon-folder-open"></span><span>Approve Potential Duplicates</span></a></li>
                     <% end %>
                   </ul>
                 </div>
 
                 <div class="tab-pane" id="re_opened_cases">
                   <ul class="nav-list list-inline">
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Local Cases</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Remote Cases</span></a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Re-open Cases</span></a></li>
+                    <li><a onmousedown="window.parent.location = '/local_cases'"><span class="glyphicon glyphicon-folder-open"></span><span>Local Cases</span></a></li>
+                    <li><a  onmousedown="window.parent.location = '/remote_cases'"><span class="glyphicon glyphicon-folder-open"></span><span>Remote Cases</span></a></li>
+                    <li><a  onmousedown="window.parent.location = '/re_open_cases'" ><span class="glyphicon glyphicon-folder-open"></span><span>Re-open Cases</span></a></li>
                   </ul>
                 </div>
                 <div class="tab-pane" id="manage_duplicates">
@@ -338,14 +346,14 @@
                 <div class="tab-pane" id="print_outs">
                   <ul class="nav-list list-inline">
                     <% if has_role("Authorise printing") %>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve Printing</span></a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Print Certificates</span></a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Re-Print Certificates</span></a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>View Dispatch Print Outs</span></a></li>
+                        <li><a  onmousedown="window.parent.location = '/approve_for_printing'"><span class="glyphicon glyphicon-folder-open"></span><span>Approve Printing</span></a></li>
+                        <li><a  onmousedown="window.parent.location = '/print'" ><span class="glyphicon glyphicon-folder-open"></span><span>Print Certificates</span></a></li>
+                        <li><a  onmousedown="window.parent.location = '/re_print'" ><span class="glyphicon glyphicon-folder-open"></span><span>Re-Print Certificates</span></a></li>
+                        <li><a  onmousedown="window.parent.location = '/dispatch_printouts'" ><span class="glyphicon glyphicon-folder-open"></span><span>View Dispatch Print Outs</span></a></li>
                     <% end %>
 
                     <% if has_role("Authorise reprinting of a certificate")%>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approve Re-printing</span></a></li>
+                        <li><a onmousedown="window.parent.location = '/approve_reprint'" ><span class="glyphicon glyphicon-folder-open"></span><span>Approve Re-printing</span></a></li>
                     <% end %>
 
                     <% if has_role(("Assess certificate quality"))%>
@@ -370,13 +378,7 @@
           </div>
         </li>
       </ul>
-      <% unless has_role("Create User")%>
-        <ul class="nav navbar-nav navbar-right" >
-          <li>
-            <a onmousedown="window.parent.location = '/' " style="cursor: pointer; color: darkslategray;margin-left: 20px;">Search<span></span></a>
-          </li>
-        </ul>
-      <% end %>
+
     </div><!-- /.navbar-collapse -->
 
     <% end %>

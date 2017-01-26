@@ -57,14 +57,23 @@ function getCases() {
     }                                                                         
   }                                                                           
 
-  xmlhttp.open("GET","/add_more_open_cases/"+current_page,true);           
+    var status = ""
+  <% @statuses.each {|s|%>
+    if (status == ""){
+        status = "<%= s.split(/\s+/).join('_')%>";
+    }else{
+        status += ("|" + "<%= s.split(/\s+/).join('_')%>");
+    }
+  <% } %>
+
+  xmlhttp.open("GET",("/add_more_open_cases/"+current_page + "?statuses=" + status),true);
   xmlhttp.send();                                                             
 }
 
 
 </script>
 
-<table id="open_cases">
+<table id="cases">
   <thead>
     <tr>
       <th>Serial number</th>
@@ -90,7 +99,7 @@ function getCases() {
 
 function initDataTable(){        
   try {  
-    dataTable = jQuery('#open_cases').dataTable({
+    dataTable = jQuery('#cases').dataTable({
       "bJQueryUI": true,
       "sPaginationType": "full_numbers"  
     });                                                  
