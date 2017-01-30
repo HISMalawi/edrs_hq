@@ -10,6 +10,43 @@ class ApplicationController < ActionController::Base
     current_user.activities_by_level("HQ").include?(role.strip)
   end
 
+  def place_details(person)
+
+    places = {}
+
+    places['home_country'] = Nationality.find(person.nationality_id).nationality rescue ""
+
+    places['place_of_death_district'] = District.find(person.place_of_death_district_id).name rescue ""
+
+    places['hospital_of_death'] = HealthFacility.find(person.hospital_of_death_id).name rescue ""
+
+    places['place_of_death_ta'] = TraditionalAuthority.find(person.place_of_death_ta_id).name rescue ""
+
+    places['place_of_death_village'] = Village.find(person.place_of_death_village_id).name rescue ""
+
+    places['current_district'] = District.find(person.current_district_id).name rescue ""
+
+    places['current_ta'] = TraditionalAuthority.find(person.current_ta_id).name rescue ""
+
+    places['current_village'] = Village.find(person.current_village_id).name rescue ""
+
+    places['home_district'] = District.find(person.home_district_id).name rescue ""
+
+    places['home_ta'] = TraditionalAuthority.find(person.home_ta_id).name rescue ""
+
+    places['home_village'] = Village.find(person.home_village_id).name rescue ""
+
+    places['informant_current_district'] = District.find(person.informant_current_district_id).name rescue ""
+
+    places['informant_current_ta'] = TraditionalAuthority.find(person.informant_current_ta_id).name rescue ""
+
+    places['informant_current_village'] = Village.find(person.informant_current_village_id).name rescue ""
+
+    return places
+
+  end
+
+
 	protected
   def check_user
     if !session[:user_id].blank?

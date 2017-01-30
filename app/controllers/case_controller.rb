@@ -95,6 +95,22 @@ class CaseController < ApplicationController
     render :template => "case/default"
   end
 
+  def incomplete_cases
+    @title = "Incomplete Cases"
+    @statuses = ["HQ POTENTIAL INCOMPLETE"]
+    @page = 1
+
+    render :template => "case/default"
+  end
+
+  def rejected_cases
+    @title = "Rejected Cases"
+    @statuses = ["HQ CONFIRMED INCOMPLETE"]
+    @page = 1
+
+    render :template => "case/default"
+  end
+
   def print
     @title = "Print Certificates"
     @statuses = ["HQ PRINT"]
@@ -109,6 +125,22 @@ class CaseController < ApplicationController
     @page = 1
 
     render :template => "case/default"
+  end
+
+  def ajax_change_status
+
+    status = PersonRecordStatus.by_person_recent_status.key(params[:person_id]).last
+    status.voided  = true
+    status.save
+
+    PersonRecordStatus.create(
+        :person_record_id => params[:person_id],
+        :district_code => status.district_code,
+        :creator => @current_user.id,
+        :status => params[:next_status].gsub(/\-/, ' ')
+    )
+
+    render :text => "ok"
   end
 
   def dispatch_printouts
@@ -131,6 +163,8 @@ class CaseController < ApplicationController
     (PersonRecordStatus.by_record_status.keys(keys).page(params[:page_number]).per(10) || []).each do |status|
       person = status.person
       cases << {
+        serial: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "SERIAL NUMBER"]).last.identifier rescue nil),
+        den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
         first_name: person.first_name,
         last_name:  person.last_name,
         dob:        person.birthdate.strftime("%d/%b/%Y"),
@@ -146,18 +180,12 @@ class CaseController < ApplicationController
 
     @person = Person.find(params[:person_id])
 
-    @skip = [
-          "birthdate_estimated", "updated_by", "voided_by", "voided_date", "voided", "approved_by", "approved_at",
-          "mother_birthdate_estimated", "father_birthdate_estimated", "created_by", "changed_by", "_deleted", "_rev",
-          "updated_at", "created_at", "onset_death_death_interval2", "onset_death_death_interval3", "onset_death_death_interval4",
-          "other_manner_of_death", "status_changed_by"
-        ]
+    @statuses = [PersonRecordStatus.by_person_recent_status.key(@person.id).last.status]
 
-        @person["cause_of_death"] = @person["cause_of_death1"] || @person["cause_of_death2"] || @person["cause_of_death3"] || @person["cause_of_death4"]
+    @status = PersonRecordStatus.by_person_recent_status.key(params[:id]).last
 
-    @map = {
-        "npid" => "National Patient ID"
-    }
+    @person_place_details = place_details(@person)
+
   end
 
 end

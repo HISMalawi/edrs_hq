@@ -40,12 +40,14 @@ Rails.application.routes.draw do
   get '/print' => 'case#print'
   get '/re_print' => 'case#re_print'
   get '/dispatch_printouts' => 'case#dispatch_printouts'
-
-
+  get '/ajax_change_status' => 'case#ajax_change_status'
+  post '/ajax_change_status' => 'case#ajax_change_status'
 
 
   get 'add_more_open_cases/:page_number' => 'case#more_open_cases'
   get 'view_cases/:person_id' => 'case#view_cases'
+  get '/incomplete_cases' => 'case#incomplete_cases'
+  get '/rejected_cases' => 'case#rejected_cases'
 
   ############################################################
   get "/search" => "hq#search"

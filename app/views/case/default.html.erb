@@ -6,6 +6,8 @@ function addRows(data) {
   people = JSON.parse(data);
   
   for (var i = 0; i < people.length; i++) {
+    den = people[i]['den'],
+    serial = people[i]['serial'],
     first_name = people[i]['first_name'];
     last_name = people[i]['last_name'];
     gender = people[i]["gender"];
@@ -24,7 +26,7 @@ function addRows(data) {
       /*age = patients[i]["age"];
       patient_id = patients[i]["patient_id"];
       account_number = patients[i]["account_number"];*/
-    dataTable.api().row.add([null, null, first_name, null, last_name, dob, gender, spam.innerHTML]).draw();
+    dataTable.api().row.add([serial, den, first_name, null, last_name, dob, gender, spam.innerHTML]).draw();
 
   }
 
