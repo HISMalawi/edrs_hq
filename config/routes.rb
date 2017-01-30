@@ -38,6 +38,7 @@ Rails.application.routes.draw do
   get '/approve_for_printing' => 'case#approve_for_printing'
   get '/approve_reprint' => 'case#approve_reprint'
   get '/print' => 'case#print'
+  get '/dispatched' => 'case#dispatched'
   get '/re_print' => 'case#re_print'
   get '/dispatch_printouts' => 'case#dispatch_printouts'
   get '/ajax_change_status' => 'case#ajax_change_status'

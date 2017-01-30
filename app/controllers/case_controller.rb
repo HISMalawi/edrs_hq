@@ -188,4 +188,26 @@ class CaseController < ApplicationController
 
   end
 
+
+  def search_similar_record(person)
+
+    values = [person.first_name.soundex,
+              person.last_name.soundex,
+              params[:gender],
+              params[:birthdate],
+              params[:date_of_death],
+              params[:place_of_death]
+    ]
+
+    people = Person.by_demographics.key(values).each
+
+    if people.count == 0
+
+      render :text => {:response => false}.to_json
+    else
+
+      render :text => {:response => people}.to_json
+    end
+  end
+
 end
