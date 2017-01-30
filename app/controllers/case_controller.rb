@@ -95,6 +95,22 @@ class CaseController < ApplicationController
     render :template => "case/default"
   end
 
+  def incomplete_cases
+    @title = "Incomplete Cases"
+    @statuses = ["HQ POTENTIAL INCOMPLETE"]
+    @page = 1
+
+    render :template => "case/default"
+  end
+
+  def rejected_cases
+    @title = "Rejected Cases"
+    @statuses = ["HQ CONFIRMED INCOMPLETE"]
+    @page = 1
+
+    render :template => "case/default"
+  end
+
   def print
     @title = "Print Certificates"
     @statuses = ["HQ PRINT"]
@@ -121,7 +137,7 @@ class CaseController < ApplicationController
         :person_record_id => params[:person_id],
         :district_code => status.district_code,
         :creator => @current_user.id,
-        :status => params[:next_status]
+        :status => params[:next_status].gsub(/\-/, ' ')
     )
 
     render :text => "ok"
@@ -166,18 +182,10 @@ class CaseController < ApplicationController
 
     @statuses = [PersonRecordStatus.by_person_recent_status.key(@person.id).last.status]
 
-    @skip = [
-          "birthdate_estimated", "updated_by", "voided_by", "voided_date", "voided", "approved_by", "approved_at",
-          "mother_birthdate_estimated", "father_birthdate_estimated", "created_by", "changed_by", "_deleted", "_rev",
-          "updated_at", "created_at", "onset_death_death_interval2", "onset_death_death_interval3", "onset_death_death_interval4",
-          "other_manner_of_death", "status_changed_by"
-        ]
+    @status = PersonRecordStatus.by_person_recent_status.key(params[:id]).last
 
-        @person["cause_of_death"] = @person["cause_of_death1"] || @person["cause_of_death2"] || @person["cause_of_death3"] || @person["cause_of_death4"]
+    @person_place_details = place_details(@person)
 
-    @map = {
-        "npid" => "National Patient ID"
-    }
   end
 
 end

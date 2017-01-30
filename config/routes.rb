@@ -46,6 +46,8 @@ Rails.application.routes.draw do
 
   get 'add_more_open_cases/:page_number' => 'case#more_open_cases'
   get 'view_cases/:person_id' => 'case#view_cases'
+  get '/incomplete_cases' => 'case#incomplete_cases'
+  get '/rejected_cases' => 'case#rejected_cases'
 
   ############################################################
   get "/search" => "hq#search"

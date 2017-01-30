@@ -280,11 +280,11 @@
                     <% end %>
 
                     <% if has_role("Manage incomplete records") %>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Incomplete Cases</span></a></li>
+                        <li><a onmousedown="window.parent.location = '/incomplete_cases'" ><span class="glyphicon glyphicon-folder-open"></span><span>Incomplete Cases</span></a></li>
                     <% end %>
 
                     <% if has_role("Manage incomplete records") %>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Rejected Cases</span></a></li>
+                        <li><a onmousedown="window.parent.location = '/rejected_cases'" ><span class="glyphicon glyphicon-folder-open"></span><span>Rejected Cases</span></a></li>
                     <% end %>
 
                     <% if has_role("View closed cases")%>

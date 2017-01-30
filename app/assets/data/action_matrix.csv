@@ -1,63 +1,59 @@
-,Nurse/Midwife,Data Clerk ,Logistics Officer ,ADR,Data Checking Clerk,Data Supervisor,Data Manager,Quality Supervisor,System Administrator
-NEW,,,"1,2",3,1,,2,,
-DC COMPLETE,,,,"3,4",,,,,
-DC PENDING,,,1,,,,,,
+,Nurse/Midwife,Data Clerk ,Logistics Officer ,ADR,Data Checking Clerk,Data Supervisor,Data Manager,Quality Supervisor,System Administrator,coder
+NEW,,,"1,2",3,1,,2,,,
+DC COMPLETE,,,,"3,4",,,,,,
+DC PENDING,,,1,,,,,,,
 DC AMMEND,,,,"3,23
-",,,,,
-DC REJECTED,,,1,,,,,,
-DC POTENTIAL DUPLICATE,,,,"5,8,24",,,,,
-DC DUPLICATE,,,,9,,,,,
-HQ REJECTED,,,,3,,,,,
-DC REPRINT,,,,,,,,,
-DC APPROVED,,,,,1,,,,
-DC REAPPROVED,,,,,,3,,,
-HQ APPROVED,,,,,,,"17,18",,
-HQ REAPPROVED,,,,,,,,,
-HQ COMPLETE,,,,,,,25,,
-"HQ PRINT
-",,,,,,,"17,18",,
-HQ CLOSED,,,,23,,,"19,26",21,
-HQ DISPATCHED,,,,23,,,,,
-HQ REJECTED,,,,3,,,,,
-HQ POTENTIAL DUPLICATE,,,,,7,,,,
-HQ DUPLICATE,,,,,,8,,,
-HQ INCOMPLETE,,,,,,,14,,
-HQ POTENTIAL INCOMPLETE,,,,,,13,,,
-HQ VOID,,,,,,,,,
-HQ CONFLICT,,,,,,,"22,21,8",,
-HQ REPRINT,,,,,,,,"17,18",
-,,,,,,,,,
-END,,,,,,,,,
-Action Codes,Description,Button Name,Ajax Route,Route,Popup,Button Class,,,"
-"
-1,Check for completeness and Duplicate,Check completeness,,,completeness,Btn-info,,,
-2,Mark pending,Mark Pending,,,,,,,
-3,Approve record ok,Approve,,,,Btn-success,,,
-4,Reject for editing,Reject,,,,Btn-danger,,,
-5,Manage Duplicates,Manage duplicates,,,,Btn-warning,,,
-6,Mark Potential Duplicate,"
-",,,,,,,
-7,Mark Duplicate,"Duplicate
-",,,,,,,
-8,Confirm duplicate,"Confirm duplicate
-",,,,,,,
-9,Void Record,Void,,,,,,,
-10,Re-Reapprove record ok,Re-approve,,,,,,,
-11,Approve for printing ,Approve,,,,,,,
-12,Mark potential incomplete,,,,,,,,
-13,Mark incomplete,,,,,,,,
-14,Confirm incomplete,,,,,,,,
-15,Reject - resend to DC,,,,,,,,
-16,Approve for reprinting,,,,,,,,
-17,Print,,,,,,,,
-18,Preview,,,,,,,,
-19,Re-open,,,,,,,,
-20,"Request ammendment
-",,,,,,,,
-21,Scan for reprinting,,,,,,,,
-22,Reprint,,,,,,,,
-23,"Request ammendment
-",Request ammendment,,,,,,,
-24,Reject duplicate,,,,,,,,
-25,Approve printing,,,,,,,,
-26,Dispatch certifcates,,,,,,,,
+",,,,,,
+DC REJECTED,,,1,,,,,,,
+DC POTENTIAL DUPLICATE,,,,"5,8,24",,,,,,
+DC DUPLICATE,,,,9,,,,,,
+HQ REJECTED,,,,3,,,,,,
+DC REPRINT,,,,,,,,,,
+DC APPROVED,,,,,1,,,,,27
+DC REAPPROVED,,,,,,3,,,,27
+HQ APPROVED,,,,,,,"17,18",,,27
+HQ REAPPROVED,,,,,,,,,,27
+HQ COMPLETE,,,,,,,25,,,27
+HQ PRINT,,,,,,,"17,18",,,27
+HQ CLOSED,,,,23,,,"19,26",21,,27
+HQ DISPATCHED,,,,23,,,,,,27
+HQ REJECTED,,,,3,,,,,,27
+HQ POTENTIAL DUPLICATE,,,,,7,,,,,27
+HQ DUPLICATE,,,,,,8,,,,27
+HQ INCOMPLETE,,,,,,,14,,,27
+HQ POTENTIAL INCOMPLETE,,,,,,13,,,,27
+HQ CONFIRMED INCOMPLETE,,,,,,15,,,,27
+HQ CONFLICT,,,,,,,"22,21,8",,,27
+HQ REPRINT,,,,,,,,"17,18",,27
+,,,,,,,,,,
+END,,,,,,,,,,
+Action Codes,Description,Button Name,ajax_route,Route,popup,Btn Class,,,"
+",
+1,Check for completeness and Duplicate,Check completeness,,,completeness,Btn-info,,,,
+2,Mark pending,Mark Pending,,,,,,,,
+3,Approve record ok,Approve,,,,Btn-success,,,,
+4,Reject for editing,Reject,,,,Btn-danger,,,,
+5,Manage Duplicates,Manage duplicates,,,,Btn-warning,,,,
+6,Mark Potential Duplicate,,,,,,,,,
+7,Mark Duplicate,Duplicate,,,,,,,,
+8,Confirm duplicate,Confirm duplicate,,,,,,,,
+9,Void Record,Void,,,,,,,,
+10,Re-Reapprove record ok,Re-approve,,,,,,,,
+11,Approve for printing ,Approve,,,,,,,,
+12,Mark potential incomplete,,,,,,,,,
+13,Mark incomplete,Check Completeness,,,completeness,Btn-info,,,,
+14,Confirm incomplete,Check Completeness,,,completeness,Btn-info,,,,
+15,Reject - resend to DC,Reject/Return to DC,/ajax_change_status?next_status=HQ-REJECTED,,,Btn-danger,,,,
+16,Approve for reprinting,Approve,,,,,,,,
+17,Print,Print,,,printers,Btn-primary,,,,
+18,Preview,Preview,,/preview?next_status=,,Btn-success,,,,
+19,Re-open,,,,,,,,,
+20,Request ammendment,,,,,,,,,
+21,Scan for reprinting,,,,,,,,,
+22,Reprint,,,,,,,,,
+23,Request ammendment,Request ammendment,,,,,,,,
+24,Reject duplicate,,,,,,,,,
+25,Approve printing,Approve,/ajax_change_status?next_status=HQ-PRINT,,,btn-success,,,,
+26,Dispatch certifcates,,,,,,,,,
+27,Enter cause of death,Cause of death,,,,,,,,
+END CODES,,,,,,,,,,
