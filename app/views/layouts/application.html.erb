@@ -60,6 +60,7 @@
     .nav-list > li {
         padding: 20px 15px 15px;
         border-left: 1px solid #eee;
+        cursor: pointer;
     }
     .nav-list > li:last-child { border-right: 1px solid #eee; }
     .nav-list > li > a:hover { text-decoration: none; }
@@ -75,7 +76,9 @@
         width: 100%;
     }
     .dropdown-toggle{
-        color: black;
+    }
+    .dropdown-toggle:hover, .dropdown-toggle:active{
+        color: black !important;
     }
     nav{
         border-bottom: 1px solid darkred !important;
@@ -95,12 +98,14 @@
     nav .glyphicon {
         font-size: 50px;
         margin: 20px;
+        cursor: pointer;
     }
 
     .tab-icon{
         width: 50px;
         height: 50px;
         margin: 20px;
+        cursor: pointer;
     }
     .tab-icon:hover{
         background: lightblue;
@@ -131,7 +136,7 @@
 
 <%= render 'shared/header' %>
 <nav class="navbar navbar-default" role="navigation">
-  <div class="container-fluid"  style="background: darkseagreen;">
+  <div class="container-fluid"  style="background: #222222">
 
     <% if !session[:user_id].blank? %>
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -139,19 +144,19 @@
 
       <ul class="nav navbar-nav navbar-right" >
         <li>
-          <a onmousedown="window.parent.location = '/' " style="cursor: pointer; color: darkslategray;margin-left: 20px;">Home<span></span></a>
+          <a onmousedown="window.parent.location = '/' " style="cursor: pointer; color: white;margin-left: 20px;">Home<span></span></a>
         </li>
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
         <% unless has_role("Create User")%>
             <li class="dropdown mega-dropdown" onmousedown="window.parent.location = '/search'">
-                <a class="dropdown-toggle" data-toggle="dropdown" style="cursor: pointer; color: darkslategray;margin-left: 20px;">Search</a>
+                <a class="dropdown-toggle" data-toggle="dropdown" style="cursor: pointer; color: white;margin-left: 20px;">Search</a>
             </li>
         <% end %>
 
         <li class="dropdown mega-dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color: darkslategray;margin-left: 20px;">Profile <span class="caret"></span></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color: white;margin-left: 20px;">Profile <span class="caret"></span></a>
           <div class="dropdown-menu mega-dropdown-menu">
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
@@ -231,7 +236,7 @@
           </div>
         </li>
         <li class="dropdown mega-dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color: darkslategray;margin-left: 20px;">Tasks<span class="caret"></span></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color: white;margin-left: 20px;">Tasks<span class="caret"></span></a>
           <div class="dropdown-menu mega-dropdown-menu">
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
@@ -339,7 +344,7 @@
                 <div class="tab-pane" id="print_outs">
                   <ul class="nav-list list-inline">
                     <% if has_role("Authorise printing") %>
-                        <li><a  onmousedown="window.parent.location = '/approve_for_printing'"><span class="glyphicon glyphicon-folder-open"></span><span>Approve Printing</span></a></li>
+                        <li><a  onmousedown="window.parent.location = '/approve_for_printing'"><span class="glyphicon glyphicon-folder-open"></span><span>Approve for Printing</span></a></li>
                         <li><a  onmousedown="window.parent.location = '/print'" ><span class="glyphicon glyphicon-folder-open"></span><span>Print Certificates</span></a></li>
                         <li><a  onmousedown="window.parent.location = '/re_print'" ><span class="glyphicon glyphicon-folder-open"></span><span>Re-Print Certificates</span></a></li>
                         <li><a  onmousedown="window.parent.location = '/dispatch_printouts'" ><span class="glyphicon glyphicon-folder-open"></span><span>View Dispatch Print Outs</span></a></li>
@@ -378,9 +383,9 @@
   </div><!-- /.container-fluid -->
 </nav>
 
-<div class="container main-container" style="background: white;
+<div class="container main-container main-holder" style="background: white;
         box-shadow: 6px 9px 5px 0px rgba(0,0,0,0.75);
-        height: 610px;padding-top: 5px; overflow: auto;width: 80%;
+        height: 610px;padding: 2px !important; overflow: auto;width: 80%;
         border-left: 2px dotted darkgray; background: #d3d3d3">
 
   <% if controller.controller_name == 'case' &&  controller.action_name != "view_cases"%>
