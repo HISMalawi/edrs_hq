@@ -26,7 +26,7 @@ gem 'bootstrap-sass', '~> 3.3', '>= 3.3.6'
 
 gem 'couchrest_model'
 
-gem 'passenger', '5.0.6'
+gem 'passenger', '4.0.53'
 
 gem "bcrypt-ruby", :require => "bcrypt"
 
