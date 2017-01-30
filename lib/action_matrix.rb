@@ -17,7 +17,7 @@ class ActionMatrix
 
 			if states.include?(state.strip.upcase) 
 				row.each_with_index do |data, j|
-					next if role_index != j
+					next if role_index != j || data.blank?
 					results << data.split(",")
 				end
 			end
@@ -42,7 +42,9 @@ class ActionMatrix
 					"desc" => row[1],
 					"button_name" => row[2],
 					"ajax_route" => row[3],
-					"route" => row[4]
+					"route" => row[4],
+          "popup" => row[5],
+          "class" => row[6]
 				}
 			end
 		end		

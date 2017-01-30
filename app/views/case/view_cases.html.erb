@@ -1,6 +1,4 @@
-<script>
 
-</script>
 <style>
   .table-cell{
       width: 50%;
@@ -14,7 +12,12 @@
       margin-left: 10px;
   }
 </style>
-<div >
+
+<%
+    @tasks = ActionMatrix.read(@current_user.role, @statuses)
+%>
+
+<div style="background: white">
   <div style="height: 535px; overflow: auto;padding: 0px; margin:0px;">
         <table id="view_case" class="table table-condensed table-striped table-bordered">
           <thead>
@@ -45,10 +48,20 @@
       <tfoot>
       <tr>
         <th colspan="2">
-          <div class="btn btn-success btn-small pull-right"><span>Approve</span></div>
-          <div class="btn btn-info btn-small pull-right"><span>Check for completeness</span></div>
-          <div class="btn btn-warning btn-small pull-right"><span>Check for possible duplicates</span></div>
-          <div class="btn btn-danger btn-small pull-right"><span>Reject</span></div>
+          <% @tasks.each do |task|
+            onclick = ''
+
+            if task['route']
+                onclick = "onclick = 'window.parent.location = \" #{task['route']} \" "
+            elsif task['aja_route']
+                onclick = "onclick = ajaxify('#{task['ajax_route']}')"
+            elsif task['popup']
+                onclick = "onclick = loadPopup('#{task['popup']}')"
+            end
+          %>
+
+            <div <%= onclick%> class="btn btn-small pull-right <%= task['class'].downcase rescue ''%>"><span><%= task['button_name']%></span></div>
+          <% end %>
         </th>
       </tr>
       </tfoot>
@@ -57,6 +70,109 @@
 </div>
 
 
+<div class="" id="completeness">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header btn-primary" >
+        <button type="button" class="close"  onclick="__$('completeness').style.display = 'none'">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Completeness Check</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-lg-12">
+
+            <div class=" form-group">
+              <table class="table table-condensed table-striped table-bordered table-hover">
+                <tbody>
+                    <tr class="table-row">
+                        <th class="table-cell">First Name</th>
+                        <td class="table-cell"><%= @person.first_name%></td>
+                    </tr>
+
+                    <tr class="table-row">
+                      <th class="table-cell">Last Name</th>
+                      <td class="table-cell"><%= @person.last_name%></td>
+                    </tr>
+
+                    <tr class="table-row">
+                      <th class="table-cell">Gender</th>
+                      <td class="table-cell"><%= @person.gender%></td>
+                    </tr>
+
+                    <tr class="table-row">
+                      <th class="table-cell">Date of Birth</th>
+                      <td class="table-cell"><%= @person.birthdate.to_date.strftime('%d/%b/%Y') rescue nil%></td>
+                    </tr>
+
+                    <tr class="table-row">
+                      <th class="table-cell">Date of Death</th>
+                      <td class="table-cell"><%= @person.date_of_death.to_date.strftime('%d/%b/%Y') rescue nil%></td>
+                    </tr>
+
+                    <tr class="table-row">
+                      <th class="table-cell">Informant First Name</th>
+                      <td class="table-cell"><%= @person.informant_first_name%></td>
+                    </tr>
+
+                    <tr class="table-row">
+                      <th class="table-cell">Informant Last Name</th>
+                      <td class="table-cell"><%= @person.informant_last_name%></td>
+                    </tr>
+
+                    <tr class="table-row">
+                      <th class="table-cell">Informant Signed</th>
+                      <td class="table-cell"><%= @person.informant_signed%></td>
+                    </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" onclick="ajaxChange('HQ COMPLETE')" > Complete </button>
+        <button type="button" class="btn btn-danger"onclick="ajaxChange('HQ INCOMPLETE')" > Incomplete </button>
+        <button type="button" class="btn btn-default" onclick="__$('completeness').style.display = 'none'" > Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
 <script>
+    function loadPopup(id){
+        __$(id).style.display = "block";
+    }
+
+    function __$(id){
+        return document.getElementById(id);
+    }
+
+    function ___$(clas){
+        return document.getElementsByClassName(clas)[0];
+    }
+
+    function ajaxChange(status){
+        $.ajax({
+            url: "/ajax_change_status?next_status=" + status + "&person_id=<%=params['person_id']%>",
+            success: function(feedback){
+                window.parent.location = "<%= request.referrer%>";
+            },
+            error: function(error){
+                alert("Something went wrong");
+            }
+        })
+    }
 
 </script>
+<style>
+  #completeness{
+      position : absolute;
+      left: 30%;
+      top: 15%;
+      display: none;
+  }
+</style>

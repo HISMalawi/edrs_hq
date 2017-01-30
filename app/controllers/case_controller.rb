@@ -111,6 +111,22 @@ class CaseController < ApplicationController
     render :template => "case/default"
   end
 
+  def ajax_change_status
+
+    status = PersonRecordStatus.by_person_recent_status.key(params[:person_id]).last
+    status.voided  = true
+    status.save
+
+    PersonRecordStatus.create(
+        :person_record_id => params[:person_id],
+        :district_code => status.district_code,
+        :creator => @current_user.id,
+        :status => params[:next_status]
+    )
+
+    render :text => "ok"
+  end
+
   def dispatch_printouts
     @title = "View Dispatch Printouts"
     @statuses = ["HQ DISPATCHED"]
@@ -131,6 +147,8 @@ class CaseController < ApplicationController
     (PersonRecordStatus.by_record_status.keys(keys).page(params[:page_number]).per(10) || []).each do |status|
       person = status.person
       cases << {
+        serial: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "SERIAL NUMBER"]).last.identifier rescue nil),
+        den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
         first_name: person.first_name,
         last_name:  person.last_name,
         dob:        person.birthdate.strftime("%d/%b/%Y"),
@@ -145,6 +163,8 @@ class CaseController < ApplicationController
   def view_cases
 
     @person = Person.find(params[:person_id])
+
+    @statuses = [PersonRecordStatus.by_person_recent_status.key(@person.id).last.status]
 
     @skip = [
           "birthdate_estimated", "updated_by", "voided_by", "voided_date", "voided", "approved_by", "approved_at",

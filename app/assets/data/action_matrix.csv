@@ -28,14 +28,13 @@ HQ CONFLICT,,,,,,,"22,21,8",,
 HQ REPRINT,,,,,,,,"17,18",
 ,,,,,,,,,
 END,,,,,,,,,
-Action Codes,Description,Button Name,"Route
-",,,,,,"
+Action Codes,Description,Button Name,Ajax Route,Route,Popup,Button Class,,,"
 "
-1,Check for completeness and Duplicate,Check completeness,,,,,,,
+1,Check for completeness and Duplicate,Check completeness,,,completeness,Btn-info,,,
 2,Mark pending,Mark Pending,,,,,,,
-3,Approve record ok,Approve,,,,,,,
-4,Reject for editing,Reject,,,,,,,
-5,Manage Duplicates,Manage duplicates,,,,,,,
+3,Approve record ok,Approve,,,,Btn-success,,,
+4,Reject for editing,Reject,,,,Btn-danger,,,
+5,Manage Duplicates,Manage duplicates,,,,Btn-warning,,,
 6,Mark Potential Duplicate,"
 ",,,,,,,
 7,Mark Duplicate,"Duplicate
