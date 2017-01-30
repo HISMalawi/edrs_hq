@@ -56,9 +56,15 @@ class HqController < ApplicationController
   end
   
   def death_certificate_print
+    @person = Person.find(params[:id])
+    
+    if CONFIG['pre_printed_paper'] == true
+       render :layout => false, :template => 'hq/death_certificate_print'
+    else
+       render :layout => false 
+    end
   
   end
-  
   
   def do_print_these
   
