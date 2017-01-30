@@ -110,7 +110,7 @@ class HqController < ApplicationController
 
     end
     
-   # redirect_to "/hq/print_certificates_datatable" and return
+   redirect_to "/print" and return
   
   end
   

@@ -16,7 +16,7 @@ class PersonRecordStatus < CouchRest::Model::Base
 
 		view :by_status
 
-		view :by_distrit_code
+		view :by_district_code
 
 		view :by_voided
 
@@ -46,7 +46,7 @@ class PersonRecordStatus < CouchRest::Model::Base
 
 	def person
 
-    	return Person.find(self.person_record_id)
+    	   return Person.find(self.person_record_id)
     	
-    end
+        end
 end
