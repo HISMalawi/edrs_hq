@@ -1,0 +1,272 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>eDRS Death Certificate</title>
+  <style>
+
+      body {
+          margin: 10px;
+          -moz-user-select: none;
+          font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
+          margin: auto;
+          color: #3465a4;
+          font-size: 18px;
+      }
+
+  </style>
+</head>
+<body style="color: #000;">
+
+<table style="width: 21cm;" cellpadding="5">
+<tr>
+  <th style="font-size: 18px; font-weight: normal;">
+    &nbsp;
+  </th>
+</tr>
+<tr>
+  <th style="font-size: 18px; font-weight: normal;">
+    &nbsp;
+  </th>
+</tr>
+<tr>
+  <td style="width: 230px; vertical-align: top;">
+    <div style="padding: 10px; border: 1px solid #000; width: 120px; text-align: center; margin: 15px; margin-left: 80px;">
+      Form NR13
+    </div>
+  </td>
+  <td align="center" style="padding-right: 10px;">
+    <img src="<%= emblem %>" height="80"/>
+  </td>
+
+  
+  <td align="right" style="width: 250px; vertical-align: top;">
+    <% raw = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
+
+       @data = Base64.encode64(raw)
+    %>
+    <img src ="data:image/png;base64,<%= @data%>" />
+    <br/>
+    <div style="text-align: center !important;margin-top: -15px;font-size: 12px;"><%= @person.npid %></div>
+
+  </td>
+  
+</tr>
+<tr>
+  <th colspan="3" style="font-size: 20px;">
+    REPUBLIC OF MALAWI
+  </th>
+</tr>
+<tr>
+  <th colspan="3" style="font-size: 22px; font-weight: normal;">
+    NATIONAL REGISTRATION ACT, 2010
+  </th>
+</tr>
+<tr>
+  <th colspan="3" style="font-size: 20px;">
+    CERTIFICATE OF DEATH
+  </th>
+</tr>
+<tr>
+  <th colspan="3" style="font-size: 18px; font-weight: normal;">
+    (Regulation 26)
+  </th>
+</tr>
+<tr>
+  <th colspan="3" style="font-size: 18px; font-weight: normal;">
+    &nbsp;
+  </th>
+</tr>
+<tr>
+  <th colspan="3" style="font-size: 18px; font-weight: normal;">
+
+    <table class="data" width="100%" cellpadding="7" style="font-size: 21px !important;">
+        <tr>
+          <td style="width: 130px;" align="right">
+            1.
+          </td>
+          <td align="left" style="width: 250px;">
+            Death Entry Number
+          </td>
+          <td align="left">
+            <%= @person[:death_entry_number] %>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 130px;" align="right">
+            2.
+          </td>
+          <td align="left" style="width: 250px;">
+            Registration Number
+          </td>
+          <td align="left">
+            <%= @person[:death_registration_number]  %>
+          </td>
+        </tr
+        <tr>
+          <td style="width: 130px;" align="right">
+            3.
+          </td>
+          <td align="left" style="width: 250px;">
+            Name of Deceased
+          </td>
+          <td align="left">
+            <%= @person[:first_name] %> <%= @person[:middle_name] %> <%= @person[:last_name] %>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 130px;" align="right">
+            4.
+          </td>
+          <td align="left" style="width: 250px;">
+            Date of Birth
+          </td>
+          <td align="left">
+            <%= (!@person[:birthdate].blank? ? @person[:birthdate].to_date.day : "") %><sup
+            style="font-size: 18px;"><%= (!@person[:birthdate].blank? ?
+                  @person[:birthdate].to_date.day.ordinalize.match(/([a-z]+)/).captures.first : "") %></sup>
+            <%= (!@person[:birthdate].blank? ? @person[:birthdate].to_date.strftime("%B, %Y") : "") %>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 130px;" align="right">
+            5.
+          </td>
+          <td align="left" style="width: 250px;">
+            Sex
+          </td>
+          <td align="left">
+            <%= @person[:gender] %>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 130px;" align="right">
+            6.
+          </td>
+          <td align="left" style="width: 250px;">
+            Date of Death
+          </td>
+          <td align="left">
+            <%= (!@person[:date_of_death].blank? ? @person[:date_of_death].to_date.day : "") %><sup
+            style="font-size: 18px;"><%= (!@person[:date_of_death].blank? ?
+                  @person[:date_of_death].to_date.day.ordinalize.match(/([a-z]+)/).captures.first : "") %></sup>
+            <%= (!@person[:date_of_death].blank? ? @person[:date_of_death].to_date.strftime("%B, %Y") : "") %>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 130px;" align="right">
+            7.
+          </td>
+          <td align="left" style="width: 250px;">
+            Place of Death
+          </td>
+          <td align="left">
+            <%
+                place_of_death = ""
+
+               case @person["place_of_death"]
+                 when "Home(Place of residence)"
+                    place_of_death = "#{@person["place_of_death_village"]}#{(!@person["place_of_death_village"].blank? ?
+                            ", " : "")}#{@person["place_of_death_ta"]}#{(!@person["place_of_death_ta"].blank? ?
+                            ", " : "")}#{@person["place_of_death_district"]}"
+
+                 when "Hospital/Institution"
+                    place_of_death = "#{@person["hospital_of_death_name"]}"
+
+                 when "Other"
+                    place_of_death = "#{@person["other_place_of_death"]} " + @person["place_of_death_district"]
+
+                 end
+            %>
+            <%= place_of_death %>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 130px;" align="right">
+            8.
+          </td>
+          <td align="left" style="width: 250px;">
+            Name of Mother
+          </td>
+          <td align="left">
+            <%= @person[:mother_first_name] %> <%= @person[:mother_middle_name] %> <%= @person[:mother_last_name] %>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 130px;" align="right">
+            9.
+          </td>
+          <td align="left" style="width: 250px;">
+            Name of Father
+          </td>
+          <td align="left">
+            <%= @person[:father_first_name] %> <%= @person[:father_middle_name] %> <%= @person[:father_last_name] %>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 130px;" align="right">
+            10.
+          </td>
+          <td align="left" style="width: 250px;">
+            Date of Registration
+          </td>
+          <td align="left">
+            <%= (!@person[:created_at].blank? ? @person[:created_at].to_date.day : "") %><sup
+            style="font-size: 18px;"><%= (!@person[:created_at].blank? ?
+                  @person[:created_at].to_date.day.ordinalize.match(/([a-z]+)/).captures.first : "") %></sup>
+            <%= (!@person[:created_at].blank? ? @person[:created_at].to_date.strftime("%B, %Y") : "") %>
+          </td>
+        </tr>
+      </table>
+    </th>
+  </tr>
+      
+      
+      <tr>
+        <th colspan="3" style="font-size: 18px; font-weight: normal;">
+          I hereby certify the above to be a true and correct extract from the<br/>
+          Death Register kept at NRB.
+        </th>
+      </tr>
+      <tr>
+        <td colspan="3" style="font-size: 18px; font-weight: normal;">
+          Dated this <%= Date.today.strftime("%d").to_i rescue nil %><sup><%= Date.today.strftime("%d").to_i.ordinalize.gsub(/\d+/, "") rescue nil
+        %></sup> <%= Date.today.strftime("%B") rescue nil %>, <%= Date.today.strftime("%Y") rescue nil %>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" style="font-size: 18px; font-weight: normal;">
+          <div style="border: 1px dotted #ccc; width: 180px; height: 100px; margin-left: 80px;">&nbsp;</div>
+        </td>
+        <td align="right">
+        
+        
+          <table style="border: 1px solid #000; margin-right: 0px;" cellpadding="5" cellspacing="10">
+            <tr>
+              <td style="border-bottom: 1px dotted #000; font-size: 32px; height: 50px;">
+               <% raw = File.read(Rails.root.join("public","uploads",User.find(GlobalProperty.find("signatory").value).signature)) rescue nil %>
+                 
+                 <% if raw
+                      @sig = Base64.encode64(raw)
+                    end %>
+                    
+                 <% if @sig.present? %>
+                 		<img src ="data:image/png;base64,<%= @sig %>" width="120" height="50" />
+                 <% end %>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <i>Signatures Officer(NRB)</i>
+              </th>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+  </th>
+</tr>
+</table>
+
+</body>
+</html>

@@ -51,8 +51,18 @@ Rails.application.routes.draw do
 
   ############################################################
   get "/search" => "hq#search"
+  
+  #printing routes
+  
+  get '/printed_view/:id' => "hq#printed_view"
+  
+  get '/death_certificate_print/:id' => "hq#death_certificate_print"
+  
+  post 'hq/do_print_these'
 
+  get 'hq/do_print_these'
 
+  get 'hq/death_certificate_preview'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
