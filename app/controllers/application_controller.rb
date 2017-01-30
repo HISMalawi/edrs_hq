@@ -46,8 +46,7 @@ class ApplicationController < ActionController::Base
 
   end
 
-
-	protected
+  protected
   def check_user
     if !session[:user_id].blank?
       @current_user = current_user

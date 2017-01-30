@@ -26,8 +26,8 @@ class HqController < ApplicationController
   
   def print_preview
     @section = "Print Preview"
-    @targeturl = "/hq/print_certificates" 
-    @child = Person.find(params[:id])
+    @targeturl = "/print" 
+    @person = Person.find(params[:person_id])
     @available_printers = CONFIG["printer_name"].split('|')
     render :layout => "application"
   end
@@ -39,7 +39,7 @@ class HqController < ApplicationController
     @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
     
     if @barcode.nil?
-      p = Process.fork{`bin/generate_barcode #{@person.npid} #{@person.id} #{CONFIG['barcodes_path']}`}
+      p = Process.fork{`bin/generate_barcode #{'123FRE'} #{@person.id} #{CONFIG['barcodes_path']}`}
       Process.detach(p)
     end
     

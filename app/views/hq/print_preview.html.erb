@@ -274,7 +274,7 @@
                   Mother First Name :
                 </td>
                 <td class="data">
-                  <%= @child['mother']['first_name']%>
+                  <%= @person['mother']['first_name'] rescue "N/A"%>
                 </td>
               </tr>
               
@@ -283,7 +283,7 @@
                   Mother Middle Name :
                 </td>
                 <td class="data">
-                  <%= @child['mother']['middle_name']%>
+                  <%= @person['mother']['middle_name'] rescue "N/A"%>
                 </td>
               </tr>
 
@@ -292,7 +292,7 @@
                   Mother Last Name :
                 </td>
                 <td class="data">
-                  <%= @person['mother']['last_name']%>
+                  <%= @person['mother']['last_name'] rescue "N/A"%>
                 </td>
               </tr>
 
@@ -301,7 +301,7 @@
                   Father First Name :
                 </td>
                 <td class="data">
-                  <%= @person['father']['first_name']%>
+                  <%= @person['father']['first_name'] rescue "N/A" %>
                 </td>
               </tr>
 
@@ -310,7 +310,7 @@
                   Father Middle Name :
                 </td>
                 <td class="data">
-                  <%= @person['father']['middle_name']%>
+                  <%= @person['father']['middle_name'] rescue "N/A"%>
                 </td>
               </tr>
 
@@ -319,7 +319,7 @@
                   Father Last Name :
                 </td>
                 <td class="data">
-                  <%= @person['father']['last_name']%>
+                  <%= @person['father']['last_name'] rescue "N/A"%>
                 </td>
               </tr>
                          
@@ -327,7 +327,7 @@
           </div>
         </td>
         <td style="height:100%;width:60%;vertical-align: top;">
-          <iframe src="/hq/death_certificate_preview?id=<%= params[:id]%>"></iframe>
+          <iframe src="/hq/death_certificate_preview?id=<%= @person.id %>"></iframe>
         </td>
       </tr>
       <tr>
