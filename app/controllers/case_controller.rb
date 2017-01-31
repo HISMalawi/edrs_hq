@@ -145,7 +145,10 @@ class CaseController < ApplicationController
 
     if ["HQ PRINT", "HQ REPRINT", "HQ APPROVED", "HQ REAPPROVED"].include?(next_status)
       #generate DRN
-      last_drn = PersonRecordStatus.by_sorted
+      drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([params[:person_id], "DEATH REGISTRATION NUMBER"]).last
+      if drn.blank?
+        PersonIdentifier.assign_drn(Person.find(params[:person_id]), @current_user.id)
+      end
     end
 
     render :text => "ok"
@@ -233,9 +236,10 @@ class CaseController < ApplicationController
       person = status.person
      
       cases << {
-        serial: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "SERIAL NUMBER"]).last.identifier rescue nil),
+        drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
         den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
         first_name: person.first_name,
+        middle_name:  person.last_name,
         last_name:  person.last_name,
         dob:        person.birthdate.strftime("%d/%b/%Y"),
         gender:     person.gender,

@@ -48,9 +48,10 @@ class ApplicationController < ActionController::Base
 
   protected
   def check_user
+
     if !session[:user_id].blank?
       @current_user = current_user
-
+      User.current_user = @current_user
       if @current_user.blank?
         reset_session
         redirect_to "/login"
