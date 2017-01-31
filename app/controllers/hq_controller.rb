@@ -28,31 +28,34 @@ class HqController < ApplicationController
     @section = "Print Preview"
     @targeturl = "/print" 
     @person = Person.find(params[:person_id])
-    @available_printers = CONFIG["printer_name"].split('|')
+    @available_printers = CONFIG["printer_name"].split(',')
     render :layout => "application"
   end
   
   def death_certificate_preview
    
     @person = Person.find(params[:id])
-    
+
+    @drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([@person.id, "DEATH REGISTRATION NUMBER"]).last.identifier
+    @den = PersonIdentifier.by_person_record_id_and_identifier_type.key([@person.id, "DEATH ENTRY NUMBER"]).last.identifier
+
     @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
-    
+
     if @barcode.nil?
       p = Process.fork{`bin/generate_barcode #{'123FRE'} #{@person.id} #{CONFIG['barcodes_path']}`}
       Process.detach(p)
     end
-    
+
     sleep(0.5)
-    
+
     @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
-    
+
     render :layout => false, :template => 'hq/death_certificate'
-    
+
   end
   
   def death_certificate
-  
+
   end
   
   def death_certificate_print

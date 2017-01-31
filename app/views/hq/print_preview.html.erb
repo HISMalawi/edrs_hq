@@ -332,48 +332,115 @@
       </tr>
       <tr>
         <td colspan="2">
-          <button onclick='window.location="<%= @targeturl%>"' id="btnFinish" class="green" style="margin:5px; font-size: 14px; min-width: 140px; min-height: 20px; padding: 6px;float: right; font-weight: bold !important;">Finish</button>
-          <button onclick='confirmPrint()' id="btnPrint" class="blue" style="margin:5px;font-size: 14px; min-width: 140px; min-height: 20px; padding: 6px;float: right; font-weight: bold !important;">Print</button>
+          <div onclick='window.location="<%= @targeturl%>"' id="btnFinish" class="btn btn-default pull-right btn-success" style="margin-left: 15px;">Finish</div>
+          <div
+          onclick= "onclick=loadPopup('printers')" class="btn btn-default pull-right btn-primary"><span>Print</span></div>
         </td>
       </tr>
     </table>
     
     <%= form_tag("/hq/do_print_these", "method" => "post", "id" => "frm") do %>
-      <input type="hidden" id="selected" name="selected" value="<%= params[:id]%>"/>
+      <input type="hidden" id="selected" name="selected" value="<%=  @person.id%>"/>
       <input type="hidden" id="printer_name" name="printer_name" value=""/>
     <% end %>
 
-    <!--CONFIRMATION POPUP BEGIN -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+
+    <div class="" id="printers">
       <div class="modal-dialog">
         <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" id="myModalLabel" style="text-align: left;">
-              Select Printer
-            </h4>
+          <div class="modal-header btn-primary" >
+            <button type="button" class="close"  onclick="__$('printers').style.display = 'none'">
+              <span aria-hidden="true">&times;</span>
+              <span class="sr-only">Close</span>
+            </button>
+            <h4 class="modal-title">Select a printer</h4>
           </div>
           <div class="modal-body">
-            <span style="text-align:center;">
-              <table align="center" id="printers">
-                <% @available_printers.each do |printer| %>
-                  <tr onmousedown="updateValue(this)" value="<%= printer %>">
-                    <td><input type="radio" class="printer_radio_button" value="<%= printer %>" name="printer_name"/></td>
-                    <td style="text-align: left; padding-left:50px;"><%= printer %></td>
-                  </tr>
-                <% end %>
-              </table>
-            </span>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-primary" onclick="submitForm();">Okay</button>
-              <button type="button" class="btn" data-dismiss="modal">Cancel</button>
+
+            <div class="row">
+              <div class="col-lg-12">
+                <table class="table table-condensed table-striped table-hover">
+                  <tbody>
+                  <% @available_printers.each do |printer| %>
+                      <tr onmousedown="updateValue(this)" value="<%= printer %>" class="table-row" style="cursor: pointer">
+                        <td class="table-cell"><input type="radio" class="printer_radio_button" value="<%= printer %>" name="printer_name"/></td>
+                        <td class="table-cell" style="text-align: left; padding-left:50px;"><%= printer %></td>
+                      </tr>
+                  <% end %>
+                  </tbody>
+                </table>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="__$('frm').submit()" > Print </button>
+                <button type="button" class="btn btn-default" onclick="__$('printers').style.display = 'none'" > Close</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!--CONFIRMATION POPUP END -->
+
+
   </body>
+
+  <style>
+      #completeness, #printers{
+          position : absolute;
+          left: 30%;
+          top: 15%;
+          display: none;
+      }
+  </style>
+
+
+  <script>
+      function loadPopup(id){
+          __$(id).style.display = "block";
+      }
+
+      function __$(id){
+          return document.getElementById(id);
+      }
+
+      function ___$(clas){
+          return document.getElementsByClassName(clas)[0];
+      }
+
+      function updateValue(obj){
+          obj.getElementsByTagName('input')[0].checked = true
+          __$("printer_name").value = obj.getAttribute('value');
+      }
+
+      function selectPrinter(){
+          __$("printer_name").value = '';
+          $(".printer_radio_button").prop( "checked", false );
+      }
+
+      function ajaxChange(status){
+          $.ajax({
+              url: "/ajax_change_status?next_status=" + status + "&person_id=<%=params['person_id']%>",
+              success: function(feedback){
+                  window.parent.location = "<%= request.referrer%>";
+              },
+              error: function(error){
+                  alert("Something went wrong");
+              }
+          })
+      }
+
+      function ajaxify(route, btn){
+          $.ajax({
+              url: route + "&person_id=<%=params['person_id']%>",
+              success: function(feedback){
+                  window.parent.location = "<%= request.referrer%>";
+              },
+              error: function(error){
+                  alert("Something went wrong");
+              }
+          })
+      }
+    </script>
 </html>
 
 

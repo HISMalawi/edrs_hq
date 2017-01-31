@@ -228,7 +228,7 @@
             elsif task['popup']
                 onclick = "loadPopup('#{task['popup']}')"
             end
-
+            next if task['button_name'].blank?
           %>
 
             <div onclick= "<%= onclick %>" class="btn btn-small btn-default pull-right <%= task['class'].downcase rescue ''%>"><span><%= task['button_name']%></span></div>

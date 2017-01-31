@@ -45,7 +45,7 @@ Action Codes,Description,Button Name,ajax_route,Route,popup,Btn Class,,,"
 14,Confirm incomplete,Check Completeness,,,completeness,Btn-info,,,,
 15,Reject - resend to DC,Reject/Return to DC,/ajax_change_status?next_status=HQ-REJECTED,,,Btn-danger,,,,
 16,Approve for reprinting,Approve,,,,,,,,
-17,Print,Print,,,printers,Btn-primary,,,,
+17,Print,,,,printers,Btn-primary,,,,
 18,Preview,Preview,,/print_preview?next_status=,,Btn-success,,,,
 19,Re-open,,,,,,,,,
 20,Request ammendment,,,,,,,,,
