@@ -44,6 +44,14 @@ Rails.application.routes.draw do
   get '/ajax_change_status' => 'case#ajax_change_status'
   post '/ajax_change_status' => 'case#ajax_change_status'
 
+  get '/void_cases' => 'case#void_cases'
+  get '/voided_cases' => 'case#voided_cases'
+  get '/potential' => 'case#potential'
+  get '/can_confirm' => 'case#can_confirm'
+  get '/confirmed' => 'case#confirmed'
+  get '/view_requests' => 'case#view_requests'
+  get '/verify_certificates' => 'case#dispatch_printouts'
+
 
   get 'add_more_open_cases/:page_number' => 'case#more_open_cases'
   get 'view_cases/:person_id' => 'case#view_cases'

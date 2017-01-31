@@ -142,6 +142,11 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-megadropdown-tabs" style="margin-right: 100px !important;" >
 
+      <ul class="nav navbar-nav navbar-left pull-left" >
+        <span style="color: darkseagreen; font-weight: bold; float: left;padding-top: 5px;">
+          <h4><b><%= @title rescue nil %></b></h4></span>
+      </ul>
+
       <ul class="nav navbar-nav navbar-right" >
         <li>
           <a onmousedown="window.parent.location = '/' " style="cursor: pointer; color: white;margin-left: 20px;">Home<span></span></a>

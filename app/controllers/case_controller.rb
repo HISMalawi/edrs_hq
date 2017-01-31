@@ -129,6 +129,9 @@ class CaseController < ApplicationController
 
   def ajax_change_status
 
+    next_status = params[:next_status].gsub(/\-/, ' ') rescue nil
+    render :text => "Error!" and return if next_status.blank?
+
     status = PersonRecordStatus.by_person_recent_status.key(params[:person_id]).last
     status.voided  = true
     status.save
@@ -137,8 +140,13 @@ class CaseController < ApplicationController
         :person_record_id => params[:person_id],
         :district_code => status.district_code,
         :creator => @current_user.id,
-        :status => params[:next_status].gsub(/\-/, ' ')
+        :status => next_status
     )
+
+    if ["HQ PRINT", "HQ REPRINT", "HQ APPROVED", "HQ REAPPROVED"].include?(next_status)
+      #generate DRN
+      last_drn = PersonRecordStatus.by_sorted
+    end
 
     render :text => "ok"
   end
@@ -146,6 +154,65 @@ class CaseController < ApplicationController
   def dispatch_printouts
     @title = "View Dispatch Printouts"
     @statuses = ["HQ DISPATCHED"]
+    @page = 1
+
+    render :template => "case/default"
+  end
+
+
+  def void_cases
+    @title = "Void Cases"
+    @statuses = ["HQ CONFIRMED DUPLICATE"]
+    @page = 1
+
+    render :template => "case/default"
+  end
+
+  def voided_cases
+    @title = "Voided Cases"
+    @statuses = ["HQ VOIDED"]
+    @page = 1
+
+    render :template => "case/default"
+  end
+
+  def verify_cerfitifcates
+    @title = "Verify Certificates"
+    @statuses = ["HQ PRINTED", "HQ DISPATCHED"]
+    @page = 1
+
+    render :template => "case/default"
+  end
+
+  def potential
+    @title = "Potential Duplicates"
+    @statuses = ["HQ POTENTIAL DUPLICATE"]
+    @page = 1
+
+    render :template => "case/default"
+  end
+
+
+  def can_confirm
+    @title = "Duplicates"
+    @statuses = ["HQ DUPLICATE"]
+    @page = 1
+
+    render :template => "case/default"
+  end
+
+  def confirmed
+    @title = "Confirmed duplicates"
+    @statuses = ["HQ CONFIRMED DUPLICATE"]
+    @page = 1
+
+    render :template => "case/default"
+  end
+
+
+  def view_requests
+    @title = "View Dispatch Printouts"
+    @statuses = ["DC AMMEND"]
     @page = 1
 
     render :template => "case/default"

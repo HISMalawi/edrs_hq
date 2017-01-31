@@ -10,7 +10,9 @@ class PersonIdentifier < CouchRest::Model::Base
 
   property :site_code, String
 
-  property :sort_value, String
+  property :den_sort_value, Integer
+
+  property :drn_sort_value, Integer
 
   property :district_code, String
 
@@ -34,7 +36,19 @@ class PersonIdentifier < CouchRest::Model::Base
 
     view :by_site_code
 
-    view :by_sort_value_and_identifier_type_and_identifier
+    view :by_den_sort_value,
+         :map => "function(doc) {
+                  if (doc['type'] == 'PersonIdentifier' && doc['district_code'] == '#{CONFIG['district_code']}') {
+                    emit(doc['den_sort_value']);
+                  }
+                }"
+
+    view :by_drn_sort_value,
+         :map => "function(doc) {
+                  if ((doc['type'] == 'PersonIdentifier')) {
+                    emit(doc['drn_sort_value']);
+                  }
+                }"
 
     view :by_district_code
 
@@ -81,28 +95,55 @@ class PersonIdentifier < CouchRest::Model::Base
 
   def self.assign_den(person)
 
-    #den = DeathEntryNumber.by_district_unassigned.key(CONFIG['district_code']).last
-    den = PatientIdentifier.by_sort_value_and_identifier_type_and_district_code.last.identifier rescue nil
+    den = PersonIdentifier.by_den_sort_value.last.identifier rescue nil
+    year = Date.today.year
 
-    if den.blank?
+    if den.blank? || !den.match(/#{year}$/)
       n = 1
     else
       n = den.scan(/\/\d+\//).last.scan(/\d+/).last.to_i + 1
     end
 
-    year = Date.today.year
+    code = person.district_code
 
-    code = CONFIG['district_code']
     num = n.to_s.rjust(7,"0")
-    den = "#{code}/#{num}/#{year}"
+    new_den = "#{code}/#{num}/#{year}"
 
     self.create({
                     :person_record_id=>person.id.to_s,
                     :identifier_type =>"DEATH ENTRY NUMBER",
-                    :identifier => den,
+                    :identifier => new_den,
+                    :den_sort_value => (year.to_s + num).to_i,
+                    :district_code => CONFIG['district_code']
+                })
+
+
+  end
+
+  def self.assign_drn(person)
+
+    den = PersonIdentifier.by_sort_value_and_identifier_type_and_identifier.last.identifier rescue nil
+    year = Date.today.year
+
+    if den.blank? || !den.match(/#{year}$/)
+      n = 1
+    else
+      n = den.scan(/\/\d+\//).last.scan(/\d+/).last.to_i + 1
+    end
+
+    code = person.district_code
+
+    num = n.to_s.rjust(7,"0")
+    new_den = "#{code}/#{num}/#{year}"
+
+    self.create({
+                    :person_record_id=>person.id.to_s,
+                    :identifier_type =>"DEATH ENTRY NUMBER",
+                    :identifier => new_den,
                     :sort_value => (year.to_s + num).to_i,
                     :district_code => CONFIG['district_code']
                 })
 
   end
+
 end
