@@ -16,7 +16,8 @@
 
         if (__$("frm")) {
 
-          //__$("frm").submit();
+          __$("frm").submit();
+          
           selectPrinter();
         }
       }
@@ -183,7 +184,7 @@
                   First Name :
                 </td>
                 <td class="data">
-                  <%= @person['first_name']%>
+                  <%= @person.first_name %>
                 </td>
               </tr>
 
@@ -192,7 +193,7 @@
                   Middle Name :
                 </td>
                 <td class="data">
-                  <%= @person['middle_name']%>
+                  <%= @person.middle_name %>
                 </td>
               </tr>
 
@@ -201,7 +202,7 @@
                   Last Name :
                 </td>
                 <td class="data">
-                  <%= @person['last_name']%>
+                  <%= @person.last_name %>
                 </td>
               </tr>
 
@@ -210,7 +211,7 @@
                   Date of Birth :
                 </td>
                 <td class="data">
-                  <%= @person['birthdate']%>
+                  <%= @person.birthdate.strftime("%d/%b/%Y")%>
                 </td>
               </tr>
 
@@ -225,46 +226,45 @@
 
               <tr>
                 <td>
-                  Hospital of Birth :
+                  Date of Death :
                 </td>
                 <td class="data">
-                  <%= @person['hospital_of_birth']%>
+                  <%= @person[:date_of_death].to_date.strftime("%d/%b/%Y") %>
                 </td>
               </tr>
-
               <tr>
                 <td >
-                  Birth Address :
+                  Hospital of Death :
                 </td>
                 <td class="data">
-                  <%= @person['birth_address']%>
+                  <%= @person["hospital_of_death_name"] %>
                 </td>
               </tr>
 
               <tr>
                 <td>
-                  Village of Birth :
+                  Village of Death :
                 </td>
                 <td class="data">
-                  <%= @person['birth_village']%>
-                </td>
-              </tr>
-
-              <tr>
-                <td >
-                  TA of Birth :
-                </td>
-                <td class="data">
-                  <%= @person['birth_ta']%>
+                  <%= @person["place_of_death_village"] %>
                 </td>
               </tr>
 
               <tr>
                 <td>
-                  District of Birth :
+                  TA of Death :
                 </td>
                 <td class="data">
-                  <%= @person['birth_district']%>
+                  <%= @person["place_of_death_ta"] %>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  District of Death :
+                </td>
+                <td class="data">
+                  <%= @person["place_of_death_district"] %>
                 </td>
               </tr>
               
@@ -274,7 +274,7 @@
                   Mother First Name :
                 </td>
                 <td class="data">
-                  <%= @person['mother']['first_name'] rescue "N/A"%>
+                  <%= @person[:mother_first_name] %>
                 </td>
               </tr>
               
@@ -283,7 +283,7 @@
                   Mother Middle Name :
                 </td>
                 <td class="data">
-                  <%= @person['mother']['middle_name'] rescue "N/A"%>
+                  <%= @person[:mother_middle_name] rescue "N/A"%>
                 </td>
               </tr>
 
@@ -292,7 +292,7 @@
                   Mother Last Name :
                 </td>
                 <td class="data">
-                  <%= @person['mother']['last_name'] rescue "N/A"%>
+                  <%= @person[:mother_last_name] rescue "N/A"%>
                 </td>
               </tr>
 
@@ -301,7 +301,7 @@
                   Father First Name :
                 </td>
                 <td class="data">
-                  <%= @person['father']['first_name'] rescue "N/A" %>
+                  <%= @person[:father_first_name] rescue "N/A" %>
                 </td>
               </tr>
 
@@ -310,7 +310,7 @@
                   Father Middle Name :
                 </td>
                 <td class="data">
-                  <%= @person['father']['middle_name'] rescue "N/A"%>
+                  <%= @person[:father_middle_name] rescue "N/A"%>
                 </td>
               </tr>
 
@@ -319,7 +319,7 @@
                   Father Last Name :
                 </td>
                 <td class="data">
-                  <%= @person['father']['last_name'] rescue "N/A"%>
+                  <%= @person[:father_last_name] rescue "N/A"%>
                 </td>
               </tr>
                          
@@ -332,11 +332,12 @@
       </tr>
       <tr>
         <td colspan="2">
-          <button onclick=' window.location = "<%= @targeturl%>" ' id="btnFinish" class="green" style="margin:5px; font-size: 14px; min-width: 140px; min-height: 20px; padding: 6px;float: right; font-weight: bold !important;">Finish</button>
+          <button onclick='window.location="<%= @targeturl%>"' id="btnFinish" class="green" style="margin:5px; font-size: 14px; min-width: 140px; min-height: 20px; padding: 6px;float: right; font-weight: bold !important;">Finish</button>
           <button onclick='confirmPrint()' id="btnPrint" class="blue" style="margin:5px;font-size: 14px; min-width: 140px; min-height: 20px; padding: 6px;float: right; font-weight: bold !important;">Print</button>
         </td>
       </tr>
     </table>
+    
     <%= form_tag("/hq/do_print_these", "method" => "post", "id" => "frm") do %>
       <input type="hidden" id="selected" name="selected" value="<%= params[:id]%>"/>
       <input type="hidden" id="printer_name" name="printer_name" value=""/>
