@@ -57,6 +57,8 @@ Rails.application.routes.draw do
   
   get '/printed_view/:id' => "hq#printed_view"
   
+  get "/print_preview" => "hq#print_preview"
+  
   get '/death_certificate_print/:id' => "hq#death_certificate_print"
   
   post 'hq/do_print_these'

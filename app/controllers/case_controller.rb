@@ -157,11 +157,14 @@ class CaseController < ApplicationController
       next if status.blank?
       keys << status.gsub(/\_/, " ").upcase
     }
-
+    
+    
     cases = []
     
     (PersonRecordStatus.by_record_status.keys(keys).page(params[:page_number]).per(10) || []).each do |status|
+      
       person = status.person
+     
       cases << {
         serial: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "SERIAL NUMBER"]).last.identifier rescue nil),
         den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
@@ -171,7 +174,7 @@ class CaseController < ApplicationController
         gender:     person.gender,
         person_id:  person.id
       }
-    end
+    end 
 
     render text: cases.to_json and return
   end

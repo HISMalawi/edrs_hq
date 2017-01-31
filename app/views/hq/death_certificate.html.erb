@@ -9,6 +9,7 @@
           -moz-user-select: none;
           font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
           margin: auto;
+          background-color: white;	
           color: #3465a4;
           font-size: 18px;
       }
@@ -228,7 +229,7 @@
         </th>
       </tr>
       <tr>
-        <td colspan="3" style="font-size: 18px; font-weight: normal;">
+        <td colspan="3" style="font-size: 18px; font-weight: normal;text-align: center">
           Dated this <%= Date.today.strftime("%d").to_i rescue nil %><sup><%= Date.today.strftime("%d").to_i.ordinalize.gsub(/\d+/, "") rescue nil
         %></sup> <%= Date.today.strftime("%B") rescue nil %>, <%= Date.today.strftime("%Y") rescue nil %>
         </td>
