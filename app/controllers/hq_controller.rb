@@ -55,7 +55,22 @@ class HqController < ApplicationController
   end
   
   def death_certificate
-
+    @person = Person.find(params[:id])
+    @drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([@person.id, "DEATH REGISTRATION NUMBER"]).last.identifier
+    @den = PersonIdentifier.by_person_record_id_and_identifier_type.key([@person.id, "DEATH ENTRY NUMBER"]).last.identifier
+    @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
+    
+    if @barcode.nil?
+      p = Process.fork{`bin/generate_barcode #{"123FRE"} #{@person.id} #{CONFIG['barcodes_path']}`}
+      Process.detach(p)
+    end
+    
+    sleep(1)    
+     
+    @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
+    
+    render :layout => false
+    
   end
   
   def death_certificate_print
@@ -70,7 +85,7 @@ class HqController < ApplicationController
   end
   
   def do_print_these
-     
+    
     selected = params[:selected].split("|")
 
     paper_size = GlobalProperty.find("paper_size").value rescue "A4"
@@ -87,12 +102,13 @@ class HqController < ApplicationController
 
       next if person.blank?
       
-      person.update_attributes(:record_status => "PRINTED",
-                               :request_status => "CLOSED", 
-                               :printed_at => Time.now,
-                               :date_certificate_issued => Date.today.strftime("%Y-%m-%d") ) if person.record_status != 'PRINTED'
+      status = PersonRecordStatus.by_person_recent_status.key(person.id).last
+      status.voided = true
+      status.save
+
+      PersonRecordStatus.create(:person_record_id => person.id, :district_code => status.district_code,
+        			:creator => @current_user.id, :status => "HQ CLOSED")
       
-     
       id = person.id
       
       print_url = "wkhtmltopdf --zoom #{zoom} --page-size #{paper_size} --username #{CONFIG["print_user"]} --password #{CONFIG["print_password"]} #{CONFIG["protocol"]}://#{request.env["SERVER_NAME"]}:#{request.env["SERVER_PORT"]}/death_certificate/#{id} #{CONFIG['certificates_path']}#{id}.pdf\n"    

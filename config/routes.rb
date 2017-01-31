@@ -69,6 +69,8 @@ Rails.application.routes.draw do
   
   get '/death_certificate_print/:id' => "hq#death_certificate_print"
   
+  get '/death_certificate/:id' => "hq#death_certificate"
+  
   post 'hq/do_print_these'
 
   get 'hq/do_print_these'
