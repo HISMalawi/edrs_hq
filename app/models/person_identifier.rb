@@ -149,7 +149,7 @@ class PersonIdentifier < CouchRest::Model::Base
   end
 
   def self.generate_drn(person)
-    last_record = PersonIdentifier.by_drn_sort_value.last.identifier rescue nil
+    last_record = PersonIdentifier.by_drn_sort_value.last.drn_sort_value rescue nil
     drn = last_record.to_i + 1 rescue 1
     nat_serial_num = drn
     drn = "%08d" % drn
