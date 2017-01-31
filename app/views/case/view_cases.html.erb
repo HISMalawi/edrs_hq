@@ -7,11 +7,13 @@
       color: darkslategray;
   }
   .btn{
-      border-radius: 2px;
       min-width: 100px;
       margin-left: 10px;
   }
-
+  .dynamic-button{
+      margin-left: 15px;
+      margin-right: 25px;
+  }
   #summary{
 
       margin-bottom: 1%;
@@ -231,7 +233,7 @@
             next if task['button_name'].blank?
           %>
 
-            <div onclick= "<%= onclick %>" class="btn btn-small btn-default pull-right <%= task['class'].downcase rescue ''%>"><span><%= task['button_name']%></span></div>
+            <div onclick= "<%= onclick %>" class="dynamic-button btn btn-small btn-default pull-right <%= task['class'].downcase rescue ''%>"><span><%= task['button_name']%></span></div>
           <% end %>
         </th>
       </tr>
