@@ -307,8 +307,8 @@
                     <% end %>
 
                     <% if has_role("Void outstanding records")%>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Void Cases</span></a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Voided Cases</span></a></li>
+                        <li><a onmousedown="window.parent.location = '/void_cases'"><span class="glyphicon glyphicon-folder-open"></span><span>Void Cases</span></a></li>
+                        <li><a onmousedown="window.parent.location = '/voided_cases'" ><span class="glyphicon glyphicon-folder-open"></span><span>Voided Cases</span></a></li>
                     <% end %>
 
                     <% if has_role("View closed cases")%>
@@ -328,16 +328,16 @@
                 <div class="tab-pane" id="manage_duplicates">
                   <ul class="nav-list list-inline">
                     <% if has_role("Manage duplicates") %>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Potential</span></a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Can Confirm</span></a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Confirmed</span></a></li>
+                        <li><a onmousedown="window.parent.location = '/potential'" ><span class="glyphicon glyphicon-folder-open"></span><span>Potential</span></a></li>
+                        <li><a onmousedown="window.parent.location = '/can_confirm'" ><span class="glyphicon glyphicon-folder-open"></span><span>Can Confirm</span></a></li>
+                        <li><a onmousedown="window.parent.location = '/confirmed'" ><span class="glyphicon glyphicon-folder-open"></span><span>Confirmed</span></a></li>
                     <% end %>
                   </ul>
                 </div>
                 <div class="tab-pane" id="view_requests">
                   <ul class="nav-list list-inline">
                     <% if has_role("Make ammendments") %>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>View Requests</span></a></li>
+                        <li><a onmousedown="window.parent.location = '/view_requests'" ><span class="glyphicon glyphicon-folder-open"></span><span>View Requests</span></a></li>
                     <% end %>
                   </ul>
                 </div>
@@ -355,14 +355,14 @@
                     <% end %>
 
                     <% if has_role(("Assess certificate quality"))%>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Verify Certificates</span></a></li>
+                        <li><a onmousedown="window.parent.location = '/verify_certificates'" ><span class="glyphicon glyphicon-folder-open"></span><span>Verify Certificates</span></a></li>
                     <% end %>
                   </ul>
                 </div>
                 <div class="tab-pane" id="reports">
                   <ul class="nav-list list-inline">
                     <% if has_role("Authorise printing") || has_role( "Activate User") || has_role("Deactivate User") || has_role("Create User") || has_role( "Update User") || has_role("View Users")%>
-                        <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Printed Certicates List</span></a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Printed Certificates List</span></a></li>
                         <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Reported Births</span></a></li>
                         <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Registered Births</span></a></li>
                         <li><a href="#"><span class="glyphicon glyphicon glyphicon-stats"></span><span>Approved at HQ</span></a></li>

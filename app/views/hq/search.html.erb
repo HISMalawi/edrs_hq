@@ -40,87 +40,188 @@
             min-width: 350px;
         }
     }
+
+    .radio {
+        padding-left: 20px; margin: 25px;
+        color: darkslategray}
+    .radio label {
+        display: inline-block;
+        border-bottom: 1px dotted lightgray;
+        position: relative;
+        padding-left: 5px; }
+    .radio label::before {
+        content: "";
+        display: inline-block;
+        position: absolute;
+        width: 17px;
+        height: 17px;
+        left: 0;
+        margin-left: -20px;
+        border: 1px solid #cccccc;
+        border-radius: 50%;
+        background-color: #fff;
+        -webkit-transition: border 0.15s ease-in-out;
+        -o-transition: border 0.15s ease-in-out;
+        transition: border 0.15s ease-in-out; }
+    .radio label::after {
+        display: inline-block;
+        position: absolute;
+        content: " ";
+        width: 11px;
+        height: 11px;
+        left: 3px;
+        top: 3px;
+        margin-left: -20px;
+        border-radius: 50%;
+        background-color: #555555;
+        -webkit-transform: scale(0, 0);
+        -ms-transform: scale(0, 0);
+        -o-transform: scale(0, 0);
+        transform: scale(0, 0);
+        -webkit-transition: -webkit-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+        -moz-transition: -moz-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+        -o-transition: -o-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+        transition: transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33); }
+    .radio input[type="radio"] {
+        opacity: 0; }
+    .radio input[type="radio"]:focus + label::before {
+        outline: thin dotted;
+        outline: 5px auto -webkit-focus-ring-color;
+        outline-offset: -2px; }
+    .radio input[type="radio"]:checked + label::after {
+        -webkit-transform: scale(1, 1);
+        -ms-transform: scale(1, 1);
+        -o-transform: scale(1, 1);
+        transform: scale(1, 1); }
+    .radio input[type="radio"]:disabled + label {
+        opacity: 0.65; }
+    .radio input[type="radio"]:disabled + label::before {
+        cursor: not-allowed; }
+    .radio.radio-inline {
+        margin-top: 0; }
+
+    .radio-primary input[type="radio"] + label::after {
+        background-color: #428bca; }
+    .radio-primary input[type="radio"]:checked + label::before {
+        border-color: #428bca; }
+    .radio-primary input[type="radio"]:checked + label::after {
+        background-color: #428bca; }
+
+    .radio-danger input[type="radio"] + label::after {
+        background-color: #d9534f; }
+    .radio-danger input[type="radio"]:checked + label::before {
+        border-color: #d9534f; }
+    .radio-danger input[type="radio"]:checked + label::after {
+        background-color: #d9534f; }
+
+    .radio-info input[type="radio"] + label::after {
+        background-color: #5bc0de; }
+    .radio-info input[type="radio"]:checked + label::before {
+        border-color: #5bc0de; }
+    .radio-info input[type="radio"]:checked + label::after {
+        background-color: #5bc0de; }
+
+    .radio-warning input[type="radio"] + label::after {
+        background-color: #f0ad4e; }
+    .radio-warning input[type="radio"]:checked + label::before {
+        border-color: #f0ad4e; }
+    .radio-warning input[type="radio"]:checked + label::after {
+        background-color: #f0ad4e; }
+
+    .radio-success input[type="radio"] + label::after {
+        background-color: #5cb85c; }
+    .radio-success input[type="radio"]:checked + label::before {
+        border-color: #5cb85c; }
+    .radio-success input[type="radio"]:checked + label::after {
+        background-color: #5cb85c; }
 </style>
 
-<div class="container">
-  <div class="row">
-    <div class="col-md-4">
-      <div class="input-group" id="adv-search">
-        <input type="text" class="form-control" placeholder="Select search criteria below" />
-        <div class="input-group-btn">
-          <div class="btn-group" role="group">
-            <div class="dropdown dropdown-lg">
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
-              <div class="dropdown-menu dropdown-menu-right" role="menu">
-                <form class="form-horizontal" role="form">
-                  <div class="form-group">
-                    <label for="contain">First name </label>
-                    <input id="first_name" class="form-control" type="text" />
-                  </div>
-
-                  <div class="form-group">
-                    <label for="contain">Last name </label>
-                    <input id="last_name" class="form-control" type="text" />
-                  </div>
-
-                  <div class="form-group">
-                    <label for="filter">Gender</label>
-                    <select id="gender" class="form-control">
-                      <option value="0"></option>
-                      <option value="1">Male</option>
-                      <option value="2">Female</option>
-                    </select>
-                  </div>
-
-                  <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-                </form>
+<table class="table" style="background: white;height: 97%;width: 99%">
+    <tr class="" style="width: 100%">
+        <td class="" style="width: 30%;border: 1px solid gray">
+              <div class="radio radio-primary">
+                <input type="radio" name="radio1" id="radio1" value="option1">
+                <label for="radio1">
+                  By Person Details
+                </label>
               </div>
-            </div>
-            <button type="button" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-
-    <div class="col-md-4">
-      <div class="input-group" id="adv-search2">
-        <input type="text" class="form-control" placeholder="Select search criteria below" />
-        <div class="input-group-btn">
-          <div class="btn-group" role="group">
-            <div class="dropdown dropdown-lg">
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
-              <div class="dropdown-menu dropdown-menu-right" role="menu">
-                <form class="form-horizontal" role="form">
-                  <div class="form-group">
-                    <label for="contain">First name </label>
-                    <input id="first_name" class="form-control" type="text" />
-                  </div>
-
-                  <div class="form-group">
-                    <label for="contain">Last name </label>
-                    <input id="last_name" class="form-control" type="text" />
-                  </div>
-
-                  <div class="form-group">
-                    <label for="filter">Gender</label>
-                    <select id="gender" class="form-control">
-                      <option value="0"></option>
-                      <option value="1">Male</option>
-                      <option value="2">Female</option>
-                    </select>
-                  </div>
-
-                  <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-                </form>
+              <div class="radio radio-primary">
+                <input type="radio" name="radio1" id="radio2" value="option2">
+                <label for="radio2">
+                  By Home Address
+                </label>
               </div>
-            </div>
-            <button type="button" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-          </div>
-        </div>
-      </div>
-    </div>
 
-   </div>
-</div>
+          <div class="radio radio-primary">
+            <input type="radio" name="radio1" id="radio3" value="option2">
+            <label for="radio3">
+              By Mother details
+            </label>
+          </div>
+
+          <div class="radio radio-primary">
+            <input type="radio" name="radio1" id="radio4" value="option2">
+            <label for="radio4">
+              By Father Details
+            </label>
+          </div>
+
+          <div class="radio radio-primary">
+            <input type="radio" name="radio1" id="radio5" value="option2">
+            <label for="radio5">
+              By Informant Address
+            </label>
+          </div>
+
+          <div class="radio radio-primary">
+            <input type="radio" name="radio1" id="radio6" value="option2">
+            <label for="radio6">
+              By Place of death
+            </label>
+          </div>
+        </td>
+        <td class="" style="width: 70%; border: 1px solid gray">
+            <div class="container" style="width: 100%">
+              <div class="row">
+                <div class="pull-right" style="width: 50%; margin: auto;margin-right: 30%;">
+                  <div class="input-group" id="adv-search">
+                    <input type="text" class="form-control" placeholder="Select search criteria below" />
+                    <div class="input-group-btn">
+                      <div class="btn-group" role="group">
+                        <div class="dropdown dropdown-lg ">
+                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="true"><span class="caret"></span></button>
+                          <div class="dropdown-menu dropdown-menu-right" role="menu">
+                            <form class="form-horizontal" role="form">
+                              <div class="form-group">
+                                <label for="contain">First name </label>
+                                <input id="first_name" class="form-control" type="text" />
+                              </div>
+
+                              <div class="form-group">
+                                <label for="contain">Last name </label>
+                                <input id="last_name" class="form-control" type="text" />
+                              </div>
+
+                              <div class="form-group">
+                                <label for="filter">Gender</label>
+                                <select id="gender" class="form-control">
+                                  <option value="0"></option>
+                                  <option value="1">Male</option>
+                                  <option value="2">Female</option>
+                                </select>
+                              </div>
+
+                              <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                            </form>
+                          </div>
+                        </div>
+                        <button type="button" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+             </div>
+        </div>
+    </td>
+</tr>
+</table>
