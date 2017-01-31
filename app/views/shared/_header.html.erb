@@ -21,10 +21,10 @@
           </a>
 
           <% if @current_user.blank? %>
-              <strong>Welcome!</strong>
-              <a>Please login below</a>
+              <strong>Welcome!<br />Please login</strong>
           <% else %>
               <span><%= @current_user.username%>@NRB HQ</span>
+              <br/ >
               <a href="/login" ><u>Logout</u></a>
         <% end %>
         </div>
