@@ -120,7 +120,7 @@
             </tr>
             <tr>
               <td>Date</td>
-              <td><%= Date.pars(@person.date_certifier_signed.to_s).strftime("%d/%b/%Y") rescue "" %> </td>
+              <td><%= Date.parse(@person.date_certifier_signed.to_s).strftime("%d/%b/%Y") rescue "" %> </td>
               <td>Name</td>
               <td colspan="4"> <%= @person.certifier_first_name %> <%@person.certifier_last_name%></td>
             </tr>

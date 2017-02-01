@@ -211,6 +211,7 @@
                   <option value=""></option>
                   <option>Natural</option>
                   <option>Accident</option>
+                  <option>Homicide</option>
                   <option>Suicide</option>
                   <option>Pending Investigation</option>
                   <option>Could not be determined</option>
@@ -247,17 +248,20 @@
           <div id="certification" class="container custom" style="display: none;">
             <div class="form-group">
               <label for="certifier_signed">Certifier Signed</label>
-              <select name="certifier_signed" load="<%= @person.certifier_signed%>" id="certifier_signed" class="form-control">
+              <select name="certifier_signed" load="<%= @person.date_certifier_signed%>" id="certifier_signed" class="form-control">
                 <option value=""></option>
                 <option>Yes</option>
                 <option>No</option>
               </select>
+
+              <label for="">Date certifier signed</label>
+              <input name="date_certifier_signed" value="<%= @person.certifier_last_name%>" id="date_certifier_signed" class="form-control" type="text" />
+
             </div>
 
             <div class="form-group">
               <label for="">Certifier last name</label>
               <input name="certifier_last_name" value="<%= @person.certifier_last_name%>" id="certifier_last_name" class="form-control" type="text" />
-
 
               <label for="">Certifier first name</label>
               <input name="certifier_first_name" value="<%= @person.certifier_first_name%>" id="certifier_first_name" class="form-control" type="text" />
@@ -309,6 +313,7 @@
 
    var h = {
         "other_position_of_certifier" : ['position_of_certifier', 'Other'],
+        "date_certifier_signed" : ['certifier_signed', 'Yes'],
         "other_death_by_accident" : ['death_by_accident', 'Other'],
         "death_by_accident" : ['manner', 'Accident'],
         "other_manner_of_death" : ['manner', 'Other']

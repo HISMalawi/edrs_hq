@@ -222,6 +222,13 @@
       <tfoot>
       <tr>
         <th colspan="2" style="padding-left: 10px !important;">
+          <%
+            cancel_url = request.referrer
+            cancel_url = "/" if (!cancel_url.match('case/') rescue true)
+          %>
+
+          <div onclick= "window.parent.location = '<%= cancel_url%>' " class="dynamic-button btn btn-small btn-default pull-left btn-danger"><span>Cancel</span></div>
+
           <% @tasks.each do |task|
             onclick = ''
 
@@ -233,8 +240,8 @@
                 onclick = "loadPopup('#{task['popup']}')"
             end
             next if task['button_name'].blank?
-          %>
 
+          %>
             <div onclick= "<%= onclick %>" class="dynamic-button btn btn-small btn-default pull-right <%= task['class'].downcase rescue ''%>"><span><%= task['button_name']%></span></div>
           <% end %>
         </th>
