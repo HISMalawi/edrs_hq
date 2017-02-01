@@ -62,6 +62,9 @@ roles = {
         ]
     },
     "HQ" => {
+        "Coder" => [
+            "Add cause of death"
+        ],
         "Data Checking Clerk" => [
             "View a record",
             "Check completeness",

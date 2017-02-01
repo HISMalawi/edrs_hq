@@ -60,7 +60,8 @@ Rails.application.routes.draw do
 
   ############################################################
   get "/search" => "hq#search"
-  
+  get "/do_search" => "hq#do_search"
+
   #printing routes
   
   get '/printed_view/:id' => "hq#printed_view"

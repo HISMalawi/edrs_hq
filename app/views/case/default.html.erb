@@ -1,9 +1,12 @@
 <script>
-
 var dataTable = null;
 
-function addRows(data) {
-  people = JSON.parse(data);
+function addRows(data, skip_parse) {
+  if (skip_parse == true){
+      people = data;
+  }else {
+      people = JSON.parse(data);
+  }
   
   for (var i = 0; i < people.length; i++) {
     den = people[i]['den'],
@@ -50,11 +53,13 @@ function getCases() {
                                                                            
   xmlhttp.onreadystatechange=function() {                                     
     if (xmlhttp.readyState==4 && xmlhttp.status==200) {                       
-      var results = xmlhttp.responseText;                                     
-      if(results == 'undefined' || results == '' || results == '"not validate"') {                           
+      var results = xmlhttp.responseText;
+
+      if(results == 'undefined' || results == '' || results == '"not validate"' || results.length == 0) {
         return;                                                               
-      }else{                                                                  
-        //dataTable.fnClearTable();
+      }else{
+
+       //dataTable.fnClearTable();
         addRows(results);                                                           
       }                                                                       
     }                                                                         
@@ -108,6 +113,23 @@ function initDataTable(){
     });                                                  
   }catch(e){
     location.reload(); 
+  }
+  cases = [];
+  var h = {}
+
+    <% (@cases || []).each do |cas|
+        keys = cas.keys
+        keys.each do |k|
+        v = cas[k]
+    %>
+    h['<%= k%>'] = '<%= v%>';
+<% end %>
+    cases.push(h);
+    h = {};
+<%end%>
+    console.log(cases);
+  if (cases && cases.length > 0){
+      addRows(cases, true);
   }
   getCases();
 }

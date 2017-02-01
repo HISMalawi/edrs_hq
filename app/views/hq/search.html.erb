@@ -107,121 +107,129 @@
     .radio-primary input[type="radio"]:checked + label::after {
         background-color: #428bca; }
 
-    .radio-danger input[type="radio"] + label::after {
-        background-color: #d9534f; }
-    .radio-danger input[type="radio"]:checked + label::before {
-        border-color: #d9534f; }
-    .radio-danger input[type="radio"]:checked + label::after {
-        background-color: #d9534f; }
-
-    .radio-info input[type="radio"] + label::after {
-        background-color: #5bc0de; }
-    .radio-info input[type="radio"]:checked + label::before {
-        border-color: #5bc0de; }
-    .radio-info input[type="radio"]:checked + label::after {
-        background-color: #5bc0de; }
-
-    .radio-warning input[type="radio"] + label::after {
-        background-color: #f0ad4e; }
-    .radio-warning input[type="radio"]:checked + label::before {
-        border-color: #f0ad4e; }
-    .radio-warning input[type="radio"]:checked + label::after {
-        background-color: #f0ad4e; }
-
-    .radio-success input[type="radio"] + label::after {
-        background-color: #5cb85c; }
-    .radio-success input[type="radio"]:checked + label::before {
-        border-color: #5cb85c; }
-    .radio-success input[type="radio"]:checked + label::after {
-        background-color: #5cb85c; }
+    .custom{
+        display: none;
+        width: 60%;
+    }
 </style>
 
 <table class="table" style="background: white;height: 97%;width: 99%">
     <tr class="" style="width: 100%">
         <td class="" style="width: 30%;border: 1px solid gray">
-              <div class="radio radio-primary">
-                <input type="radio" name="radio1" id="radio1" value="option1">
-                <label for="radio1">
-                  By Person Details
-                </label>
-              </div>
-              <div class="radio radio-primary">
-                <input type="radio" name="radio1" id="radio2" value="option2">
-                <label for="radio2">
-                  By Home Address
-                </label>
-              </div>
+          <div class="radio radio-primary" onmousedown="showControls('den')">
+            <input type="radio" name="radio" id="radio">
+            <label for="radio">
+              By Death Entry Number
+            </label>
+          </div>
 
-          <div class="radio radio-primary">
-            <input type="radio" name="radio1" id="radio3" value="option2">
+          <div class="radio radio-primary" onmousedown="showControls('drn')">
+            <input type="radio" name="radio" id="radio0">
+            <label for="radio0">
+              By Death Registration Number
+            </label>
+          </div>
+
+          <div class="radio radio-primary" onmousedown="showControls('details_of_deceased')">
+            <input type="radio" name="radio" id="radio1">
+            <label for="radio1">
+              By Person Details
+            </label>
+          </div>
+          <div class="radio radio-primary" onmousedown="showControls('')">
+            <input type="radio" name="radio" id="radio2">
+            <label for="radio2">
+              By Home Address
+            </label>
+          </div>
+
+          <div class="radio radio-primary" onmousedown="showControls('')">
+            <input type="radio" name="radio" id="radio3">
             <label for="radio3">
               By Mother details
             </label>
           </div>
 
-          <div class="radio radio-primary">
-            <input type="radio" name="radio1" id="radio4" value="option2">
+          <div class="radio radio-primary" onmousedown="showControls('')">
+            <input type="radio" name="radio" id="radio4">
             <label for="radio4">
               By Father Details
             </label>
           </div>
 
-          <div class="radio radio-primary">
-            <input type="radio" name="radio1" id="radio5" value="option2">
+          <div class="radio radio-primary" onmousedown="showControls('')">
+            <input type="radio" name="radio" id="radio5">
             <label for="radio5">
               By Informant Address
             </label>
           </div>
 
-          <div class="radio radio-primary">
-            <input type="radio" name="radio1" id="radio6" value="option2">
+          <div class="radio radio-primary" onmousedown="showControls('')">
+            <input type="radio" name="radio" id="radio6">
             <label for="radio6">
               By Place of death
             </label>
           </div>
         </td>
-        <td class="" style="width: 70%; border: 1px solid gray">
-            <div class="container" style="width: 100%">
-              <div class="row">
-                <div class="pull-right" style="width: 50%; margin: auto;margin-right: 30%;">
-                  <div class="input-group" id="adv-search">
-                    <input type="text" class="form-control" placeholder="Select search criteria below" />
-                    <div class="input-group-btn">
-                      <div class="btn-group" role="group">
-                        <div class="dropdown dropdown-lg ">
-                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="true"><span class="caret"></span></button>
-                          <div class="dropdown-menu dropdown-menu-right" role="menu">
-                            <form class="form-horizontal" role="form">
-                              <div class="form-group">
-                                <label for="contain">First name </label>
-                                <input id="first_name" class="form-control" type="text" />
-                              </div>
 
-                              <div class="form-group">
-                                <label for="contain">Last name </label>
-                                <input id="last_name" class="form-control" type="text" />
-                              </div>
+        <td id = "input-td" class="" style="width: 70%; border: 1px solid gray">
 
-                              <div class="form-group">
-                                <label for="filter">Gender</label>
-                                <select id="gender" class="form-control">
-                                  <option value="0"></option>
-                                  <option value="1">Male</option>
-                                  <option value="2">Female</option>
-                                </select>
-                              </div>
+          <div id="den" class="container custom">
+            <form class="form-horizontal" role="form" action="/do_search">
+              <div class="form-group">
+                <label for="den">Enter Death Entry Number </label>
+                <input name="search_type" value="den" type="hidden" type="text" />
+                <input name="den" id="den" class="form-control" type="text" />
+              </div>
+              <button type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </form>
+          </div>
 
-                              <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-                            </form>
-                          </div>
-                        </div>
-                        <button type="button" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-             </div>
+          <div id="drn" class="container custom">
+            <form class="form-horizontal" role="form" action="/do_search">
+              <div class="form-group">
+                <input name="search_type" value="drn" type="hidden" type="text" />
+                <label for="drn">Enter Death Registration Number </label>
+                <input name="drn" id="drn" class="form-control" type="text" />
+              </div>
+              <button type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </form>
+          </div>
+
+
+          <div class="container custom" id="details_of_deceased">
+            <form class="form-horizontal" role="form" action="/do_search">
+              <input name="search_type" value="details_of_deceased" type="hidden" type="text" />
+              <div class="form-group">
+                <label for="contain">First name </label>
+                <input id="first_name" class="form-control" type="text" />
+              </div>
+
+              <div class="form-group">
+                <label for="contain">Last name </label>
+                <input id="last_name" class="form-control" type="text" />
+              </div>
+
+              <div class="form-group">
+                <label for="filter">Gender</label>
+                <select id="gender" class="form-control">
+                  <option value="0"></option>
+                  <option value="1">Male</option>
+                  <option value="2">Female</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </form>
         </div>
+
+
     </td>
 </tr>
 </table>
+<script>
+  function showControls(id){
+      $(".custom").hide();
+      $("#" + id).show();
+  }
+</script>

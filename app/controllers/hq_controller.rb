@@ -23,6 +23,39 @@ class HqController < ApplicationController
   def search
 
   end
+
+  def do_search
+    results = []
+    @title = "Search Results"
+    @statuses = []
+
+    case params[:search_type]
+      when "den"
+        PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH ENTRY NUMBER"]).each do |identifier|
+          results << identifier.person
+        end
+      when "drn"
+        PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH REGISTRATION NUMBER"]).each do |identifier|
+          results << identifier.person
+        end
+    end
+
+    @cases = []
+    results.each do |person|
+      @cases << {
+          drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
+          den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
+          first_name: person.first_name,
+          middle_name:  person.last_name,
+          last_name:  person.last_name,
+          dob:        person.birthdate.strftime("%d/%b/%Y"),
+          gender:     person.gender,
+          person_id:  person.id
+      }
+    end
+
+    render :template => "case/default"
+  end
   
   def print_preview
     @section = "Print Preview"
