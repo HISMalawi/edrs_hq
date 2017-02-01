@@ -23,6 +23,59 @@ class HqController < ApplicationController
   def search
 
   end
+
+  def do_search
+    results = []
+    @title = "Search Results"
+    @statuses = []
+
+    case params[:search_type]
+      when "den"
+        PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH ENTRY NUMBER"]).each do |identifier|
+          results << identifier.person
+        end
+      when "drn"
+        PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH REGISTRATION NUMBER"]).each do |identifier|
+          results << identifier.person
+        end
+    end
+
+    if has_role( "Add cause of death") && results.length > 0
+      cause_available = ['cause_of_death1',                       'cause_of_death2',
+      'cause_of_death3',                        'cause_of_death4',
+      'onset_death_interval1',       'onset_death_death_interval2',
+      'onset_death_death_interval3', 'onset_death_death_interval4',
+      'cause_of_death_conditions',               'manner_of_death',
+      'other_manner_of_death',                 'death_by_accident',
+      'other_death_by_accident'].collect{|key| eval("results.last.#{key}")}.compact.length > 0 rescue false
+
+      if cause_available
+        redirect_to "/cause_of_death_preview?person_id=#{results.last.id}" and return
+      else
+        redirect_to "/cause_of_death?person_id=#{results.last.id}" and return
+      end
+    end
+
+    @cases = []
+    results.each do |person|
+      @cases << {
+          drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
+          den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
+          first_name: person.first_name,
+          middle_name:  person.last_name,
+          last_name:  person.last_name,
+          dob:        person.birthdate.strftime("%d/%b/%Y"),
+          gender:     person.gender,
+          person_id:  person.id
+      }
+    end
+
+    render :template => "case/default"
+  end
+
+  def cause_of_death_preview
+    @person = Person.find(params[:person_id])
+  end
   
   def print_preview
     @section = "Print Preview"

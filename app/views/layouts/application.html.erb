@@ -393,7 +393,7 @@
         height: 610px;padding: 2px !important; overflow: auto;width: 80%;
         border-left: 2px dotted darkgray; background: #d3d3d3">
 
-  <% if controller.controller_name == 'case' &&  controller.action_name != "view_cases"%>
+  <% if (controller.controller_name == 'case' &&  controller.action_name != "view_cases") || controller.action_name == 'do_search'%>
     <%#=javascript_include_tag "DataTables/prototype" %>                          
     <%=javascript_include_tag "DataTables/jquery.dataTables.min" %>
     <%= stylesheet_link_tag "DataTables/jquery.dataTables" %>                                     

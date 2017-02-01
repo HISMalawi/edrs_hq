@@ -34,6 +34,8 @@ class PersonIdentifier < CouchRest::Model::Base
 
     view :by_identifier_type
 
+    view :by_identifier_and_identifier_type
+
     view :by_identifier
 
     view :by_site_code
