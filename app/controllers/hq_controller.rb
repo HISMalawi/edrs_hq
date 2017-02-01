@@ -34,14 +34,26 @@ class HqController < ApplicationController
         PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH ENTRY NUMBER"]).each do |identifier|
           results << identifier.person
         end
-
-        if results.length > 0
-          redirect_to "/cause_of_death_preview?person_id=#{results.last.id}" and return
-        end
       when "drn"
         PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH REGISTRATION NUMBER"]).each do |identifier|
           results << identifier.person
         end
+    end
+
+    if has_role( "Add cause of death") && results.length > 0
+      cause_available = ['cause_of_death1',                       'cause_of_death2',
+      'cause_of_death3',                        'cause_of_death4',
+      'onset_death_interval1',       'onset_death_death_interval2',
+      'onset_death_death_interval3', 'onset_death_death_interval4',
+      'cause_of_death_conditions',               'manner_of_death',
+      'other_manner_of_death',                 'death_by_accident',
+      'other_death_by_accident'].collect{|key| eval("results.last.#{key}")}.compact.length > 0 rescue false
+
+      if cause_available
+        redirect_to "/cause_of_death_preview?person_id=#{results.last.id}" and return
+      else
+        redirect_to "/cause_of_death?person_id=#{results.last.id}" and return
+      end
     end
 
     @cases = []
