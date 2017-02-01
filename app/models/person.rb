@@ -420,6 +420,14 @@ class Person < CouchRest::Model::Base
     return Village.find(self.informant_current_village_id).name
   end
 
+   #Identifiers
+  def den
+    return PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id, "DEATH ENTRY NUMBER"]).first.identifier
+  end
+  def national_id
+    return PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id,"National ID"]).first.identifier 
+  end
+
   #Person properties
   property :first_name, String
   property :middle_name, String
@@ -448,6 +456,7 @@ class Person < CouchRest::Model::Base
   property :onset_death_death_interval3, String
   property :onset_death_death_interval4, String
   property :cause_of_death_conditions, String
+  property :icd_10_code, String
   property :manner_of_death, String
   property :other_manner_of_death, String
   property :death_by_accident, String

@@ -28,6 +28,20 @@
         padding-left: 10px;
         border: 1px solid lightslategrey;
 
+
+    }
+
+    #summary th{
+
+         background: #424244;
+
+         color: #ffffff;
+
+         border : 1px solid #424244;
+
+         padding: 0.5em;
+
+         text-align: center
     }
     .clickable{
 
@@ -43,175 +57,7 @@
 %>
 <div style="background: white">
   <div style="height: 535px; overflow: auto;padding: 0px; margin:0px;">
-    <table id="summary">
-
-      <tr>
-        <th colspan="11">Section 1 : Particulars of the deceased</th>
-      </tr>
-
-      <tr>
-        <td rowspan="11" style="background-color:#dbdada;">PART 1 <br/>PERSONAL DETAILS OF DECEASED</td>
-        <td>1</td>
-        <td  class="clickable" >Surname</td>
-        <td colspan="2" ><%= @person.last_name %></td>
-        <td class="clickable"  >First name</td>
-        <td  colspan="2"><%= @person.first_name %></td>
-        <td class="clickable"  >Other</td>
-        <td colspan="2"><%= @person.middle_name rescue "" %></td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td class="clickable"  >ID No.</td>
-        <td style="border-bottom :1.5px solid black"><%= @person.id_number rescue ""%></td>
-        <td>3</td>
-        <td class="clickable" >Nationality</td>
-        <td colspan="2" style="border-bottom :1.5px solid black"><%= @person.nationality rescue ""%></td>
-        <td>4</td>
-        <td class="clickable" >Sex</td>
-        <td style="border-bottom:1.5px solid black"> <%= @person.gender %></td>
-      </tr>
-      <tr>
-        <td>5</td>
-        <td class="clickable" >Birth Date</td>
-        <td style="border-bottom: 1.5px solid black" colspan="5"><%= Date.parse(@person.birthdate.to_s).strftime("%d/%b/%Y") %></td>
-        <td rowspan="2">6</td>
-        <td rowspan="2" class="clickable" >Birth certificate No.</td>
-        <td rowspan="2" style="border-bottom :1.5px solid black"><%= @person.birth_certificate_number %></td>
-      </tr>
-      <tr>
-        <td>7</td>
-        <td class="clickable"  >Date of Death</td>
-        <td style="border-bottom: 1.5px solid black" colspan="5"><%= Date.parse(@person.date_of_death.to_s).strftime("%d/%b/%Y") %></td>
-      </tr>
-      <tr>
-        <td rowspan="4">8</td>
-        <td class="clickable"  >Place of birth</td>
-        <td colspan="9"><%= @person.place_of_death %></td>
-      </tr>
-      <tr>
-        <td class="clickable"  >Health Facility</td>
-        <td colspan="8" style="border-bottom: 1.5px solid black"> <%= @person_place_details['hospital_of_death'] %></td>
-      </tr>
-      <tr>
-        <td class="clickable"  >Home</td>
-        <td>Address</td>
-        <td class="clickable"  >District</td>
-        <td style="border-bottom:1.5px solid black"><%= @person_place_details['home_district'] %></td>
-        <td class="clickable" >TA</td>
-        <td style="border-bottom:1.5px solid black"><%= @person_place_details['home_ta'] %></td>
-        <td class="clickable"  >Village</td>
-        <td style="border-bottom:1.5px solid black" colspan="2"><%= @person_place_details['home_village'] %></td>
-      </tr>
-      <tr>
-        <td>Other</td>
-        <td colspan="8"></td>
-      </tr>
-      <tr>
-        <td>9</td>
-        <td colspan="3">Physical residential address</td>
-        <td class="clickable"  >District </td>
-        <td><%= @person_place_details['current_district'] %></td>
-        <td class="clickable" >TA</td>
-        <td><%= @person_place_details['current_ta'] %></td>
-        <td class="clickable"  >Village</td>
-        <td><%= @person_place_details['current_village'] %></td>
-      </tr>
-      <tr>
-        <td rowspan="2">11</td>
-        <td colspan="8" class="clickable"  >In case this is a female death, did the death occur while pregnant, at the time of delivery or within 6 weeks after the end of pregnancy?</td>
-        <td><%= @person.died_while_pegnant rescue "No" %></td>
-      </tr>
-      <tr>
-
-        <td colspan="9"></td>
-      </tr>
-      <tr>
-        <td rowspan="6">PART 2 <br/><br/>DETAILS OF PARENT</td>
-        <td rowspan="3">1</td>
-        <td colspan="6" class="clickable"  >Mother's name</td>
-        <td rowspan="3">2</td>
-        <td rowspan="3" class="clickable" >ID No.</td>
-        <td rowspan ="3" style="border-bottom:1.5px solid black"><%= @person.mother_id_number %></td>
-      </tr>
-      <tr>
-        <td class="clickable"  >Surname</td>
-        <td colspan="2"><%= @person.mother_last_name %></td>
-        <td class="clickable" >First name</td>
-        <td colspan="2"><%= @person.mother_first_name %></td>
-      </tr>
-      <tr>
-        <td class="clickable" >Other names</td>
-        <td colspan="5"><%= @person.mother_middle_name %></td>
-      </tr>
-      <tr>
-        <td rowspan="3">3</td>
-        <td colspan="6" class="clickable" >Father's name</td>
-        <td rowspan="3">4</td>
-        <td rowspan="3" class="clickable" >ID No.</td>
-        <td rowspan ="3" style="border-bottom:1.5px solid black"><%= @person.father_id_number %></td>
-      </tr>
-      <tr>
-        <td class="clickable" >Surname</td>
-        <td colspan="2"><%= @person.father_last_name %></td>
-        <td class="clickable">First name</td>
-        <td colspan="2"><%= @person.father_first_name %></td>
-      </tr>
-      <tr>
-        <td class="clickable" >Other names</td>
-        <td colspan="5"><%= @person.father_middle_name %></td>
-      </tr>
-
-      <tr>
-        <td rowspan="7" style="background-color:#dbdada;">PART 3 <br/>INFORMANTS DETAILS</td>
-        <td rowspan="2">1</td>
-        <td class="clickable"  >Surname</td>
-        <td colspan="2"><%= @person.informant_last_name %></td>
-        <td class="clickable" >First name</td>
-        <td colspan="2"><%= @person.informant_first_name %></td>
-        <td rowspan="2">2</td>
-        <td rowspan="2" class="clickable" >ID No.</td>
-        <td rowspan="2"><%= @person.informant_id_number %></td>
-      </tr>
-      <tr>
-        <td class="clickable" >Other name</td>
-        <td colspan="5"><%= @person.informant_middle_name %></td>
-      </tr>
-      <tr>
-        <td>3</td>
-        <td class="clickable" >Relation to the deceased</td>
-        <td colspan="8">
-          <%= @person.informant_relationship_to_deceased rescue @person.informant_relationship_to_deceased_other %>
-        </td>
-      </tr>
-      <tr>
-        <td rowspan="2">4</td>
-        <td>Adress</td>
-        <td class="clickable" >District</td>
-        <td colspan="2"><%= @person_place_details['informant_current_district'] %></td>
-        <td class="clickable" >TA</td>
-        <td colspan="2"><%= @person_place_details['informant_current_ta'] %></td>
-        <td class="clickable" >Village</td>
-        <td><%= @person_place_details['informant_current_village'] %></td>
-      </tr>
-      <tr>
-        <td class="clickable" >Postal address :</td>
-        <td colspan="6">
-          <%= @person.informant_addressline1 rescue "" %>
-          <%= " #{@person.informant_addressline2}" rescue ""%>
-          <%= " #{@person.informant_city}" rescue "" %>
-        </td>
-        <td class="clickable" >Telephone Number</td>
-        <td><%= @person.informant_phone_number %></td>
-      </tr>
-      <tr>
-        <td rowspan="2">5</td>
-        <th colspan="9" style="background: #ffffff; color:black">I certify that the above information is correct and I am aware that I could face criminal prosecution if this information is incorrect in material respect.</th>
-      </tr>
-      <tr>
-        <td>Date:</td>
-        <td colspan="8"><%= Date.parse(@person.informant_signature_date.to_s).strftime("%d/%b/%Y") rescue "" %></td>
-      </tr>
-    </table>
+    <%= render :partial => "section2" %>
   </div>
 
   <div class="table-container-footer" style="padding: 0px;margin-bottom: 0px;">
