@@ -74,7 +74,21 @@ class HqController < ApplicationController
   end
 
   def cause_of_death
+    @person = Person.find(params[:person_id])
+  end
 
+  def save_cause_of_death
+    @person = Person.find(params[:person_id])
+    @person.keys.each do |k|
+      if params.keys.include?(k)
+        @person[k] = params[k]
+      end
+    end
+
+    @person.save
+
+    flash[:success] = "Record updated successfully"
+    redirect_to "/search?person_id=#{params[:person_id]}"
   end
 
   def cause_of_death_preview

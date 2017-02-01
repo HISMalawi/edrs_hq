@@ -63,6 +63,7 @@ Rails.application.routes.draw do
   get "/do_search" => "hq#do_search"
   get "/cause_of_death_preview" => "hq#cause_of_death_preview"
   get "/cause_of_death" => "hq#cause_of_death"
+  get "/save_cause_of_death" => "hq#save_cause_of_death"
 
   #printing routes
   
