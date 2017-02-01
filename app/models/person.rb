@@ -587,7 +587,7 @@ class Person < CouchRest::Model::Base
   property :certifier_middle_name, String
   property :certifier_last_name, String
   property :certifier_signed, String
-  property :date_certifier_signed, String
+  property :date_certifier_signed, Time
   property :position_of_certifier, String
   property :other_position_of_certifier, String
 

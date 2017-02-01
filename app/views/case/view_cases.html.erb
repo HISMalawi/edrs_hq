@@ -14,12 +14,12 @@
       margin-left: 15px;
       margin-right: 25px;
   }
-  #summary{
+  .summary{
 
       margin-bottom: 1%;
 
   }
-  #summary td {
+  .summary td {
 
       background: #ffffff;
       text-align: left !important;
@@ -44,7 +44,7 @@
 
 <div style="background: white">
   <div style="height: 535px; overflow: auto;padding: 0px; margin:0px;">
-      <table id="summary">
+      <table class="summary" id="summary">
 
         <tr>
           <th colspan="11">Section 1 : Particulars of the deceased</th>
@@ -213,6 +213,8 @@
           <td colspan="8"><%= Date.parse(@person.informant_signature_date.to_s).strftime("%d/%b/%Y") rescue "" %></td>
         </tr>
       </table>
+
+      <%= render :partial=>"/hq/section2" %>
   </div>
 
   <div class="table-container-footer" style="padding: 0px;margin-bottom: 0px;">
