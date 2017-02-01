@@ -34,6 +34,10 @@ class HqController < ApplicationController
         PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH ENTRY NUMBER"]).each do |identifier|
           results << identifier.person
         end
+
+        if results.length > 0
+          redirect_to "/cause_of_death_preview?person_id=#{results.last.id}" and return
+        end
       when "drn"
         PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH REGISTRATION NUMBER"]).each do |identifier|
           results << identifier.person
@@ -55,6 +59,10 @@ class HqController < ApplicationController
     end
 
     render :template => "case/default"
+  end
+
+  def cause_of_death_preview
+    @person = Person.find(params[:person_id])
   end
   
   def print_preview

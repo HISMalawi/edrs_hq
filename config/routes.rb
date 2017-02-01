@@ -61,6 +61,7 @@ Rails.application.routes.draw do
   ############################################################
   get "/search" => "hq#search"
   get "/do_search" => "hq#do_search"
+  get "/cause_of_death_preview" => "hq#cause_of_death_preview"
 
   #printing routes
   
