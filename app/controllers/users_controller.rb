@@ -12,6 +12,7 @@ class UsersController < ApplicationController
         User.current_user = user
         redirect_to "/"
       else
+        flash[:error] = "Incorrect login details!!"
         redirect_to "/login"
       end
     end

@@ -116,6 +116,8 @@
         border: 1px dotted lightblue;
         border-radius: 5px;
         padding: 3px;
+        padding-bottom: 7px;
+        padding-left: 15px;
         background: #f8f8ff;
     }
 
@@ -254,9 +256,13 @@
                 <option>No</option>
               </select>
 
-              <label for="">Date certifier signed</label>
-              <input name="date_certifier_signed" value="<%= @person.certifier_last_name%>" id="date_certifier_signed" class="form-control" type="text" />
+              <div id="datetimepicker1" class="input-append">
+                <label for="">Date certifier signed</label>
+                <input data-format="dd/mm/yyyy" name="date_certifier_signed" value="<%= @person.certifier_last_name%>" id="date_certifier_signed" class="form-control" type="text" />
 
+              </div>
+      </i>
+    </span>
             </div>
 
             <div class="form-group">
@@ -333,6 +339,8 @@
             }
         }
     }
+
+    $('#datetimepicker').data("DateTimePicker").FUNCTION()
 
     var interval = setInterval("checkConditions()", 200);
 
