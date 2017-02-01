@@ -73,6 +73,10 @@ class HqController < ApplicationController
     render :template => "case/default"
   end
 
+  def cause_of_death
+
+  end
+
   def cause_of_death_preview
     @person = Person.find(params[:person_id])
   end
