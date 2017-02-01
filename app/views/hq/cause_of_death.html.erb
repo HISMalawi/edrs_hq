@@ -108,110 +108,172 @@
         background-color: #428bca; }
 
     .custom{
-        width: 60%;
+        width: 85%;
+        display: none;
+    }
+
+    .form-group{
+        border: 1px dotted lightblue;
+        border-radius: 5px;
+        padding: 3px;
+        background: #f8f8ff;
+    }
+
+    .form-control{
+        background: rgb(254, 254, 254);
+        width: 70%;
+        margin-left: 10%;
+    }
+
+    form{
+
+
     }
 </style>
 
 <table class="table" style="background: white;height: 97%;width: 99.5%">
     <tr class="" style="width: 100%">
+      <td class="" style="width: 25%;border: 1px solid gray">
+        <div id="cause_of_death_radio" class="radio radio-primary" onmousedown="showControls('cause_of_death')">
+          <input type="radio" name="radio" id="radio">
+              <label for="radio">
+                Cause of death
+              </label>
+        </div>
 
-        <td id = "input-td" class="" style="width: 60%; border: 1px solid gray">
+        <div id="manner_of_death_radio" class="radio radio-primary" onmousedown="showControls('manner_of_death')">
+            <input type="radio" name="radio" id="radio0">
+                <label for="radio0">
+                    Manner of death
+                </label>
+        </div>
 
-          <div id="den" class="container custom">
-            <form class="form-horizontal" role="form" action="/do_search">
-              <div class="form-group">
-                <label for="den">Enter Death Entry Number </label>
-                <input name="search_type" value="den" type="hidden" type="text" />
-                <input name="den" id="den" class="form-control" type="text" />
-              </div>
-            </form>
-          </div>
+        <div id="certification_radio" class="radio radio-primary" onmousedown="showControls('certification')">
+            <input type="radio" name="radio" id="radio1">
+                <label for="radio1">
+                    Certification
+                </label>
+            </div>
+        </td>
 
-          <div id="drn" class="container custom">
-            <form class="form-horizontal" role="form" action="/do_search">
+        <td id = "input-td" class="" style="width: 75%; border: 1px solid gray">
+
+          <div id="cause_of_death" class="container custom">
+            <form id="frm" class="form-horizontal" role="form" action="/save_cause_of_death">
+              <input name="person_id" value="<%= @person.id%>" type="hidden" type="text" />
+
               <div class="form-group">
                 <label for="">Cause of Death 1 </label>
                 <input name="cause_of_death1" id="cause_of_death1" class="form-control" type="text" />
 
                 <label for="">Cause of Death 1 onset to death Interval </label>
                 <input name="onset_death_interval1" id="onset_death_interval1" class="form-control" type="text" />
+               </div>
 
+              <div class="form-group">
                 <label for="">Cause of Death 2 </label>
                 <input name="cause_of_death2" id="cause_of_death2" class="form-control" type="text" />
 
                 <label for="">Cause of Death 2 onset to death Interval </label>
                 <input name="onset_death_interval2" id="onset_death_interval2" class="form-control" type="text" />
+              </div>
 
+              <div class="form-group">
                 <label for="">Cause of Death 3</label>
                 <input name="cause_of_death3" id="cause_of_death3" class="form-control" type="text" />
 
                 <label for="">Cause of Death 3 onset to death Interval</label>
-                <input name="onset_death_interval1" id="cause_of_death1" class="form-control" type="text" />
-
-                <label for="">Cause of Death 1 onset to death Interval </label>
-                <input name="onset_death_interval1" id="cause_of_death1" class="form-control" type="text" />
-
-                <label for="">Cause of Death 1 onset to death Interval </label>
-                <input name="onset_death_interval1" id="cause_of_death1" class="form-control" type="text" />
-
-                <label for="">Cause of Death 1 onset to death Interval </label>
-                <input name="onset_death_interval1" id="cause_of_death1" class="form-control" type="text" />
+                <input name="onset_death_interval3" id="onset_death_interval3" class="form-control" type="text" />
               </div>
-            </form>
+
+
+              <div class="form-group">
+                <label for="">Cause of Death 4</label>
+                <input name="cause_of_death4" id="cause_of_death4" class="form-control" type="text" />
+
+                <label for="">Cause of Death 4 onset to death Interval</label>
+                <input name="onset_death_interval4" id="onset_death_interval4" class="form-control" type="text" />
+              </div>
+
+              <div onclick="hit('manner_of_death_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
+
           </div>
 
-          <section name="Cause of death">
-            <sub id="cause_of_death" name="Cause of death">
-              <%= (f.text_field :cause_of_death1,:helpText => "Cause of Death 1", :optional=>true,:condition => true ,:tt_onLoad =>"showCategory('Section 2 : For Hospital death')") rescue "" %>
 
-              <%= (f.text_field :onset_death_interval1,:helpText => "Cause of Death 1 onset to death Interval", :optional=>true,:condition => "__$('person_cause_of_death1').value.length > 1",:tt_onLoad =>"showCategory('Section 2 : For Hospital death')") rescue "" %>
+          <div id="manner_of_death" class="container custom" style="display: none;">
+              <div class="form-group">
+                <label for="manner">Manner of death </label>
+                <select name="manner_of_death" id="manner" class="form-control">
+                  <option value=""></option>
+                  <option>Natural</option>
+                  <option>Accident</option>
+                  <option>Suicide</option>
+                  <option>Pending Investigation</option>
+                  <option>Could not be determined</option>
+                  <option>Other</option>
+                </select>
 
-              <%= (f.text_field :cause_of_death2,:helpText => "Cause of Death 2", :optional=>true,:condition => true,:tt_onLoad =>"showCategory('Section 2 : For hospital death')") rescue "" %>
+                <label for="">Other manners of death</label>
+                <input name="other_manner_of_death" id="other_manner_of_death" class="form-control" type="text" />
+              </div>
 
-              <%= (f.text_field :onset_death_interval2,:helpText => "Cause of Death 2 onset to death Interval", :optional=>true,:condition => "__$('person_cause_of_death2').value.length > 1",:tt_onLoad =>"showCategory('Section 2 : For Hospital death')") rescue "" %>
+              <div class="form-group">
+                <label for="">How did injury/accident occur?</label>
+                <select name="death_by_accident" id="death_by_accident" class="form-control">
+                  <option value=""></option>
+                  <option>Motor vehicle(driver)</option>
+                  <option>Motor vehicle(passenger)</option>
+                  <option>Motor</option>
+                  <option>Drowning</option>
+                  <option>Other</option>
+                </select>
 
-              <%= (f.text_field :cause_of_death3,:helpText => "Cause of Death 3", :optional=>true,:condition => true,:tt_onLoad =>"showCategory('Section 2 : For hospital death')") rescue "" %>
+                <label for="">Other accident specify</label>
+                <input name="other_death_by_accident" id="other_death_by_accident" class="form-control" type="text" />
+              </div>
 
-              <%= (f.text_field :onset_death_interval3,:helpText => "Cause of Death 3 onset to death Interval", :optional=>true,:condition => "__$('person_cause_of_death3').value.length > 1",:tt_onLoad =>"showCategory('Section 2 : For Hospital death')") rescue "" %>
+              <div onclick="hit('cause_of_death_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
+              <div onclick="hit('certification_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
+          </div>
 
-              <%= (f.text_field :cause_of_death4,:helpText => "Cause of Death 4", :optional=>true,:condition => true,:tt_onLoad =>"showCategory('Section 2 : For hospital death')") rescue "" %>
 
-              <%= (f.text_field :onset_death_interval4,:helpText => "Cause of Death 4 onset to death Interval", :optional=>true,:condition => "__$('person_cause_of_death4').value.length > 1",:tt_onLoad =>"showCategory('Section 2 : For Hospital death')") rescue "" %>
+          <div id="certification" class="container custom" style="display: none;">
+            <div class="form-group">
+              <label for="certifier_signed">Certifier Signed</label>
+              <select name="certifier_signed" id="certifier_signed" class="form-control">
+                <option value=""></option>
+                <option>Yes</option>
+                <option>No</option>
+              </select>
+            </div>
 
-              <%= (f.text_field :cause_of_death_conditions,:helpText => "Other significant conditions contributing  to the death, but not related to the disease or condition causing it.", :optional=>true,:condition => true,:tt_onLoad =>"showCategory('Section 2 : For hospital death')") rescue "" %>
-            </sub>
-            <sub id="manner_of_death" name="Manner of Death" >
-              <%= select_tag("person[manner_of_death]", options_for_select(['Natural', 'Accident',
-                                                                            'Suicide', 'Pending Investigation',
-                                                                            'Could not be determined',
-                                                                            'Other'], @person[:manner_of_death]),:helpText =>"Manner of death",:condition => true,:tt_onLoad =>"showCategory('Section 2 : For hospital death')") %>
-              <%= (f.text_field :other_manner_of_death,:helpText => "Other manners of death", :optional=>true, :condition => "__$('person_manner_of_death').value.match('Other') &&__$('person_place_of_death').value.match('Hospital')",:tt_onLoad =>"showCategory('Section 2 : For hospital death')") rescue "" %>
+            <div class="form-group">
+              <label for="">Certifier last name</label>
+              <input name="certifier_last_name" id="certifier_last_name" class="form-control" type="text" />
 
-              <%= select_tag("person[death_by_accident]", options_for_select(['Motor vehicle(driver)', ' Motor vehicle(passenger)',
-                                                                              ' Motor', 'Drowning',
-                                                                              'Other'], @person[:death_by_accident]),:helpText =>"How did injury/accident occur?",:condition => true,:tt_onLoad =>"showCategory('Section 2 : For hospital death')") %>
 
-              <%= (f.text_field :other_death_by_accident,:helpText => "Other accident specify", :optional=>true, :condition => "__$('person_death_by_accident').value.match('Other') && __$('person_place_of_death').value.match('Hospital')",:tt_onLoad =>"showCategory('Section 2 : For hospital death')") rescue "" %>
-            </sub>
-          </section>
-          <section name="Verification">
-            <sub id="hospital_certification" name="Hospital Certification">
-              <%= select_tag("person[certifier_signed]", options_for_select(['Yes','No'], @person[:certifier_signed]),:helpText =>"Certifier Signed",:condition => true,:tt_onLoad =>"showCategory('Section 2 : For hospital deathe')") %>
+              <label for="">Certifier first name</label>
+              <input name="certifier_first_name" id="certifier_first_name" class="form-control" type="text" />
+            </div>
 
-              <%= (f.text_field :date_certifier_signed,:helpText => "Date Certifier signed",
-                                :field_type => "date",:condition => true,:tt_onLoad =>"showCategory('Section 2 : For hospital deathe')") rescue "" %>
+            <div class="form-group">
+              <label for="">Designation of medical certifier</label>
+              <select name="position_of_certifier" id="position_of_certifier" class="form-control">
+                <option value=""></option>
+                <option>Physician</option>
+                <option>Clinic Officer</option>
+                <option>Medical Assistant</option>
+                <option>Other</option>
+              </select>
 
-              <%= (f.text_field :certifier_last_name, :helpText => "Certifier Last Name",:optional => :true,:allowFreeText =>true, :ajaxURL => "/get_last_names?start=",:condition => true,:tt_onLoad =>"showCategory('Section 2 : For hospital death')") rescue "" %>
+              <label for="">Other Designation of medical certifier</label>
+              <input name="other_position_of_certifier" id="other_position_of_certifier" class="form-control" type="text" />
+            </div>
 
-              <%= (f.text_field :certifier_first_name,:helpText => "Certifier First Name",:allowFreeText =>true,:optional => :true,:ajaxURL => "/get_first_names?start=",:condition => true,:tt_onLoad =>"showCategory('Section 2 : For hospital death')") rescue "" %>
-
-              <%= select_tag("person[position_of_certifier]", options_for_select(['Physician', 'Clinic Officer',
-                                                                                  'Medical Assistant','Other'], @person[:position_of_certifier]),:helpText =>"Designation of medical certifier:",:condition => true,:tt_onLoad =>"showCategory('Section 2 : For hospital deathe')") %>
-
-              <%= (f.text_field :other_position_of_certifier,:helpText => "Other Designation of medical certifier", :condition => "__$('person_position_of_certifier').value.match('Other') && true",:tt_onLoad =>"showCategory('Section 2 : For hospital deathe')") rescue "" %>
-            </sub>
-          </section>
-          <input type="hidden" name="id" value="<%= params[:id] %>">
+            <div onclick="hit('manner_of_death_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
+            <div onclick="document.getElementById('frm').submit()" class="btn btn-success pull-right">Save&nbsp;&nbsp;<span class="glyphicon" aria-hidden="true"></span></div>
+          </div>
+      </form>
 
     </td>
 </tr>
@@ -221,4 +283,12 @@
       $(".custom").hide();
       $("#" + id).show();
   }
+
+  function hit(id){
+      var d = document.getElementById(id);
+      d.onmousedown.apply(d);
+      $(d).find("input").prop('checked', 'checked')
+  }
+
+  hit("cause_of_death_radio");
 </script>
