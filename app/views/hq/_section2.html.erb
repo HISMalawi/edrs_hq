@@ -1,4 +1,4 @@
-<table id="summary">
+<table class="summary">
               <tr>
                 <th colspan="9" >Section-2: Medical Certificate of Death and Cause of Death (FOR HEALTH FACILITY DEATH ONLY)</th>
               </tr>
@@ -15,20 +15,20 @@
                       <b>Antecedent cause</b><br/>
                       Morbid conditions, if any, giving rise to the above cause, stating the underlying condition last
                   </td>
-                  <td colspan="3">(a) <font id="cause_of_death_1"></font><br/>Due to (or as a consequence of)</td>
-                  <td colspan="3"></td>
+                  <td colspan="3">(a) <font id="cause_of_death_1"><%= @person.cause_of_death1 rescue "" %></font><br/>Due to (or as a consequence of)</td>
+                  <td colspan="3"><%= @person.onset_death_interval1 rescue "" %></td>
               </tr>
               <tr>   
-                  <td colspan="3">(b) <font id="cause_of_death_2"></font><br/>Due to (or as a consequence of)</td>
-                  <td colspan="3"></td>
+                  <td colspan="3">(b) <font id="cause_of_death_2"><%= @person.cause_of_death2 rescue "" %></font><br/>Due to (or as a consequence of)</td>
+                  <td colspan="3"><%= @person.onset_death_interval2 rescue "" %></td>
               </tr>
               <tr>   
-                  <td colspan="3">(c) <font id="cause_of_death_3"></font><br/>Due to (or as a consequence of)</td>
-                  <td colspan="3"></td>
+                  <td colspan="3">(c) <font id="cause_of_death_3"><%= @person.cause_of_death3 rescue "" %></font><br/>Due to (or as a consequence of)</td>
+                  <td colspan="3"><%= @person.onset_death_interval3 rescue "" %></td>
               </tr>
               <tr>   
-                  <td colspan="3">(d) <font id="cause_of_death_4"></font><br/>Due to (or as a consequence of)</td>
-                  <td colspan="3"></td>
+                  <td colspan="3">(d) <font id="cause_of_death_4"><%= @person.cause_of_death4 rescue "" %></font><br/>Due to (or as a consequence of)</td>
+                  <td colspan="3"><%= @person.onset_death_interval4 rescue "" %></td>
               </tr>
 
               <tr>
@@ -37,40 +37,81 @@
                   <td colspan="3"></td>
               </tr>
               <tr>
-                  <td colspan="8" >
+                  <td colspan="5" >
                     <font style="font-size:11px">This does not mean the mode of dying, e.g heart failure, 
                     respiratory failure. It means the disease, injury, or complication that caused death
                     </font>
                   </td>
+                  <td><b>ICD 10 Code</b></td>
+                  <td colspan="2"><%= @person.icd_10_code rescue ""%></td>
              </tr>
 
              <tr>
                <td rowspan="2">2</td>
                <td rowspan="2">Manner of death</td>
-               <td>Natural</td>
-               <td>Accident</td>
-               <td>Homicide</td>
-               <td>Suicide</td>
-               <td colspan="2">Pending Investigation</td>
+               <% ['Natural','Accident','Homicide','Suicide','Pending Investigation'].each do |manner| %>
+                    <%if @person.manner_of_death.present? && manner == @person.manner_of_death %>
+                          <td><%= manner %> <span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                    <%else%>
+                          <td><%= manner %> <span ></span></td>
+                    <%end%>
+               <%end%>
+               <td></td>
              </tr>
              <tr>
-               <td>Could not be determined</td>
-               <td>Other</td>
-               <td>Specify</td>
-               <td colspan="4"></td>
+                <%if @person.manner_of_death.present? && @person.manner_of_death=="Could not be determined" %>
+                          <td><%="Could not be determined" %> <span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                <%else%>
+                          <td><%= "Could not be determined" %> <span ></span></td>
+                <%end%>
+                <%if @person.manner_of_death.present? && @person.manner_of_death=="Other" %>
+                          <td><%="Other" %> <span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                          <td>Specify</td>
+                          <td colspan="4"><%= @person.other_manner_of_death rescue ""%></td>
+                <%else%>
+                          <td><%= "Other" %> <span ></span></td>
+                          <td>Specify</td>
+                          <td colspan="4"></td>
+                <%end%>
+              
             </tr>
             <tr>
                 <td rowspan="2" style="background-color:#dbdada;">3</td>
                 <td rowspan="2">If accidental death, how did it occur:</td>
-                <td>Motor Vehicle(driver)</td>
-                <td colspan="2">Motor vehivle (passenger)</td>
-                <td colspan="3">Motor vehicle (pedestrian)</td>
+
+                <% if @person.death_by_accident.present? && @person.death_by_accident.match("driver").present? %>
+                    <td>Motor Vehicle(driver)<span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                <%else%>
+                     <td>Motor Vehicle(driver)</td>
+                <%end%>
+                 <% if @person.death_by_accident.present? && @person.death_by_accident.match("passenger").present? %>
+                    <td  colspan="2">Motor Vehicle(passenger)<span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                <%else%>
+                     <td  colspan="2">Motor Vehicle(passenger)</td>
+                <%end%>
+
+                 <% if @person.death_by_accident.present? && @person.death_by_accident.match("pedestrian").present? %>
+                    <td  colspan="3">Motor Vehicle(pedestrian)<span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                <%else%>
+                     <td  colspan="3">Motor Vehicle(pedestrian)</td>
+                <%end%>
             </tr>
             <tr>
-                <td>Drowning</td>
-                <td>Other</td>
-                <td>Specifiy</td>
-                <td colspan="3"></td>
+                 <% if @person.death_by_accident.present? && @person.death_by_accident.match("Drowning").present? %>
+                    <td>Drowning<span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                <%else%>
+                     <td>Drowning</td>
+                <%end%>
+                 <% if @person.death_by_accident.present? && @person.death_by_accident.match("Other").present? %>
+                    <td>Other<span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                     <td>Specifiy</td>
+                    <td colspan="3"><%= @person.other_death_by_accident rescue ""%></td>
+                <%else%>
+                     <td>Other</td>
+                      <td>Specifiy</td>
+                      <td colspan="3"></td>
+                <%end%>
+               
             </tr>
 
             <tr>
@@ -79,17 +120,28 @@
             </tr>
             <tr>
               <td>Date</td>
-              <td></td>
+              <td><%= Date.pars(@person.date_certifier_signed.to_s).strftime("%d/%b/%Y") rescue "" %> </td>
               <td>Name</td>
-              <td colspan="4"></td>
+              <td colspan="4"> <%= @person.certifier_first_name %> <%@person.certifier_last_name%></td>
             </tr>
             <tr>
                 <td>Designation of the medical certifier</td>
-                <td>Physician</td>
-                <td>Clinical Officer</td>
-                <td>Medical assistant</td>
-                <td>Other</td>
-                <td>Specify</td>
-                <td></td>
+                <%['Physician','Clinical Officer','Medical Assistant'].each do |position| %>
+                    <%if @person.position_of_certifier.present? && position == @person.position_of_certifier %>
+                          <td><%= position %> <span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                    <%else%>
+                          <td><%= position %> <span ></span></td>
+                    <%end%>
+                <%end%>
+                <%if @person.position_of_certifier.present? && @person.position_of_certifier =="Other" %>
+                          <td><%= "Other" %> <span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                          <td>Specify</td>
+                          <td><%= @person.other_position_of_certifier recsue "" %></td>
+                    <%else%>
+                          <td><%= "Other" %> <span ></span></td>
+                          <td>Specify</td>
+                          <td></td>
+                    <%end%>
+                
             </tr>
       </table>
