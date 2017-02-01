@@ -452,9 +452,9 @@ class Person < CouchRest::Model::Base
   property :cause_of_death3, String
   property :cause_of_death4, String
   property :onset_death_interval1, String
-  property :onset_death_death_interval2, String
-  property :onset_death_death_interval3, String
-  property :onset_death_death_interval4, String
+  property :onset_death_interval2, String
+  property :onset_death_interval3, String
+  property :onset_death_interval4, String
   property :cause_of_death_conditions, String
   property :icd_10_code, String
   property :manner_of_death, String

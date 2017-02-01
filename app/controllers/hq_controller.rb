@@ -41,13 +41,13 @@ class HqController < ApplicationController
     end
 
     if has_role( "Add cause of death") && results.length > 0
-      cause_available = ['cause_of_death1',                       'cause_of_death2',
+      cause_available = ['cause_of_death1',     'cause_of_death2',
       'cause_of_death3',                        'cause_of_death4',
-      'onset_death_interval1',       'onset_death_death_interval2',
-      'onset_death_death_interval3', 'onset_death_death_interval4',
-      'cause_of_death_conditions',               'manner_of_death',
+      'onset_death_interval1',            'onset_death_interval2',
+      'onset_death_interval3',            'onset_death_interval4',
+      'cause_of_death_conditions',              'manner_of_death',
       'other_manner_of_death',                 'death_by_accident',
-      'other_death_by_accident'].collect{|key| eval("results.last.#{key}")}.compact.length > 0 rescue false
+      'other_death_by_accident', 'icd_10_code'].collect{|key| eval("results.last.#{key}")}.compact.length > 0 rescue false
 
       if cause_available
         redirect_to "/cause_of_death_preview?person_id=#{results.last.id}" and return
@@ -74,6 +74,7 @@ class HqController < ApplicationController
   end
 
   def cause_of_death
+    @title = "Cause of death"
     @person = Person.find(params[:person_id])
   end
 

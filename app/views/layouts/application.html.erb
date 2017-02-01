@@ -387,7 +387,15 @@
     <% end %>
   </div><!-- /.container-fluid -->
 </nav>
-
+<% if flash[:success].present? %>
+    <div class="alert alert-success" style="text-align: center; width: 100%;margin:0px;padding:0px;">
+      <%=flash[:success]%>
+    </div>
+<% elsif flash[:error].present?%>
+    <div class="alert alert-danger" style="text-align: center; width: 100%;margin:0px;padding:0px;">
+      <%=flash[:error]%>
+    </div>
+<% end %>
 <div class="container main-container main-holder" style="background: white;
         box-shadow: 6px 9px 5px 0px rgba(0,0,0,0.75);
         height: 610px;padding: 2px !important; overflow: auto;width: 80%;
