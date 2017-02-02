@@ -239,7 +239,7 @@ class CaseController < ApplicationController
         drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
         den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
         first_name: person.first_name,
-        middle_name:  person.last_name,
+        middle_name:  person.middle_name,
         last_name:  person.last_name,
         dob:        person.birthdate.strftime("%d/%b/%Y"),
         gender:     person.gender,

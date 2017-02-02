@@ -133,38 +133,45 @@
           <div class="radio radio-primary" onmousedown="showControls('details_of_deceased')">
             <input type="radio" name="radio" id="radio1">
             <label for="radio1">
-              By Person Details
+              By Personal Details of Deceased
             </label>
           </div>
-          <div class="radio radio-primary" onmousedown="showControls('')">
+          <div class="radio radio-primary" onmousedown="showControls('home_address')">
             <input type="radio" name="radio" id="radio2">
             <label for="radio2">
               By Home Address
             </label>
           </div>
 
-          <div class="radio radio-primary" onmousedown="showControls('')">
+          <div class="radio radio-primary" onmousedown="showControls('mother')">
             <input type="radio" name="radio" id="radio3">
             <label for="radio3">
-              By Mother details
+              By Name of Mother
             </label>
           </div>
 
-          <div class="radio radio-primary" onmousedown="showControls('')">
+          <div class="radio radio-primary" onmousedown="showControls('father')">
             <input type="radio" name="radio" id="radio4">
             <label for="radio4">
-              By Father Details
+              By Name of Father
             </label>
           </div>
 
-          <div class="radio radio-primary" onmousedown="showControls('')">
+          <div class="radio radio-primary" onmousedown="showControls('informant_name')">
+            <input type="radio" name="radio" id="radio7">
+            <label for="radio7">
+              By Name Informant
+            </label>
+          </div>
+
+          <div class="radio radio-primary" onmousedown="showControls('informant_address')">
             <input type="radio" name="radio" id="radio5">
             <label for="radio5">
               By Informant Address
             </label>
           </div>
 
-          <div class="radio radio-primary" onmousedown="showControls('')">
+          <div class="radio radio-primary" onmousedown="showControls('place_of_death')">
             <input type="radio" name="radio" id="radio6">
             <label for="radio6">
               By Place of death
@@ -201,28 +208,167 @@
             <form class="form-horizontal" role="form" action="/do_search">
               <input name="search_type" value="details_of_deceased" type="hidden" type="text" />
               <div class="form-group">
-                <label for="contain">First name </label>
-                <input id="first_name" class="form-control" type="text" />
+                <label for="contain">First Name </label>
+                <input name="first_name" id="first_name" class="form-control" type="text" />
               </div>
 
               <div class="form-group">
-                <label for="contain">Last name </label>
-                <input id="last_name" class="form-control" type="text" />
+                <label for="contain">Last Name </label>
+                <input name="last_name" id="last_name" class="form-control" type="text" />
               </div>
 
               <div class="form-group">
-                <label for="filter">Gender</label>
-                <select id="gender" class="form-control">
-                  <option value="0"></option>
-                  <option value="1">Male</option>
-                  <option value="2">Female</option>
+                <label for="filter">Sex</label>
+                <select name="gender" id="gender" class="form-control">
+                  <option value=""></option>
+                  <option>Male</option>
+                  <option>Female</option>
                 </select>
               </div>
 
               <button type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
             </form>
-        </div>
+          </div>
 
+          <div class="container custom" id="mother">
+            <form class="form-horizontal" role="form" action="/do_search">
+              <input name="search_type" value="mother" type="hidden" type="text" />
+              <div class="form-group">
+                <label for="mother_first_name">Mother First Name </label>
+                <input name="mother_first_name" id="mother_first_name" class="form-control" type="text" />
+              </div>
+
+              <div class="form-group">
+                <label for="mother_last_name">Mother Last Name </label>
+                <input name="mother_last_name" id="mother_last_name" class="form-control" type="text" />
+              </div>
+
+              <button type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </form>
+          </div>
+
+          <div class="container custom" id="informant_name">
+            <form class="form-horizontal" role="form" action="/do_search">
+              <input name="search_type" value="informant_name" type="hidden" type="text" />
+              <div class="form-group">
+                <label for="informant_first_name">Informant First Name </label>
+                <input name="informant_first_name" id="informant_first_name" class="form-control" type="text" />
+              </div>
+
+              <div class="form-group">
+                <label for="informant_last_name">Informant Last Name </label>
+                <input name="informant_last_name" id="informant_last_name" class="form-control" type="text" />
+              </div>
+
+              <button type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </form>
+          </div>
+
+
+          <div class="container custom" id="father">
+            <form class="form-horizontal" role="form" action="/do_search">
+              <input name="search_type" value="father" type="hidden" type="text" />
+              <div class="form-group">
+                <label for="father_first_name">Father First Name </label>
+                <input name="father_first_name" id="father_first_name" class="form-control" type="text" />
+              </div>
+
+              <div class="form-group">
+                <label for="father_last_name">Father Last Name </label>
+                <input name="father_last_name" id="father_last_name" class="form-control" type="text" />
+              </div>
+
+              <button type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </form>
+          </div>
+
+          <div class="container custom" id="home_address">
+            <form class="form-horizontal" role="form" action="/do_search">
+              <input name="search_type" value="home_address" type="hidden" type="text" />
+              <div class="form-group">
+                <label for="home_country">Home Country</label>
+                <input name="home_country" id="home_country" class="form-control" type="text" />
+              </div>
+
+              <div class="form-group">
+                <label for="home_district">Home District</label>
+                <input name="home_district" id="home_district" class="form-control" type="text" />
+              </div>
+
+              <div class="form-group">
+                <label for="home_ta">Home TA</label>
+                <input name="home_ta" id="home_ta" class="form-control" type="text" />
+              </div>
+
+              <div class="form-group">
+                <label for="home_village">Home Village</label>
+                <input name="home_village" id="home_village" class="form-control" type="text" />
+              </div>
+              <button type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </form>
+          </div>
+
+          <div class="container custom" id="place_of_death">
+            <form class="form-horizontal" role="form" action="/do_search">
+              <input name="search_type" value="place_of_death" type="hidden" type="text" />
+
+              <div class="form-group">
+                <label for="filter">Place of Death</label>
+                <select name="gender" id="gender" class="form-control">
+                  <option value=""></option>
+                  <option>Home</option>
+                  <option>Hospital/Institution</option>
+                  <option>Other</option>
+
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="place_of_death_district">District of Death</label>
+                <input name="place_of_death_district" id="place_of_death_district" class="form-control" type="text" />
+              </div>
+
+              <div class="form-group">
+                <label for="place_of_death_ta">TA of Death</label>
+                <input name="place_of_death_ta" id="place_of_death_ta" class="form-control" type="text" />
+              </div>
+
+              <div class="form-group">
+                <label for="village_of_death">Village of Death</label>
+                <input name="village_of_death" id="village_of_death" class="form-control" type="text" />
+              </div>
+
+              <div class="form-group">
+                <label for="place_of_death_hospital">Hospital of Death</label>
+                <input name="place_of_death_hospital" id="place_of_death_hospital" class="form-control" type="text" />
+              </div>
+
+
+              <div class="form-group">
+                <label for="other_place_of_death">Other Place of Death</label>
+                <input name="other_place_of_death" id="other_place_of_death" class="form-control" type="text" />
+              </div>
+              <button type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </form>
+          </div>
+
+
+          <div class="container custom" id="informant_address">
+            <form class="form-horizontal" role="form" action="/do_search">
+              <input name="search_type" value=informant_address type="hidden" type="text" />
+
+              <div class="form-group">
+                <label for="informant_district">Current District of Residence</label>
+                <input name="informant_district" id="informant_district" class="form-control" type="text" />
+              </div>
+
+              <div class="form-group">
+                <label for="informant_ta">TA of Residence</label>
+                <input name="informant_ta" id="informant_ta" class="form-control" type="text" />
+              </div>
+              <button type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </form>
+          </div>
 
     </td>
 </tr>

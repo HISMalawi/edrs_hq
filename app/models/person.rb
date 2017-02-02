@@ -624,6 +624,9 @@ class Person < CouchRest::Model::Base
 
     view :by_last_name_code
 
+    view :by_last_name_and_first_name
+
+    view :by_last_name_and_first_name_and_gender
 
     view :by_specific_birthdate,
          :map => "function(doc) {

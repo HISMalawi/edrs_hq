@@ -38,6 +38,12 @@ class HqController < ApplicationController
         PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH REGISTRATION NUMBER"]).each do |identifier|
           results << identifier.person
         end
+      when "details_of_deceased"
+        last_name = params[:last_name].encrypt
+        first_name = params[:first_name].encrypt
+        gender = params[:gender]
+        results = Person.by_last_name_and_first_name_and_gender.key([last_name, first_name, gender]);
+
     end
 
     if has_role( "Add cause of death") && results.length > 0
@@ -62,7 +68,7 @@ class HqController < ApplicationController
           drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
           den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
           first_name: person.first_name,
-          middle_name:  person.last_name,
+          middle_name:  person.middle_name,
           last_name:  person.last_name,
           dob:        person.birthdate.strftime("%d/%b/%Y"),
           gender:     person.gender,
