@@ -16,7 +16,7 @@ if ARGV.length > 2
 
 	file = File.open("#{ARGV[2]}/#{ARGV[1]}.png", "wb")
 	
-	file.write barcode.to_png(:height => 50, :xdim => 2)
+	file.write barcode.to_png(:height => 50, :xdim => 1)
 
   file.close
 
