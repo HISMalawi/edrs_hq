@@ -894,9 +894,9 @@ class Person < CouchRest::Model::Base
                               doc['gender'],
                               doc['date_of_death'], 
                               doc['birthdate'], 
-                              doc['place_of_death_district'],
+                              doc['place_of_death'],
                               doc['informant_first_name_code'],
-                              doc['informant_first_last_code']], 1);
+                              doc['informant_last_name_code']], 1);
                     }
                 }"
     view :by_demographics_with_place,
