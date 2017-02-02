@@ -1,0 +1,135 @@
+<style>
+
+    .record td {
+        padding: 10px !important;
+    }
+
+    label {
+        font-weight: normal !important;
+    }
+
+</style>
+
+<table style="margin: auto;">
+  <tr>
+    <td>
+
+      <%= form_for(@property, :url => "/create_property") do |f| %>
+
+          <% if @property.errors.any? %>
+              <div id="error_explanation">
+                <h2><%= pluralize(@property.errors.count, "error") %> prohibited this property from being saved:</h2>
+
+                <ul>
+                  <% @property.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+          <% end %>
+
+          <table class="record" cellpadding="5" style="margin: auto; margin-top: 40px;">
+            <tr>
+              <th colspan="3" style="text-align: center !important; border-bottom: 1px solid #666;
+                      padding: 10px !important; font-size: 18px;">
+                Application Settings
+              </th>
+            </tr>
+          
+            <tr>
+              <td align="right">
+                <%= f.label :Admin_password %>
+              </td>
+              <td>
+                :
+              </td>
+              <td>
+                <%= f.password_field "admin_password", :class => "input_cell", :placeholder => "Admin Password", :required => true, :textCase => "lower" %>
+              </td>
+            </tr>
+       
+
+            <tr>
+              <td align="right">
+                <%= f.label :Signatory_username %>
+              </td>
+              <td>
+                :
+              </td>
+              <td>
+               <%= f.text_field "value", :class => "input_cell", :placeholder => "Signatory Username", :required => true, :textCase => "lower" %>
+              </td>
+            </tr>
+
+            <tr>
+              <td align="right">
+                <%= f.label :Signatory_password %>
+              </td>
+              <td>
+                :
+              </td>
+              <td>
+               <%= f.password_field "signatory_password", :class => "input_cell", :placeholder => "Signatory Password", :required => true, :textCase => "lower" %>
+              </td>
+            </tr>
+
+          </table>
+
+      <% end %>
+
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <button id="btnAction" class="blue" style="cursor: pointer;
+              border: 1px solid #fff; padding: 5px; border-radius: 50px; padding-top: 7px; z-index: 1200;
+              font-size: 14px; min-height: 25px;" onclick="submitForm()">
+        Save Settings
+      </button>
+
+    </td>
+  </tr>
+</table>
+
+<script>
+    // var good = <%= request.path.match(/new/) ? false : true %>
+
+        function submitForm() {
+        
+        if (validateForm()) {
+            document.getElementsByTagName('form')[0].submit();
+        }
+
+    }
+
+    function validateForm() {
+        admin_password = document.getElementById('global_property_admin_password');
+        signatory_username = document.getElementById('global_property_value');
+        signatory_password = document.getElementById('global_property_signatory_password');
+        
+        if (admin_password.value == '') {
+            showMsg("Please enter admin password ...");
+            return false;
+        } else if (signatory_username.value == '') {
+            showMsg("Please enter signatory username ...");
+            return false;
+        } else if (signatory_password.value == '') {
+            showMsg("Please enter signatory password ...");
+            return false;
+        }
+
+        return true;
+    }
+
+
+</script>

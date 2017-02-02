@@ -92,7 +92,7 @@
               </td>
             </tr>
 
-            <% @roles = [""] + Role.by_level.keys(["HQ"]).each.collect { |x| x.role }.uniq %>
+            <% @roles = [""] + Role.by_level.keys(["HQ"]).each.collect { |x| x.role }.uniq + ["Certificate Signatory"] %>
 
             <tr class="table-row">
               <td align="right" class="table-cell">
@@ -156,7 +156,9 @@
               </td>
 
               <td class="table-cell">
-                <%= f.file_field :signature, :class => "form-control", :onchange =>"validateFiles(this);", :data => {:max_file_size => 1.megabyte},  :placeholder => "Signature", :optional => true, :disabled => "disabled" %>
+                <%= f.file_field :signature, :class => "form-control", :onchange =>"validateFiles(this);", 
+                		 :data => {:max_file_size => 1.megabyte},  :placeholder => "Signature", 
+                		 :optional => true, :disabled => "disabled" %>
               </td>
             </tr>
             
@@ -167,7 +169,9 @@
             <%#= f.hidden_field :_rev %>
             <%#= f.hidden_field :created_at %>
             <%#= f.hidden_field :updated_at %>
-            <%#= f.submit :id => "btnAction", :class => "buttons blue", :style => "position: absolute; right: 160px; bottom: 20px;", :onclick => "submitForm()"  %>
+            <%#= f.submit :id => "btnAction", :class => "buttons blue", 
+            		  :style => "position: absolute; right: 160px; bottom: 20px;", 
+            		  :onclick => "submitForm()"  %>
           </div>
 
       <% end %>

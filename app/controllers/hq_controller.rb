@@ -209,4 +209,82 @@ class HqController < ApplicationController
   
   end
   
+  def signature
+    @property = GlobalProperty.new
+    @section = "Change Signature"
+    @user = User.new
+    @signatory =  GlobalProperty.find("signatory").value rescue nil
+    render :layout => "application"
+  end
+  
+  
+  def paper_size
+    @property = GlobalProperty.new
+    @section = "Change Paper Size"
+    @user = User.new
+    @papersize =  GlobalProperty.find("paper_size").value rescue nil
+    render :layout => "application"
+  end
+  
+  def create_property
+    
+    papersize = params[:property][:paper_setting] rescue nil
+    admin_password = params[:global_property][:admin_password] rescue nil
+    signatory_password = params[:global_property][:signatory_password] rescue nil
+    signatory_username =  params[:global_property][:value] rescue nil
+    
+    if papersize.present?
+        @papersize =  GlobalProperty.find("paper_size") rescue nil
+				if @papersize.blank?
+				  GlobalProperty.create(setting: "paper_size", value: params[:property][:paper_setting])
+				else
+				  @papersize.update_attributes(value: params[:property][:paper_setting])
+				  flash[:notice] = "Changed paper size"
+				end
+			
+    elsif admin_password.present? && signatory_password.present? && signatory_username.present?
+         
+        user = User.current_user
+        
+        if user.role.downcase == "system administrator" && user.password_matches?(admin_password)
+       
+          signatory = User.by_username.key(signatory_username).first rescue nil
+          if signatory.present?
+        
+           if signatory.role.downcase == "certificate signatory" && signatory.password_matches?(signatory_password)
+              @signatory =  GlobalProperty.find("signatory") rescue nil
+							if @signatory.blank?
+								GlobalProperty.create(setting: "signatory", value: signatory_username)
+								flash[:notice] = "Assigned signatory"
+							else
+								@signatory.update_attributes(value: signatory_username)
+								flash[:notice] = "Updated signatory"
+							end
+				  
+           else
+           	flash[:error] = "Wrong signatory or wrong signatory password"
+           end
+          
+          else
+           flash[:error] = "Unauthorised user" 
+          end
+        else
+          flash[:error] = "Unauthorised user"
+        end
+        
+    end
+    
+    redirect_to "/" and return	
+    
+  end
+  
+
+
+
+
+
+
+
+
+  
 end
