@@ -5,12 +5,26 @@
     }
 
     label {
-        font-weight: normal !important;
+        padding-right: 20px;
+    }
+
+    .table-cell{
+        padding: 0px !important;
+        height: 40px !important;
+        max-height: 40px !important;
+
+    }
+
+    .form-control{
+        margin: 0px !important;
+        margin-left: 25px;
+        width: 60%;
+        border-radius: 3px;
     }
 
 </style>
 
-<table style="margin: auto;">
+<table class="table" style="margin: auto; width: 600px" >
   <tr>
     <td>
 
@@ -28,48 +42,39 @@
               </div>
           <% end %>
 
-          <table class="record" cellpadding="5" style="margin: auto; margin-top: 40px;">
-            <tr>
+          <table class="table table-condensed table-striped table-bordered record" cellpadding="5" style="margin: auto; margin-top: 40px;">
+            <tr class="table-row">
               <th colspan="3" style="text-align: center !important; border-bottom: 1px solid #666;
                       padding: 10px !important; font-size: 18px;">
                 Application Settings
               </th>
             </tr>
           
-            <tr>
+            <tr class="table-row">
               <td align="right">
                 <%= f.label :Admin_password %>
               </td>
               <td>
-                :
-              </td>
-              <td>
-                <%= f.password_field "admin_password", :class => "input_cell", :placeholder => "Admin Password", :required => true, :textCase => "lower" %>
+                <%= f.password_field "admin_password", :class => "form-control", :placeholder => "Admin Password", :required => true, :textCase => "lower" %>
               </td>
             </tr>
        
 
-            <tr>
+            <tr class="table-row">
               <td align="right">
                 <%= f.label :Signatory_username %>
               </td>
               <td>
-                :
-              </td>
-              <td>
-               <%= f.text_field "value", :class => "input_cell", :placeholder => "Signatory Username", :required => true, :textCase => "lower" %>
+               <%= f.text_field "value", :class => "form-control", :placeholder => "Signatory Username", :required => true, :textCase => "lower" %>
               </td>
             </tr>
 
-            <tr>
+            <tr class="table-row">
               <td align="right">
                 <%= f.label :Signatory_password %>
               </td>
               <td>
-                :
-              </td>
-              <td>
-               <%= f.password_field "signatory_password", :class => "input_cell", :placeholder => "Signatory Password", :required => true, :textCase => "lower" %>
+               <%= f.password_field "signatory_password",:class => "form-control", :placeholder => "Signatory Password", :required => true, :textCase => "lower" %>
               </td>
             </tr>
 
@@ -79,19 +84,10 @@
 
     </td>
   </tr>
+  
   <tr>
     <td>
-      &nbsp;
-    </td>
-  </tr>
-  <tr>
-    <td>
-      &nbsp;
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <button id="btnAction" class="blue" style="cursor: pointer;
+      <button id="btnAction" class="btn btn-success pull-right" style="cursor: pointer; margin-right: 2px;" style="cursor: pointer;
               border: 1px solid #fff; padding: 5px; border-radius: 50px; padding-top: 7px; z-index: 1200;
               font-size: 14px; min-height: 25px;" onclick="submitForm()">
         Save Settings
