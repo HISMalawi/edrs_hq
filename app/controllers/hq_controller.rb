@@ -141,19 +141,14 @@ class HqController < ApplicationController
      
     @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
     
-    render :layout => false
-    
-  end
-  
-  def death_certificate_print
-    @person = Person.find(params[:id])
-    
-    if CONFIG['pre_printed_paper'] == true
+    if CONFIG['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A4"
        render :layout => false, :template => 'hq/death_certificate_print'
+    elsif CONFIG['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A5"
+       render :layout => false, :template => 'hq/death_certificate_print_a5'
     else
-       render :layout => false 
+       render :layout => false
     end
-  
+    
   end
   
   def do_print_these

@@ -49,7 +49,7 @@
 
     %>
     
-    <% raw_sig = File.read(Rails.root.join("public","uploads",User.find(GlobalProperty.find("signatory").value).signature)) rescue nil %>        
+    <% raw_sig = File.read(Rails.root.join("public","uploads",User.by_username.key(GlobalProperty.find("signatory").value).first.signature)) rescue nil %>        
     <% if raw_sig
       @sig = Base64.encode64(raw_sig)
      end %>
@@ -72,7 +72,7 @@
             Death Entry Number
           </td>
           <td align="left">
-            <%= @person[:death_entry_number] %>
+            <%= @den %>
           </td>
         </tr>
         <tr>
@@ -83,7 +83,7 @@
             Registration Number
           </td>
           <td align="left">
-            <%= @person[:death_registration_number]  %>
+            <%= @drn %>
           </td>
         </tr
         <tr>
@@ -149,15 +149,16 @@
 
                case @person["place_of_death"]
                  when "Home(Place of residence)"
-                    place_of_death = "#{@person["place_of_death_village"]}#{(!@person["place_of_death_village"].blank? ?
-                            ", " : "")}#{@person["place_of_death_ta"]}#{(!@person["place_of_death_ta"].blank? ?
-                            ", " : "")}#{@person["place_of_death_district"]}"
+                    place_of_death = "#{@person.place_of_death_village}#{(!@person.place_of_death_village.blank? ?
+                            ", " : "")}#{@person.place_of_death_ta}#{(!@person.place_of_death_ta.blank? ?
+                            ", " : "")}#{@person.place_of_death_district}"
 
                  when "Hospital/Institution"
-                    place_of_death = "#{@person["hospital_of_death_name"]}"
+
+                    place_of_death = "#{@person.hospital_of_death}"
 
                  when "Other"
-                    place_of_death = "#{@person["other_place_of_death"]} " + @person["place_of_death_district"]
+                    place_of_death = "#{@person.other_place_of_death} " + @person.place_of_death_district
 
                  end
             %>
@@ -200,6 +201,15 @@
             <%= (!@person[:created_at].blank? ? @person[:created_at].to_date.strftime("%B, %Y") : "") %>
           </td>
         </tr>
+        
+       <tr><td colspan="3" align="center" valign="middle"><p style="font-size: 18px; font-weight: normal;"><br>I hereby certify the above to be a true and correct extract from the<br/>
+          Death Register kept at NRB.<br/><br/>
+          
+          Dated this <%= Date.today.strftime("%d").to_i rescue nil %><sup><%= Date.today.strftime("%d").to_i.ordinalize.gsub(/\d+/, "") rescue nil %></sup> 
+          <%= Date.today.strftime("%B") rescue nil %>, <%= Date.today.strftime("%Y") rescue nil %>
+          
+      </p></td></tr> 
+        
     </table>
     </div>
     	
