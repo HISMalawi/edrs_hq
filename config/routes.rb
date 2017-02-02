@@ -81,6 +81,14 @@ Rails.application.routes.draw do
 
   get 'hq/death_certificate_preview'
 
+  #global property routes
+
+  get "/signature" => "hq#signature"
+  
+  get "/paper_size" => "hq#paper_size"
+
+  post "/create_property" => "hq#create_property"
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
