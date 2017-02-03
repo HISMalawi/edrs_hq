@@ -287,22 +287,30 @@
               <input name="search_type" value="home_address" type="hidden" type="text" />
               <div class="form-group">
                 <label for="home_country">Home Country</label>
-                <input name="home_country" id="home_country" class="form-control" type="text" />
+                    <select name="home_country" id="home_country" onchange="ajaxify('/districts', 'home_district', ['home_district', 'home_ta', 'home_village'])" class="form-control" type="text" >
+                    </select>
               </div>
 
               <div class="form-group">
                 <label for="home_district">Home District</label>
-                <input name="home_district" id="home_district" class="form-control" type="text" />
+                <select name="home_district" id="home_district"
+                        onchange="ajaxify('/tas?district={home_district}', 'home_ta', ['home_ta', 'home_village'])" class="form-control conditional" type="text" >
+                </select>
               </div>
 
               <div class="form-group">
                 <label for="home_ta">Home TA</label>
-                <input name="home_ta" id="home_ta" class="form-control" type="text" />
+                <select name="home_ta" id="home_ta"
+                        onchange="ajaxify('/villages?ta={home_ta}&district={home_district}', 'home_village', ['home_village'])" class="form-control conditional" type="text">
+
+                </select>
               </div>
 
               <div class="form-group">
                 <label for="home_village">Home Village</label>
-                <input name="home_village" id="home_village" class="form-control" type="text" />
+                <select name="home_village" id="home_village" class="form-control conditional" type="text">
+
+                </select>
               </div>
               <button type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
             </form>
@@ -358,13 +366,23 @@
               <input name="search_type" value=informant_address type="hidden" type="text" />
 
               <div class="form-group">
-                <label for="informant_district">Current District of Residence</label>
-                <input name="informant_district" id="informant_district" class="form-control" type="text" />
+                <label for="informant_district">Informant Current District of Residence</label>
+                <select name="informant_district" id="informant_district"
+                        onchange="ajaxify('/tas?district={informant_district}', 'informant_ta', ['informant_ta', 'informant_village'])" class="form-control conditional" type="text" >
+                </select>
               </div>
 
               <div class="form-group">
-                <label for="informant_ta">TA of Residence</label>
-                <input name="informant_ta" id="informant_ta" class="form-control" type="text" />
+                <label for="informant_ta">Informant TA of Residence</label>
+                <select name="informant_ta" id="informant_ta"
+                        onchange="ajaxify('/villages?district={informant_district}&ta={informant_ta}', 'informant_village', ['informant_village'])" class="form-control conditional" type="text" >
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="informant_village">Informant Village of Residence</label>
+                <select name="informant_village" id="informant_village" class="form-control" type="text">
+                </select>
               </div>
               <button type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
             </form>
@@ -378,4 +396,71 @@
       $(".custom").hide();
       $("#" + id).show();
   }
+
+  function __$(id){
+    return document.getElementById(id);
+  }
+
+ function ajaxify(url, id, clear_arr){
+
+      if (url.match(/{(.*?)}/)){
+          url = url.replace(/{(.*?)}/, __$(url.match(/{(.*?)}/)[1]).value);
+          if (url.match(/{(.*?)}/)){
+              url = url.replace(/{(.*?)}/, __$(url.match(/{(.*?)}/)[1]).value);
+          }
+      }
+      jQuery.ajax(
+              {
+                  url: url,
+                  success: function(results){
+                      results = JSON.parse(results);
+                      for(var i = 0; i < clear_arr.length; i ++){
+                        jQuery("#" + clear_arr[i]).val("");
+                      }
+
+                      var parent = document.getElementById(id);
+                      jQuery(parent).empty();
+
+                      for(var i = 0; i < results.length; i ++){
+                        var option = document.createElement("option");
+                          option.innerHTML = results[i];
+                          parent.appendChild(option);
+                      }
+
+                  },
+                  error: function(e){
+                    alert("Something Went Wrong!");
+                  }
+              }
+      )
+  }
+
+  ajaxify("/nationalities", 'home_country', ["home_district", "home_ta", "home_village"])
+  ajaxify("/districts", 'informant_district', ["informant_district", "informant_ta", "informant_village"])
+
+  var h = {
+      "home_district" : ['home_country', 'Malawian'],
+      "home_ta" : ['home_country', 'Malawian'],
+      "home_village" : ['home_country', 'Malawian']
+  }
+
+  function checkConditions() {
+      var conditionals = document.getElementsByClassName("conditional");
+      for(var k = 0 in h){
+          var node = document.getElementById(k);
+          if(!node){continue};
+          var parent = h[k][0];
+          var value = h[k][1];
+          if(document.getElementById(parent).value != value){
+              node.setAttribute('disabled', true);
+              jQuery(node).val("");
+          }else{
+              node.removeAttribute('disabled');
+          }
+      }
+  }
+
+  var interval = setInterval("checkConditions()", 200);
+
+
 </script>

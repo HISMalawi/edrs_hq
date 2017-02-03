@@ -81,6 +81,16 @@ Rails.application.routes.draw do
 
   get 'hq/death_certificate_preview'
 
+  get '/facilities' => "hq#facilities"
+
+  get '/nationalities' => "hq#nationalities"
+
+  get '/districts' => "hq#districts"
+
+  get "/tas" => "hq#tas"
+
+  get "/villages" => "hq#villages"
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
