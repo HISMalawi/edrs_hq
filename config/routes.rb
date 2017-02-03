@@ -81,6 +81,15 @@ Rails.application.routes.draw do
 
   get 'hq/death_certificate_preview'
 
+  get '/facilities' => "hq#facilities"
+
+  get '/nationalities' => "hq#nationalities"
+
+  get '/districts' => "hq#districts"
+
+  get "/tas" => "hq#tas"
+
+  get "/villages" => "hq#villages"
   #global property routes
 
   get "/signature" => "hq#signature"

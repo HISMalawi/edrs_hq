@@ -624,6 +624,9 @@ class Person < CouchRest::Model::Base
 
     view :by_last_name_code
 
+    view :by_last_name_and_first_name
+
+    view :by_last_name_and_first_name_and_gender
 
     view :by_specific_birthdate,
          :map => "function(doc) {
@@ -941,6 +944,27 @@ class Person < CouchRest::Model::Base
     filter :facility_sync, "function(doc,req) {return req.query.facility_code == doc.facility_code}"
 
     filter :district_sync, "function(doc,req) {return req.query.district_code == doc.district_code}"
+
+    view :by_home_country_id,
+         :map => "function(doc) {
+                  if (doc['type'] == 'Person' && doc['home_country_id'] != null) {
+                    emit(doc['home_country_id'], 1);
+                  }
+                }"
+
+    view :by_home_village_id,
+         :map => "function(doc) {
+                  if (doc['type'] == 'Person' && doc['home_village_id'] != null) {
+                    emit(doc['home_village_id'], 1);
+                  }
+                }"
+
+    view :by_informant_current_village_id,
+         :map => "function(doc) {
+                  if (doc['type'] == 'Person' && doc['informant_current_village_id'] != null) {
+                    emit(doc['informant_current_village_id'], 1);
+                  }
+                }"
 
   end
 
