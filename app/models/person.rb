@@ -238,7 +238,7 @@ class Person < CouchRest::Model::Base
 
           informant_village = Village.by_ta_id_and_name.key([informant_ta.id,params[:informant_current_village]]).first
 
-          params[:informant_village_id] = informant_village.id
+          params[:informant_current_village_id] = informant_village.id
         end
 
       end
@@ -381,7 +381,7 @@ class Person < CouchRest::Model::Base
   end
 
   def home_country
-    return Nationality.find(self.home_country_id).name
+    return Nationality.find(self.home_country_id).nationality
   end
 
   def home_district
@@ -468,7 +468,7 @@ class Person < CouchRest::Model::Base
   property :current_village_id, String
   property :current_ta_id, String
   property :current_district_id, String
-  property :died_while_pegnant, String
+  property :died_while_pregnant, String
   property :updated_by, String
   property :voided_by, String
   property :voided_date, Time
@@ -699,8 +699,8 @@ class Person < CouchRest::Model::Base
 
     view :by_hospital_of_death,
          :map => "function(doc) {
-                  if (doc['type'] == 'Person' && doc['hospital_of_death_name'] != null) {
-                    emit(doc['hospital_of_death_name'], 1);
+                  if (doc['type'] == 'Person' && doc['hospital_of_death'] != null) {
+                    emit(doc['hospital_of_death'], 1);
                   }
                 }"
 
