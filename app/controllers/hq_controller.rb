@@ -272,8 +272,8 @@ class HqController < ApplicationController
         (today - 3.months), (today - 2.months), (today - 1.months), (today)] .each do |date|
 
         status = ["DC APPROVED", "HQ APPROVED", "HQ COMPLETE", "HQ INCOMPLETE", "HQ DUPLICATE",
-                  "HQ POTENTIAL DUPLICATE", "HQ PRINTED", "HQ CLOSED", "HQ POTENTIAL INCOMPLETE",
-                  "HQ DISPATCHED", "HQ PRINT", "HQ REPRINT", "HQ AMMEND"]
+                  "HQ POTENTIAL DUPLICATE", "HQ CLOSED", "HQ POTENTIAL INCOMPLETE",
+                  "HQ DISPATCHED", "HQ PRINT", "HQ REPRINT", "HQ AMMEND"].uniq
         month = date.strftime("%b`%y")
         count = 0.0
         status.each do |state|
