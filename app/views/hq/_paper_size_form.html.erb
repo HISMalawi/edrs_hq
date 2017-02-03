@@ -1,0 +1,101 @@
+<style>
+
+    .record td {
+        padding: 10px !important;
+    }
+
+    label {
+        padding-right: 20px;
+    }
+
+    .table-cell{
+        padding: 0px !important;
+        height: 40px !important;
+        max-height: 40px !important;
+
+    }
+
+    .form-control{
+        margin: 0px !important;
+        margin-left: 25px;
+        width: 60%;
+        border-radius: 3px;
+    }
+
+</style>
+
+
+<table class="table" style="margin: auto; width: 600px" >
+  <tr>
+    <td>
+
+      <%= form_for(@property, :url => "/create_property") do |f| %>
+
+          <% if @property.errors.any? %>
+              <div id="error_explanation">
+                <h2><%= pluralize(@property.errors.count, "error") %> prohibited this property from being saved:</h2>
+
+                <ul>
+                  <% @property.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+          <% end %>
+
+         <table class="table table-condensed table-striped table-bordered record" cellpadding="5" style="margin: auto; margin-top: 40px;">
+            <tr class="table-row">
+              <th class="table-cell" colspan="3" style="text-align: center !important; border-bottom: 1px solid #666;
+                      padding: 10px !important; font-size: 16px;">
+                Application Settings
+              </th>
+            </tr>
+            
+            <% @paper_size = ["","A4","A5"] %>
+
+            <tr class="table-row">
+              <td align="right" valign="baseline">
+                <%= f.label :Paper_Size %>
+              </td>
+              <td class="table-cell">
+                <%= select_tag "property[paper_setting]", options_for_select(@paper_size, @papersize), :class => "form-control", :placeholder => "Select Paper Size", :required => true %>
+              </td>
+            </tr>
+          </table>
+      <% end %>
+    </td>
+  </tr>
+  <tr class="table-row">
+    <td class="table-cell">
+      <button id="btnAction" class="btn btn-success pull-right" style="cursor: pointer; margin-right: 10px;" onclick="submitForm()">
+        Save Settings
+      </button>
+
+    </td>
+  </tr>
+</table>
+
+<script>
+    // var good = <%= request.path.match(/new/) ? false : true %>
+
+        function submitForm() {
+        // if (validateForm() && good) {
+        if (validateForm()) {
+            document.getElementsByTagName('form')[0].submit();
+        }
+
+    }
+
+    function validateForm() {
+        paper_size = document.getElementById('property_paper_setting');
+        
+        if (paper_size.value == '') {
+            showMsg("Please select paper size ...");
+            return false;
+        } 
+
+        return true;
+    }
+
+
+</script>
