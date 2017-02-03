@@ -98,6 +98,9 @@ Rails.application.routes.draw do
 
   post "/create_property" => "hq#create_property"
 
+  get "/by_reporting_month_and_district" => "hq#by_reporting_month_and_district"
+  get "/by_record_status" => "hq#by_record_status"
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

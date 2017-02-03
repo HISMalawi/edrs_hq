@@ -26,4 +26,4 @@ nbproject/
 /public/uploads/*
 Gemfile.lock
 .pem
-
+/passenger*

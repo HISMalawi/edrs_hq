@@ -7,43 +7,11 @@
 
 </style>
 
-<script>
-    var graph_categories = [];
-    var graph_data = [];
-
-    <% today = DateTime.now %>
-    <% [(today - 11.months),  (today - 10.months), (today - 9.months), (today - 8.months),
-        (today - 7.months), (today - 6.months), (today - 5.months), (today - 4.months),
-        (today - 3.months), (today - 2.months), (today - 1.months), (today)] .each do |date|
-
-        status = ["DC APPROVED", "HQ APPROVED",
-          "HQ COMPLETE", "HQ INCOMPLETE",
-          "HQ PRINTED", "HQ CLOSED",
-          "HQ DISPATCHED", "HQ PRINT", "HQ REPRINT"]
-        month = date.strftime("%b`%y")
-        count = 0.0
-        status.each do |state|
-            start = state + "_" + date.beginning_of_month.strftime("%Y-%m-%d")
-            endd = state + "_" + date.end_of_month.strftime("%Y-%m-%d")
-            count = count + PersonRecordStatus.by_record_status_and_created_at.startkey(start).endkey(endd).each.count
-        end
-    %>
-        graph_categories.push('<%= month%>');
-        graph_data.push(parseInt('<%= count%>'));
-    <% end %>
-
-
-</script>
-
 <table width="100%" border="0" style="border: 1px solid #ccc;background: white;">
   <tr>
     <td rowspan="2" style="width: 32%;">
-      <div id="c_map" style="width: 100%; height: 600px; text-align: center; float: left;  border: 1px solid #ccc;">
+      <div id="c_map" style="background: #f8f8ff;width: 100%; height: 600px; text-align: center; float: left;  border: 1px solid #ccc;">
         <object id="map" type="image/svg+xml" data="/assets/Malawi.svg" style="height: 100%; width: 100%;"></object>
-        <div id="national" style="width: 200px; height: 200px; margin-top: -205px; text-align: center; background-color: #fff;
-                border: 1px solid #ccc; position: absolute; bottom: 75px; left: 30px; overflow: hidden;
-                box-shadow: 6px 9px 5px 0px rgba(0,0,0,0.75);border: none;">
-        </div>
       </div>
     </td>
     <td colspan="2" style="padding-left: 5%">
@@ -58,7 +26,7 @@
       <div id="cell1_1" style="height: 100%; text-align: center; border: 1px solid #ccc;">
         <table class="table table-condensed  table-striped stat" >
           <tr class="table-row">
-              <td colspan="2" class="table-cell" style="padding: 5px;background: grey;color: black;"><b>National Statistics</b></td>
+              <td colspan="2" class="table-cell" style="padding: 5px;background: grey;color: black;"><b><span id="district_label"></span> Statistics</b></td>
           </tr>
           <tr class="table-row">
             <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3;background: #808080; color: black;"><b>State</b></td>
@@ -66,32 +34,32 @@
           </tr>
           <tr class="table-row">
             <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3">Newly Received (HQ)</td>
-            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3"><%= PersonRecordStatus.by_record_status.key("DC APPROVED").each.count%></td>
+            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3" id="dc_approved">-</td>
           </tr>
           <tr class="table-row">
             <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3">Print-Que (HQ)</td>
-            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3"><%= PersonRecordStatus.by_record_status.keys(["HQ PRINT"]).each.count%></td>
+            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3" id="hq_print">-</td>
           </tr>
 
           <tr class="table-row">
             <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3">Re-Print Que (HQ)</td>
-            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3"><%= PersonRecordStatus.by_record_status.keys(["HQ REPRINT"]).each.count%></td>
+            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3" id="hq_reprint">-</td>
           </tr>
           <tr class="table-row">
             <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3">Suspected Duplicate (HQ)</td>
-            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3"><%= PersonRecordStatus.by_record_status.keys(["HQ POTENTIAL DUPLICATE"]).each.count%></td>
+            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3" id="hq_duplicate">-</td>
           </tr>
           <tr class="table-row">
             <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3">Incomplete Records (HQ)</td>
-            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3"><%= PersonRecordStatus.by_record_status.keys(["HQ INCOMPLETE"]).each.count%></td>
+            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3" id="hq_incomplete">-</td>
           </tr>
           <tr class="table-row">
             <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3">Printed (HQ)</td>
-            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3"><%= PersonRecordStatus.by_record_status.keys(["HQ CLOSED"]).each.count%></td>
+            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3" id="hq_printed">-</td>
           </tr>
           <tr class="table-row">
             <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3">Printed and Dispatched</td>
-            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3"><%= PersonRecordStatus.by_record_status.keys(["HQ DISPATCHED"]).each.count%></td>
+            <td class="table-cell" style="padding: 5px; border: 1px solid #d3d3d3" id="hq_dispatched">-</td>
           </tr>
         </table>
       </div>
@@ -123,6 +91,9 @@
         return [x, y]
 
     }
+    var elements = ["chitipa", "karonga", "rumphi", "mzimba", "nkhata_bay", "nkhotakota", "salima", "kasungu", "dedza",
+        "lilongwe", "ntchisi", "ntcheu", "mchinji", "dowa", "balaka", "zomba", "machinga", "blantyre", "machinga",
+        "chiradzulu", "chikwawa", "nsanje", "neno", "mwanza", "phalombe", "mulanje", "likoma", "thyolo", "mangochi"];
 
     function setDefaults() {
 
@@ -136,37 +107,34 @@
 
         }
 
-        var elements = ["chitipa", "karonga", "rumphi", "mzimba", "nkhata_bay", "nkhotakota", "salima", "kasungu", "dedza",
-            "lilongwe", "ntchisi", "ntcheu", "mchinji", "dowa", "balaka", "zomba", "machinga", "blantyre", "machinga",
-            "chiradzulu", "chikwawa", "nsanje", "neno", "mwanza", "phalombe", "mulanje", "likoma", "thyolo", "mangochi"];
 
         for (var i = 0; i < elements.length; i++) {
 
             if (svg.getElementById(elements[i])) {
+                svg.getElementById(elements[i]).setAttribute("style", "cursor:pointer;fill:#ffffff;stroke:#6e6e6e;stroke-width:0.40000001000000002;fill-opacity:1");
 
-                svg.getElementById(elements[i]).onmouseover = function () {
+                svg.getElementById(elements[i]).onmousedown = function () {
 
-                    this.setAttribute("style", "fill:#ffcccc;stroke:#6e6e6e;stroke-width:0.40000001000000002;fill-opacity:1");
+                    for (var i = 0; i < elements.length; i++) {
+                        if (svg.getElementById(elements[i])) {
+                            svg.getElementById(elements[i]).setAttribute("style", "cursor:pointer;fill:#ffffff;stroke:#6e6e6e;stroke-width:0.40000001000000002;fill-opacity:1");
+                        }
+                    }
+                    this.setAttribute("style", "cursor:pointer;fill:#ffcccc;stroke:#6e6e6e;stroke-width:0.40000001000000002;fill-opacity:1");
 
                 }
 
-                svg.getElementById(elements[i]).onmouseout = function () {
+                svg.getElementById(elements[i]).onclick = function () {
 
-                    this.setAttribute("style", "fill:#ffffff;stroke:#6e6e6e;stroke-width:0.40000001000000002;fill-opacity:1");
+                    drawBorder(this.id);
 
                 }
-
-                /*svg.getElementById(elements[i]).onclick = function () {
-
-                 drawBorder(this.id);
-
-                 }*/
 
             }
         }
-
-        // loadSites();
     }
+        // loadSites();
+
 
     function insertSite(x, y, color, id) {
         var doc = __$("map").contentDocument;
@@ -445,7 +413,7 @@
 
     function drawBorder(district) {
 
-        return;
+        //return;
 
         var names = {
             "chitipa": "Chitipa",
@@ -512,28 +480,6 @@
         rect.setAttribute('id', 'rect' + district);
         svg.getElementById("malawi").appendChild(rect);
 
-        if (svg.getElementById('cursor')) {
-
-            var cursor = svg.getElementById('cursor');
-
-            cursor.setAttributeNS(null, 'x', element.x);
-            cursor.setAttributeNS(null, 'y', element.y);
-            cursor.setAttributeNS(null, 'height', element.height);
-            cursor.setAttributeNS(null, 'width', element.width);
-
-        } else {
-
-            var cursor = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
-            cursor.setAttributeNS(null, 'x', element.x);
-            cursor.setAttributeNS(null, 'y', element.y);
-            cursor.setAttributeNS(null, 'height', element.height);
-            cursor.setAttributeNS(null, 'width', element.width);
-            cursor.setAttribute('stroke', 'rgba(255,0,0,0.8)');
-            cursor.setAttribute('fill', 'none');
-            cursor.setAttribute('id', 'cursor');
-            svg.getElementById("malawi").appendChild(cursor);
-
-        }
 
         if (previous != undefined) {
             unloadDistrictSites(previous);
@@ -541,16 +487,129 @@
 
         previous = district;
 
-        loadDistrictSites(district);
+        //loadDistrictSites(district);
 
-        loadCharts("cell0_0");
-
-        // plotPieChart("cell1_0", "Transaction Distribution " + district.titleize())
-
-        // plotPieChart("cell1_2", district)
+        loadCharts("cell0_0", district);
 
     }
 
+    function loadCharts(id, district){
+        __$(id).innerHTML = "<span style='color: darkslategray;width: 100%;text-align: center;'>Loading ...</span>";
+        var names = {
+            "chitipa": "Chitipa",
+            "karonga": 'Karonga',
+            "rumphi": 'Rumphi',
+            "mzimba": "Mzimba",
+            "nkhata_bay": "Nkhata_bay",
+            "nkhotakota": "Nkhotakota",
+            "salima": "Salima",
+            "kasungu": "Kasungu",
+            "dedza": "Dedza",
+            "lilongwe": "Lilongwe",
+            "ntchisi": "Ntchisi",
+            "ntcheu": "Ntcheu",
+            "mchinji": "Mchinji",
+            "dowa": "Dowa",
+            "balaka": "Balaka",
+            "zomba": "Zomba",
+            "machinga": "Machinga",
+            "blantyre": "Blantyre",
+            "chiradzulu": "Chiradzulu",
+            "chikwawa": "Chikwawa",
+            "nsanje": "Nsanje",
+            "neno": "Neno",
+            "mwanza": "Mwanza",
+            "phalombe": "Phalombe",
+            "mulanje": "Mulanje",
+            "likoma": "Likoma",
+            "thyolo": "Thyolo",
+            "mangochi": "Mangochi"
+        };
+
+        district = (names[district] || '').gsub(/\_/, "-");
+        jQuery.ajax(
+                {
+                    url: "/by_reporting_month_and_district?district=" + district,
+                    success: function(result){
+                        result = JSON.parse(result);
+                        graph(id, district, result['graph_categories'], result['graph_data']);
+                    },
+                    error: function(e){
+                        alert("Failed to load graph!!")
+                    }
+                }
+        )
+
+        jQuery.ajax(
+                {
+                    url: "/by_record_status?district=" + district,
+                    success: function(result){
+                        result = JSON.parse(result);
+                        __$('district_label').innerHTML = district || "National"
+                        for(var id in result){
+                            __$(id).innerHTML = result[id]
+                        }
+                    },
+                    error: function(e){
+                        alert("Failed to load graph!!")
+                    }
+                }
+        )
+    }
+
+
+    function graph(id, district, graph_categories, graph_data){
+
+        $(function () {
+            Highcharts.chart(id, {
+                chart: {
+                    type: 'column',
+                    height: null,margin: null
+                },
+                title: {
+                    text: ((district || "National") + ' Death Registrations - Past 12 months')
+                },
+                legend: {
+                    enabled: false
+                },
+                subtitle: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: graph_categories,
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Number of registrations'
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+
+                tooltip: {
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                            '<td style="padding:0"><b>{point.y:.0f}</b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: 'Registrations',
+                    data: graph_data
+                }]
+            });
+        });
+    }
     function loadDistrictSitesByOffsets(district) {
 
         var target = sites_by_zones[district];
@@ -698,1166 +757,15 @@
 
     }
 
-    function ajaxCall(target, url) {
-
-        if (target == undefined || target == null || url == undefined || url == null) {
-
-            return;
-
-        }
-
-        var httpRequest;
-        if (window.XMLHttpRequest) {
-            httpRequest = new XMLHttpRequest();
-        }
-
-        httpRequest.onreadystatechange = function () {
-            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-
-                var result = httpRequest.responseText;
-
-                target.innerHTML = result;
-
-                processSummaryQueue();
-
-            }
-        }
-        httpRequest.open("GET", url, true);
-        httpRequest.send();
-
-    }
-
-    function padZero(num) {
-
-        return (parseInt(num) < 10 ? "0" + num : num);
-
-    }
-
-    var initialised = false;
-
-    function loadCategory(target) {
-        if (!target) {
-
-            return;
-
-        }
-
-        target.innerHTML = "";
-
-        // var categories = ["ACTIVE", "DC_ASK", "GRANTED", "REJECTED", "CLOSED", "APPROVED", "RE-PRINT",
-        //    "CAN PRINT", "POTENTIAL DUPLICATE", "INCOMPLETE"];
-
-        // "PRINTED", "HQ OPEN", "DUPLICATE", "FACILITY OPEN", "DC OPEN", "VOIDED"
-        var categories = {
-            "HQ OPEN": [
-                "ACTIVE",
-                "CAN PRINT",
-                "APPROVED",
-                "RE-PRINT",
-                "POTENTIAL DUPLICATE",
-                "INCOMPLETE"
-            ],
-            "PRINTED": [
-                "CLOSED",
-                "DISPATCHED"
-
-            ],
-            "DUPLICATE": [
-
-            ],
-            "VOIDED": [
-                "CLOSED"
-            ]/*,
-             "DC OPEN": [
-             "ACTIVE",
-             "DC_ASK",
-             "GRANTED",
-             "REJECTED",
-             "CLOSED",
-             "POTENTIAL DUPLICATE"
-             ],
-             "FACILITY OPEN": [
-             "ACTIVE"
-             ]*/
-        };
-
-        var states = {
-            "HQ OPEN-ACTIVE": "Newly Received (HQ)",
-            "HQ OPEN-CAN PRINT": "Print-Que (HQ)",
-            "HQ OPEN-APPROVED": "Verified (HQ)",
-            "HQ OPEN-RE-PRINT": "Re-Print Que (HQ)",
-            "HQ OPEN-POTENTIAL DUPLICATE": "Suspected Duplicate (HQ)",
-            "HQ OPEN-INCOMPLETE": "Incomplete Records (HQ)",
-            "PRINTED-CLOSED": "Printed (HQ)",
-            "PRINTED-DISPATCHED": "Printed and Dispatched (HQ)",
-            "VOIDED-CLOSED": "Voided",
-            "DC OPEN-ACTIVE": "Active (DC)",
-            "DC OPEN-DC_ASK": "Edit Request (DC)",
-            "DC OPEN-GRANTED": "Allowed Edits (DC)",
-            "DC OPEN-CLOSED": "Closed (DC)",
-            "DC OPEN-POTENTIAL DUPLICATE": "Suspected Duplicates (DC)",
-            "FACILITY OPEN-ACTIVE": "Active (Facility)"
-        }
-
-        var groups = Object.keys(categories);
-
-        var table = document.createElement("table");
-        table.border = 0;
-        table.style.width = "100%";
-
-        target.appendChild(table);
-
-        target.style.overflow = "auto";
-
-        var tbody = document.createElement("tbody");
-        table.appendChild(tbody);
-
-        var headers = ["State", "Count"]; //, "This Month", "This Year"];
-
-        var tr = document.createElement("tr");
-        tr.style.color = "#333";
-        tr.style.fontSize = "12px";
-        tr.style.backgroundColor = "#ccc";
-
-        tbody.appendChild(tr);
-
-        var td1 = document.createElement("td");
-        td1.style.textAlign = "center";
-        td1.style.padding = "5px";
-        td1.innerHTML = "National Statistics Summary";
-        td1.style.border = "1px solid #eee";
-        td1.style.fontWeight = "bold";
-        td1.style.fontSize = "16px";
-        td1.colSpan = headers.length;
-
-        tr.appendChild(td1);
-
-        var tr = document.createElement("tr");
-        tr.style.color = "#333";
-        tr.style.fontSize = "12px";
-        tr.style.backgroundColor = "#ccc";
-
-        tbody.appendChild(tr);
-
-        for (var j = 0; j < headers.length; j++) {
-
-            var td1 = document.createElement("td");
-            td1.style.textAlign = (j == 0 ? "left" : "center");
-            td1.style.padding = "5px";
-            td1.innerHTML = headers[j];
-            td1.style.border = "1px solid #eee";
-            td1.style.fontWeight = "bold";
-
-            if(j == 0){
-
-                td1.style.width = "280px";
-
-            }
-
-            tr.appendChild(td1);
-
-        }
-
-        for (var i = 0; i < groups.length; i++) {
-
-            for (var j = 0; j < categories[groups[i]].length; j++) {
-
-                var tr = document.createElement("tr");
-                tr.style.color = "#333";
-                tr.style.fontSize = "12px";
-
-                tbody.appendChild(tr);
-
-                var td1 = document.createElement("td");
-                td1.style.textAlign = "left";
-                td1.style.padding = "5px";
-                td1.innerHTML = (states[groups[i] + "-" + categories[groups[i]][j]] ? states[groups[i] + "-" +
-                        categories[groups[i]][j]] : groups[i] + "-" + categories[groups[i]][j]);
-                td1.style.borderRight = "1px solid #ccc";
-                td1.style.borderBottom = "1px solid #ccc";
-
-                tr.appendChild(td1);
-
-                var td2 = document.createElement("td");
-                td2.style.textAlign = "center";
-                td2.style.width = "100px";
-                td2.style.padding = "5px";
-                td2.innerHTML = "&nbsp;";
-                td2.style.borderRight = "1px solid #ccc";
-                td2.style.borderBottom = "1px solid #ccc";
-                td2.id = "td2_" + i + "_" + j;
-
-                tr.appendChild(td2);
-
-                var date = (new Date()).getFullYear() + "-" + padZero((new Date()).getMonth() + 1) + "-" + padZero((new Date()).getDate());
-
-                summaryQueue.push(["td2_" + i + "_" + j, "/query_by_codes?record_status=" + groups[i] + "&request_status=" + categories[groups[i]][j]]);
-
-            }
-
-        }
-
-        processSummaryQueue();
-
-        checkScroll();
-
-    }
-
-    var summaryQueue = [];
-
-    function processSummaryQueue() {
-
-        if (summaryQueue.length > 0) {
-
-            var task = summaryQueue[summaryQueue.length - 1];
-
-            if(__$(task[0])) {
-
-                ajaxCall(__$(task[0]), task[1]);
-
-            }
-
-            summaryQueue.pop();
-
-        }
-
-    }
-    function loadTasks(target, district) {
-
-        if (!target) {
-
-            return;
-
-        }
-
-        target.innerHTML = "";
-
-        var categories = {
-            "HQ OPEN": [ ],
-            "PRINTED": [ ],
-            "DUPLICATE": [ ],
-            "VOIDED": [ ],
-            "DC OPEN": [ ]
-        };
-
-        <% if has_role("Check for duplicates") or has_role("Check completeness") %>
-
-        categories["HQ OPEN"].push("ACTIVE");
-
-        <% end %>
-
-        <% if has_role("Make ammendments") %>
-
-        categories["DC OPEN"].push("DC_ASK");
-
-        <% end %>
-
-        <% if has_role("Approve/Reject a child record") %>
-
-        categories["HQ OPEN"].push("POTENTIAL DUPLICATE");
-
-        <% end %>
-
-        <% if has_role("Reject a record") %>
-
-        categories["HQ OPEN"].push("INCOMPLETE");
-
-        <% end %>
-
-        <% if has_role("Authorise printing") or has_role("Authorise reprinting of a certificate") %>
-
-        categories["HQ OPEN"].push("APPROVED");
-
-        <% end %>
-
-        <% if has_role("Open a closed case") %>
-
-        categories["DC OPEN"].push("DC_ASK");
-
-        categories["PRINTED"].push("DC_ASK");
-
-        <% end %>
-
-        /*var categories = {
-         "HQ OPEN": [
-         "ACTIVE",
-         "CLOSED",
-         "CAN PRINT",
-         "APPROVED",
-         "RE-PRINT",
-         "POTENTIAL DUPLICATE",
-         "INCOMPLETE"
-         ],
-         "PRINTED": [
-         "CLOSED",
-         "DC_ASK",
-         "REJECTED"
-         ],
-         "DUPLICATE": [
-         "CLOSED"
-         ],
-         "VOIDED": [
-         "CLOSED"
-         ]
-         };*/
-
-        var states = {
-            "HQ OPEN-ACTIVE": "Newly Received (HQ)",
-            "HQ OPEN-CAN PRINT": "Print-Que (HQ)",
-            "HQ OPEN-APPROVED": "Verified (HQ)",
-            "HQ OPEN-RE-PRINT": "Re-Print Que (HQ)",
-            "HQ OPEN-POTENTIAL DUPLICATE": "Suspected Duplicate (HQ)",
-            "HQ OPEN-INCOMPLETE": "Incomplete Records (HQ)",
-            "PRINTED-CLOSED": "Printed (HQ)",
-            "PRINTED-DISPATCHED": "Printed and Dispatched (HQ)",
-            "VOIDED-CLOSED": "Voided",
-            "DC OPEN-ACTIVE": "Active (DC)",
-            "DC OPEN-DC_ASK": "Edit Request (DC)",
-            "DC OPEN-GRANTED": "Allowed Edits (DC)",
-            "DC OPEN-CLOSED": "Closed (DC)",
-            "DC OPEN-POTENTIAL DUPLICATE": "Suspected Duplicates (DC)",
-            "FACILITY OPEN-ACTIVE": "Active (Facility)"
-        }
-
-        var groups = Object.keys(categories);
-
-        var table = document.createElement("table");
-        table.border = 0;
-        table.style.width = "100%";
-        target.appendChild(table);
-
-        var tbody = document.createElement("tbody");
-        table.appendChild(tbody);
-
-        for (var i = 0; i < groups.length; i++) {
-
-            for (var j = 0; j < categories[groups[i]].length; j++) {
-
-                var tr = document.createElement("tr");
-                tr.style.color = "#333";
-                tr.style.fontSize = "12px";
-
-                tbody.appendChild(tr);
-
-                var td1 = document.createElement("td");
-                td1.style.textAlign = "left";
-                td1.style.padding = "5px";
-                td1.innerHTML = (states[groups[i] + "-" + categories[groups[i]][j]] ? states[groups[i] + "-" +
-                        categories[groups[i]][j]] : groups[i] + "-" + categories[groups[i]][j]);
-                td1.style.borderRight = "1px solid #ccc";
-                td1.style.borderBottom = "1px solid #ccc";
-
-                tr.appendChild(td1);
-
-                var td2 = document.createElement("td");
-                td2.style.textAlign = "center";
-                td2.style.width = "100px";
-                td2.style.padding = "5px";
-                td2.innerHTML = "&nbsp;";
-                td2.style.borderRight = "1px solid #ccc";
-                td2.style.borderBottom = "1px solid #ccc";
-
-                tr.appendChild(td2);
-
-                var td3 = document.createElement("td");
-                td3.style.textAlign = "center";
-                td3.style.width = "100px";
-                td3.style.padding = "5px";
-                td3.innerHTML = "&nbsp;";
-                td3.style.borderRight = "1px solid #ccc";
-                td3.style.borderBottom = "1px solid #ccc";
-
-                tr.appendChild(td3);
-
-                var td4 = document.createElement("td");
-                td4.style.textAlign = "center";
-                td4.style.width = "88px";
-                td4.className = "td4";
-                td4.style.padding = "5px";
-                td4.innerHTML = "&nbsp;";
-                td4.style.borderBottom = "1px solid #ccc";
-
-                tr.appendChild(td4);
-
-                var date = (new Date()).getFullYear() + "-" + padZero((new Date()).getMonth() + 1) + "-" + padZero((new Date()).getDate());
-
-                ajaxCall(td2, "/query_by_district_and_codes?date=<%= Date.today.strftime("%Y-%m-%d") %>&district=" +
-                        district + "&record_status=" + groups[i] + "&request_status=" + categories[groups[i]][j]);
-
-                ajaxCall(td3, "/query_by_district_and_codes?start_date=<%= Date.today.strftime("%Y-%m-01") %>&end_date=" +
-                        "<%= Date.today.strftime("%Y-%m-%d") %>&district=" +
-                        district + "&record_status=" + groups[i] + "&request_status=" + categories[groups[i]][j]);
-
-                ajaxCall(td4, "/query_by_district_and_codes?start_date=<%= Date.today.strftime("%Y-01-01") %>&end_date=" +
-                        "<%= Date.today.strftime("%Y-%m-%d") %>&district=" +
-                        district + "&record_status=" + groups[i] + "&request_status=" + categories[groups[i]][j]);
-
-            }
-
-        }
-
-        checkTd4Scroll();
-
-    }
-
-    function checkScroll() {
-
-        var td3s = document.getElementsByClassName("td3");
-
-        for (var i = 0; i < td3s.length; td3s++) {
-
-            if (__$("stats")) {
-
-                __$("stats").scrollTop = 10
-
-                if (__$("stats").scrollTop > 0) {
-
-                    td3s[i].style.width = "88px";
-
-                } else {
-
-                    td3s[i].style.width = "100px";
-
-                }
-
-                __$("stats").scrollTop = 0
-
-            } else {
-
-                td3s[i].style.width = "100px";
-
-            }
-
-        }
-
-    }
-
-    function checkTd4Scroll() {
-
-        var td4s = document.getElementsByClassName("td4");
-
-        for (var i = 0; i < td4s.length; td4s++) {
-
-            if (__$("criticals")) {
-
-                __$("criticals").scrollTop = 10
-
-                if (__$("criticals").scrollTop > 0) {
-
-                    td4s[i].style.width = "88px";
-
-                } else {
-
-                    td4s[i].style.width = "100px";
-
-                }
-
-                __$("criticals").scrollTop = 0
-
-            } else {
-
-                td4s[i].style.width = "100px";
-
-            }
-
-        }
-
-    }
-
-    var data = [];
-
-    var specifics = {};
-
-    var queue = [];
-
-    function loadCharts(target) {
-
-        if (__$(target)) {
-
-            __$(target).innerHTML = "";
-
-        }
-
-        data = [];
-
-        specifics = {};
-
-        if (__$("cell1_0")) {
-
-            __$("cell1_0").innerHTML = "";
-
-        }
-
-        /*if (__$("cell1_1")) {
-
-         __$("cell1_1").innerHTML = "";
-
-         }
-
-         if (__$("cell1_2")) {
-
-         __$("cell1_2").innerHTML = "";
-
-         }*/
-
-        redrawChart(target);
-
-        <% id = 0 %>
-
-        <% ((Date.today - 1.year)..(Date.today)).each do |date| %>
-
-        <% id += 1 %>
-
-        // ajaxTasks(target, district, "<%= date %>", "<%= id %>")
-
-        queue.push([target, "<%= date %>", "<%= id %>"]);
-
-        <% end %>
-
-        processQueue();
-
-    }
-
-    function processQueue() {
-
-        if (queue.length > 0) {
-
-            var task = queue[queue.length - 1];
-
-            ajaxTasks(task[0], task[1], task[2]);
-
-            queue.pop();
-
-        }
-
-    }
-
-    function ajaxTasks(target, date, id) {
-
-        if (id) {
-
-            // showSpinner(id);
-
-        }
-
-        var url = "/query_by_reporting_date_and_district_code?date=" + date;
-
-        var httpRequest = new XMLHttpRequest();
-        httpRequest.onreadystatechange = function () {
-            handleTasks(httpRequest, target, id);
-        };
-        try {
-            httpRequest.open('GET', url, true);
-            httpRequest.send(null);
-        } catch (e) {
-        }
-    }
-
-    function handleTasks(aXMLHttpRequest, target, id) {
-        if (!aXMLHttpRequest) return;
-
-        if (aXMLHttpRequest.readyState == 4 && (aXMLHttpRequest.status == 200 ||
-                aXMLHttpRequest.status == 304)) {
-
-            var result = JSON.parse(aXMLHttpRequest.responseText);
-
-            if (result) {
-
-                data.push([result["id"], result["total"]]);
-
-                specifics[result["id"]] = result["districts"];
-
-                var chart = $('#' + target).highcharts();
-                chart.series[0].addPoint([parseInt(result["id"]), parseInt(result["total"])], true, false, true);
-
-                // redrawChart(target, id);
-
-                processQueue();
-
-            }
-
-        }
-    }
-
-    function redrawChart(target, spinId) {
-
-        data = data.sort();
-
-        $(function () {
-
-            // Create the chart
-            $('#' + target).highcharts('StockChart', {
-                credits: {
-                    enabled: false
-                },
-
-                rangeSelector: {
-                    selected: 1,
-                    inputEnabled: $('#' + target).width() > 480
-                },
-
-                title: {
-                    text: "National Birth Registrations Timeline"
-                },
-
-                yAxis: {
-                    min: 0,
-                    allowDecimals: false
-                },
-                series: [
-                    {
-                        name: 'Total Transactions',
-                        data: data,
-                        tooltip: {
-                            valueDecimals: 0
-                        },
-                        cursor: 'pointer',
-                        events: {
-                            click: function (event) {
-                                custom(event.point.x);
-                            }
-                        }
-                    }
-                ]
-            });
-
-        });
-
-        if (data.length > 0) {
-
-            custom(data[data.length - 1][0]);
-
-        }
-
-        // plotPieChart(target, title, id, spinId)
-        // plotPieChart("cell1_0", district.replace(/\s/g, " ").replace(/\_/g, " ").titleize() + " Transactions", undefined, spinId);
-
-        if (spinId) {
-
-            hideSpinner(spinId);
-
-        }
-
-    }
-
-    function custom(id) {
-        if (__$("cell1_1")) {
-
-            var codes = {};
-            <% (@districts rescue {}).each do |key, value| %>
-            codes["<%= key %>"] = "<%= value %>";
-            <% end %>
-
-            var series = [];
-
-            var colors = [
-                "#ff3333",
-                "#8085e9",
-                "#90ed7d",
-                "#434348",
-                "#7cb5ec",
-                "#3465a4",
-                "#f3900f",
-                "#f30fd6",
-                "#f15c80",
-                "#3e8a2f",
-                "#a46d27",
-                "#00007f",
-                "#7f007f",
-                "#007f7f",
-                "#00ffff",
-                "#e8ea2f",
-                "#562fea",
-                "#799f71"
-            ]
-
-            var keys = Object.keys(codes);
-
-            for (var i = 0; i < keys.length; i++) {
-
-                var detail = {
-                    name: codes[keys[i]],
-                    data: [parseInt(specifics[id][keys[i]])]/*,
-                     color: colors[i]*/
-                };
-
-                series.push(detail);
-
-                drawCount(keys[i], parseInt(specifics[id][keys[i]]));
-
-            }
-
-            var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-            var date = new Date(id);
-
-            var displayDate = date.getDate() + "/" + months[date.getMonth()] + "/" + date.getFullYear();
-
-            $(function () {
-                $('#cell1_0').highcharts({
-                    credits: {
-                        enabled: false
-                    },
-                    chart: {
-                        type: 'column'
-                    },
-                    title: {
-                        text: displayDate + ' Birth Registrations'
-                    },
-                    subtitle: {
-                        text: ''
-                    },
-                    xAxis: {
-                        categories: [
-                            ''
-                        ]
-                    },
-                    yAxis: {
-                        min: 0,
-                        allowDecimals: false,
-                        title: {
-                            text: 'Number of Registrations'
-                        }
-                    },
-                    tooltip: {
-                        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-                        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                                '<td style="padding:0"><b>{point.y:.0f}</b></td></tr>',
-                        footerFormat: '</table>',
-                        shared: false,
-                        useHTML: true
-                    },
-                    plotOptions: {
-                        column: {
-                            pointPadding: 0.2,
-                            borderWidth: 0,
-                            showInLegend: false
-                        }
-                    },
-                    series: series
-                });
-            });
-
-            plotPieChart("national", "", id, undefined, true, true);
-
-            // loadCategory(__$("cell1_1"), id);
-
-        }
-    }
-
-    function drawCount(code, count) {
-
-        var codes = {};
-        <% (@districts rescue {}).each do |key, value| %>
-        codes["<%= key %>"] = "<%= value.downcase.gsub(/\s/, "_") %>";
-        <% end %>
-
-
-        var names = {
-            "chitipa": "Chitipa",
-            "karonga": 'Karonga',
-            "rumphi": 'Rumphi',
-            "mzimba": "Mzimba",
-            "nkhata_bay": "nkhata_bay",
-            "nkhotakota": "Nkhotakota",
-            "salima": "Salima",
-            "kasungu": "Kasungu",
-            "dedza": "Dedza",
-            "lilongwe": "Lilongwe",
-            "ntchisi": "Ntchisi",
-            "ntcheu": "Ntcheu",
-            "mchinji": "Mchinji",
-            "dowa": "Dowa",
-            "balaka": "Balaka",
-            "zomba": "Zomba",
-            "machinga": "Machinga",
-            "blantyre": "Blantyre",
-            "chiradzulu": "Chiradzulu",
-            "chikwawa": "Chikwawa",
-            "nsanje": "Nsanje",
-            "neno": "Neno",
-            "mwanza": "Mwanza",
-            "phalombe": "Phalombe",
-            "mulanje": "Mulanje",
-            "likoma": "Likoma",
-            "thyolo": "Thyolo",
-            "mangochi": "Mangochi"
-        };
-
-        var svg = __$("map").contentDocument;
-
-        if (!svg) {
-
-            setTimeout(function () {
-
-                drawCount(code, count);
-
-            }, 500);
-
-            return;
-
-        }
-
-        var district = codes[code];
-
-        var element = svg.getElementById(district).getBBox();
-
-        var rect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
-        rect.setAttributeNS(null, 'x', element.x);
-        rect.setAttributeNS(null, 'y', element.y);
-        rect.setAttributeNS(null, 'height', element.height);
-        rect.setAttributeNS(null, 'width', element.width);
-        rect.setAttribute('stroke', 'none');     //'rgba(128,128,128,0.5)');
-        rect.setAttribute('fill', 'none');
-        rect.setAttribute('id', 'rect' + district);
-        svg.getElementById("malawi").appendChild(rect);
-
-        if (svg.getElementById("circle" + district) && svg.getElementById("text" + district)) {
-
-            var circle = svg.getElementById('circle' + district);
-
-            circle.setAttributeNS(null, 'x', element.x + (element.width / 2));
-            circle.setAttributeNS(null, 'y', element.y + (element.height / 2));
-
-            var text = svg.getElementById('text' + district);
-
-            text.innerHTML = count;
-
-            text.setAttributeNS(null, 'x', element.x + (element.width / 2));
-            text.setAttributeNS(null, 'y', element.y + (element.height / 2));
-
-        } else {
-
-            var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-
-            circle.setAttribute("cx", element.x + (element.width / 2));
-
-            circle.setAttribute("cy", element.y + (element.height / 2));
-
-            circle.setAttribute("r", 15);
-
-            circle.setAttribute("id", "circle" + district);
-
-            circle.setAttribute("fill", "#ffffff");
-
-            circle.setAttribute("stroke-width", "1px");
-
-            circle.setAttribute("stroke", 'rgba(255,0,0,0.8)');
-
-            svg.getElementById("malawi").appendChild(circle);
-
-            var text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-
-            text.innerHTML = count;
-
-            text.setAttribute("id", "text" + district);
-
-            text.setAttribute("x", element.x + (element.width / 2));
-
-            text.setAttribute("y", element.y + (element.height / 2));
-
-            text.setAttribute("text-anchor", "middle");
-
-            text.setAttribute("stroke", "#3465a4");
-
-            text.setAttribute("dy", ".3em");
-
-            text.setAttribute("font-size", "11px");
-
-            text.setAttribute("font-weight", "normal");
-
-            svg.getElementById("malawi").appendChild(text);
-
-        }
-
-    }
-
-    Object.defineProperty(String.prototype, "titleize", {
-        value: function () {
-            var tokens = this.trim().split(" ");
-            var result = "";
-
-            for (var i = 0; i < tokens.length; i++) {
-
-                result += (tokens[i]).substring(0, 1).toUpperCase() + (tokens[i]).substring(1, tokens[i].length) + " ";
-
-            }
-
-            result = result.trim();
-
-            return result;
-        }
-    });
-
-    function plotPieChart(target, title, id, spinId, legend, short) {
-
-        if (__$(target)) {
-
-            __$(target).innerHTML = "";
-
-        }
-
-        var codes = {};
-        <% (@districts rescue {}).each do |key, value| %>
-        codes["<%= key %>"] = "<%= value %>";
-        <% end %>
-
-        var keys = Object.keys(codes);
-
-        var seriesData = [];
-
-        if (id) {
-
-            for (var i = 0; i < keys.length; i++) {
-
-                var detail = {
-                    name: (short ? keys[i] : codes[keys[i]]),
-                    y: parseInt(specifics[id][keys[i]])
-                };
-
-                seriesData.push(detail);
-
-            }
-
-        } else {
-
-            for (var i = 0; i < keys.length; i++) {
-
-                var total = 0;
-
-                var skeys = Object.keys(specifics);
-
-                for (var j = 0; j < skeys.length; j++) {
-
-                    var key = skeys[j];
-
-                    total += parseInt(specifics[key][keys[i]]);
-
-                }
-
-                var detail = {
-                    name: (short ? states[cats[i]][1] : states[cats[i]][0]),
-                    y: total
-                };
-
-                seriesData.push(detail);
-
-            }
-
-        }
-
-        $(function () {
-
-            $(document).ready(function () {
-
-                // Build the chart
-                $('#' + target).highcharts({
-                    credits: {
-                        enabled: false
-                    },
-                    chart: {
-                        plotBackgroundColor: null,
-                        plotBorderWidth: null,
-                        plotShadow: false,
-                        type: 'pie'
-                    },
-                    title: {
-                        text: title
-                    },
-                    tooltip: {
-                        pointFormat: '{series.name}: <b>{point.percentage:.0f}%</b>'
-                    },
-                    plotOptions: (legend == undefined ? {
-                        pie: {
-                            allowPointSelect: true,
-                            cursor: 'pointer',
-                            dataLabels: {
-                                enabled: false
-                            },
-                            showInLegend: true
-                        }
-                    } : {
-                        pie: {
-                            allowPointSelect: true,
-                            cursor: 'pointer',
-                            dataLabels: {
-                                enabled: true,
-                                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                                style: {
-                                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                                },
-                                connectorColor: 'silver'
-                            }
-                        }
-                    }),
-                    series: [
-                        {
-                            name: "Transactions",
-                            colorByPoint: true,
-                            data: seriesData
-                        }
-                    ]
-                });
-            });
-        });
-
-        if (spinId) {
-
-            hideSpinner(spinId);
-
-        }
-
-    }
-
-    function checkCtrl(obj) {
-        var o = obj;
-        var t = o.offsetTop;
-        var l = o.offsetLeft + 1;
-        var w = o.offsetWidth;
-        var h = o.offsetHeight;
-
-        while ((o ? (o.offsetParent != document.body) : false)) {
-            o = o.offsetParent;
-            t += (o ? o.offsetTop : 0);
-            l += (o ? o.offsetLeft : 0);
-        }
-        return [w, h, t, l];
-    }
-    var spinner;
-
-    var spinTracker = [];
-
-    function showSpinner(id) {
-
-        if (!document.getElementById('spin')) {
-            var div = document.createElement("div");
-            div.id = "spin";
-            div.style.position = "absolute";
-            div.style.top = ((window.innerHeight / 2) - 80) + "px";
-            div.style.left = ((window.innerWidth / 2)) + "px";
-
-            document.body.appendChild(div);
-
-            var opts = {
-                lines: 15, // The number of lines to draw
-                length: 15, // The length of each line
-                width: 8, // The line thickness
-                radius: 20, // The radius of the inner circle
-                corners: 1, // Corner roundness (0..1)
-                rotate: 0, // The rotation offset
-                color: '#000', // #rgb or #rrggbb
-                speed: 1, // Rounds per second
-                trail: 60, // Afterglow percentage
-                shadow: false, // Whether to render a shadow
-                hwaccel: false, // Whether to use hardware acceleration
-                className: 'spinner', // The CSS class to assign to the spinner
-                zIndex: 2e9, // The z-index (defaults to 2000000000)
-                top: 25, // Top position relative to parent in px
-                left: 25 // Left position relative to parent in px
-            };
-
-        }
-
-        if (spinTracker.length <= 0) {
-
-            var target = document.getElementById('spin');
-            spinner = new Spinner(opts).spin(target);
-
-        }
-
-        spinTracker.push(id);
-
-    }
-
-    function hideSpinner(id) {
-
-        spinTracker.pop();
-
-        if (spinTracker.length <= 0) {
-
-            spinner.stop();
-
-            if (__$("spin")) {
-
-                document.body.removeChild(__$("spin"));
-
-            }
-
-        }
-
-    }
-
     var mDistricts = ["chitipa", "karonga", "rumphi", "mzimba", "nkhata_bay", "nkhotakota", "salima", "kasungu", "dedza",
         "lilongwe", "ntchisi", "ntcheu", "mchinji", "dowa", "balaka", "zomba", "machinga", "blantyre", "machinga",
         "chiradzulu", "chikwawa", "nsanje", "neno", "mwanza", "phalombe", "mulanje", "likoma", "thyolo", "mangochi"];
 
-    /*setInterval(function (){
 
-     if(spinTracker.length <= 0) {
-
-     var i = Math.round(Math.random() * mDistricts.length);
-
-     drawBorder(mDistricts[i]);
-
-     }
-
-     }, 50000);*/
 
     setDefaults();
 
-       $(function () {
-            Highcharts.chart('cell0_0', {
-                chart: {
-                    type: 'column',
-                    height: null,margin: null
-                },
-                title: {
-                    text: 'Death Registrations - Past 12 months'
-                },
-                legend: {
-                    enabled: false
-                },
-                subtitle: {
-                    text: ''
-                },
-                xAxis: {
-                    categories: graph_categories,
-                    crosshair: true
-                },
-                yAxis: {
-                    min: 0,
-                    title: {
-                        text: 'Number of registrations'
-                    }
-                },
-                credits: {
-                    enabled: false
-                },
-
-                tooltip: {
-                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                            '<td style="padding:0"><b>{point.y:.0f}</b></td></tr>',
-                    footerFormat: '</table>',
-                    shared: true,
-                    useHTML: true
-                },
-                plotOptions: {
-                    column: {
-                        pointPadding: 0.2,
-                        borderWidth: 0
-                    }
-                },
-                series: [{
-                    name: 'Registrations',
-                    data: graph_data
-                }]
-            });
-        });
-
-
-
-
+    loadCharts("cell0_0", "")
 
 
 </script>

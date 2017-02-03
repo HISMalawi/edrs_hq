@@ -259,6 +259,71 @@ class HqController < ApplicationController
     end
   end
 
+
+  def by_reporting_month_and_district
+    results = {
+        "graph_data" => [],
+        "graph_categories" => []
+    }
+
+    today = DateTime.now
+     [(today - 11.months),  (today - 10.months), (today - 9.months), (today - 8.months),
+        (today - 7.months), (today - 6.months), (today - 5.months), (today - 4.months),
+        (today - 3.months), (today - 2.months), (today - 1.months), (today)] .each do |date|
+
+        status = ["DC APPROVED", "HQ APPROVED", "HQ COMPLETE", "HQ INCOMPLETE", "HQ DUPLICATE",
+                  "HQ POTENTIAL DUPLICATE", "HQ PRINTED", "HQ CLOSED", "HQ POTENTIAL INCOMPLETE",
+                  "HQ DISPATCHED", "HQ PRINT", "HQ REPRINT", "HQ AMMEND"]
+        month = date.strftime("%b`%y")
+        count = 0.0
+        status.each do |state|
+
+            if params[:district].blank?
+              start = state + "_" + date.beginning_of_month.strftime("%Y-%m-%d")
+              endd = state + "_" + date.end_of_month.strftime("%Y-%m-%d")
+              count = count + PersonRecordStatus.by_record_status_and_created_at.startkey(start).endkey(endd).each.count
+            else
+              district = params[:district].gsub("_", "-")
+              code = District.by_name.key(district).last.id rescue ""
+              start = code+"_"+state + "_" + date.beginning_of_month.strftime("%Y-%m-%d")
+              endd = code+"_"+state + "_" + date.end_of_month.strftime("%Y-%m-%d")
+              count = count + PersonRecordStatus.by_district_code_and_record_status_and_created_at.startkey(start).endkey(endd).each.count
+            end
+        end
+        results['graph_categories'] << month
+        results['graph_data'] << count
+     end
+
+    render :text => results.to_json
+  end
+
+  def by_record_status
+    results = {}
+
+    sent  = [
+        ["dc_approved", ["DC APPROVED"]],
+        ["hq_print", ["HQ PRINT"]],
+        ["hq_reprint", ["HQ REPRINT"]],
+        ["hq_duplicate", ["HQ POTENTIAL DUPLICATE", "HQ DUPLICATE", "HQ CONFIRMED DUPLICATE"]],
+        ["hq_incomplete", ["HQ POTENTIAL INCOMPLETE", "HQ INCOMPLETE"]],
+        ["hq_printed", ["HQ CLOSED"]],
+        ["hq_dispatched", ["HQ DISPATCHED"]]
+     ]
+
+    sent.each do |id, states|
+        if params[:district].blank?
+          results[id] = PersonRecordStatus.by_status.keys(states).each.count
+        else
+          district = params[:district].gsub("_", "-")
+          code = District.by_name.key(district).last.id rescue ""
+          states = states.collect{|s| code+"_"+s}
+          results[id] = PersonRecordStatus.by_district_code_and_status.keys(states).each.count
+        end
+    end
+
+    render :text => results.to_json
+  end
+
   def facilities
 
     district_param = params[:district] || '';
