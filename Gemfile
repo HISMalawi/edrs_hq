@@ -26,7 +26,7 @@ gem 'bootstrap-sass', '~> 3.3', '>= 3.3.6'
 
 gem 'couchrest_model'
 
-gem 'couchrest_model_elastic'
+#gem 'couchrest_model_elastic'
 
 gem 'passenger', '4.0.53'
 
