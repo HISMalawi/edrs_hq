@@ -56,7 +56,7 @@ class UsersController < ApplicationController
       @user = User.new(filtered)
     else
       flash[:notice] = "User with that name already exists"
-      redirect_to action: "/users/new", id: @user.id and return
+      redirect_to "/users/new", id: @user.id and return
     end
 
     respond_to do |format|

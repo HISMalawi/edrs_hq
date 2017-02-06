@@ -14,7 +14,7 @@ class Audit	< CouchRest::Model::Base
 
   property :record_id, String # Certificate/Child id
   property :audit_type, String # Quality Control | Reprint | Audit | Deduplication | Incomplete Record | DC Record Rejection | HQ Record Rejection | HQ Void | HQ Re-Open | Potential Duplicate
-  property :level, String # Child | User
+  property :level, String # Death | User
   property :reason, String
   property :user_id, String # User id
   property :site_id, String

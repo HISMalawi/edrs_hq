@@ -34,6 +34,11 @@ Rails.application.routes.draw do
   get '/local_cases' => 'case#local_cases'
   get '/remote_cases' => 'case#remote_cases'
   get '/re_open_cases' => 'case#re_open_cases'
+  get '/re_approved_cases' => 'case#re_approved_cases'
+  get 'rejected_and_approved_cases' => 'case#rejected_and_approved_cases'
+
+  get '/get_comments' => 'hq#get_comments'
+
 
   get '/approve_for_printing' => 'case#approve_for_printing'
   get '/approve_reprint' => 'case#approve_reprint'
@@ -100,6 +105,7 @@ Rails.application.routes.draw do
 
   get "/by_reporting_month_and_district" => "hq#by_reporting_month_and_district"
   get "/by_record_status" => "hq#by_record_status"
+  get "/manage_duplicates" => "hq#manage_duplicates"
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

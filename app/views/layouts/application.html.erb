@@ -303,8 +303,8 @@
                     <% end %>
 
                     <% if has_role("Manage incomplete records") %>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Re-Approved Cases</span></a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-folder-open"></span><span>Approved Then Rejected</span></a></li>
+                        <li><a onmousedown="window.parent.location = '/re_approved_cases'"  ><span class="glyphicon glyphicon-folder-open"></span><span>Re-Approved Cases</span></a></li>
+                        <li><a onmousedown="window.parent.location = '/rejected_and_approved_cases'"  ><span class="glyphicon glyphicon-folder-open"></span><span>Rejected And Approved</span></a></li>
                     <% end %>
 
                     <% if has_role("Reject a record")%>
@@ -325,8 +325,6 @@
 
                 <div class="tab-pane" id="re_opened_cases">
                   <ul class="nav-list list-inline">
-                    <li><a onmousedown="window.parent.location = '/local_cases'"><span class="glyphicon glyphicon-folder-open"></span><span>Local Cases</span></a></li>
-                    <li><a  onmousedown="window.parent.location = '/remote_cases'"><span class="glyphicon glyphicon-folder-open"></span><span>Remote Cases</span></a></li>
                     <li><a  onmousedown="window.parent.location = '/re_open_cases'" ><span class="glyphicon glyphicon-folder-open"></span><span>Re-open Cases</span></a></li>
                   </ul>
                 </div>

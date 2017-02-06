@@ -1,9 +1,6 @@
 require 'couchrest_model'
 
 class Auditing < CouchRest::Model::Base
-
-  use_database "audit"
-
   before_save :set_site_type, :set_user_id
 
   def audit_id=(value)

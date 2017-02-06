@@ -79,6 +79,22 @@ class CaseController < ApplicationController
     render :template => "case/default"
   end
 
+  def re_approved_cases
+    @title = "Re-Approved Cases"
+    @statuses = ["HQ REAPPROVED"]
+    @page = 1
+
+    render :template => "case/default"
+  end
+
+  def rejected_and_approved_cases
+    @title = "Re-Approved Cases"
+    @statuses = ["HQ"]
+    @page = 1
+
+    render :template => "case/default"
+  end
+
   def approve_for_printing
     @title = "Approve for Printing"
     @statuses = ["HQ COMPLETE"]
@@ -105,7 +121,7 @@ class CaseController < ApplicationController
 
   def rejected_cases
     @title = "Rejected Cases"
-    @statuses = ["HQ CONFIRMED INCOMPLETE"]
+    @statuses = ["HQ CONFIRMED INCOMPLETE", "HQ REOPENED"]
     @page = 1
 
     render :template => "case/default"
@@ -151,6 +167,23 @@ class CaseController < ApplicationController
       end
     end
 
+    if next_status == "HQ COMPLETE"
+      @person = Person.find(params[:person_id])
+      if search_similar_record(person).count > 0
+
+        status = PersonRecordStatus.by_person_recent_status.key(params[:person_id]).last
+        status.voided  = true
+        status.save
+
+        PersonRecordStatus.create(
+            :person_record_id => params[:person_id],
+            :district_code => status.district_code,
+            :creator => @current_user.id,
+            :status => "HQ POTENTIAL DUPLICATE"
+        )
+      end
+    end
+
     render :text => "ok"
   end
 
@@ -162,6 +195,21 @@ class CaseController < ApplicationController
     render :template => "case/default"
   end
 
+  def search_similar_record(params)
+    people = []
+    values = [
+        params[:first_name].soundex,
+        params[:last_name].soundex,
+        params[:gender],
+        params[:date_of_death],
+        params[:birthdate],
+        params[:place_of_death]]
+
+    Person.by_demographics.key(values).each do |p|
+      people << p if p.id != params.id
+    end
+    people
+  end
 
   def void_cases
     @title = "Void Cases"

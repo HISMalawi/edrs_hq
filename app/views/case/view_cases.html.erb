@@ -223,6 +223,7 @@
       <tr>
         <th colspan="2" style="padding-left: 10px !important;">
           <%
+             comment = false
             cancel_url = request.referrer
             cancel_url = "/" if (!cancel_url.match('case/') rescue true)
           %>
@@ -241,9 +242,16 @@
             end
             next if task['button_name'].blank?
 
+            if ((task['ajax_route'].match(/comment/) || task['route'].match(/comment/)) rescue false)
+                comment = true
+            end
           %>
-            <div onclick= "<%= onclick %>" class="dynamic-button btn btn-small btn-default pull-right <%= task['class'].downcase rescue ''%>"><span><%= task['button_name']%></span></div>
+
+              <div onclick= "<%= onclick %>" class="dynamic-button btn btn-small btn-primary pull-right <%= task['class'].downcase rescue ''%>"><span><%= task['button_name']%></span></div>
           <% end %>
+
+          <div onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary"><span>View Comments</span></div>
+
         </th>
       </tr>
       </tfoot>
@@ -355,8 +363,8 @@
                 "Data Manager" => ["HQ COMPLETE", "HQ CONFIRMED INCOMPLETE"]
         }%>
 
-        <button type="button" class="btn btn-success" onclick="ajaxChange('<%= @next_state[@current_user.role][0]%>')" > Complete </button>
-        <button type="button" class="btn btn-danger"onclick="ajaxChange('<%= @next_state[@current_user.role][1]%>')" > Incomplete </button>
+        <button type="button" class="btn btn-success" onclick="ajaxChange('<%= @next_state[@current_user.role][0] rescue nil%>')" > Complete </button>
+        <button type="button" class="btn btn-danger"onclick="ajaxChange('<%= @next_state[@current_user.role][1] rescue nil%>')" > Incomplete </button>
         <button type="button" class="btn btn-default" onclick="__$('completeness').style.display = 'none'" > Close</button>
       </div>
     </div>
@@ -364,6 +372,63 @@
 </div>
 </div>
 </div>
+
+
+
+<div class="" id="comments">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header btn-primary" >
+        <button type="button" class="close"  onclick="__$('textarea').value = ''; __$('comments').style.display = 'none'">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Death Record Comments</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-lg-12">
+
+            <div class=" form-group">
+              <div class="container">
+                <div class="row" style="width: 550px;">
+
+                    <div id="comments-list">
+
+                    </div>
+
+                    <div style="width: 100%;margin-top: 20px;border-top: 1px solid #d3d3d3">
+                        <form>
+                          <textarea placeholder="New Comment" id="textarea" style="width: 90%;margin-top: 4px;"></textarea>
+
+                          <button type="submit" class="btn btn-sm btn-primary pull-left">Submit</button>
+                        </form>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-default" onclick="__$('textarea').value = ''; __$('comments').style.display = 'none'" > Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="clone_me" class="media" style="padding: 8px;display:none;">
+
+  <div class="media-body" style="width: 550px;">
+
+    <h4 class="media-heading user_name"><a class="name"> <small class="role"> </small></a></h4>
+    <span class="comment" style="width: 100%;"></span>
+
+  </div>
+</div>
+
 
 <%= form_tag("/do_print_these", "method" => "post", "id" => "frm") do %>
     <input type="hidden" id="selected" name="selected" value="<%= params[:person_id]%>"/>
@@ -400,7 +465,7 @@
                 window.parent.location = "<%= request.referrer%>";
             },
             error: function(error){
-                alert("Something went wrong");
+                alert("Something went wrong!");
             }
         })
     }
@@ -412,17 +477,62 @@
                 window.parent.location = "<%= request.referrer%>";
             },
             error: function(error){
-                alert("Something went wrong");
+                alert("Something went wrong!");
             }
         })
     }
 
+    function ajaxPullComments(){
+        jQuery("#comment-list").html("");
+
+        jQuery.ajax(
+                {
+                    url: "/get_comments?person_id=<%= params[:person_id]%>",
+                    success: function(results){
+                        results = JSON.parse(results);
+                        var parent = document.getElementById("comments-list");
+                        parent.innerHTML = "";
+                        var clone = document.getElementById("clone_me");
+                        for(var i = 0; i < results.length; i++){
+                            var dup = clone.cloneNode(true);
+                            dup.id = i;
+                            dup.style.display = "block";
+                            //set values
+                            dup.getElementsByClassName("name")[0].innerHTML = results[i]['user']
+                                    + " <small class='user_role'>" + results[i]['user_role'] + " " + results[i]['date_added'] + " </small>";
+                            dup.getElementsByClassName("comment")[0].innerHTML = results[i]['comment'];
+
+                            parent.appendChild(dup);
+                        }
+
+                        jQuery("#comments").show();
+                    },
+                    error: function(e){
+                        alert("Something went wrong!")
+                    }
+                }
+        )
+    }
+
 </script>
 <style>
-  #completeness, #printers{
+  #completeness, #printers, #comments{
       position : absolute;
       left: 30%;
-      top: 15%;
+      top: 13.5%;
       display: none;
+  }
+
+  .user_name{
+      font-size:14px;
+      font-weight: bold;
+  }
+  .comments-list .media{
+      border-bottom: 1px dotted #ccc;
+  }
+  #comments-list{
+      max-height: 300px;
+      overflow: auto;
+      width: 100%;
   }
 </style>

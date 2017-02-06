@@ -271,9 +271,9 @@ class HqController < ApplicationController
         (today - 7.months), (today - 6.months), (today - 5.months), (today - 4.months),
         (today - 3.months), (today - 2.months), (today - 1.months), (today)] .each do |date|
 
-        status = ["DC APPROVED", "HQ APPROVED", "HQ COMPLETE", "HQ INCOMPLETE", "HQ DUPLICATE",
+        status = ["DC APPROVED", "HQ APPROVED","DC REAPPROVED", "HQ REAPPROVED", "HQ COMPLETE", "HQ INCOMPLETE", "HQ DUPLICATE",
                   "HQ POTENTIAL DUPLICATE", "HQ CLOSED", "HQ POTENTIAL INCOMPLETE",
-                  "HQ DISPATCHED", "HQ PRINT", "HQ REPRINT", "HQ AMMEND"].uniq
+                  "HQ DISPATCHED", "HQ PRINT", "HQ REPRINT", "HQ AMMEND", "DC AMMEND"].uniq
         month = date.strftime("%b`%y")
         count = 0.0
         status.each do |state|
@@ -494,6 +494,57 @@ class HqController < ApplicationController
     
     redirect_to "/" and return	
     
+  end
+
+  def manage_duplicates
+    @person = Person.find(params[:person_id])
+    @duplicates = search_similar_record(@person)
+    @title = "Manage Duplicates"
+  end
+
+  def search_similar_record(params)
+    people = []
+    values = [
+        params[:first_name].soundex,
+        params[:last_name].soundex,
+        params[:gender],
+        params[:date_of_death],
+        params[:birthdate],
+        params[:place_of_death]]
+
+    Person.by_demographics.key(values).each do |p|
+      people << p if p.id != params.id
+    end
+    people
+  end
+
+
+  def get_comments
+    @person = Person.find(params[:person_id])
+    @comments = []
+
+    Audit.by_record_id.key(@person.id).each  do |audit|
+      user = User.find(audit.user_id)
+      user_name = (user.first_name + " " + user.last_name)
+      ago = ""
+      if (audit.created_at.to_date == Date.today)
+        ago = "today"
+      else
+        ago = (Date.today - audit.created_at.to_date).to_i
+        ago = ago.to_s + (ago.to_i == 1 ? " day ago" : " days ago")
+      end
+
+      @comments << {
+          "created_at" => audit.created_at.to_time,
+          'user' => user_name,
+          'user_role' => user.role,
+          'level' => audit.level,
+          'comment' => audit.reason,
+          'date_added' => ago
+      }
+    end
+
+    render :text => @comments.to_json
   end
 
 end
