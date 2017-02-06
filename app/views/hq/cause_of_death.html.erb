@@ -164,12 +164,7 @@
           <div id="cause_of_death" class="container custom">
               <input name="person_id" value="<%= @person.id%>" type="hidden" type="text" />
 
-            <div class="form-group">
-              <label for="icd_10_code">ICD-10 Code</label>
-              <input name="icd_10_code" id="icd_10_code" value="<%= @person.icd_10_code%>" class="form-control" type="text" />
-            </div>
-
-              <div class="form-group">
+               <div class="form-group">
                 <label for="">Cause of Death 1 </label>
                 <input name="cause_of_death1" id="cause_of_death1" value="<%= @person.cause_of_death1%>" class="form-control" type="text" />
 
@@ -201,6 +196,11 @@
                 <label for="">Cause of Death 4 onset to death Interval</label>
                 <input name="onset_death_interval4" id="onset_death_interval4" value="<%= @person.onset_death_interval4%>" class="form-control" type="text" />
               </div>
+
+                <div class="form-group">
+                  <label for="icd_10_code">ICD-10 Code</label>
+                  <input name="icd_10_code" id="icd_10_code" value="<%= @person.icd_10_code%>" class="form-control" type="text" />
+                </div>
 
               <div onclick="hit('manner_of_death_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
             </div>

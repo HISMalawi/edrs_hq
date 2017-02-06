@@ -113,10 +113,13 @@
     }
 </style>
 
-<table class="table" style="background: white;height: 97%;width: 99%">
+<table class="table cst" style="background: white;height: 97%;width: 99.5%">
     <tr class="" style="width: 100%">
-        <td class="" style="width: 30%;border: 1px solid gray">
-          <div class="radio radio-primary" onmousedown="showControls('den')">
+    <% if @current_user.role.downcase != 'coder'%>
+
+    <td class="" style="width: 30%;border: 1px solid gray">
+
+        <div id="first" class="radio radio-primary" onmousedown="showControls('den')">
             <input type="radio" name="radio" id="radio">
             <label for="radio">
               By Death Entry Number
@@ -179,7 +182,16 @@
           </div>
         </td>
 
-        <td id = "input-td" class="" style="width: 70%; border: 1px solid gray">
+    <% else %>
+        <style>
+            #input-td{
+                padding-top: 50px;
+            }
+        </style>
+
+    <% end %>
+
+    <td id = "input-td" class="" style="width: 70%; border: 1px solid gray">
 
           <div id="den" class="container custom">
             <form class="form-horizontal" role="form" action="/do_search">
@@ -462,5 +474,8 @@
 
   var interval = setInterval("checkConditions()", 200);
 
+
+  showControls('den');
+  $("#den").click();
 
 </script>
