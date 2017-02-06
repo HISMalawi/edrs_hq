@@ -38,7 +38,8 @@ Rails.application.routes.draw do
   get 'rejected_and_approved_cases' => 'case#rejected_and_approved_cases'
 
   get '/get_comments' => 'hq#get_comments'
-
+  get '/ajax_save_comment' => 'hq#ajax_save_comment'
+  post '/ajax_save_comment' => 'hq#ajax_save_comment'
 
   get '/approve_for_printing' => 'case#approve_for_printing'
   get '/approve_reprint' => 'case#approve_reprint'

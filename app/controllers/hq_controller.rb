@@ -542,9 +542,43 @@ class HqController < ApplicationController
           'comment' => audit.reason,
           'date_added' => ago
       }
+
+      @comments = @comments.sort_by{|c| c['created_at']}
     end
 
     render :text => @comments.to_json
+  end
+
+  def ajax_save_comment
+    @person = Person.find(params[:person_id])
+
+    audit =  Audit.create(
+      "reason" => params['comment'],
+      "user_id" => @current_user.id,
+      "record_id" => @person.id,
+      "level" => "Person",
+      "type" => (params["next_status"].gsub(/\-/, '') rescue nil),
+      "site_id" => CONFIG['district_code']
+    )
+
+    user = User.find(audit.user_id)
+    user_name = (user.first_name + " " + user.last_name)
+    ago = ""
+    if (audit.created_at.to_date == Date.today)
+      ago = "today"
+    else
+      ago = (Date.today - audit.created_at.to_date).to_i
+      ago = ago.to_s + (ago.to_i == 1 ? " day ago" : " days ago")
+    end
+
+    render :text => {
+        "created_at" => audit.created_at.to_time,
+        'user' => user_name,
+        'user_role' => user.role,
+        'level' => audit.level,
+        'comment' => audit.reason,
+        'date_added' => ago
+    }.to_json
   end
 
 end

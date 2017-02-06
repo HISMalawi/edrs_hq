@@ -399,10 +399,10 @@
                     </div>
 
                     <div style="width: 100%;margin-top: 20px;border-top: 1px solid #d3d3d3">
-                        <form>
-                          <textarea placeholder="New Comment" id="textarea" style="width: 90%;margin-top: 4px;"></textarea>
+                        <form id="comment-form" action="/ajax_save_comment">
+                          <textarea name="comment" placeholder="New Comment" id="textarea" style="width: 90%;margin-top: 4px;"></textarea>
 
-                          <button type="submit" class="btn btn-sm btn-primary pull-left">Submit</button>
+                          <div onclick="saveComment();" class="btn btn-sm btn-primary pull-left">Submit</div>
                         </form>
                     </div>
                   </div>
@@ -419,7 +419,7 @@
 </div>
 
 
-<div id="clone_me" class="media" style="padding: 8px;display:none;">
+<div id="clone_me" class="media" style="padding: 5px;display:none;border-top: 1px solid lightgrey;">
 
   <div class="media-body" style="width: 550px;">
 
@@ -499,7 +499,7 @@
                             dup.style.display = "block";
                             //set values
                             dup.getElementsByClassName("name")[0].innerHTML = results[i]['user']
-                                    + " <small class='user_role'>" + results[i]['user_role'] + " " + results[i]['date_added'] + " </small>";
+                                    + " <small class='user_role'>" + results[i]['user_role'] + " - " + results[i]['date_added'] + " </small>";
                             dup.getElementsByClassName("comment")[0].innerHTML = results[i]['comment'];
 
                             parent.appendChild(dup);
@@ -508,6 +508,41 @@
                         jQuery("#comments").show();
                     },
                     error: function(e){
+                        alert("Something went wrong!")
+                    }
+                }
+        )
+    }
+
+    function saveComment(){
+
+        jQuery.ajax(
+                {
+                    url: "/ajax_save_comment?person_id=<%= params[:person_id]%>&comment=",
+                    data: {
+                        'comment' : __$("textarea").value,
+                        "authenticity_token": "<%= form_authenticity_token %>"
+                    },
+                    success: function(result){
+                        result = JSON.parse(result);
+                        var parent = document.getElementById("comments-list");
+                        var clone = document.getElementById("clone_me");
+
+                        var dup = clone.cloneNode(true);
+
+                        dup.style.display = "block";
+                        //set values
+                        dup.getElementsByClassName("name")[0].innerHTML = result['user']
+                                + " <small class='user_role'>" + result['user_role'] + " - " + result['date_added'] + " </small>";
+                        dup.getElementsByClassName("comment")[0].innerHTML = result['comment'];
+                        dup.style.background = "lightblue";
+
+                        parent.appendChild(dup);
+                        parent.scrollTop = parent.scrollHeight;
+                        __$("textarea").value = "";
+                       // alert("Comment Added Successfully")
+                    },
+                    error: function(){
                         alert("Something went wrong!")
                     }
                 }
