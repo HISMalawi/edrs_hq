@@ -237,7 +237,7 @@
                   Hospital of Death :
                 </td>
                 <td class="data">
-                  <%= @person["hospital_of_death_name"] %>
+                  <%= @person.hospital_of_death %>
                 </td>
               </tr>
 
@@ -246,7 +246,7 @@
                   Village of Death :
                 </td>
                 <td class="data">
-                  <%= @person["place_of_death_village"] %>
+                  <%= @person.place_of_death_village rescue nil %>
                 </td>
               </tr>
 
@@ -255,7 +255,7 @@
                   TA of Death :
                 </td>
                 <td class="data">
-                  <%= @person["place_of_death_ta"] %>
+                  <%= @person.place_of_death_ta rescue nil %>
                 </td>
               </tr>
 
@@ -264,7 +264,7 @@
                   District of Death :
                 </td>
                 <td class="data">
-                  <%= @person["place_of_death_district"] %>
+                  <%= @person.place_of_death_district %>
                 </td>
               </tr>
               
