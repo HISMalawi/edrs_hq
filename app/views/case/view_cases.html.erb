@@ -250,8 +250,9 @@
               <div onclick= "<%= onclick %>" class="dynamic-button btn btn-small btn-primary pull-right <%= task['class'].downcase rescue ''%>"><span><%= task['button_name']%></span></div>
           <% end %>
 
-          <div onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary"><span>View Comments</span></div>
-
+          <% if comment == true && @current_user.role == "Data Checking Clerk"%>
+            <div onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary"><span>View Comments</span></div>
+          <% end %>
         </th>
       </tr>
       </tfoot>
@@ -360,7 +361,7 @@
         <%@next_state ={
                 "Data Checking Clerk" => ["HQ COMPLETE", "HQ POTENTIAL INCOMPLETE"],
                 "Data Supervisor" => ["HQ CONFLICT", "HQ INCOMPLETE"],
-                "Data Manager" => ["HQ COMPLETE", "HQ CONFIRMED INCOMPLETE"]
+                "Data Manager" => ["HQ PRINT", "HQ CONFIRMED INCOMPLETE"]
         }%>
 
         <button type="button" class="btn btn-success" onclick="ajaxChange('<%= @next_state[@current_user.role][0] rescue nil%>')" > Complete </button>
@@ -373,16 +374,10 @@
 </div>
 </div>
 
-
-
 <div class="" id="comments">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header btn-primary" >
-        <button type="button" class="close"  onclick="__$('textarea').value = ''; __$('comments').style.display = 'none'">
-          <span aria-hidden="true">&times;</span>
-          <span class="sr-only">Close</span>
-        </button>
+      <div class="modal-header btn-primary">
         <h4 class="modal-title">Death Record Comments</h4>
       </div>
       <div class="modal-body">
@@ -410,7 +405,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-sm btn-default" onclick="__$('textarea').value = ''; __$('comments').style.display = 'none'" > Close</button>
+            <button id="comment_close" type="button" class="btn btn-sm btn-default" onclick="__$('textarea').value = '';
+                    __$('comments').style.display = 'none'" > Finish </button>
           </div>
         </div>
       </div>
@@ -418,17 +414,12 @@
   </div>
 </div>
 
-
 <div id="clone_me" class="media" style="padding: 5px;display:none;border-top: 1px solid lightgrey;">
-
   <div class="media-body" style="width: 550px;">
-
     <h4 class="media-heading user_name"><a class="name"> <small class="role"> </small></a></h4>
     <span class="comment" style="width: 100%;"></span>
-
   </div>
 </div>
-
 
 <%= form_tag("/do_print_these", "method" => "post", "id" => "frm") do %>
     <input type="hidden" id="selected" name="selected" value="<%= params[:person_id]%>"/>
@@ -462,7 +453,19 @@
         $.ajax({
             url: "/ajax_change_status?next_status=" + status + "&person_id=<%=params['person_id']%>",
             success: function(feedback){
-                window.parent.location = "<%= request.referrer%>";
+                jQuery(".modal-dialog").parent().hide();
+
+                var status_arr = ["HQ INCOMPLETE", "HQ POTENTIAL INCOMPLETE", "HQ CONFIRMED INCOMPLETE",
+                    "HQ POTENTIAL DUPLICATE", "HQ DUPLICATE", "HQ CONFIRMED DUPLICATE", "HQ VOID", "HQ REOPEN",
+                    "HQ AMMEND"
+                ];
+
+                if(status_arr.indexOf(status) >= 0){
+                    var link = "<%= (session[:return_url] || '/')%>".trim();
+                    ajaxPullComments(link);
+                }else {
+                    window.parent.location = "<%= (session[:return_url] || request.referrer)%>";
+                }
             },
             error: function(error){
                 alert("Something went wrong!");
@@ -474,7 +477,7 @@
         $.ajax({
             url: route + "&person_id=<%=params['person_id']%>",
             success: function(feedback){
-                window.parent.location = "<%= request.referrer%>";
+                window.parent.location = "<%= session[:return_url] || request.referrer%>";
             },
             error: function(error){
                 alert("Something went wrong!");
@@ -482,7 +485,7 @@
         })
     }
 
-    function ajaxPullComments(){
+    function ajaxPullComments(link){
         jQuery("#comment-list").html("");
 
         jQuery.ajax(
@@ -506,6 +509,16 @@
                         }
 
                         jQuery("#comments").show();
+
+                        parent.scrollTop = parent.scrollHeight;
+
+                        document.getElementById("comment_close").onmousedown = function(){
+                            if(link){
+                                window.parent.location = link;
+                            }else{
+                                window.parent.location = "/";
+                            }
+                        }
                     },
                     error: function(e){
                         alert("Something went wrong!")

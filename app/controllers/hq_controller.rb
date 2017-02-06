@@ -520,7 +520,7 @@ class HqController < ApplicationController
     @person = Person.find(params[:person_id])
     @comments = []
 
-    Audit.by_record_id.key(@person.id).each  do |audit|
+    Audit.by_record_id.key(@person.id).each do |audit|
       user = User.find(audit.user_id)
       user_name = (user.first_name + " " + user.last_name)
       ago = ""
@@ -530,7 +530,6 @@ class HqController < ApplicationController
         ago = (Date.today - audit.created_at.to_date).to_i
         ago = ago.to_s + (ago.to_i == 1 ? " day ago" : " days ago")
       end
-
       @comments << {
           "created_at" => audit.created_at.to_time,
           'user' => user_name,
@@ -539,7 +538,6 @@ class HqController < ApplicationController
           'comment' => audit.reason,
           'date_added' => ago
       }
-
       @comments = @comments.sort_by{|c| c['created_at']}
     end
 
