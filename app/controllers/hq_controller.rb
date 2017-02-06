@@ -21,7 +21,7 @@ class HqController < ApplicationController
   end
 
   def search
-
+    @title = "Search Death Records"
   end
 
   def do_search
@@ -37,6 +37,43 @@ class HqController < ApplicationController
       when "drn"
         PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH REGISTRATION NUMBER"]).each do |identifier|
           results << identifier.person
+        end
+      when "details_of_deceased"
+        last_name = params[:last_name].encrypt
+        first_name = params[:first_name].encrypt
+        gender = params[:gender]
+        results = Person.by_last_name_and_first_name_and_gender.key([last_name, first_name, gender]);
+      when "home_address"
+        if params[:home_country] != "Malawian"
+          home_country_id = Nationality.by_name(params[:home_country]).last.id rescue nil
+          results = Person.by_home_country_id.key(home_country_id)
+        else
+          home_district_id = District.by_name.key(params[:home_district]).last.id rescue nil
+          home_ta_id = TraditionalAuthority.by_district_id_and_name.key([home_district_id, params[:home_ta]]).last.id rescue nil
+          home_village_id = Village.by_ta_id_and_name.key([home_ta_id, params[:home_village]]).last.id rescue nil
+          results = Person.by_home_village_id.key(home_village_id)
+        end
+      when "mother"
+        last_name = params["mother_last_name"].soundex rescue nil
+        first_name = params["mother_first_name"].soundex rescue nil
+        results = Person.by_mother_last_name_and_first_name.key([last_name, first_name])
+      when "father"
+        last_name = params["father_last_name"].soundex rescue nil
+        first_name = params["father_first_name"].soundex rescue nil
+        results = Person.by_father_last_name_and_first_name.key([last_name, first_name])
+      when "informant_name"
+        last_name = params["informant_last_name"].soundex rescue nil
+        first_name = params["informant_first_name"].soundex rescue nil
+        results = Person.by_informant_last_name_and_first_name.key([last_name, first_name])
+      when "informant_address"
+        if params[:informant_country] != "Malawian"
+          country_id = Nationality.by_name(params[:informant_country]).last.id rescue nil
+          results = Person.by_home_country_id.key(country_id)
+        else
+          district_id = District.by_name.key(params[:informant_district]).last.id rescue nil
+          ta_id = TraditionalAuthority.by_district_id_and_name.key([district_id, params[:informant_ta]]).last.id rescue nil
+          village_id = Village.by_ta_id_and_name.key([ta_id, params[:informant_village]]).last.id rescue nil
+          results = Person.by_informant_current_village_id.key(village_id)
         end
     end
 
@@ -62,7 +99,7 @@ class HqController < ApplicationController
           drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
           den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
           first_name: person.first_name,
-          middle_name:  person.last_name,
+          middle_name:  person.middle_name,
           last_name:  person.last_name,
           dob:        person.birthdate.strftime("%d/%b/%Y"),
           gender:     person.gender,
@@ -205,7 +242,193 @@ class HqController < ApplicationController
   def print_certificates
   
   end
-  
+
+  def districts
+
+    if params[:place].present? && params[:place] == "Hospital/Institution"
+
+      cities = ["Lilongwe City", "Blantyre City", "Zomba City", "Mzuzu City"]
+
+      district = District.by_name.each
+
+      render :text => district.collect { |w| "<li>#{w.name}" unless cities.include? w.name }.join("</li>")+"</li>"
+
+    else
+      district = District.by_name.each
+
+      render :text => ([""] + district.collect { |w| w.name}).sort
+
+    end
+  end
+
+
+  def by_reporting_month_and_district
+    results = {
+        "graph_data" => [],
+        "graph_categories" => []
+    }
+
+    today = DateTime.now
+     [(today - 11.months),  (today - 10.months), (today - 9.months), (today - 8.months),
+        (today - 7.months), (today - 6.months), (today - 5.months), (today - 4.months),
+        (today - 3.months), (today - 2.months), (today - 1.months), (today)] .each do |date|
+
+        status = ["DC APPROVED", "HQ APPROVED", "HQ COMPLETE", "HQ INCOMPLETE", "HQ DUPLICATE",
+                  "HQ POTENTIAL DUPLICATE", "HQ PRINTED", "HQ CLOSED", "HQ POTENTIAL INCOMPLETE",
+                  "HQ DISPATCHED", "HQ PRINT", "HQ REPRINT", "HQ AMMEND"]
+        month = date.strftime("%b`%y")
+        count = 0.0
+        status.each do |state|
+
+            if params[:district].blank?
+              start = state + "_" + date.beginning_of_month.strftime("%Y-%m-%d")
+              endd = state + "_" + date.end_of_month.strftime("%Y-%m-%d")
+              count = count + PersonRecordStatus.by_record_status_and_created_at.startkey(start).endkey(endd).each.count
+            else
+              district = params[:district].gsub("_", "-")
+              code = District.by_name.key(district).last.id rescue ""
+              start = code+"_"+state + "_" + date.beginning_of_month.strftime("%Y-%m-%d")
+              endd = code+"_"+state + "_" + date.end_of_month.strftime("%Y-%m-%d")
+              count = count + PersonRecordStatus.by_district_code_and_record_status_and_created_at.startkey(start).endkey(endd).each.count
+            end
+        end
+        results['graph_categories'] << month
+        results['graph_data'] << count
+     end
+
+    render :text => results.to_json
+  end
+
+  def by_record_status
+    results = {}
+
+    sent  = [
+        ["dc_approved", ["DC APPROVED"]],
+        ["hq_print", ["HQ PRINT"]],
+        ["hq_reprint", ["HQ REPRINT"]],
+        ["hq_duplicate", ["HQ POTENTIAL DUPLICATE", "HQ DUPLICATE", "HQ CONFIRMED DUPLICATE"]],
+        ["hq_incomplete", ["HQ POTENTIAL INCOMPLETE", "HQ INCOMPLETE"]],
+        ["hq_printed", ["HQ CLOSED"]],
+        ["hq_dispatched", ["HQ DISPATCHED"]]
+     ]
+
+    sent.each do |id, states|
+        if params[:district].blank?
+          results[id] = PersonRecordStatus.by_status.keys(states).each.count
+        else
+          district = params[:district].gsub("_", "-")
+          code = District.by_name.key(district).last.id rescue ""
+          states = states.collect{|s| code+"_"+s}
+          results[id] = PersonRecordStatus.by_district_code_and_status.keys(states).each.count
+        end
+    end
+
+    render :text => results.to_json
+  end
+
+  def facilities
+
+    district_param = params[:district] || '';
+
+    if !district_param.blank?
+
+      district = District.by_name.key(district_param.to_s).first
+
+      facilities = HealthFacility.by_district_id.keys([district.id]).each
+    else
+      facilities = HealthFacility.by_name.each
+    end
+
+    list = []
+    facilities.each do |f|
+      if !params[:search_string].blank?
+        list << f if f.name.match(/#{params[:search_string]}/i)
+      else
+        list << f
+      end
+    end
+
+    render :text =>  ([""] + list.collect { |w| w.name}.uniq).sort
+  end
+
+  def nationalities
+    nationalities = Nationality.all
+    malawi = Nationality.by_nationality.key("Malawian").last
+    list = []
+    nationalities.each do |n|
+      if !params[:search_string].blank?
+        list << n if n.nationality.match(/#{params[:search_string]}/i)
+      else
+        list << n
+      end
+    end
+
+    if "Malawian".match(/#{params[:search_string]}/i) || params[:search_string].blank?
+      list = [malawi] + list
+    end
+
+    render :text =>  ([""] + list.collect { |w| w.nationality}.uniq)
+
+  end
+
+  def tas
+
+    result = []
+
+    if !params[:district].blank?
+
+      district = District.by_name.key(params[:district].strip).first
+
+      result = TraditionalAuthority.by_district_id.key(district.id)
+    else
+
+      result = TraditionalAuthority.by_district_id
+
+    end
+
+    list = []
+    result.each do |r|
+      if !params[:search_string].blank?
+        list << r if r.name.match(/#{params[:search_string]}/i)
+      else
+        list << r
+      end
+    end
+
+    render :text =>  ([""] + list.collect { |w| w.name}.uniq).sort
+  end
+
+
+  def villages
+
+    result = []
+
+    if !params[:district].blank? and !params[:ta].blank?
+
+      district = District.by_name.key(params[:district].strip).first
+
+      ta =TraditionalAuthority.by_district_id_and_name.key([district.id, params[:ta]]).first
+
+      result = Village.by_ta_id.key(ta.id.strip)
+
+    else
+      result = Village.by_ta_id
+
+    end
+
+    list = []
+    result.each do |r|
+      if !params[:search_string].blank?
+        list << r if r.name.match(/#{params[:search_string]}/i)
+      else
+        list << r
+      end
+    end
+
+    render :text =>  ([""] + list.collect { |w| w.name}.uniq).sort
+
+  end
+
   def signature
     @property = GlobalProperty.new
     @section = "Change Signature"
@@ -269,5 +492,5 @@ class HqController < ApplicationController
     redirect_to "/" and return	
     
   end
-    
+
 end

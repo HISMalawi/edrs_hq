@@ -81,6 +81,15 @@ Rails.application.routes.draw do
 
   get 'hq/death_certificate_preview'
 
+  get '/facilities' => "hq#facilities"
+
+  get '/nationalities' => "hq#nationalities"
+
+  get '/districts' => "hq#districts"
+
+  get "/tas" => "hq#tas"
+
+  get "/villages" => "hq#villages"
   #global property routes
 
   get "/signature" => "hq#signature"
@@ -88,6 +97,9 @@ Rails.application.routes.draw do
   get "/paper_size" => "hq#paper_size"
 
   post "/create_property" => "hq#create_property"
+
+  get "/by_reporting_month_and_district" => "hq#by_reporting_month_and_district"
+  get "/by_record_status" => "hq#by_record_status"
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

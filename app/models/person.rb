@@ -238,7 +238,7 @@ class Person < CouchRest::Model::Base
 
           informant_village = Village.by_ta_id_and_name.key([informant_ta.id,params[:informant_current_village]]).first
 
-          params[:informant_village_id] = informant_village.id
+          params[:informant_current_village_id] = informant_village.id
         end
 
       end
@@ -381,7 +381,7 @@ class Person < CouchRest::Model::Base
   end
 
   def home_country
-    return Nationality.find(self.home_country_id).name
+    return Nationality.find(self.home_country_id).nationality
   end
 
   def home_district
@@ -468,7 +468,7 @@ class Person < CouchRest::Model::Base
   property :current_village_id, String
   property :current_ta_id, String
   property :current_district_id, String
-  property :died_while_pegnant, String
+  property :died_while_pregnant, String
   property :updated_by, String
   property :voided_by, String
   property :voided_date, Time
@@ -624,6 +624,9 @@ class Person < CouchRest::Model::Base
 
     view :by_last_name_code
 
+    view :by_last_name_and_first_name
+
+    view :by_last_name_and_first_name_and_gender
 
     view :by_specific_birthdate,
          :map => "function(doc) {
@@ -699,8 +702,8 @@ class Person < CouchRest::Model::Base
 
     view :by_hospital_of_death,
          :map => "function(doc) {
-                  if (doc['type'] == 'Person' && doc['hospital_of_death_name'] != null) {
-                    emit(doc['hospital_of_death_name'], 1);
+                  if (doc['type'] == 'Person' && doc['hospital_of_death'] != null) {
+                    emit(doc['hospital_of_death'], 1);
                   }
                 }"
 
@@ -894,9 +897,9 @@ class Person < CouchRest::Model::Base
                               doc['gender'],
                               doc['date_of_death'], 
                               doc['birthdate'], 
-                              doc['place_of_death_district'],
+                              doc['place_of_death'],
                               doc['informant_first_name_code'],
-                              doc['informant_first_last_code']], 1);
+                              doc['informant_last_name_code']], 1);
                     }
                 }"
     view :by_demographics_with_place,
@@ -941,6 +944,27 @@ class Person < CouchRest::Model::Base
     filter :facility_sync, "function(doc,req) {return req.query.facility_code == doc.facility_code}"
 
     filter :district_sync, "function(doc,req) {return req.query.district_code == doc.district_code}"
+
+    view :by_home_country_id,
+         :map => "function(doc) {
+                  if (doc['type'] == 'Person' && doc['home_country_id'] != null) {
+                    emit(doc['home_country_id'], 1);
+                  }
+                }"
+
+    view :by_home_village_id,
+         :map => "function(doc) {
+                  if (doc['type'] == 'Person' && doc['home_village_id'] != null) {
+                    emit(doc['home_village_id'], 1);
+                  }
+                }"
+
+    view :by_informant_current_village_id,
+         :map => "function(doc) {
+                  if (doc['type'] == 'Person' && doc['informant_current_village_id'] != null) {
+                    emit(doc['informant_current_village_id'], 1);
+                  }
+                }"
 
   end
 
