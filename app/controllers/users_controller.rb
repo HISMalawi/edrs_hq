@@ -4,18 +4,20 @@ class UsersController < ApplicationController
 		reset_session
 
     if request.post?
-
       user = User.by_username.key(params["users"]["username"]).last
 
       if user and user.password_matches?(params["users"]["password"])
         session[:user_id] = user.id
         User.current_user = user
-        redirect_to "/"
+        redirect_to "/" and return
+        raise "XXXXXXX"
       else
         flash[:error] = "Incorrect login details!!"
-        redirect_to "/login"
+        redirect_to "/login" and return
       end
     end
+
+    render :layout => false
   end
 
   def new
