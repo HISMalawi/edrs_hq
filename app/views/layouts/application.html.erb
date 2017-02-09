@@ -39,6 +39,22 @@
       <script src="js/respond.min.js"></script>
       <script src="js/lte-ie7.js"></script>
     <![endif]-->
+
+    <style>
+      .left-info-footer {
+        left: 200px;
+        position: absolute;
+        opacity: 1;
+        transition: 1s opacity;
+      }
+
+      .credits {
+        bottom: -355px;
+        position: relative;
+      }
+
+    </style>
+
   </head>
 
   <body>
@@ -52,7 +68,7 @@
             </div>
 
             <!--logo start-->
-            <a href="index.html" class="logo">Nice <span class="lite">Admin</span></a>
+            <a href="/" class="logo">e <span class="lite">DRS</span></a>
             <!--logo end-->
 
             <div class="nav search-row" id="top_menu">
@@ -60,7 +76,7 @@
                 <ul class="nav top-menu">                    
                     <li>
                         <form class="navbar-form">
-                            <input class="form-control" placeholder="Search" type="text">
+                            <!--input class="form-control" placeholder="Search" type="text"-->
                         </form>
                     </li>                    
                 </ul>
@@ -74,7 +90,7 @@
                     <!-- task notificatoin start -->
                     <li id="task_notificatoin_bar" class="dropdown">
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                            <i class="icon-task-l"></i>
+                            <i class="icon-bell-l"></i>
                             <span class="badge bg-important">5</span>
                         </a>
                         <ul class="dropdown-menu extended tasks-bar">
@@ -157,7 +173,10 @@
                     </li>
                     <!-- task notificatoin end -->
                     <!-- inbox notificatoin start-->
-                    <li id="mail_notificatoin_bar" class="dropdown">
+                 
+                 
+                 
+                    <!--li id="mail_notificatoin_bar" class="dropdown">
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                             <i class="icon-envelope-l"></i>
                             <span class="badge bg-important">5</span>
@@ -219,10 +238,10 @@
                                 <a href="#">See all messages</a>
                             </li>
                         </ul>
-                    </li>
+                    </li-->
                     <!-- inbox notificatoin end -->
                     <!-- alert notification start-->
-                    <li id="alert_notificatoin_bar" class="dropdown">
+                    <!--li id="alert_notificatoin_bar" class="dropdown">
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
 
                             <i class="icon-bell-l"></i>
@@ -265,7 +284,7 @@
                                 <a href="#">See all notifications</a>
                             </li>
                         </ul>
-                    </li>
+                    </li-->
                     <!-- alert notification end-->
                     <!-- user login dropdown start-->
                     <li class="dropdown">
@@ -273,31 +292,28 @@
                             <span class="profile-ava">
                                 <img alt="" src="#">
                             </span>
-                            <span class="username">Jenifer Smith</span>
+                            <span class="username"><%=User.current_user.username%></span>
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu extended logout">
                             <div class="log-arrow-up"></div>
                             <li class="eborder-top">
-                                <a href="#"><i class="icon_profile"></i> My Profile</a>
+                                <a href="/profile/<%=User.current_user.id%>"><i class="icon_profile"></i> My Profile</a>
                             </li>
-                            <li>
+                            <!--li>
                                 <a href="#"><i class="icon_mail_alt"></i> My Inbox</a>
                             </li>
                             <li>
                                 <a href="#"><i class="icon_clock_alt"></i> Timeline</a>
-                            </li>
+                            </li-->
                             <li>
-                                <a href="#"><i class="icon_chat_alt"></i> Chats</a>
-                            </li>
-                            <li>
-                                <a href="login.html"><i class="icon_key_alt"></i> Log Out</a>
+                                <a href="/settings"><i class="icon_chat_alt"></i> Settings</a>
                             </li>
                             <li>
                                 <a href="documentation.html"><i class="icon_key_alt"></i> Documentation</a>
                             </li>
                             <li>
-                                <a href="documentation.html"><i class="icon_key_alt"></i> Documentation</a>
+                                <a href="/login"><i class="icon_key_alt"></i> Log Out</a>
                             </li>
                         </ul>
                     </li>
@@ -314,23 +330,23 @@
               <!-- sidebar menu start-->
               <ul class="sidebar-menu">                
                   <li class="">
-                      <a class="" href="index.html">
+                      <a class="" href="/">
                           <i class="icon_house_alt"></i>
                           <span>Dashboard</span>
                       </a>
                   </li>
-				  <li class="sub-menu">
-                      <a href="javascript:;" class="">
+                  <li class="">
+                      <a href="/tasks" class="">
                           <i class="icon_document_alt"></i>
-                          <span>Forms</span>
-                          <span class="menu-arrow arrow_carrot-right"></span>
+                          <span>Manage cases</span>
+                          <!--span class="menu-arrow arrow_carrot-right"></span-->
                       </a>
-                      <ul class="sub">
+                      <!--ul class="sub">
                           <li><a class="" href="form_component.html">Form Elements</a></li>                          
                           <li><a class="" href="form_validation.html">Form Validation</a></li>
-                      </ul>
+                      </ul-->
                   </li>       
-                  <li class="sub-menu">
+                  <!--li class="sub-menu">
                       <a href="javascript:;" class="">
                           <i class="icon_desktop"></i>
                           <span>UI Fitures</span>
@@ -366,19 +382,24 @@
                       <ul class="sub">
                           <li><a class="" href="basic_table.html">Basic Table</a></li>
                       </ul>
-                  </li>
+                  </li-->
                   
                   <li class="sub-menu ">
                       <a href="javascript:;" class="">
                           <i class="icon_documents_alt"></i>
-                          <span>Pages</span>
+                          <span>Reports</span>
                           <span class="menu-arrow arrow_carrot-right"></span>
                       </a>
                       <ul class="sub">                          
-                          <li><a class="" href="profile.html">Profile</a></li>
-                          <li><a class="" href="login.html"><span>Login Page</span></a></li>
-                          <li><a class="active" href="blank.html">Blank Page</a></li>
-                          <li><a class="" href="404.html">404 Error</a></li>
+                          <% if has_role("Authorise printing") || has_role( "Activate User") || has_role("Deactivate User") || has_role("Create User") || has_role( "Update User") || has_role("View Users")%>
+                            <li><a href="#">Printed Certificates</a></li>
+                            <li><a href="#">Reported Births</a></li>
+                            <li><a href="#">Registered Births</a></li>
+                            <li><a href="#">Approved at HQ</span></a></li>
+                            <li><a href="#">Voided Records</a></li>
+                          <% end %>
+                            
+
                       </ul>
                   </li>
                   
@@ -393,15 +414,39 @@
           <section class="wrapper">
 		  <div class="row">
 				<div class="col-lg-12">
-					<h3 class="page-header"><i class="fa fa fa-bars"></i> Pages</h3>
+					<!--h3 class="page-header"><i class="fa fa fa-bars"></i> Pages</h3-->
 					<ol class="breadcrumb">
-						<li><i class="fa fa-home"></i><a href="index.html">Home</a></li>
-						<li><i class="fa fa-bars"></i>Pages</li>
-						<li><i class="fa fa-square-o"></i>Pages</li>
+						<li><i class="fa fa-home"></i><a href="/">Home</a></li>
+						<li><i class="fa fa-bars"></i><%= controller.controller_name %></li>
+						<li><i class="fa fa-square-o"></i><%= controller.action_name.gsub('_', ' ')%></li>
 					</ol>
 				</div>
 			</div>
               <!-- page start-->
+              <!-- javascripts -->
+              <!--script src="assets/bootstrap/jquery.js"></script-->
+              <script src="assets/DataTables/jquery.js"></script>
+              <script src="assets/bootstrap/bootstrap.min.js"></script>
+              <script src="assets/bootstrap/jquery.scrollTo.min.js"></script>
+              <script src="assets/bootstrap/jquery.nicescroll.js"></script>
+              <script src="assets/bootstrap/scripts.js"></script>
+              <%#=javascript_include_tag "bootstrap/jquery" %>                          
+              <%#=javascript_include_tag "bootstrap/bootstrap.min" %>                          
+              <!-- nice scroll -->
+              <%#=javascript_include_tag "bootstrap/jquery.scrollTo.min" %>                          
+              <%#=javascript_include_tag "bootstrap/jquery.nicescroll" %>                          
+              <%#=javascript_include_tag "bootstrap/scripts" %>                          
+              <% if (controller.controller_name == 'case' &&  controller.action_name != "view_cases") || controller.action_name == 'do_search'%>
+
+                <!--script src="assets/DataTables/jquery.js"></script-->
+                <script src="assets/DataTables/jquery.dataTables.min.js"></script>
+                <link href="/assets/DataTables/jquery.dataTables.css" rel="stylesheet">
+                <link href="/assets/DataTables/demo_table_jui.css" rel="stylesheet">
+                <link href="/assets/DataTables/demo_page.css" rel="stylesheet">
+
+                <link href="/assets/DataTables/jquery-ui.css" rel="stylesheet">
+
+              <%end%>
               <%= yield %>
               <!-- page end-->
           </section>
@@ -415,37 +460,19 @@
                     Licensing information: https://bootstrapmade.com/license/
                     Purchase the pro version form: https://bootstrapmade.com/buy/?theme=NiceAdmin
                 -->
-                <!--a href="https://bootstrapmade.com/free-business-bootstrap-themes-website-templates/">Business Bootstrap Themes</a> by <a href="https://bootstrapmade.com/">BootstrapMade</a-->
-              <a href="#">electronic Death Registration</a> by <a href="https://baobabhealth.org/">Baobab Health Trust</a>
+                <span class="left-info-footer">
+                  <a href="https://bootstrapmade.com/free-business-bootstrap-themes-website-templates/">Business Bootstrap Themes</a> 
+                  by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+                </span>
+                <span class="right-info-footer">
+                  <a href="#">electronic Death Registration</a> by 
+                  <a style="padding-right: 20px;" href="https://baobabhealth.org/">Baobab Health Trust</a>
+                </span>
             </div>
         </div>
   </section>
   <!-- container section end -->
-    <!-- javascripts -->
-    <!--script src="js/jquery.js"></script-->
-    <script src="assets/bootstrap/jquery.js"></script>
-    <script src="assets/bootstrap/bootstrap.min.js"></script>
-    <script src="assets/bootstrap/jquery.scrollTo.min.js"></script>
-    <script src="assets/bootstrap/jquery.nicescroll.js"></script>
-    <script src="assets/bootstrap/scripts.js"></script>
-    <%#=javascript_include_tag "bootstrap/jquery" %>                          
-    <%#=javascript_include_tag "bootstrap/bootstrap.min" %>                          
-    <!-- nice scroll -->
-    <%#=javascript_include_tag "bootstrap/jquery.scrollTo.min" %>                          
-    <%#=javascript_include_tag "bootstrap/jquery.nicescroll" %>                          
-    <%#=javascript_include_tag "bootstrap/scripts" %>                          
-    <% if (controller.controller_name == 'case' &&  controller.action_name != "view_cases") || controller.action_name == 'do_search'%>
-      <%#=javascript_include_tag "DataTables/prototype" %>                          
-      <%=javascript_include_tag "DataTables/jquery.dataTables.min" %>
-      <%= stylesheet_link_tag "DataTables/jquery.dataTables" %>                                     
-      <%= stylesheet_link_tag "DataTables/demo_table_jui" %>                                     
-      <%= stylesheet_link_tag "DataTables/demo_page" %>                                     
-      
-      <%#= stylesheet_link_tag "DataTables/jquery-ui.theme" %>                                     
-      <%= stylesheet_link_tag "DataTables/jquery-ui" %>                                     
-    <%end%>
           
-    <%#= yield %>
 
   </body>
 </html>

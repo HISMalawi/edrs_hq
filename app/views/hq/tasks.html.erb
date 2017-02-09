@@ -1,0 +1,94 @@
+<style>
+.task-btn  {
+  width: 100%;
+}
+
+.btn-title {
+  font-size: 25px !important;
+  font-weight: bold;
+}
+
+.btn-desc {
+  font-size: 15px !important;
+}
+
+.icons {
+  font-size: 18px;
+  margin-right: 12px;
+}
+
+</style>
+
+<h3>Cases</h3>
+
+
+<div id="button-container"></div>
+
+
+
+
+
+<script>
+var tasks = [
+    ['View','View open cases','/tasks'],
+    ['Printed','View printed cases','/tasks'],
+    ['Dispatched','View dispatched certificates','/tasks'],
+    ['Conflict cases','View cases with queries','/tasks'],
+    ['Rejected cases','View rejected cases','/tasks'],
+    ['Re-printing','View cases approved for re-reprinting','/tasks'],
+    ['Potential duplicates','Approve potential duplicates','/tasks']
+];
+
+var button_container = document.getElementById("button-container");
+
+function buildUI() {
+  var row = document.createElement('div');
+  button_container.appendChild(row);
+  counter = 0;
+  
+  <%(@tasks || []).each do |title, desc, link, icon, btn_type|%>
+    btnDIV = document.createElement('div');
+    btnDIV.setAttribute('class','col-lg-3 col-md-3 col-sm-12 col-xs-12');
+    row.appendChild(btnDIV);
+
+    i = document.createElement('i');
+    i.setAttribute('class','<%=icon%> icons');
+    i.setAttribute('aria-hidden','true');
+
+    s = document.createElement('span');
+    s.setAttribute('class','btn-title');
+    s.innerHTML = "<%=title%></p>";
+
+    s2 = document.createElement('span');
+    s2.setAttribute('class','btn-desc');
+    s2.innerHTML = "<%=desc%>";
+
+    button = document.createElement('button');
+    button.setAttribute('class','btn btn-<%=btn_type%> task-btn');
+    button.setAttribute('onclick',"document.location='<%=link%>'");
+
+    button.appendChild(i);
+    button.appendChild(s);
+    button.appendChild(s2);
+    btnDIV.appendChild(button)
+    
+    counter++;
+
+    if(counter == 4){
+      row = document.createElement('div');
+      row.innerHTML = "&nbsp;";
+      button_container.appendChild(row);
+      row = document.createElement('div');
+      button_container.appendChild(row);
+      counter = 0;
+    }
+
+  <%end%>
+
+
+}
+
+
+buildUI();
+
+</script>

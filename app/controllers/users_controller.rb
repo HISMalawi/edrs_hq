@@ -10,7 +10,6 @@ class UsersController < ApplicationController
         session[:user_id] = user.id
         User.current_user = user
         redirect_to "/" and return
-        raise "XXXXXXX"
       else
         flash[:error] = "Incorrect login details!!"
         redirect_to "/login" and return
@@ -257,6 +256,39 @@ class UsersController < ApplicationController
 
   end
 
+  def settings
+    @tasks = []
+
+    if has_role("Manage Sites")
+    end
+
+    if has_role("Create User") 
+      @tasks << ['Add user','Create new user','/users/new','fa fa-user']
+    end
+
+    if has_role("View Users")
+      @tasks << ['Edit users','Edit existing users','/search_user?title=Search+for+user+to+edit&cat=edit','fa fa-pencil-square-o']
+    end
+
+    if has_role("Deactivate User") 
+      @tasks <<['Block users','Block existing active users','/search_user?title=Search+for+user+to+block&cat=block','fa fa-lock']
+    end
+
+    if has_role( "Activate User")
+    end
+
+    if has_role("View Users") 
+    end 
+
+    if has_role("Create User") 
+      @tasks << ['Paper size','Edit certificate paper size','/paper_size','fa fa-file-text-o']
+      @tasks << ['Signature','Add signatures','/signature','fa fa-pencil']
+    end
+                    
+    if has_role("Change own password") 
+    end 
+
+  end
 
   private
   # Use callbacks to share common setup or constraints between actions.
