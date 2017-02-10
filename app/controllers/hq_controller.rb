@@ -110,6 +110,18 @@ class HqController < ApplicationController
     render :template => "case/default"
   end
 
+  def cause_of_death_list
+
+      diagnosis_list_csv = CSV.foreach("#{Rails.root}/app/assets/data/diagnoses_csv.csv", :headers => false)
+
+      diagnosis_list = diagnosis_list_csv.collect{|row| row[1] unless row[1].blank?}
+
+      diagnosis_list << ""
+
+      render :text => diagnosis_list.sort
+      
+  end
+
   def cause_of_death
     @title = "Cause of death"
     @person = Person.find(params[:person_id])
