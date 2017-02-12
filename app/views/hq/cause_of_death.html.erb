@@ -132,6 +132,59 @@
     #summary td {
         padding: 0.5em;
     }
+    #ui-datepicker-div{
+        width:20% !important;
+        background: #ffffff;
+        border:1px solid #e0dddd;
+        padding: 0.2em;
+    }
+
+    .ui-datepicker-calendar,.ui-datepicker-header{
+        width: 100%;
+        margin-left: 4%;
+
+    }
+    
+    .ui-state-default{
+        padding: 7px 7px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .ui-state-hover{
+        background: #80b7f5;
+        color: white;
+        padding: 7px 7px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .ui-icon-circle-triangle-e{
+        float: right;
+        margin-right: 8%;
+        padding: 8px 8px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block
+    }
+    .ui-icon-circle-triangle-w{
+        padding: 8px 8px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block
+    }
+
+    .ui-datepicker-next-hover{
+        float: right;
+        margin-right: 8%;
+    }
+    #number_field{
+            position: absolute;
+            top: 30%;
+            left: 35%;
+            display: none;
+
+    }
 </style>
  <link rel="stylesheet" href="/select2/select2.min.css">
 
@@ -354,21 +407,23 @@
                <div class="form-group">
                <div class="col-lg-12 col-md-12">
                       <label for="cause_of_death1">Cause of Death 1 </label>
-                      <select name="cause_of_death1" id="cause_of_death1" load="<%= @person.cause_of_death1%>" class="form-control select2" style="width:100%" >
+                      <select name="cause_of_death1" id="cause_of_death1" load="<%= @person.cause_of_death1%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,1)" >
                              <option value=""></option>
                       </select>
                </div>
                 <div class="col-md-6">
                     <label for="onset_death_interval1">Onset to death Interval </label>
-                    <input name="onset_death_interval1" id="onset_death_interval1"  value="<%= @person.onset_death_interval1%>" class="form-control" type="text" type="number" />
+                    <input name="onset_death_interval1" id="onset_death_interval1"  value="<%= @person.onset_death_interval1%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
                 </div>
                 <div class="col-md-6">
                     <label for="interval_unit1">Units</label>
                     <select name="interval_unit1" id="interval_unit1" load="<%= @person.interval_unit1 rescue ''%>" class="form-control">
                       <option value=""></option>
+                      <option>Second(s)</option>
                       <option>Minute(s)</option>
                       <option>Day(s)</option>
                       <option>Week(s)</option>
+                      <option>Month(s)</option>
                     </select>
                 </div>
                </div>
@@ -376,21 +431,23 @@
               <div class="form-group">
                 <div class="col-lg-12 col-md-12">
                     <label for="">Cause of Death 2 </label>
-                     <select name="cause_of_death2" id="cause_of_death2" load="<%= @person.cause_of_death2%>" class="form-control select2" style="width:100%" >
+                     <select name="cause_of_death2" id="cause_of_death2" load="<%= @person.cause_of_death2%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,2)">
                       <option value=""></option>
                     </select>
                 </div>
                 <div class="col-md-6">
                     <label for="">Onset to death Interval </label>
-                    <input name="onset_death_interval2" id="onset_death_interval2"  value="<%= @person.onset_death_interval2%>" class="form-control" type="text" type="number" />
+                    <input name="onset_death_interval2" id="onset_death_interval2"  value="<%= @person.onset_death_interval2%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
                 </div>
                 <div class="col-md-6">
                     <label for="">Units</label>
                     <select name="interval_unit2" id="interval_unit2" load="<%= @person.interval_unit2 rescue ''%>" class="form-control">
                       <option value=""></option>
+                      <option>Second(s)</option>
                       <option>Minute(s)</option>
                       <option>Day(s)</option>
                       <option>Week(s)</option>
+                      <option>Month(s)</option>
                     </select>
                 </div>
               </div>
@@ -398,21 +455,23 @@
               <div class="form-group">
                 <div class="col-lg-12 col-md-12">
                     <label for="">Cause of Death 3</label>
-                     <select name="cause_of_death3" id="cause_of_death3" load="<%= @person.cause_of_death3%>" class="form-control select2" style="width:100%" >
+                     <select name="cause_of_death3" id="cause_of_death3" load="<%= @person.cause_of_death3%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,3)">
                       <option value=""></option>
                     </select>
                 </div>
                 <div class="col-md-6">
                     <label for="">Onset to death Interval </label>
-                    <input name="onset_death_interval3" id="onset_death_interval3"  value="<%= @person.onset_death_interval3%>" class="form-control" type="text" type="number" />
+                    <input name="onset_death_interval3" id="onset_death_interval3"  value="<%= @person.onset_death_interval3%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)"/>
                 </div>
                 <div class="col-md-6">
                     <label for="">Units</label>
                     <select name="interval_unit3" id="interval_unit3" load="<%= @person.interval_unit3 rescue ''%>" class="form-control">
                       <option value=""></option>
+                      <option>Second(s)</option>
                       <option>Minute(s)</option>
                       <option>Day(s)</option>
                       <option>Week(s)</option>
+                      <option>Month(s)</option>
                     </select>
                 </div>
               </div>
@@ -421,21 +480,23 @@
               <div class="form-group">
               <div class="col-lg-12 col-md-12">
                   <label for="">Cause of Death 4</label>
-                  <select name="cause_of_death4" id="cause_of_death4" load="<%= @person.cause_of_death4%>" class="form-control select2" style="width:100%" >
+                  <select name="cause_of_death4" id="cause_of_death4" load="<%= @person.cause_of_death4%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,4)">
                     <option value=""></option>
                   </select>
                 </div>
                 <div class="col-md-6">
                     <label for="">Onset to death Interval </label>
-                    <input name="onset_death_interval4" id="onset_death_interval4"  value="<%= @person.onset_death_interval4%>" class="form-control" type="text" type="number" />
+                    <input name="onset_death_interval4" id="onset_death_interval4"  value="<%= @person.onset_death_interval4%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
                 </div>
                 <div class="col-md-6">
                     <label for="">Units</label>
                     <select name="interval_unit4" id="interval_unit4" load="<%= @person.interval_unit4 rescue ''%>" class="form-control">
                       <option value=""></option>
+                      <option>Second(s)</option>
                       <option>Minute(s)</option>
                       <option>Day(s)</option>
                       <option>Week(s)</option>
+                      <option>Month(s)</option>
                     </select>
                 </div>
               </div>
@@ -494,11 +555,8 @@
                 <option>No</option>
               </select>
 
-              <div id="datetimepicker1" class="input-append">
-                <label for="">Date certifier signed</label>
-                <input data-format="dd/mm/yyyy" name="date_certifier_signed" value="<%= @person.certifier_last_name%>" id="date_certifier_signed" class="form-control" type="text" />
-
-              </div>
+              <label for="">Date certifier signed</label>
+                <input name="date_certifier_signed" value="<%= @person.certifier_last_name%>" id="date_certifier_signed" class="form-control" type="text" />
       </i>
     </span>
             </div>
@@ -529,6 +587,32 @@
               <div onclick="hit('icd_10_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
           </div>
            <div id="icd_10" class="container custom" style="display: none;">
+                <div class="form-group">
+                      <table style="width:60%; margin:auto">
+                            <thead>
+                              <tr>
+                                  <th colspan="2">Person's sex,other details and cause of death</th>
+                              </tr>
+                              <tr>
+                                  <td>Sex</td>
+                                  <td><%= @person.gender %></td>
+                              </tr>
+                              <tr>
+                                  <td>Date of Birth</td>
+                                  <td><%= Date.parse(@person.birthdate.to_s).strftime("%d/%b/%Y") %></td>
+                              </tr>
+                              <% if @person.died_while_pregnant=="Yes" %>
+                              <tr>
+                                  <td>Death occured while pregnant</td>
+                                  <td><%= @person.died_while_pregnant rescue "No" %></td>
+                              </tr>
+                              <%end%>
+                             </thead> 
+                             <tbody id="cause_summary">
+                                  
+                             </tbody>
+                      </table>
+                </div>
 
                 <div class="form-group">
                   <label for="icd_10_code">ICD-10 Code</label>
@@ -544,6 +628,30 @@
     </td>
 </tr>
 </table>
+<div id="number_field" class="">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header btn-primary" >
+        <button type="button" class="close"  onclick="$('#number_field').css('display','none')">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Field validation</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-lg-12">
+              Field is for numbers only
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" onclick="$('#number_field').css('display', 'none')" > Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <script src="/select2/select2.full.min.js"></script>
 <script>
     function showControls(id){
@@ -587,7 +695,31 @@
             }
         }
     }
+    function setRequired(element,pos){
+          if(element.value.length > 0){
+              $("#onset_death_interval"+pos).attr("required","");
+              $("#interval_unit"+pos).attr("required","");
+          }else{
+              $("#onset_death_interval"+pos).removeAttr("required");
+              $("#interval_unit"+pos).removeAttr("required");
+          }
+    }
+    function checkIfNumber(element){
+        var reg = /^\d+$/;
+        var value = element.value;
 
+        if(reg.test(value)){
+
+        }else{
+
+          $("#number_field").show();
+          element.value = value.substring(0,value.length-1);
+
+        }
+        
+        console.log(reg.test(value));
+       
+    }
     var interval = setInterval("checkConditions()", 200);
 
     $.getJSON("/cause_of_death_list",function(data){
@@ -597,7 +729,16 @@
             });
 
     });
+    $(document).ready(function(){
 
+             $('#date_certifier_signed').datepicker({});
+    });
+    function loaCauseSummary(){
+             var table_body = $("#cause_summary");
+             for(var i = 0 ; i < 4 ; i++){
 
+                  var tr = document.createElement("tr");
 
+             }
+    }
 </script>
