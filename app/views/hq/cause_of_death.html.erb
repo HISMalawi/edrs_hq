@@ -114,7 +114,6 @@
 
     .form-group{
         border: 1px dotted lightblue;
-        border-radius: 5px;
         padding: 3px;
         padding-bottom: 7px;
         padding-left: 15px;
@@ -123,85 +122,386 @@
 
     .form-control{
         background: rgb(254, 254, 254);
-        width: 70%;
-        margin-left: 10%;
+        width: 98%;
+    }
+    #summary {
+       width:  98%;
+       margin: auto;
+
+    }
+    #summary td {
+        padding: 0.5em;
+    }
+    #ui-datepicker-div{
+        width:20% !important;
+        background: #ffffff;
+        border:1px solid #e0dddd;
+        padding: 0.2em;
     }
 
-    form{
+    .ui-datepicker-calendar,.ui-datepicker-header{
+        width: 100%;
+        margin-left: 4%;
 
+    }
+    
+    .ui-state-default{
+        padding: 7px 7px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .ui-state-hover{
+        background: #80b7f5;
+        color: white;
+        padding: 7px 7px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .ui-icon-circle-triangle-e{
+        float: right;
+        margin-right: 8%;
+        padding: 8px 8px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block
+    }
+    .ui-icon-circle-triangle-w{
+        padding: 8px 8px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block
+    }
+
+    .ui-datepicker-next-hover{
+        float: right;
+        margin-right: 8%;
+    }
+    #number_field{
+            position: absolute;
+            top: 30%;
+            left: 35%;
+            display: none;
 
     }
 </style>
+ <link rel="stylesheet" href="/select2/select2.min.css">
 
 <table class="table" style="background: white;height: 97%;width: 99.5%">
     <tr class="" style="width: 100%">
       <td class="" style="width: 25%;border: 1px solid gray">
+        <div id="person_details_radio" class="radio radio-primary" onmousedown="showControls('person_details')">
+          <input type="radio" name="radio" id="radio0">
+              <label for="radio0">
+                Person details
+              </label>
+        </div>
         <div id="cause_of_death_radio" class="radio radio-primary" onmousedown="showControls('cause_of_death')">
-          <input type="radio" name="radio" id="radio">
-              <label for="radio">
+          <input type="radio" name="radio" id="radio1">
+              <label for="radio1">
                 Cause of death
               </label>
         </div>
 
         <div id="manner_of_death_radio" class="radio radio-primary" onmousedown="showControls('manner_of_death')">
-            <input type="radio" name="radio" id="radio0">
-                <label for="radio0">
+            <input type="radio" name="radio" id="radio2">
+                <label for="radio2">
                     Manner of death
                 </label>
         </div>
 
+
         <div id="certification_radio" class="radio radio-primary" onmousedown="showControls('certification')">
-            <input type="radio" name="radio" id="radio1">
-                <label for="radio1">
+            <input type="radio" name="radio" id="radio3">
+                <label for="radio3">
                     Certification
                 </label>
-            </div>
+        </div>
+
+        <div id="icd_10_radio" class="radio radio-primary" onmousedown="showControls('icd_10')">
+            <input type="radio" name="radio" id="radio4">
+                <label for="radio4">
+                    ICD 10 Code
+                </label>
+        </div>
         </td>
 
-        <td id = "input-td" class="" style="width: 75%; border: 1px solid gray">
+        <td id = "input-td" class="" style="width: 100%; border: 1px solid gray">
           <form id="frm" class="form-horizontal" role="form" action="/save_cause_of_death">
 
+          <div id="person_details" class="container custom"  style="width:100%">
+              <div style="height: 520px; overflow: auto;padding: 0px; margin:0px;width:100%;margin-bottom: 15px;">
+                  <table class="summary" id="summary">
+
+                    <tr>
+                      <th colspan="11">Section 1 : Particulars of the deceased</th>
+                    </tr>
+
+                    <tr>
+                      <td rowspan="11" style="background-color:#dbdada;">PART 1 <br/>PERSONAL DETAILS OF DECEASED</td>
+                      <td>1</td>
+                      <td  class="clickable" >Surname</td>
+                      <td colspan="2" >*************</td>
+                      <td class="clickable"  >First name</td>
+                      <td  colspan="2">*************</td>
+                      <td class="clickable"  >Other</td>
+                      <td colspan="2">*************</td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td class="clickable"  >ID No.</td>
+                      <td style="border-bottom :1.5px solid black">*************</td>
+                      <td>3</td>
+                      <td class="clickable" >Nationality</td>
+                      <td colspan="2" style="border-bottom :1.5px solid black"><%= @person.nationality rescue ""%></td>
+                      <td>4</td>
+                      <td class="clickable" >Sex</td>
+                      <td style="border-bottom:1.5px solid black"> <%= @person.gender %></td>
+                    </tr>
+                    <tr>
+                      <td>5</td>
+                      <td class="clickable" >Birth Date</td>
+                      <td style="border-bottom: 1.5px solid black" colspan="5"><%= Date.parse(@person.birthdate.to_s).strftime("%d/%b/%Y") %></td>
+                      <td rowspan="2">6</td>
+                      <td rowspan="2" class="clickable" >Birth certificate No.</td>
+                      <td rowspan="2" style="border-bottom :1.5px solid black">*************</td>
+                    </tr>
+                    <tr>
+                      <td>7</td>
+                      <td class="clickable"  >Date of Death</td>
+                      <td style="border-bottom: 1.5px solid black" colspan="5"><%= Date.parse(@person.date_of_death.to_s).strftime("%d/%b/%Y") %></td>
+                    </tr>
+                    <tr>
+                      <td rowspan="4">8</td>
+                      <td class="clickable"  >Place of birth</td>
+                      <td colspan="9"><%= @person.place_of_death %></td>
+                    </tr>
+                    <tr>
+                      <td class="clickable"  >Health Facility</td>
+                      <td colspan="8" style="border-bottom: 1.5px solid black"> <%= @person.hospital_of_death %></td>
+                    </tr>
+                    <tr>
+                      <td class="clickable"  >Home</td>
+                      <td>Address</td>
+                      <td class="clickable"  >District</td>
+                      <td style="border-bottom:1.5px solid black"><%= @person.home_district %></td>
+                      <td class="clickable" >TA</td>
+                      <td style="border-bottom:1.5px solid black"><%= @person.home_ta %></td>
+                      <td class="clickable"  >Village</td>
+                      <td style="border-bottom:1.5px solid black" colspan="2"><%= @person.home_village %></td>
+                    </tr>
+                    <tr>
+                      <td>Other</td>
+                      <td colspan="8"></td>
+                    </tr>
+                    <tr>
+                      <td>9</td>
+                      <td colspan="3">Physical residential address</td>
+                      <td class="clickable"  >District </td>
+                      <td><%= @person.current_district %></td>
+                      <td class="clickable" >TA</td>
+                      <td><%= @person.current_ta %></td>
+                      <td class="clickable"  >Village</td>
+                      <td><%= @person.current_village %></td>
+                    </tr>
+                    <tr>
+                      <td rowspan="2">11</td>
+                      <td colspan="8" class="clickable"  >In case this is a female death, did the death occur while pregnant, at the time of delivery or within 6 weeks after the end of pregnancy?</td>
+                      <td><%= @person.died_while_pregnant rescue "No" %></td>
+                    </tr>
+                    <tr>
+
+                      <td colspan="9"></td>
+                    </tr>
+                    <tr>
+                      <td rowspan="6">PART 2 <br/><br/>DETAILS OF PARENT</td>
+                      <td rowspan="3">1</td>
+                      <td colspan="6" class="clickable"  >Mother's name</td>
+                      <td rowspan="3">2</td>
+                      <td rowspan="3" class="clickable" >ID No.</td>
+                      <td rowspan ="3" style="border-bottom:1.5px solid black">*************</td>
+                    </tr>
+                    <tr>
+                      <td class="clickable"  >Surname</td>
+                      <td colspan="2">*************</td>
+                      <td class="clickable" >First name</td>
+                      <td colspan="2">************</td>
+                    </tr>
+                    <tr>
+                      <td class="clickable" >Other names</td>
+                      <td colspan="5">*************</td>
+                    </tr>
+                    <tr>
+                      <td rowspan="3">3</td>
+                      <td colspan="6" class="clickable" >Father's name</td>
+                      <td rowspan="3">4</td>
+                      <td rowspan="3" class="clickable" >ID No.</td>
+                      <td rowspan ="3" style="border-bottom:1.5px solid black">*************</td>
+                    </tr>
+                    <tr>
+                      <td class="clickable" >Surname</td>
+                      <td colspan="2">*************</td>
+                      <td class="clickable">First name</td>
+                      <td colspan="2">*************</td>
+                    </tr>
+                    <tr>
+                      <td class="clickable" >Other names</td>
+                      <td colspan="5">*************</td>
+                    </tr>
+
+                    <tr>
+                      <td rowspan="7" style="background-color:#dbdada;">PART 3 <br/>INFORMANTS DETAILS</td>
+                      <td rowspan="2">1</td>
+                      <td class="clickable"  >Surname</td>
+                      <td colspan="2">*************</td>
+                      <td class="clickable" >First name</td>
+                      <td colspan="2">*************</td>
+                      <td rowspan="2">2</td>
+                      <td rowspan="2" class="clickable" >ID No.</td>
+                      <td rowspan="2">*************</td>
+                    </tr>
+                    <tr>
+                      <td class="clickable" >Other name</td>
+                      <td colspan="5">*************</td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td class="clickable" >Relation to the deceased</td>
+                      <td colspan="8">
+                        <%= @person.informant_relationship_to_deceased rescue @person.informant_relationship_to_deceased_other %>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td rowspan="2">4</td>
+                      <td>Adress</td>
+                      <td class="clickable" >District</td>
+                      <td colspan="2"><%= @person.informant_current_district %></td>
+                      <td class="clickable" >TA</td>
+                      <td colspan="2"><%= @person.informant_current_ta %></td>
+                      <td class="clickable" >Village</td>
+                      <td><%= @person.informant_current_village %></td>
+                    </tr>
+                    <tr>
+                      <td class="clickable" >Postal address :</td>
+                      <td colspan="6">
+                       *************
+                      </td>
+                      <td class="clickable" >Telephone Number</td>
+                      <td>*************</td>
+                    </tr>
+                    <tr>
+                      <td rowspan="2">5</td>
+                      <th colspan="9" style="background: #ffffff; color:black">I certify that the above information is correct and I am aware that I could face criminal prosecution if this information is incorrect in material respect.</th>
+                    </tr>
+                    <tr>
+                      <td>Date:</td>
+                      <td colspan="8"><%= Date.parse(@person.informant_signature_date.to_s).strftime("%d/%b/%Y") rescue "" %></td>
+                    </tr>
+                  </table>
+              </div>
+              <div onclick="hit('cause_of_death_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
+          </div>
           <div id="cause_of_death" class="container custom">
               <input name="person_id" value="<%= @person.id%>" type="hidden" type="text" />
-
                <div class="form-group">
-                <label for="">Cause of Death 1 </label>
-                <input name="cause_of_death1" id="cause_of_death1" value="<%= @person.cause_of_death1%>" class="form-control" type="text" />
-
-                <label for="">Cause of Death 1 onset to death Interval </label>
-                <input name="onset_death_interval1" id="onset_death_interval1" value="<%= @person.onset_death_interval1%>" class="form-control" type="text" />
+               <div class="col-lg-12 col-md-12">
+                      <label for="cause_of_death1">Cause of Death 1 </label>
+                      <select name="cause_of_death1" id="cause_of_death1" load="<%= @person.cause_of_death1%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,1)" >
+                             <option value=""></option>
+                      </select>
+               </div>
+                <div class="col-md-6">
+                    <label for="onset_death_interval1">Onset to death Interval </label>
+                    <input name="onset_death_interval1" id="onset_death_interval1"  value="<%= @person.onset_death_interval1%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
+                </div>
+                <div class="col-md-6">
+                    <label for="interval_unit1">Units</label>
+                    <select name="interval_unit1" id="interval_unit1" load="<%= @person.interval_unit1 rescue ''%>" class="form-control">
+                      <option value=""></option>
+                      <option>Second(s)</option>
+                      <option>Minute(s)</option>
+                      <option>Day(s)</option>
+                      <option>Week(s)</option>
+                      <option>Month(s)</option>
+                    </select>
+                </div>
                </div>
 
               <div class="form-group">
-                <label for="">Cause of Death 2 </label>
-                <input name="cause_of_death2" id="cause_of_death2" class="form-control" value="<%= @person.cause_of_death2%>" type="text" />
-
-                <label for="">Cause of Death 2 onset to death Interval </label>
-                <input name="onset_death_interval2" id="onset_death_interval2" value="<%= @person.onset_death_interval2%>" class="form-control" type="text" />
-              </div>
-
-              <div class="form-group">
-                <label for="">Cause of Death 3</label>
-                <input name="cause_of_death3" id="cause_of_death3" value="<%= @person.cause_of_death3%>" class="form-control" type="text" />
-
-                <label for="">Cause of Death 3 onset to death Interval</label>
-                <input name="onset_death_interval3" id="onset_death_interval3" value="<%= @person.onset_death_interval3%>" class="form-control" type="text" />
-              </div>
-
-
-              <div class="form-group">
-                <label for="">Cause of Death 4</label>
-                <input name="cause_of_death4" id="cause_of_death4" class="form-control" value="<%= @person.cause_of_death4%>"  type="text" />
-
-                <label for="">Cause of Death 4 onset to death Interval</label>
-                <input name="onset_death_interval4" id="onset_death_interval4" value="<%= @person.onset_death_interval4%>" class="form-control" type="text" />
-              </div>
-
-                <div class="form-group">
-                  <label for="icd_10_code">ICD-10 Code</label>
-                  <input name="icd_10_code" id="icd_10_code" value="<%= @person.icd_10_code%>" class="form-control" type="text" />
+                <div class="col-lg-12 col-md-12">
+                    <label for="">Cause of Death 2 </label>
+                     <select name="cause_of_death2" id="cause_of_death2" load="<%= @person.cause_of_death2%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,2)">
+                      <option value=""></option>
+                    </select>
                 </div>
+                <div class="col-md-6">
+                    <label for="">Onset to death Interval </label>
+                    <input name="onset_death_interval2" id="onset_death_interval2"  value="<%= @person.onset_death_interval2%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
+                </div>
+                <div class="col-md-6">
+                    <label for="">Units</label>
+                    <select name="interval_unit2" id="interval_unit2" load="<%= @person.interval_unit2 rescue ''%>" class="form-control">
+                      <option value=""></option>
+                      <option>Second(s)</option>
+                      <option>Minute(s)</option>
+                      <option>Day(s)</option>
+                      <option>Week(s)</option>
+                      <option>Month(s)</option>
+                    </select>
+                </div>
+              </div>
 
+              <div class="form-group">
+                <div class="col-lg-12 col-md-12">
+                    <label for="">Cause of Death 3</label>
+                     <select name="cause_of_death3" id="cause_of_death3" load="<%= @person.cause_of_death3%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,3)">
+                      <option value=""></option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="">Onset to death Interval </label>
+                    <input name="onset_death_interval3" id="onset_death_interval3"  value="<%= @person.onset_death_interval3%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)"/>
+                </div>
+                <div class="col-md-6">
+                    <label for="">Units</label>
+                    <select name="interval_unit3" id="interval_unit3" load="<%= @person.interval_unit3 rescue ''%>" class="form-control">
+                      <option value=""></option>
+                      <option>Second(s)</option>
+                      <option>Minute(s)</option>
+                      <option>Day(s)</option>
+                      <option>Week(s)</option>
+                      <option>Month(s)</option>
+                    </select>
+                </div>
+              </div>
+
+
+              <div class="form-group">
+              <div class="col-lg-12 col-md-12">
+                  <label for="">Cause of Death 4</label>
+                  <select name="cause_of_death4" id="cause_of_death4" load="<%= @person.cause_of_death4%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,4)">
+                    <option value=""></option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="">Onset to death Interval </label>
+                    <input name="onset_death_interval4" id="onset_death_interval4"  value="<%= @person.onset_death_interval4%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
+                </div>
+                <div class="col-md-6">
+                    <label for="">Units</label>
+                    <select name="interval_unit4" id="interval_unit4" load="<%= @person.interval_unit4 rescue ''%>" class="form-control">
+                      <option value=""></option>
+                      <option>Second(s)</option>
+                      <option>Minute(s)</option>
+                      <option>Day(s)</option>
+                      <option>Week(s)</option>
+                      <option>Month(s)</option>
+                    </select>
+                </div>
+              </div>
+
+              <div onclick="hit('person_details_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
               <div onclick="hit('manner_of_death_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
             </div>
 
@@ -246,7 +546,6 @@
               <div onclick="hit('certification_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
           </div>
 
-
           <div id="certification" class="container custom" style="display: none;">
             <div class="form-group">
               <label for="certifier_signed">Certifier Signed</label>
@@ -256,17 +555,14 @@
                 <option>No</option>
               </select>
 
-              <div id="datetimepicker1" class="input-append">
-                <label for="">Date certifier signed</label>
-                <input data-format="dd/mm/yyyy" name="date_certifier_signed" value="<%= @person.certifier_last_name%>" id="date_certifier_signed" class="form-control" type="text" />
-
-              </div>
+              <label for="">Date certifier signed</label>
+                <input name="date_certifier_signed" value="<%= @person.certifier_last_name%>" id="date_certifier_signed" class="form-control" type="text" />
       </i>
     </span>
             </div>
 
             <div class="form-group">
-              <label for="">Certifier last name</label>
+              <label for="">Certifier surname</label>
               <input name="certifier_last_name" value="<%= @person.certifier_last_name%>" id="certifier_last_name" class="form-control" type="text" />
 
               <label for="">Certifier first name</label>
@@ -287,8 +583,43 @@
               <input name="other_position_of_certifier"
                      value="<%= @person.other_position_of_certifier%>" id="other_position_of_certifier" class="form-control" type="text" />
             </div>
+             <div onclick="hit('manner_of_death_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
+              <div onclick="hit('icd_10_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
+          </div>
+           <div id="icd_10" class="container custom" style="display: none;">
+                <div class="form-group">
+                      <table style="width:60%; margin:auto">
+                            <thead>
+                              <tr>
+                                  <th colspan="2">Person's sex,other details and cause of death</th>
+                              </tr>
+                              <tr>
+                                  <td>Sex</td>
+                                  <td><%= @person.gender %></td>
+                              </tr>
+                              <tr>
+                                  <td>Date of Birth</td>
+                                  <td><%= Date.parse(@person.birthdate.to_s).strftime("%d/%b/%Y") %></td>
+                              </tr>
+                              <% if @person.died_while_pregnant=="Yes" %>
+                              <tr>
+                                  <td>Death occured while pregnant</td>
+                                  <td><%= @person.died_while_pregnant rescue "No" %></td>
+                              </tr>
+                              <%end%>
+                             </thead> 
+                             <tbody id="cause_summary">
+                                  
+                             </tbody>
+                      </table>
+                </div>
 
-            <div onclick="hit('manner_of_death_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
+                <div class="form-group">
+                  <label for="icd_10_code">ICD-10 Code</label>
+                  <input name="icd_10_code" id="icd_10_code" value="<%= @person.icd_10_code%>" class="form-control" type="text" />
+              </div>
+
+              <div onclick="hit('certification_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
             <div onclick="document.getElementById('frm').submit()" class="btn btn-success pull-right">Save&nbsp;&nbsp;<span class="glyphicon" aria-hidden="true"></span></div>
           </div>
       </form>
@@ -297,6 +628,31 @@
     </td>
 </tr>
 </table>
+<div id="number_field" class="">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header btn-primary" >
+        <button type="button" class="close"  onclick="$('#number_field').css('display','none')">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Field validation</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-lg-12">
+              Field is for numbers only
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" onclick="$('#number_field').css('display', 'none')" > Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/select2/select2.full.min.js"></script>
 <script>
     function showControls(id){
         $(".custom").hide();
@@ -309,7 +665,7 @@
         $(d).find("input").prop('checked', 'checked')
     }
 
-    hit("cause_of_death_radio");
+    hit("person_details_radio");
 
     var selects = document.getElementsByTagName("select");
     for (var i = 0; i < selects.length; i++){
@@ -339,7 +695,50 @@
             }
         }
     }
+    function setRequired(element,pos){
+          if(element.value.length > 0){
+              $("#onset_death_interval"+pos).attr("required","");
+              $("#interval_unit"+pos).attr("required","");
+          }else{
+              $("#onset_death_interval"+pos).removeAttr("required");
+              $("#interval_unit"+pos).removeAttr("required");
+          }
+    }
+    function checkIfNumber(element){
+        var reg = /^\d+$/;
+        var value = element.value;
 
+        if(reg.test(value)){
+
+        }else{
+
+          $("#number_field").show();
+          element.value = value.substring(0,value.length-1);
+
+        }
+        
+        console.log(reg.test(value));
+       
+    }
     var interval = setInterval("checkConditions()", 200);
 
+    $.getJSON("/cause_of_death_list",function(data){
+              $(".select2").select2({
+                tags: data,
+                tokenSeparators: [",", " "]
+            });
+
+    });
+    $(document).ready(function(){
+
+             $('#date_certifier_signed').datepicker({});
+    });
+    function loaCauseSummary(){
+             var table_body = $("#cause_summary");
+             for(var i = 0 ; i < 4 ; i++){
+
+                  var tr = document.createElement("tr");
+
+             }
+    }
 </script>

@@ -110,6 +110,18 @@ class HqController < ApplicationController
     render :template => "case/default"
   end
 
+  def cause_of_death_list
+
+      diagnosis_list_csv = CSV.foreach("#{Rails.root}/app/assets/data/diagnoses_csv.csv", :headers => false)
+
+      diagnosis_list = diagnosis_list_csv.collect{|row| row[1] unless row[1].blank?}
+
+      diagnosis_list << ""
+
+      render :text => diagnosis_list.sort
+      
+  end
+
   def cause_of_death
     @title = "Cause of death"
     @person = Person.find(params[:person_id])
@@ -117,6 +129,27 @@ class HqController < ApplicationController
 
   def save_cause_of_death
     @person = Person.find(params[:person_id])
+    i = 1
+    while i < 4  do
+       interval_unit = params["interval_unit#{i}"]
+
+       case interval_unit
+       when "Second(s)"
+          params["onset_death_interval#{i}"] = params["onset_death_interval#{i}"]
+       when "Minute(s)"
+          params["onset_death_interval#{i}"] = params["onset_death_interval#{i}"].to_i * 60
+       when "Hour(s)"
+          params["onset_death_interval#{i}"] = params["onset_death_interval#{i}"].to_i * 60 * 60
+       when "Day(s)"
+          params["onset_death_interval#{i}"] = params["onset_death_interval#{i}"].to_i * 60 * 60 * 24
+       when "Week(s)"  
+          params["onset_death_interval#{i}"] = params["onset_death_interval#{i}"].to_i * 60 * 60 * 24 * 7 
+       when "Month(s)"  
+          params["onset_death_interval#{i}"] = params["onset_death_interval#{i}"].to_i * 60 * 60 * 24 * 30
+       else  
+       end
+       i +=1
+    end
     @person.keys.each do |k|
       if params.keys.include?(k)
         @person[k] = params[k]
