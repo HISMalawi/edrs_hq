@@ -610,7 +610,6 @@ class HqController < ApplicationController
     }.to_json
   end
 
-<<<<<<< HEAD
   def tasks
 =begin
   var tasks = [
