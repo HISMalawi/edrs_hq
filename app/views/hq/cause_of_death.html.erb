@@ -408,7 +408,6 @@
                <div class="col-lg-12 col-md-12">
                       <label for="cause_of_death1">Cause of Death 1 </label>
                       <select name="cause_of_death1" id="cause_of_death1" load="<%= @person.cause_of_death1%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,1)" >
-                             <option value=""></option>
                       </select>
                </div>
                 <div class="col-md-6">
@@ -545,14 +544,14 @@
           <div id="certification" class="container custom" style="display: none;">
             <div class="form-group">
               <label for="certifier_signed">Certifier Signed</label>
-              <select name="certifier_signed" load="<%= @person.date_certifier_signed%>" id="certifier_signed" class="form-control">
+              <select name="certifier_signed" load="<%= @person.certifier_signed %>" id="certifier_signed" class="form-control">
                 <option value=""></option>
                 <option>Yes</option>
                 <option>No</option>
               </select>
 
               <label for="">Date certifier signed</label>
-                <input name="date_certifier_signed" value="<%= @person.certifier_last_name%>" id="date_certifier_signed" class="form-control" type="text" />
+                <input name="date_certifier_signed" value="<%= @person.date_certifier_signed%>" id="date_certifier_signed" class="form-control" type="text" />
       </i>
     </span>
             </div>
@@ -723,12 +722,30 @@
     var interval = setInterval("checkConditions()", 200);
 
     $.getJSON("/cause_of_death_list",function(data){
-              $(".select2").select2({
-                tags: data,
-                tokenSeparators: [",", " "]
-            });
 
+            for(var i =  1 ; i <=4 ; i++){
+                switch(i){
+                     case 1:
+                        makeselect2("cause_of_death"+i, "<%= @person.cause_of_death1%>",data)
+                        break;
+                    case 2:
+                        makeselect2("cause_of_death"+i, "<%= @person.cause_of_death2%>",data)
+                        break;
+                    case 3:
+                        makeselect2("cause_of_death"+i, "<%= @person.cause_of_death3%>",data)
+                        break;
+                    case 4:
+                        makeselect2("cause_of_death"+i, "<%= @person.cause_of_death4%>",data)
+                        break;
+                }
+            }
     });
+    function makeselect2(id , value,data){
+        $("#"+id).select2({
+                tags: data,
+                tokenSeparators: []
+        }).select2('val', value);
+    }
     $(document).ready(function(){
 
              $('#date_certifier_signed').datepicker({});
