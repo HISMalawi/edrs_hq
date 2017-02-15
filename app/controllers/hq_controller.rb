@@ -164,6 +164,7 @@ class HqController < ApplicationController
 
   def cause_of_death_preview
     @person = Person.find(params[:person_id])
+    @person = sec_to_readable(@person)
   end
   
   def print_preview
@@ -609,4 +610,23 @@ class HqController < ApplicationController
     }.to_json
   end
 
+  def sec_to_readable(person)
+    (1..4).each do |i|
+      secs = person["onset_death_interval#{i}"].to_i
+      time_to_string = [[60, :second], [60, :minute], [24, :hour], [365, :day],[1000, :year]].map{ |count, name|
+        if secs > 0
+          secs, n = secs.divmod(count)
+          if n > 0 
+            if n == 1
+              "#{n.to_i} #{name}"
+            elsif n > 1
+              "#{n.to_i} #{name}s"
+            end
+          end
+        end
+      }.compact.reverse.join(' ')
+      person["onset_death_interval#{i}"] = time_to_string
+    end
+    return person
+  end
 end

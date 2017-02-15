@@ -183,7 +183,26 @@ end
 
 puts "Initialising Nations"
 
-CSV.foreach("#{Rails.root}/app/assets/data/nationality.txt", :headers => false) do |row|
+CSV.foreach("#{Rails.root}/app/assets/data/country.csv", :headers => true) do |row|
+  Country.count
+  next if row[0].blank?
+  country = Country.by_country.key(row[3]).first
+
+  if country.blank?
+    country = Country.new()
+    country.iso = row[1]
+    country.name = row[3]
+    country.numcode = row[5]
+    country.phonecode = row[6]
+    country.save!
+  else
+    puts "Country already exists"
+  end
+
+end
+puts "Country count : #{Country.all.count}"
+
+CSV.foreach("#{Rails.root}/app/assets/data/nationality.txt", :headers => true) do |row|
   next if row[0].blank?
   nationality = Nationality.find(row[0])
 
@@ -196,7 +215,7 @@ CSV.foreach("#{Rails.root}/app/assets/data/nationality.txt", :headers => false) 
   end
 
 end
-puts "Nation count : #{Nationality.all.count}"
+puts "Nationality count : #{Nationality.all.count}"
 
 
 file = File.open("#{Rails.root}/app/assets/data/districts.json").read
