@@ -231,8 +231,8 @@
           <form id="frm" class="form-horizontal" role="form" action="/save_cause_of_death">
 
           <div id="person_details" class="container custom"  style="width:100%">
-              <div style="height: 520px; overflow: auto;padding: 0px; margin:0px;width:100%;margin-bottom: 15px;">
-                  <table class="summary" id="summary">
+              <div style="height: 520px; overflow: auto;padding: 0px; margin:0px;width:100%;margin-bottom: 15px; border-left:1px solid #d9d8d7; border-top:1px solid #d9d8d7;border-bottom:1px solid #d9d8d7">
+                  <table class="summary" id="summary" style="">
 
                     <tr>
                       <th colspan="11">Section 1 : Particulars of the deceased</th>
@@ -408,23 +408,21 @@
                <div class="col-lg-12 col-md-12">
                       <label for="cause_of_death1">Cause of Death 1 </label>
                       <select name="cause_of_death1" id="cause_of_death1" load="<%= @person.cause_of_death1%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,1)" >
-                             <option value=""></option>
                       </select>
                </div>
                 <div class="col-md-6">
-                    <label for="onset_death_interval1">Onset to death Interval </label>
-                    <input name="onset_death_interval1" id="onset_death_interval1"  value="<%= @person.onset_death_interval1%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
-                </div>
-                <div class="col-md-6">
                     <label for="interval_unit1">Units</label>
-                    <select name="interval_unit1" id="interval_unit1" load="<%= @person.interval_unit1 rescue ''%>" class="form-control">
-                      <option value=""></option>
-                      <option>Second(s)</option>
+                    <select name="interval_unit1" id="interval_unit1" load="Second(s)" class="form-control" onchange="clearOnset(1)">
+                      <option >Second(s)</option>
                       <option>Minute(s)</option>
                       <option>Day(s)</option>
                       <option>Week(s)</option>
                       <option>Month(s)</option>
                     </select>
+                </div>
+                 <div class="col-md-6">
+                    <label for="onset_death_interval1">Onset to death Interval </label>
+                    <input name="onset_death_interval1" id="onset_death_interval1"  value="<%= @person.onset_death_interval1%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
                 </div>
                </div>
 
@@ -436,19 +434,18 @@
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <label for="">Onset to death Interval </label>
-                    <input name="onset_death_interval2" id="onset_death_interval2"  value="<%= @person.onset_death_interval2%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
-                </div>
-                <div class="col-md-6">
                     <label for="">Units</label>
-                    <select name="interval_unit2" id="interval_unit2" load="<%= @person.interval_unit2 rescue ''%>" class="form-control">
-                      <option value=""></option>
+                    <select name="interval_unit2" id="interval_unit2"  load="Second(s)" class="form-control" onchange="clearOnset(2)">
                       <option>Second(s)</option>
                       <option>Minute(s)</option>
                       <option>Day(s)</option>
                       <option>Week(s)</option>
                       <option>Month(s)</option>
                     </select>
+                </div>
+                 <div class="col-md-6">
+                    <label for="">Onset to death Interval </label>
+                    <input name="onset_death_interval2" id="onset_death_interval2"  value="<%= @person.onset_death_interval2%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
                 </div>
               </div>
 
@@ -460,19 +457,18 @@
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <label for="">Onset to death Interval </label>
-                    <input name="onset_death_interval3" id="onset_death_interval3"  value="<%= @person.onset_death_interval3%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)"/>
-                </div>
-                <div class="col-md-6">
                     <label for="">Units</label>
-                    <select name="interval_unit3" id="interval_unit3" load="<%= @person.interval_unit3 rescue ''%>" class="form-control">
-                      <option value=""></option>
+                    <select name="interval_unit3" id="interval_unit3"  load="Second(s)" class="form-control" onchange="clearOnset(3)">
                       <option>Second(s)</option>
                       <option>Minute(s)</option>
                       <option>Day(s)</option>
                       <option>Week(s)</option>
                       <option>Month(s)</option>
                     </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="">Onset to death Interval </label>
+                    <input name="onset_death_interval3" id="onset_death_interval3"  value="<%= @person.onset_death_interval3%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)"/>
                 </div>
               </div>
 
@@ -485,19 +481,18 @@
                   </select>
                 </div>
                 <div class="col-md-6">
-                    <label for="">Onset to death Interval </label>
-                    <input name="onset_death_interval4" id="onset_death_interval4"  value="<%= @person.onset_death_interval4%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
-                </div>
-                <div class="col-md-6">
                     <label for="">Units</label>
-                    <select name="interval_unit4" id="interval_unit4" load="<%= @person.interval_unit4 rescue ''%>" class="form-control">
-                      <option value=""></option>
+                    <select name="interval_unit4" id="interval_unit4"  load="Second(s)" class="form-control" onchange="clearOnset(4)">
                       <option>Second(s)</option>
                       <option>Minute(s)</option>
                       <option>Day(s)</option>
                       <option>Week(s)</option>
                       <option>Month(s)</option>
                     </select>
+                </div>
+                 <div class="col-md-6">
+                    <label for="">Onset to death Interval </label>
+                    <input name="onset_death_interval4" id="onset_death_interval4"  value="<%= @person.onset_death_interval4%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
                 </div>
               </div>
 
@@ -549,14 +544,14 @@
           <div id="certification" class="container custom" style="display: none;">
             <div class="form-group">
               <label for="certifier_signed">Certifier Signed</label>
-              <select name="certifier_signed" load="<%= @person.date_certifier_signed%>" id="certifier_signed" class="form-control">
+              <select name="certifier_signed" load="<%= @person.certifier_signed %>" id="certifier_signed" class="form-control">
                 <option value=""></option>
                 <option>Yes</option>
                 <option>No</option>
               </select>
 
               <label for="">Date certifier signed</label>
-                <input name="date_certifier_signed" value="<%= @person.certifier_last_name%>" id="date_certifier_signed" class="form-control" type="text" />
+                <input name="date_certifier_signed" value="<%= @person.date_certifier_signed%>" id="date_certifier_signed" class="form-control" type="text" />
       </i>
     </span>
             </div>
@@ -588,25 +583,29 @@
           </div>
            <div id="icd_10" class="container custom" style="display: none;">
                 <div class="form-group">
-                      <table style="width:60%; margin:auto">
+                      <table style="width:80%; margin:auto">
                             <thead>
                               <tr>
                                   <th colspan="2">Person's sex,other details and cause of death</th>
                               </tr>
                               <tr>
-                                  <td>Sex</td>
+                                  <th>Sex</th>
                                   <td><%= @person.gender %></td>
                               </tr>
                               <tr>
-                                  <td>Date of Birth</td>
+                                  <th>Date of Birth</th>
                                   <td><%= Date.parse(@person.birthdate.to_s).strftime("%d/%b/%Y") %></td>
                               </tr>
                               <% if @person.died_while_pregnant=="Yes" %>
                               <tr>
-                                  <td>Death occured while pregnant</td>
+                                  <th>Death occured while pregnant</th>
                                   <td><%= @person.died_while_pregnant rescue "No" %></td>
                               </tr>
                               <%end%>
+                              <tr>
+                                  <th>Physcial Adress</th>
+                                  <td><%= "#{@person.current_district} District , TA #{@person.current_ta} , #{@person.current_village}" rescue "No" %></td>
+                              </tr>
                              </thead> 
                              <tbody id="cause_summary">
                                   
@@ -723,12 +722,30 @@
     var interval = setInterval("checkConditions()", 200);
 
     $.getJSON("/cause_of_death_list",function(data){
-              $(".select2").select2({
-                tags: data,
-                tokenSeparators: [",", " "]
-            });
 
+            for(var i =  1 ; i <=4 ; i++){
+                switch(i){
+                     case 1:
+                        makeselect2("cause_of_death"+i, "<%= @person.cause_of_death1%>",data)
+                        break;
+                    case 2:
+                        makeselect2("cause_of_death"+i, "<%= @person.cause_of_death2%>",data)
+                        break;
+                    case 3:
+                        makeselect2("cause_of_death"+i, "<%= @person.cause_of_death3%>",data)
+                        break;
+                    case 4:
+                        makeselect2("cause_of_death"+i, "<%= @person.cause_of_death4%>",data)
+                        break;
+                }
+            }
     });
+    function makeselect2(id , value,data){
+        $("#"+id).select2({
+                tags: data,
+                tokenSeparators: []
+        }).select2('val', value);
+    }
     $(document).ready(function(){
 
              $('#date_certifier_signed').datepicker({});
@@ -740,5 +757,9 @@
                   var tr = document.createElement("tr");
 
              }
+    }
+    function clearOnset(pos){
+      $('#onset_death_interval'+pos).val("");
+      $('#onset_death_interval'+pos).focus();
     }
 </script>

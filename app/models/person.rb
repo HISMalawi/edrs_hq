@@ -437,14 +437,16 @@ class Person < CouchRest::Model::Base
   property :middle_name_code, String
   property :gender, String
   property :birthdate, Date
-  property :birthdate_estimated, String
+  property :birthdate_estimated, Integer, :default => 0
   property :date_of_death, Date
   property :birth_certificate_number, String
   property :nationality_id, String
   property :place_of_death, String
   property :hospital_of_death_id, String
   property :other_place_of_death, String
+  property :other_place_of_death_village, String
   property :place_of_death_village_id, String
+  property :other_place_of_death_ta, String
   property :place_of_death_ta_id, String
   property :place_of_death_district_id, String
   property :cause_of_death1, String
@@ -461,11 +463,15 @@ class Person < CouchRest::Model::Base
   property :other_manner_of_death, String
   property :death_by_accident, String
   property :other_death_by_accident, String
+  property :other_home_village, String
   property :home_village_id, String
+  property :other_home_ta, String
   property :home_ta_id, String
   property :home_district_id, String
   property :home_country_id, String
+  property :other_current_village, String
   property :current_village_id, String
+  property :other_current_ta, String
   property :current_ta_id, String
   property :current_district_id, String
   property :died_while_pregnant, String
