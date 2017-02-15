@@ -200,12 +200,21 @@ CSV.foreach("#{Rails.root}/app/assets/data/country.csv", :headers => true) do |r
   end
 
 end
+#Unknown Country
+ucountry = by_country.key("Unknown").first
+if ucountry.blank?
+  ucountry = Country.new()
+  ucountry.name = "Unknown"
+  ucountry.save
+else
+  puts "Unknown Country already exists"
+end
+
 puts "Country count : #{Country.all.count}"
 
 CSV.foreach("#{Rails.root}/app/assets/data/nationality.txt", :headers => true) do |row|
   next if row[0].blank?
-  nationality = Nationality.find(row[0])
-
+  nationality = Nationality.by_nationality.key(row[0]).first
   if nationality.blank?
     nationality = Nationality.new()
     nationality.nationality = row[0]
@@ -214,6 +223,15 @@ CSV.foreach("#{Rails.root}/app/assets/data/nationality.txt", :headers => true) d
     puts "Nationality already exists"
   end
 
+end
+#Unknown 
+unationality = Nationality.by_nationality.key("Unknown").first
+if unationality.blank?
+  unationality = Nationality.new()
+  unationality.nationality = "Unknown"
+  unationality.save
+else
+  puts "Unknown Nationality already exists"
 end
 puts "Nationality count : #{Nationality.all.count}"
 
