@@ -212,7 +212,7 @@ end
 
 puts "Country count : #{Country.all.count}"
 
-CSV.foreach("#{Rails.root}/app/assets/data/nationality.txt", :headers => true) do |row|
+CSV.foreach("#{Rails.root}/app/assets/data/nationality.txt", :headers => false) do |row|
   next if row[0].blank?
   nationality = Nationality.by_nationality.key(row[0]).first
   if nationality.blank?
