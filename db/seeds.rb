@@ -130,7 +130,7 @@ puts "User role count : #{Role.count}"
 
 puts "Initializing default user"
 
-user = User.find('admin')
+user = User.by_username.key('admin').first
 
 if user.blank?
 
@@ -186,7 +186,7 @@ puts "Initialising Nations"
 CSV.foreach("#{Rails.root}/app/assets/data/country.csv", :headers => true) do |row|
   Country.count
   next if row[0].blank?
-  country = Country.by_country.key(row[3]).first
+  country = Country.by_name.key(row[3]).first
 
   if country.blank?
     country = Country.new()
@@ -201,7 +201,7 @@ CSV.foreach("#{Rails.root}/app/assets/data/country.csv", :headers => true) do |r
 
 end
 #Unknown Country
-ucountry = by_country.key("Unknown").first
+ucountry = Country.by_name.key("Unknown").first
 if ucountry.blank?
   ucountry = Country.new()
   ucountry.name = "Unknown"
