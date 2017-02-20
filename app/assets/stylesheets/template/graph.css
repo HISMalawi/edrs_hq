@@ -134,13 +134,13 @@ http://vladimirkudinov.com
 	display: block;
 	width: 34px;
 	height: 32px;
-	background: url('../img/lines.png') no-repeat 9px 12px;
+	background: url('assets/lines.png') no-repeat 9px 12px;
 }
 
-#bars span { background: url('../img/bars.png') no-repeat center 10px; }
+#bars span { background: url('assets/bars.png') no-repeat center 10px; }
 
-#lines.active span { background-image: url('../img/lines_active.png'); }
-#bars.active span { background-image: url('../img/bars_active.png'); }
+#lines.active span { background-image: url('assets/lines_active.png'); }
+#bars.active span { background-image: url('assets/bars_active.png'); }
 
 /* Hide the First and Last Y Label */
 .yAxis .tickLabel:first-child,

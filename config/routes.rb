@@ -23,7 +23,9 @@ Rails.application.routes.draw do
   get "/unblock" => "users#unblock"
   get "/users/edit"
   patch "/users/edit"
-
+  get '/settings' => 'users#settings'
+  get 'profile/:user_id' => 'users#profile'
+  
   ################## cases routes ############################
   get '/open_cases' => 'case#open'
   get '/closed_cases' => 'case#closed'
@@ -109,6 +111,7 @@ Rails.application.routes.draw do
   get "/by_record_status" => "hq#by_record_status"
   get "/manage_duplicates" => "hq#manage_duplicates"
 
+  get '/tasks' => 'hq#tasks'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

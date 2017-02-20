@@ -30,7 +30,7 @@ function addRows(data, skip_parse) {
       /*age = patients[i]["age"];
       patient_id = patients[i]["patient_id"];
       account_number = patients[i]["account_number"];*/
-    dataTable.api().row.add([drn, den, first_name, middle_name, last_name, dob, gender, spam.innerHTML]).draw();
+    dataTable.api().row.add([drn, den, first_name, middle_name, last_name, gender, dob, spam.innerHTML]).draw();
 
   }
 
@@ -81,7 +81,7 @@ function getCases() {
 
 </script>
 
-<table id="cases">
+<!--table id="cases">
   <thead>
     <tr>
       <th style="min-width: 70px;">DRN</th>
@@ -100,40 +100,59 @@ function getCases() {
 
   <tfoot>
   </tfoot>
-</table> 
+</table-->
+
+
+<table class="table table-striped table-advance table-hover" id="cases">
+
+<thead>
+  <tr>
+    <th><i class="icon_profile"></i> DRN</th>
+    <th><i class="icon_calendar"></i> DEN</th>
+    <th><i class="icon_mail_alt"></i> First name</th>
+    <th><i class="icon_pin_alt"></i> Middle name</th>
+    <th><i class="icon_mobile"></i> Last name</th>
+    <th><i class="icon_cogs"></i> Gender</th>
+    <th><i class="icon_cogs"></i> DOB</th>
+    <th>&nbsp;</th>
+  </tr>
+</thead>
+
+<tfoot>
+</tfoot>
+
+</table>
+ 
 
 
 <script>
 
 function initDataTable(){        
   try {  
-    dataTable = jQuery('#cases').dataTable({
-      "bJQueryUI": true,
-      "sPaginationType": "full_numbers"  
-    });                                                  
+    dataTable = $('#cases').dataTable();
   }catch(e){
-    location.reload(); 
+    alert(e);
   }
-  cases = [];
+
+  var cases = [];
   var h = {}
 
-    <% (@cases || []).each do |cas|
+  <% (@cases || []).each do |cas|
         keys = cas.keys
         keys.each do |k|
-        v = cas[k]
-    %>
-    h['<%= k%>'] = '<%= v%>';
-<% end %>
-    cases.push(h);
-    h = {};
-<%end%>
-    console.log(cases);
+          v = cas[k] %>
+          h['<%= k %>'] = '<%= v%>';
+        <%end%>
+
+        cases.push(h);
+        h = {};
+  <%end%>
+
   if (cases && cases.length > 0){
-      addRows(cases, true);
+    addRows(cases, true);
   }
   getCases();
 }
-
 
 setTimeout(initDataTable(), 2000);
 </script>
