@@ -627,72 +627,72 @@ class HqController < ApplicationController
     @tasks = []
 
     if has_role("View a record")
-      @tasks << ['Open cases','View open cases','/open_cases','fa fa-eye','info']
+      @tasks << ['Open cases','View open cases','/open_cases','manage-cases.png']
     end
 
     if has_role("View closed cases")
-      @tasks << ['View closed cases','View closed cases','/closed_cases','fa fa-envelope','info']
+      @tasks << ['View closed cases','View closed cases','/closed_cases','lock.png']
     end
 
     if has_role("Manage incomplete records")
-      @tasks << ['View incomplete cases','View incomplete cases','/incomplete_cases','fa fa-folder','info']
+      @tasks << ['View incomplete cases','View incomplete cases','/incomplete_cases','']
     end
 
     if has_role("Manage incomplete records") 
-      @tasks << ['Reject cases','Reject cases','/rejected_cases','fa fa-sticky-note-o','info']
+      @tasks << ['Reject cases','Reject cases','/rejected_cases','']
     end
 
     if has_role("View closed cases")
-      @tasks << ['Dispatched cases','View dispatched certificates','/dispatched','fa fa-ticket','info']
-      @tasks << ['Conflict cases','View cases with queries','/conflict','fa fa-sun-o','info']
+      @tasks << ['Dispatched cases','View dispatched certificates','/dispatched','dispatch.png']
+      @tasks << ['Conflict cases','View cases with queries','/conflict','conflict_case.png']
     end
 
     if has_role("Manage incomplete records") 
-      @tasks << ['Re-approve cases','Re-approve cases','/re_approved_cases','fa fa-thumps-up','info']
-      @tasks << ['Reject/Approve cases','Reject/Approve cases','/rejected_and_approved_cases','fa fa-thumps-down','info']
+      @tasks << ['Re-approve cases','Re-approve cases','/re_approved_cases','']
+      @tasks << ['Reject/Approve cases','Reject/Approve cases','/rejected_and_approved_cases','']
     end
 
     if has_role("View closed cases")
-      @tasks << ['Cloased cased','View all closed cases','/dispatched','fa fa-circle','info']
-      @tasks << ['Conflict cases','View cases with queries','/conflict','fa fa-plus-square','info']
+      @tasks << ['Closed case','View all closed cases','/dispatched','close-case.png']
+      @tasks << ['Conflict cases','View cases with queries','/conflict','']
     end
 
     if has_role("Manage incomplete records")
-      @tasks << ['Re-approved cases','View re-approved cases','/re_approved_cases','fa fa-check','info']
-      @tasks << ['Rejected/Approved cases','View rejected and approved_cases','/rejected_and_approved_cases','fa fa-thumps-down','info']
+      @tasks << ['Re-approved cases','View re-approved cases','/re_approved_cases','']
+      @tasks << ['Rejected/Approved cases','View rejected and approved_cases','/rejected_and_approved_cases','']
     end
 
     if has_role("Reject a record")
-      @tasks << ['Reject record','Reject record','/dm_reject','fa fa-thumps-down','info']
+      @tasks << ['Reject record','Reject record','/dm_reject','']
     end
 
     if has_role("Void outstanding records")
-      @tasks << ['Void cases','Void cases','/void_cases','fa fa-trash-o','danger']
-      @tasks << ['Voided cases','View void cases','/voided_cases','fa fa-trash','info']
+      @tasks << ['Void cases','Void cases','/void_cases','']
+      @tasks << ['Voided cases','View void cases','/voided_cases','']
     end
 
     if has_role("View closed cases")
-      @tasks << ['Approve for re-printing','Approve for re-printing','/approve_for_reprinting','fa fa-check-circle','info']
-      @tasks << ['Potential duplicates','View potential duplicates','/approve_potential_duplicates','fa fa-file-text','info']
+      @tasks << ['Approve for re-printing','Approve for re-printing','/approve_for_reprinting','']
+      @tasks << ['Potential duplicates','View potential duplicates','/approve_potential_duplicates','']
     end
 
     if has_role("Make ammendments")
-      @tasks << ['View requests','View requests','/view_requests','fa fa-question','info']
+      @tasks << ['View requests','View requests','/view_requests','']
     end
 
     if has_role("Authorise printing")
-      @tasks << ['Approve for printing','Approve for printing','/approve_for_printing','fa fa-check','info']
-      @tasks << ['Print Certificates','Print Certificates','/print','fa fa-print','success']
-      @tasks << ['Re-print certificates','Re-print certificates','/re_print','fa fa-print','info']
-      @tasks << ['Dispatch print outs','View dispatched print outs','/dispatch_printouts','fa fa-truck','info']
+      @tasks << ['Approve for printing','Approve for printing','/approve_for_printing','']
+      @tasks << ['Print Certificates','Print Certificates','/print','']
+      @tasks << ['Re-print certificates','Re-print certificates','/re_print','']
+      @tasks << ['Dispatch print outs','View dispatched print outs','/dispatch_printouts','']
     end 
 
     if has_role("Authorise reprinting of a certificate")
-      @tasks << ['Approve re-printing','Approve for re-printing','/approve_reprint','fa fa-thumbs-o-up','info']
+      @tasks << ['Approve re-printing','Approve for re-printing','/approve_reprint','']
     end
 
     if has_role(("Assess certificate quality"))
-      @tasks << ['Verify certificates','Verify certificates','/verify_certificates','fa fa-check-square-o','info']
+      @tasks << ['Verify certificates','Verify certificates','/verify_certificates','']
     end
 
 
