@@ -360,73 +360,17 @@ class Person < CouchRest::Model::Base
 
   end
 
-  #places person methon
-  def nationality
-    return Nationality.find(self.nationality_id).nationality
-  end
-  def place_of_death_district
-    return District.find(self.place_of_death_district_id).name
-  end
-
-  def hospital_of_death
-    return  HealthFacility.find(self.hospital_of_death_id).name
-  end
-
-  def place_of_death_ta
-    return TraditionalAuthority.find(self.place_of_death_ta_id).name
-  end
-
-  def place_of_death_village
-    return Village.find(self.place_of_death_village_id).name
-  end
-
-  def home_country
-    return Nationality.find(self.home_country_id).nationality
-  end
-
-  def home_district
-    return District.find(self.home_district_id).name
-  end
-
-  def home_ta
-    return TraditionalAuthority.find(self.home_ta_id).name
-  end
-
-  def home_village
-    return Village.find(self.home_village_id).name
-  end
-
-  def current_district
-    return District.find(self.current_district_id).name
-  end
-
-  def current_ta
-    return TraditionalAuthority.find(self.current_ta_id).name
-  end
-
-  def current_village
-    return Village.find(self.current_village_id).name
-  end
-
-  def informant_current_district
-    return District.find(self.informant_current_district_id).name
-  end
-
-  def informant_current_ta
-    return TraditionalAuthority.find(self.informant_current_ta_id).name
-  end
-
-  def informant_current_village
-    return Village.find(self.informant_current_village_id).name
-  end
-
-   #Identifiers
+  #Identifiers
   def den
     return PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id, "DEATH ENTRY NUMBER"]).first.identifier
   end
   def national_id
     return PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id,"National ID"]).first.identifier 
   end
+  def barcode
+      PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id,"Form Barcode"]).first.identifier
+  end
+
 
   #Person properties
   property :first_name, String
@@ -441,22 +385,31 @@ class Person < CouchRest::Model::Base
   property :date_of_death, Date
   property :birth_certificate_number, String
   property :nationality_id, String
+  property :nationality, String
   property :place_of_death, String
   property :hospital_of_death_id, String
+  property :hospital_of_death, String
   property :other_place_of_death, String
   property :other_place_of_death_village, String
+  property :place_of_death_village, String
   property :place_of_death_village_id, String
   property :other_place_of_death_ta, String
   property :place_of_death_ta_id, String
+  property :place_of_death_ta, String
   property :place_of_death_district_id, String
+  property :place_of_death_district, String
   property :cause_of_death1, String
+  property :other_cause_of_death1, String
   property :cause_of_death2, String
+  property :other_cause_of_death2, String
   property :cause_of_death3, String
+  property :other_cause_of_death3, String
   property :cause_of_death4, String
+  property :other_cause_of_death4, String
   property :onset_death_interval1, String
-  property :onset_death_interval2, String
-  property :onset_death_interval3, String
-  property :onset_death_interval4, String
+  property :onset_death_death_interval2, String
+  property :onset_death_death_interval3, String
+  property :onset_death_death_interval4, String
   property :cause_of_death_conditions, String
   property :icd_10_code, String
   property :manner_of_death, String
@@ -465,15 +418,24 @@ class Person < CouchRest::Model::Base
   property :other_death_by_accident, String
   property :other_home_village, String
   property :home_village_id, String
+  property :home_village, String
   property :other_home_ta, String
   property :home_ta_id, String
+  property :home_ta, String
   property :home_district_id, String
+  property :home_district, String
   property :home_country_id, String
+  property :home_country, String
   property :other_current_village, String
   property :current_village_id, String
+  property :current_village, String
   property :other_current_ta, String
   property :current_ta_id, String
+  property :current_ta, String
   property :current_district_id, String
+  property :current_district, String
+  property :current_country_id, String
+  property :current_country, String
   property :died_while_pregnant, String
   property :updated_by, String
   property :voided_by, String
@@ -486,7 +448,7 @@ class Person < CouchRest::Model::Base
   property :npid, String
   property :approved_by, String
   property :approved_at, Time
-  property :delayed_registration, String, :default =>"No"
+  property :delayed_registration, String,  :default =>"No"
   property :relationship, String, :default => "Natural Death" # Unnatural Death | Unclaimed bodies | Missing Persons | Death abroad
   property :court_order, String, :default => "No"
 
@@ -505,24 +467,38 @@ class Person < CouchRest::Model::Base
   property :mother_current_village_id, String
   property :mother_current_ta_id, String
   property :mother_current_district_id, String
+  property :mother_current_village, String
+  property :mother_current_ta, String
+  property :mother_current_district, String
   property :mother_home_village_id, String
   property :mother_home_ta_id, String
   property :mother_home_district_id, String
   property :mother_home_country_id, String
-  property :mother_citizenship_id, String
+  property :mother_nationality_id, String
+  property :mother_home_village_id, String
+  property :mother_home_ta, String
+  property :mother_home_district, String
+  property :mother_home_country, String
+  property :mother_nationality, String
   property :mother_occupation, String
 
   #Address details for foreigner
-
+  property :mother_residential_country_id, String #Country
   property :mother_residential_country, String #Country
 
   property :mother_foreigner_current_district_id, String #District/State
   property :mother_foreigner_current_village_id, String #Village/Town
   property :mother_foreigner_current_ta_id, String #Address
+  property :mother_foreigner_current_district, String #District/State
+  property :mother_foreigner_current_village, String #Village/Town
+  property :mother_foreigner_current_ta, String #Address
 
   property :mother_foreigner_home_district_id, String #District/State
   property :mother_foreigner_home_village_id, String #Village/Town
   property :mother_foreigner_home_ta_id, String #Address
+  property :mother_foreigner_home_district, String #District/State
+  property :mother_foreigner_home_village, String #Village/Town
+  property :mother_foreigner_home_ta, String #Address
 
   #end
 
@@ -541,24 +517,39 @@ class Person < CouchRest::Model::Base
   property :father_current_village_id, String
   property :father_current_ta_id, String
   property :father_current_district_id, String
+  property :father_current_village, String
+  property :father_current_ta, String
+  property :father_current_district, String
   property :father_home_village_id, String
   property :father_home_ta_id, String
   property :father_home_district_id, String
   property :father_home_country_id, String
-  property :father_citizenship_id, String
+  property :father_nationality_id, String
+  property :father_home_village, String
+  property :father_home_ta, String
+  property :father_home_district, String
+  property :father_home_country, String
+  property :father_nationality, String
   property :father_occupation, String
 
   #Address details for foreigner
 
   property :father_residential_country_id, String #Country
+  property :father_residential_country, String #Country
 
   property :father_foreigner_current_district_id, String #District/State
   property :father_foreigner_current_village_id, String #Village/Town
   property :father_foreigner_current_ta_id, String #Address
+  property :father_foreigner_current_district, String #District/State
+  property :father_foreigner_current_village, String #Village/Town
+  property :father_foreigner_current_ta, String #Address
 
   property :father_foreigner_home_district_id, String #District/State
   property :father_foreigner_home_village_id, String #Village/Town
   property :father_foreigner_home_ta_id, String #Address
+  property :father_foreigner_home_district, String #District/State
+  property :father_foreigner_home_village, String #Village/Town
+  property :father_foreigner_home_ta, String #Address
 
   #end
 
@@ -584,6 +575,11 @@ class Person < CouchRest::Model::Base
   property :informant_current_village_id, String
   property :informant_current_ta_id, String
   property :informant_current_district_id, String
+  property :informant_current_village, String
+  property :informant_current_other_village, String
+  property :informant_current_ta, String
+  property :informant_current_other_ta, String
+  property :informant_current_district, String
   property :informant_addressline1, String
   property :informant_addressline2, String
   property :informant_city, String
@@ -591,6 +587,8 @@ class Person < CouchRest::Model::Base
   property :informant_signed, String
   property :informant_signature_date, Date
   property :informant_designation, String
+  property :informant_office_name,String
+  property :informant_office_address, String
   #end
 
   property :certifier_first_name, String
