@@ -52,7 +52,23 @@
         bottom: -355px;
         position: relative;
       }
+      .icon-attr {
+        height: 40%;
+        width: 40%;
+        padding-top: 10px;
+      }
 
+      .divbtn {
+        height: 150px;
+        width: 99%;
+        display: table;
+        margin-top: 10px;
+        cursor:pointer;
+        box-shadow: 10px 10px 5px #888888;
+        text-align: center; 
+        background-color: white;
+        border: 1px solid #2e6da4;
+      }
     </style>
 
   </head>
@@ -298,10 +314,10 @@
                         <ul class="dropdown-menu extended logout">
                             <div class="log-arrow-up"></div>
                             <li class="eborder-top">
-                                <a href="/profile/<%=User.current_user.id%>"><i class="icon_profile"></i> My Profile</a>
+                                <a href="/profile/<%=User.current_user.id%>"><i class="icon_profile"></i> My account</a>
                             </li>
                             <li>
-                                <a href="/settings/<%=User.current_user.id%>"><i class="fa fa-gears"></i> Settings</a>
+                                <a href="/settings/"><i class="fa fa-gears"></i> Settings</a>
                             </li>
                             <li>
                                 <a href="/login"><i class="icon_key_alt"></i> Log Out</a>
@@ -344,19 +360,7 @@
                           <li><a class="" href="form_validation.html">Form Validation</a></li>
                       </ul-->
                   </li>       
-                  <!--li class="sub-menu">
-                      <a href="javascript:;" class="">
-                          <i class="icon_desktop"></i>
-                          <span>UI Fitures</span>
-                          <span class="menu-arrow arrow_carrot-right"></span>
-                      </a>
-                      <ul class="sub">
-                          <li><a class="" href="general.html">Components</a></li>
-                          <li><a class="" href="buttons.html">Buttons</a></li>
-                          <li><a class="" href="grids.html">Grids</a></li>
-                      </ul>
-                  </li>
-                  <li>
+                  <!--<li>
                       <a class="" href="widgets.html">
                           <i class="icon_genius"></i>
                           <span>Widgets</span>
@@ -400,7 +404,23 @@
 
                       </ul>
                   </li>
-                  
+                  <li class="sub-menu">
+                      <a href="/manage_users" class="">
+                          <i class="fa fa-users"></i>
+                          <span>Manage Users</span>
+                      </a>
+                  </li>
+                   <li class="sub-menu">
+                      <a href="javascript:;" class="">
+                          <i class="fa fa-gears"></i>
+                          <span>Profile</span>
+                          <span class="menu-arrow arrow_carrot-right"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="" href="/settings">Settings</a></li>
+                          <li><a class="" href="/my_account">My account</a></li>
+                      </ul>
+                  </li>
               </ul>
               <!-- sidebar menu end-->
           </div>
@@ -458,7 +478,7 @@
                     Licensing information: https://bootstrapmade.com/license/
                     Purchase the pro version form: https://bootstrapmade.com/buy/?theme=NiceAdmin
                 -->
-                <span class="left-info-footer">
+                <span class="left-info-footer" style="opacity: 0.1;">
                   <a href="https://bootstrapmade.com/free-business-bootstrap-themes-website-templates/">Business Bootstrap Themes</a> 
                   by <a href="https://bootstrapmade.com/">BootstrapMade</a>
                 </span>

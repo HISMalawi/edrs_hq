@@ -256,38 +256,49 @@ class UsersController < ApplicationController
 
   end
 
-  def settings
+  def manage_users
     @tasks = []
-
     if has_role("Manage Sites")
     end
 
     if has_role("Create User") 
-      @tasks << ['Add user','Create new user','/users/new','fa fa-user']
+      @tasks << ['Add user','Create new user','/users/new','add_person.png']
     end
 
-    if has_role("View Users")
-      @tasks << ['Edit users','Edit existing users','/search_user?title=Search+for+user+to+edit&cat=edit','fa fa-pencil-square-o']
+    if has_role("View user log")
+      @tasks << ['View users','View existing users','/view_users','config-users.png']
+      #@tasks << ['Edit users','Edit existing users','/search_user?title=Search+for+user+to+edit&cat=edit','config-users.png']
     end
 
     if has_role("Deactivate User") 
-      @tasks <<['Block users','Block existing active users','/search_user?title=Search+for+user+to+block&cat=block','fa fa-lock']
+      @tasks <<['Block users','Block existing active users','/search_user?title=Search+for+user+to+block&cat=block','block.png']
     end
 
     if has_role( "Activate User")
     end
 
-    if has_role("View Users") 
+    if has_role("View user log") 
     end 
+  end
+
+  def settings
+    @tasks = []
 
     if has_role("Create User") 
-      @tasks << ['Paper size','Edit certificate paper size','/paper_size','fa fa-file-text-o']
-      @tasks << ['Signature','Add signatures','/signature','fa fa-pencil']
+      @tasks << ['Paper size','Edit certificate paper size','/paper_size','papersize.png']
+      @tasks << ['Signature','Add signatures','/signature','signatures.jpeg']
     end
                     
     if has_role("Change own password") 
     end 
 
+  end
+
+  def my_account
+    @task = [
+               ['View details','View details','/',''],
+               ['Password','Password','/','']
+            ]
   end
 
   private

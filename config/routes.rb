@@ -24,6 +24,8 @@ Rails.application.routes.draw do
   get "/users/edit"
   patch "/users/edit"
   get '/settings' => 'users#settings'
+  get '/manage_users' => "users#manage_users"
+  get 'my_account' => "users#my_account"
   get 'profile/:user_id' => 'users#profile'
   
   ################## cases routes ############################

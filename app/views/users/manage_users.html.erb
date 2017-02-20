@@ -2,12 +2,11 @@
 
 </style>
 
-<h3>Settings</h3>
+<h3>Manage Users</h3>
 
 
 <div id="button-container"></div>
 
-<%= raise @tasks.inspect %>
 <script>
 var button_container = document.getElementById("button-container");
 
@@ -16,8 +15,6 @@ function buildUI() {
 
   button_container.appendChild(row);
   counter = 0;
-
-
   
   <%(@tasks || []).each do |title, desc, link, icon|%>
 /*
@@ -71,3 +68,4 @@ function buildUI() {
 buildUI();
 
 </script>
+
