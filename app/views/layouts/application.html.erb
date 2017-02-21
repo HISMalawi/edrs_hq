@@ -404,12 +404,14 @@
 
                       </ul>
                   </li>
+                  <% if has_role("Create User") %>
                   <li class="sub-menu">
                       <a href="/manage_users" class="">
                           <i class="fa fa-users"></i>
                           <span>Manage Users</span>
                       </a>
                   </li>
+                  <%end %>
                    <li class="sub-menu">
                       <a href="javascript:;" class="">
                           <i class="fa fa-gears"></i>

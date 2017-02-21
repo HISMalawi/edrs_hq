@@ -1,3 +1,4 @@
+<link href="/assets/jquery-ui/jquery-ui.min.css" rel="stylesheet">
 <style>
 
     .dropdown.dropdown-lg .dropdown-menu {
@@ -131,18 +132,6 @@
     }
     #summary td {
         padding: 0.5em;
-    }
-    #ui-datepicker-div{
-        width:20% !important;
-        background: #ffffff;
-        border:1px solid #e0dddd;
-        padding: 0.2em;
-    }
-
-    .ui-datepicker-calendar,.ui-datepicker-header{
-        width: 100%;
-        margin-left: 4%;
-
     }
     
     .ui-state-default{
@@ -410,19 +399,20 @@
                       <select name="cause_of_death1" id="cause_of_death1" load="<%= @person.cause_of_death1%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,1)" >
                       </select>
                </div>
+                 <div class="col-md-6">
+                    <label for="onset_death_interval1">Onset to death Interval </label>
+                    <input name="onset_death_interval1" id="onset_death_interval1"  value="<%= @person.onset_death_interval1%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
+                </div>
                 <div class="col-md-6">
                     <label for="interval_unit1">Units</label>
                     <select name="interval_unit1" id="interval_unit1" load="Second(s)" class="form-control" onchange="clearOnset(1)">
                       <option >Second(s)</option>
                       <option>Minute(s)</option>
+                      <option>Hour(s)</option>
                       <option>Day(s)</option>
                       <option>Week(s)</option>
                       <option>Month(s)</option>
                     </select>
-                </div>
-                 <div class="col-md-6">
-                    <label for="onset_death_interval1">Onset to death Interval </label>
-                    <input name="onset_death_interval1" id="onset_death_interval1"  value="<%= @person.onset_death_interval1%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
                 </div>
                </div>
 
@@ -433,19 +423,20 @@
                       <option value=""></option>
                     </select>
                 </div>
+                 <div class="col-md-6">
+                    <label for="">Onset to death Interval </label>
+                    <input name="onset_death_interval2" id="onset_death_interval2"  value="<%= @person.onset_death_interval2%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
+                </div>
                 <div class="col-md-6">
                     <label for="">Units</label>
                     <select name="interval_unit2" id="interval_unit2"  load="Second(s)" class="form-control" onchange="clearOnset(2)">
-                      <option>Second(s)</option>
+                      <option >Second(s)</option>
                       <option>Minute(s)</option>
+                      <option>Hour(s)</option>
                       <option>Day(s)</option>
                       <option>Week(s)</option>
                       <option>Month(s)</option>
                     </select>
-                </div>
-                 <div class="col-md-6">
-                    <label for="">Onset to death Interval </label>
-                    <input name="onset_death_interval2" id="onset_death_interval2"  value="<%= @person.onset_death_interval2%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
                 </div>
               </div>
 
@@ -457,18 +448,19 @@
                     </select>
                 </div>
                 <div class="col-md-6">
+                    <label for="">Onset to death Interval </label>
+                    <input name="onset_death_interval3" id="onset_death_interval3"  value="<%= @person.onset_death_interval3%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)"/>
+                </div>
+                <div class="col-md-6">
                     <label for="">Units</label>
                     <select name="interval_unit3" id="interval_unit3"  load="Second(s)" class="form-control" onchange="clearOnset(3)">
-                      <option>Second(s)</option>
+                     <option >Second(s)</option>
                       <option>Minute(s)</option>
+                      <option>Hour(s)</option>
                       <option>Day(s)</option>
                       <option>Week(s)</option>
                       <option>Month(s)</option>
                     </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="">Onset to death Interval </label>
-                    <input name="onset_death_interval3" id="onset_death_interval3"  value="<%= @person.onset_death_interval3%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)"/>
                 </div>
               </div>
 
@@ -480,19 +472,20 @@
                     <option value=""></option>
                   </select>
                 </div>
+                 <div class="col-md-6">
+                    <label for="">Onset to death Interval </label>
+                    <input name="onset_death_interval4" id="onset_death_interval4"  value="<%= @person.onset_death_interval4%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
+                </div>
                 <div class="col-md-6">
                     <label for="">Units</label>
                     <select name="interval_unit4" id="interval_unit4"  load="Second(s)" class="form-control" onchange="clearOnset(4)">
-                      <option>Second(s)</option>
+                      <option >Second(s)</option>
                       <option>Minute(s)</option>
+                      <option>Hour(s)</option>
                       <option>Day(s)</option>
                       <option>Week(s)</option>
                       <option>Month(s)</option>
                     </select>
-                </div>
-                 <div class="col-md-6">
-                    <label for="">Onset to death Interval </label>
-                    <input name="onset_death_interval4" id="onset_death_interval4"  value="<%= @person.onset_death_interval4%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
                 </div>
               </div>
 
@@ -651,8 +644,46 @@
     </div>
   </div>
 </div>
+<script src="assets/jquery-ui/jquery-ui.min.js"></script>
 <script src="/select2/select2.full.min.js"></script>
 <script>
+    Object.defineProperty(Date.prototype, "format", {
+       value: function (format) {
+               var date = this;
+               var result = "";
+
+               if (!format) {
+
+                            format = ""
+
+               }
+
+                var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September",
+                            "October", "November", "December"];
+
+                if (format.match(/YYYY\-mm\-dd/)) {
+
+                            result = date.getFullYear() + "-" + padZeros((parseInt(date.getMonth()) + 1), 2) + "-" + padZeros(date.getDate(), 2);
+
+                } else if (format.match(/mmm\/d\/YYYY/)) {
+
+                            result = months[parseInt(date.getMonth())] + "/" + date.getDate() + "/" + date.getFullYear();
+
+                } else if (format.match(/d\smmmm,\sYYYY/)) {
+
+                            result = date.getDate() + " " + monthNames[parseInt(date.getMonth())] + ", " + date.getFullYear();
+
+                } else {
+
+                            result = date.getDate() + "/" + months[parseInt(date.getMonth())] + "/" + date.getFullYear();
+
+                }
+
+                        return result;
+               }
+    });
     function showControls(id){
         $(".custom").hide();
         $("#" + id).show();
@@ -748,18 +779,27 @@
     }
     $(document).ready(function(){
 
-             $('#date_certifier_signed').datepicker({});
+              var mindate = $.datepicker.formatDate('dd/mm/yy',new Date("<%= @person.date_of_death %>"));
+              var maxdate =  $.datepicker.formatDate('dd/mm/yy',new Date());
+             $('#date_certifier_signed').datepicker({ dateFormat: 'dd/mm/yy',minDate: mindate, maxDate: maxdate});
     });
+
     function loaCauseSummary(){
              var table_body = $("#cause_summary");
              for(var i = 0 ; i < 4 ; i++){
-
                   var tr = document.createElement("tr");
-
              }
     }
+
     function clearOnset(pos){
-      $('#onset_death_interval'+pos).val("");
-      $('#onset_death_interval'+pos).focus();
+      if($('#onset_death_interval'+pos).val().length > 0){
+          var next = $("#cause_of_death"+(pos + 1));
+          if(next){
+              next.focus();
+          }
+      }else{
+        $('#onset_death_interval'+pos).focus();
+      }
+      
     }
 </script>
