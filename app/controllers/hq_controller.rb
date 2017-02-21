@@ -30,6 +30,10 @@ class HqController < ApplicationController
     @statuses = []
 
     case params[:search_type]
+      when "barcode"
+          PersonIdentifier.by_identifier_and_identifier_type.key([params[:barcode], "Form Barcode"]).each do |identifier|
+          results << identifier.person
+        end
       when "den"
         PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH ENTRY NUMBER"]).each do |identifier|
           results << identifier.person
