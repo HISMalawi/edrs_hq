@@ -134,7 +134,7 @@
         padding: 0.5em;
     }
     
-    .ui-state-default{
+    /*.ui-state-default{
         padding: 7px 7px;
         text-align: center;
         text-decoration: none;
@@ -166,7 +166,7 @@
     .ui-datepicker-next-hover{
         float: right;
         margin-right: 8%;
-    }
+    }*/
     #number_field{
             position: absolute;
             top: 30%;
@@ -582,23 +582,24 @@
                                   <th colspan="2">Person's sex,other details and cause of death</th>
                               </tr>
                               <tr>
-                                  <th>Sex</th>
+                                  <td>Sex</td>
                                   <td><%= @person.gender %></td>
                               </tr>
                               <tr>
-                                  <th>Date of Birth</th>
+                                  <td>Date of Birth</td>
                                   <td><%= Date.parse(@person.birthdate.to_s).strftime("%d/%b/%Y") %></td>
                               </tr>
                               <% if @person.died_while_pregnant=="Yes" %>
                               <tr>
-                                  <th>Death occured while pregnant</th>
+                                  <td>Death occured while pregnant</td>
                                   <td><%= @person.died_while_pregnant rescue "No" %></td>
                               </tr>
                               <%end%>
                               <tr>
-                                  <th>Physcial Adress</th>
+                                  <td>Physcial Adress</td>
                                   <td><%= "#{@person.current_district} District , TA #{@person.current_ta} , #{@person.current_village}" rescue "No" %></td>
                               </tr>
+
                              </thead> 
                              <tbody id="cause_summary">
                                   

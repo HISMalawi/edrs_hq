@@ -5,7 +5,20 @@
 <h3>Manage Users</h3>
 
 
-<div id="button-container"></div>
+<div id="button-container">
+     <%(@tasks || []).each do |title, desc, link, icon|%>
+
+            <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" onclick="window.location='<%= link%>'">
+              <div class="divbtn">
+                  <span class="icons">
+                      <img class="icon-attr" src="/assets/folder.png">
+                      <p><%=title%></p>
+                  </span>
+              </div>
+              
+            </div>
+       <%end%>
+</div>
 
 <script>
 var button_container = document.getElementById("button-container");
@@ -67,7 +80,7 @@ function buildUI() {
 }
 
 
-buildUI();
+//buildUI();
 
 </script>
 
