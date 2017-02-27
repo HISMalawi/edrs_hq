@@ -398,6 +398,10 @@ class Person < CouchRest::Model::Base
   property :place_of_death_ta, String
   property :place_of_death_district_id, String
   property :place_of_death_district, String
+  property :place_of_death_country, String
+  property :place_of_death_foreign_district, String #District / State
+  property :place_of_death_foreign_village, String #Town / Village
+  property :place_of_death_foreign_hospital, String
   property :cause_of_death1, String
   property :other_cause_of_death1, String
   property :cause_of_death2, String
@@ -426,6 +430,9 @@ class Person < CouchRest::Model::Base
   property :home_district, String
   property :home_country_id, String
   property :home_country, String
+  property :home_foreign_district, String
+  property :home_foreign_village, String
+  property :home_foreign_address, String
   property :other_current_village, String
   property :current_village_id, String
   property :current_village, String
@@ -436,6 +443,9 @@ class Person < CouchRest::Model::Base
   property :current_district, String
   property :current_country_id, String
   property :current_country, String
+  property :current_foreign_district, String
+  property :current_foreign_village, String
+  property :current_foreign_address, String
   property :died_while_pregnant, String
   property :updated_by, String
   property :voided_by, String
@@ -580,10 +590,15 @@ class Person < CouchRest::Model::Base
   property :informant_current_ta, String
   property :informant_current_other_ta, String
   property :informant_current_district, String
+  property :informant_current_country, String
   property :informant_addressline1, String
   property :informant_addressline2, String
   property :informant_city, String
   property :informant_phone_number, String
+  property :informant_foreign_state, String
+  property :informant_foreign_district, String
+  property :informant_foreign_village, String
+  property :informant_foreign_address, String
   property :informant_signed, String
   property :informant_signature_date, Date
   property :informant_designation, String
