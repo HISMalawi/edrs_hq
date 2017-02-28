@@ -492,9 +492,9 @@
               <div class="form-group">
                 <div class="col-lg-12 col-md-12">
                   <label for="">Other significant conditions contributing to death , but not related to the disease or condition causing it</label>
-                  <input type="" name="cause_of_death_conditions" load="<%= @person.cause_of_death_conditions%>" class="form-control" style="width:100%">
-                  <!--select name="cause_of_death_conditions" id="cause_of_death_conditions" load="<%= @person.cause_of_death_conditions%>" class="form-control select2" style="width:100%" multiple="multiple">
-                  </select-->
+                  <!--input type="" name="cause_of_death_conditions" load="<%= @person.cause_of_death_conditions%>" class="form-control" style="width:100%"-->
+                  <select name="cause_of_death_conditions[]" id="cause_of_death_conditions" class="form-control select2" style="width:100%" multiple="multiple" multiple=true>
+                  </select>
                 </div>
               </div>
 
