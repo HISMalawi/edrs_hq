@@ -154,6 +154,9 @@ class HqController < ApplicationController
        end
        i +=1
     end
+
+    raise params[:cause_of_death_conditions].inspect
+    
     @person.keys.each do |k|
       if params.keys.include?(k)
         @person[k] = params[k]

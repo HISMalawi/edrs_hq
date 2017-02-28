@@ -35,6 +35,8 @@ class UsersController < ApplicationController
 
   def create
 
+    raise params.inspect
+
     redirect_to "/" and return if !has_role("Create User")
 
     uploaded_io = params[:user][:signature]

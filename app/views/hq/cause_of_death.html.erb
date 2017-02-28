@@ -489,6 +489,15 @@
                 </div>
               </div>
 
+              <div class="form-group">
+                <div class="col-lg-12 col-md-12">
+                  <label for="">Other significant conditions contributing to death , but not related to the disease or condition causing it</label>
+                  <input type="" name="cause_of_death_conditions" load="<%= @person.cause_of_death_conditions%>" class="form-control" style="width:100%">
+                  <!--select name="cause_of_death_conditions" id="cause_of_death_conditions" load="<%= @person.cause_of_death_conditions%>" class="form-control select2" style="width:100%" multiple="multiple">
+                  </select-->
+                </div>
+              </div>
+
               <div onclick="hit('person_details_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
               <div onclick="hit('manner_of_death_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
             </div>
@@ -755,7 +764,7 @@
 
     $.getJSON("/cause_of_death_list",function(data){
 
-            for(var i =  1 ; i <=4 ; i++){
+            for(var i =  1 ; i <=5 ; i++){
                 switch(i){
                      case 1:
                         makeselect2("cause_of_death"+i, "<%= @person.cause_of_death1%>",data)
@@ -768,6 +777,9 @@
                         break;
                     case 4:
                         makeselect2("cause_of_death"+i, "<%= @person.cause_of_death4%>",data)
+                        break;
+                     case 5:
+                        makeselect2("cause_of_death_conditions",null,data)
                         break;
                 }
             }

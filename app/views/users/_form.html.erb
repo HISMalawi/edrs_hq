@@ -27,7 +27,7 @@
 <table class="table " style="margin: auto;">
   <tr class="table-row">
     <td class="table-cell" valign="top">
-      <%= form_for(@user, :url => (request.path.match(/new/) ? "/users/create" : "/users/edit?id=#{@user.username}")) do |f| %>
+      <%= form_for(@user, :url => (request.path.match(/new/) ? "/create_user" : "/users/edit?id=#{@user.username}")) do |f| %>
 
           <% if @user.errors.any? %>
               <div id="error_explanation">

@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   get "/search_user" => "users#search"
   get "/users/new"
   post "/users/create"
+  post "/create_user" => "users#create"
   get "/search_user" => "users#search"
   get "/search_by_username/:id" => "users#search_by_username"
   get "/search_by_username" => "users#search_by_username"

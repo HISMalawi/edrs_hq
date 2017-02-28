@@ -33,8 +33,8 @@
 
               <tr>
                   <td><b>Part II</b> Other significant conditions contributing to the death, but not related to the disease or condition causing it</td>
-                  <td id="other_cause_of_death" colspan="3"></td>
-                  <td colspan="3"></td>
+                  <td id="other_cause_of_death" colspan="3"><%= @person.cause_of_death_conditions rescue ""%></td>
+                  <td colspan="3"><b>Barcode Number : </b><%= @person.barcode rescue ""%></td>
               </tr>
               <tr>
                   <td colspan="5" >
