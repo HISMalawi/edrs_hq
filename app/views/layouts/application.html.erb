@@ -356,38 +356,63 @@
                           <span>Search</span>
                       </a>
                   </li>
+                  <% if has_role("View a record")  || has_role("Create User") %>
                   <li class="">
                       <a href="/tasks" class="">
                           <i class="icon_document_alt"></i>
                           <span>Manage cases</span>
                       </a>
                   </li>       
-                  <!--<li>
-                      <a class="" href="widgets.html">
-                          <i class="icon_genius"></i>
-                          <span>Widgets</span>
+                  <%end%>
+                  <% if has_role("Manage incomplete records") %>
+                    <li class="">
+                      <a href="/rejected_cases_tasks" class="">
+                          <i class="icon_document_alt"></i>
+                          <span>Rejected cases</span>
                       </a>
-                  </li>
-                  <li>                     
-                      <a class="" href="chart-chartjs.html">
-                          <i class="icon_piechart"></i>
-                          <span>Charts</span>
-                          
+                  </li> 
+                  <%end%>
+                  <% if has_role("View a record")  || has_role("Create User") %>
+                  <li class="">
+                      <a href="/special_cases_tasks" class="">
+                          <i class="icon_document_alt"></i>
+                          <span>Special cases</span>
                       </a>
-                                         
-                  </li>
-                             
-                  <li class="sub-menu">
-                      <a href="javascript:;" class="">
-                          <i class="icon_table"></i>
-                          <span>Tables</span>
-                          <span class="menu-arrow arrow_carrot-right"></span>
+                  </li>       
+                  <%end%>
+                  <% if has_role("Manage duplicates") %>
+                    <li class="">
+                      <a href="/duplicate_cases_tasks" class="">
+                          <i class="icon_document_alt"></i>
+                          <span>Duplicate cases</span>
                       </a>
-                      <ul class="sub">
-                          <li><a class="" href="basic_table.html">Basic Table</a></li>
-                      </ul>
-                  </li-->
-                  
+                  </li>  
+                  <%end%>
+                  <% if has_role("Make ammendments") || has_role("Manage duplicates") %>
+                    <li class="">
+                      <a href="/amendment_cases_tasks" class="">
+                          <i class="icon_document_alt"></i>
+                          <span>Amendment cases</span>
+                      </a>
+                  </li>  
+                  <%end%>
+                  <% if has_role("Authorise printing") %>
+                    <li class="">
+                      <a href="/print_out_tasks" class="">
+                          <i class="icon_document_alt"></i>
+                          <span>Print out</span>
+                      </a>
+                  </li>  
+                  <%end%>
+                  <% if has_role("Assess certificate quality") %>
+                  <li class="">
+                      <a href="/view_print_outs" class="">
+                          <i class="icon_document_alt"></i>
+                          <span>Verify Certificates</span>
+                      </a>
+                  </li>       
+                  <%end%>
+                  <% if has_role("Authorise printing") || has_role( "Activate User") || has_role("Deactivate User") || has_role("Create User") || has_role( "Update User") || has_role("View Users")%>
                   <li class="sub-menu ">
                       <a href="javascript:;" class="">
                           <i class="icon_documents_alt"></i>
@@ -395,17 +420,16 @@
                           <span class="menu-arrow arrow_carrot-right"></span>
                       </a>
                       <ul class="sub">                          
-                          <% if has_role("Authorise printing") || has_role( "Activate User") || has_role("Deactivate User") || has_role("Create User") || has_role( "Update User") || has_role("View Users")%>
+                          
                             <li><a href="#">Printed Certificates</a></li>
                             <li><a href="#">Reported Births</a></li>
                             <li><a href="#">Registered Births</a></li>
                             <li><a href="#">Approved at HQ</span></a></li>
-                            <li><a href="#">Voided Records</a></li>
-                          <% end %>
-                            
+                            <li><a href="#">Voided Records</a></li>     
 
                       </ul>
                   </li>
+                  <% end %>
                   <% if has_role("Create User") %>
                   <li class="sub-menu">
                       <a href="/manage_users" class="">

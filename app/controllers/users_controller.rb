@@ -35,8 +35,6 @@ class UsersController < ApplicationController
 
   def create
 
-    raise params.inspect
-
     redirect_to "/" and return if !has_role("Create User")
 
     uploaded_io = params[:user][:signature]
@@ -65,7 +63,7 @@ class UsersController < ApplicationController
     respond_to do |format|
 
       if @user.save
-        format.html { redirect_to '/', notice: 'User was successfully created.' }
+        format.html { redirect_to '/view_users', notice: 'User was successfully created.' }
         format.json { render :show, status: :created, location: @user }
       else
         format.html { render :new }
@@ -218,7 +216,6 @@ class UsersController < ApplicationController
   end
 
   def view
-
     redirect_to "/" and return if !has_role("View Users")
 
     @users = User.all.each
@@ -229,7 +226,6 @@ class UsersController < ApplicationController
 
     @user = User.current_user
 
-    render :layout => "bootstrapped"
 
   end
 

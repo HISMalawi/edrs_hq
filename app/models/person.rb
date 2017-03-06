@@ -371,8 +371,7 @@ class Person < CouchRest::Model::Base
       PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id,"Form Barcode"]).first.identifier
   end
 
-
-  #Person properties
+#Person properties
   property :first_name, String
   property :middle_name, String
   property :last_name, String
@@ -399,7 +398,8 @@ class Person < CouchRest::Model::Base
   property :place_of_death_district_id, String
   property :place_of_death_district, String
   property :place_of_death_country, String
-  property :place_of_death_foreign_district, String #District / State
+  property :place_of_death_foreign_state, String #State
+  property :place_of_death_foreign_district, String #District
   property :place_of_death_foreign_village, String #Town / Village
   property :place_of_death_foreign_hospital, String
   property :cause_of_death1, String
@@ -430,6 +430,7 @@ class Person < CouchRest::Model::Base
   property :home_district, String
   property :home_country_id, String
   property :home_country, String
+  property :home_foreign_state, String
   property :home_foreign_district, String
   property :home_foreign_village, String
   property :home_foreign_address, String
@@ -443,6 +444,7 @@ class Person < CouchRest::Model::Base
   property :current_district, String
   property :current_country_id, String
   property :current_country, String
+  property :current_foreign_state, String
   property :current_foreign_district, String
   property :current_foreign_village, String
   property :current_foreign_address, String
@@ -461,6 +463,7 @@ class Person < CouchRest::Model::Base
   property :delayed_registration, String,  :default =>"No"
   property :relationship, String, :default => "Natural Death" # Unnatural Death | Unclaimed bodies | Missing Persons | Death abroad
   property :court_order, String, :default => "No"
+  property :police_report, String, :default => "No"
 
   #Person's mother properties
   #property :mother do

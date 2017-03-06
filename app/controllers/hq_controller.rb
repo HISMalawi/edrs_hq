@@ -634,7 +634,7 @@ class HqController < ApplicationController
     @tasks = []
 
     if has_role("View a record")
-      @tasks << ['Open cases','View open cases','/open_cases','manage-cases.png']
+      @tasks << ['Active records','Active record from DC','/open_cases','manage-cases.png']
     end
 
     if has_role("View closed cases")
@@ -642,11 +642,7 @@ class HqController < ApplicationController
     end
 
     if has_role("Manage incomplete records")
-      @tasks << ['View incomplete cases','View incomplete cases','/incomplete_cases','']
-    end
-
-    if has_role("Manage incomplete records") 
-      @tasks << ['Reject cases','Reject cases','/rejected_cases','']
+      @tasks << ['Incomplete records from DV','View incomplete cases','/incomplete_cases','']
     end
 
     if has_role("View closed cases")
@@ -654,23 +650,9 @@ class HqController < ApplicationController
       @tasks << ['Conflict cases','View cases with queries','/conflict','conflict_case.png']
     end
 
-    if has_role("Manage incomplete records") 
-      @tasks << ['Re-approve cases','Re-approve cases','/re_approved_cases','']
-      @tasks << ['Reject/Approve cases','Reject/Approve cases','/rejected_and_approved_cases','']
-    end
-
     if has_role("View closed cases")
       @tasks << ['Closed case','View all closed cases','/dispatched','close-case.png']
       @tasks << ['Conflict cases','View cases with queries','/conflict','']
-    end
-
-    if has_role("Manage incomplete records")
-      @tasks << ['Re-approved cases','View re-approved cases','/re_approved_cases','']
-      @tasks << ['Rejected/Approved cases','View rejected and approved_cases','/rejected_and_approved_cases','']
-    end
-
-    if has_role("Reject a record")
-      @tasks << ['Reject record','Reject record','/dm_reject','']
     end
 
     if has_role("Void outstanding records")
@@ -704,6 +686,38 @@ class HqController < ApplicationController
 
 
 
+  end
+
+  def rejected_cases_tasks
+    @tasks = []
+    if has_role("Reject a record")
+      @tasks << ['Reject record','Reject record','/dm_reject','']
+    end
+    if has_role("Manage incomplete records") 
+      @tasks << ['Reject cases','Reject cases','/rejected_cases','']
+    end
+    if has_role("Manage incomplete records") 
+      @tasks << ['Re-approve cases','Re-approve cases','/re_approved_cases','']
+      @tasks << ['Reject/Approve cases','Reject/Approve cases','/rejected_and_approved_cases','']
+    end
+    render :template => "/hq/tasks"
+  end
+
+  def special_cases_tasks
+    @tasks = []
+    @tasks << ['Unnatural','Unnatural death record','','']
+    @tasks << ['Unclaimed bodies','Unclaimed bodies record','','']
+    @tasks << ['Missing persons','Missing persons record','','']
+    @tasks << ['Death abroad','Death abroad record','','']
+    render :template => "/hq/tasks"
+  end
+
+  def duplicate_cases_tasks
+    
+  end
+
+  def amendment_cases_tasks
+    
   end
 
   def sec_to_readable(person)

@@ -1,37 +1,25 @@
-<style>
-
-    .record td {
-        padding: 10px !important;
-    }
-
-    label {
-        padding-right: 20px;
-    }
-
-    .table-cell{
-        padding: 0px !important;
-        height: 40px !important;
-        max-height: 40px !important;
-
-    }
-
-    .form-control{
-        margin: 0px !important;
-        margin-left: 25px;
-        width: 60%;
-        border-radius: 3px;
-    }
+<style type="text/css">
+		form{
+			margin: auto;
+			background: #ffffff;
+		}
+		fieldset{
+			width: 96%;
+			margin:auto;
+		}
 
 </style>
-
-<table class="table " style="margin: auto;">
-  <tr class="table-row">
-    <td class="table-cell" valign="top">
-      <%= form_for(@user, :url => (request.path.match(/new/) ? "/create_user" : "/users/edit?id=#{@user.username}")) do |f| %>
-
-          <% if @user.errors.any? %>
+<%= form_for @user, :url => '/users/create' ,:method => :post, :html => {:class => "form-horizontal",:role=>"form"} do |f| %>
+	<fieldset>
+		<legend>Enter user details</legend>
+			 <% if flash[:notice].present? %>
+			 	<div style="width:60%;text-align:center;color:red">
+			 		<p><%= flash[:notice] %></p>
+			 	</div>    
+	          <% end %>
+	          <% if @user.errors.any? %>
               <div id="error_explanation">
-                <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+                <h3><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h3>
 
                 <ul>
                   <% @user.errors.full_messages.each do |message| %>
@@ -40,509 +28,122 @@
                 </ul>
               </div>
           <% end %>
-
-          <table class="table table-condensed table-striped table-bordered record" cellpadding="5" style="margin: auto; margin-top: 40px;">
-            <tr class="table-row">
-              <th class="table-cell" colspan="2" style="text-align: center !important; border-bottom: 1px solid #666;
-                      padding: 10px !important; font-size: 16px;">
-                <%= (params[:action].match(/edit/i) ? "Edit User Details" : "New User Details") %>
-              </th>
-            </tr>
-            <tr class="table-row">
-              <td  class="table-cell">
-                &nbsp;
-              </td>
-              <td>
-                <span id='notice' style="font-style: italic; font-size: 0.9em;"></span><br/>
-              </td>
-            </tr>
-            <tr class="table-row">
-              <td align="right">
-                <%= f.label :username %>
-              </td>
-
-              <td>
-                <% if request.path.match(/new/) %>
-
-                    <%= f.text_field :username, :class => "form-control", :placeholder => "Username", :required => true, :textCase => "lower", :uniq_check => "/username_availability?search_str=" %>
-
-                <% else %>
-
-                    <%= f.text_field :username, :class => "form-control", :placeholder => "Username", :required => true, :textCase => "lower" %>
-
-                <% end %>
-              </td>
-            </tr>
-            <tr class="table-row">
-              <td align="right">
-                <%= f.label :first_name %>
-              </td>
-
-              <td>
-                <%= f.text_field :first_name, :class => "form-control", :placeholder => "First Name", :required => true %>
-              </td>
-            </tr>
-            <tr class="table-row">
-              <td align="right">
-                <%= f.label :last_name %>
-              </td>
-
-              <td>
-                <%= f.text_field :last_name, :class => "form-control", :placeholder => "Last Name", :required => true %>
-              </td>
-            </tr>
-
-            <% @roles = [""] + Role.by_level.keys(["HQ"]).each.collect { |x| x.role }.uniq + ["Certificate Signatory"] %>
-
-            <tr class="table-row">
-              <td align="right" class="table-cell">
-                <%= f.label :role %>
-              </td>
-
-              <td>
-                <%= select_tag "user[role]", options_for_select(@roles, @user.role), :onchange => "enableField(this)", :class => 'form-control', :placeholder => "Select user role", :required => true %>
-              </td>
-            </tr>
-
-            <% if request.path.match(/new/) %>
-
-                <tr class="table-row">
-                  <td align="right">
-                    <label for="user_plain_password">Password</label>
-                  </td>
-
-                  <td>
-                    <%= f.password_field :plain_password, :class => "form-control", :placeholder => "Password", :required => true, :textCase => "lower" %>
-                  </td>
-                </tr>
-
-                <tr class="table-row">
-                  <td align="right">
-                    <%= f.label :confirm_password %>
-                  </td>
-
-                  <td>
-                    <%= f.password_field :confirm_password, :class => "form-control", :placeholder => "Confirm the password entered", :required => true, :textCase => "lower" %>
-                  </td>
-                </tr>
-
-            <% else %>
-
-                <tr class="table-row">
-                  <td align="right" class="table-cell">
-                    <label for="user_password">Password</label>
-                  </td>
-
-                  <td class="table-cell">
-                    <%= f.password_field :password, :class => "form-control", :placeholder => "Password", :required => true, :textCase => "lower" %>
-                  </td>
-                </tr>
-
-            <% end %>
-
-            <tr class="table-row">
-              <td align="right" class="table-cell">
-                <%= f.label :email %>
-              </td>
-
-              <td class="table-cell">
-                <%= f.text_field :email, :class => "form-control", :placeholder => "Email Address", :required => true %>
-              </td>
-            </tr>
-            
-            <tr class="table-row">
-              <td align="right" class="table-cell">
-                <%= f.label :signature %>
-              </td>
-
-              <td class="table-cell">
-                <%= f.file_field :signature, :class => "form-control", :onchange =>"validateFiles(this);", 
+			<div class="form-group">
+			    <label class="control-label col-sm-2" for="username">Username</label>
+			    <div class="col-sm-10">
+			      <input type="" class="form-control" id="username" name="user[username]" placeholder="Username" required>
+			    </div>
+			  </div>
+			  <div class="form-group">
+			    <label class="control-label col-sm-2" for="first_name">Firstname</label>
+			    <div class="col-sm-10">
+			      <input type="first_name" class="form-control" id="first_name"  name="user[first_name]" placeholder="First name" required>
+			    </div>
+			  </div>
+			  <div class="form-group">
+			    <label class="control-label col-sm-2" for="last_name">Surname</label>
+			    <div class="col-sm-10">
+			      <input type="last_name" class="form-control" id="last_name"  name="user[last_name]" placeholder="Surname" required>
+			    </div>
+			  </div>
+			  <% @roles = [""] + Role.by_level.keys(["HQ"]).each.collect { |x| x.role }.uniq + ["Certificate Signatory"] %>
+			  <div class="form-group">
+			    <label class="control-label col-sm-2" for="role">Role</label>
+			    <div class="col-sm-10">
+			      <%= select_tag "user[role]", options_for_select(@roles, @user.role), :class => 'form-control', :placeholder => "Select user role", :required => true %>
+			    </div>
+			  </div>
+			   <div class="form-group">
+			    <label class="control-label col-sm-2" for="password">Password</label>
+			    <div class="col-sm-10">
+			      <input type="password" class="form-control"  name="user[plain_password]" id="password" required>
+			    </div>
+			  </div>
+			  <div class="form-group">
+			    <label class="control-label col-sm-2" for="confirm_password">Confirm Password</label>
+			    <div class="col-sm-10">
+			      <input type="password" class="form-control" id="confirm_password" onblur="matchPassword()" required>
+			    </div>
+			  </div>
+			  <div class="form-group">
+			    <label class="control-label col-sm-2" for="email"  name="user[email]">Email</label>
+			    <div class="col-sm-10">
+			      <input type="email" class="form-control" id="email" required>
+			    </div>
+			  </div>
+			   <div class="form-group">
+			    <label class="control-label col-sm-2" for="email">Signature</label>
+			    <div class="col-sm-10">
+			       <%= f.file_field :signature, :class => "form-control", :onchange =>"validateFiles(this);", 
                 		 :data => {:max_file_size => 1.megabyte},  :placeholder => "Signature", 
                 		 :optional => true, :disabled => "disabled" %>
-              </td>
-            </tr>
-            
-            
-          </table>
+			    </div>
+			  </div>
+			  <div class="form-group">
+			    <div class="col-sm-offset-2 col-sm-10">
+			      <button class="btn btn-success pull-right">Save</button>
+			    </div>
+			  </div>
+	</fieldset>
+	
+<%end%>
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
 
-          <div class="actions">
-            <%#= f.hidden_field :_rev %>
-            <%#= f.hidden_field :created_at %>
-            <%#= f.hidden_field :updated_at %>
-            <%#= f.submit :id => "btnAction", :class => "buttons blue", 
-            		  :style => "position: absolute; right: 160px; bottom: 20px;", 
-            		  :onclick => "submitForm()"  %>
-          </div>
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="modal-title">Modal Header</h4>
+      </div>
+      <div class="modal-body">
+        <p id="modal-message">Some text in the modal.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
 
-      <% end %>
-
-    </td>
-  </tr>
-
-  <tr class="table-row">
-    <td class="table-cell">
-      <button id="btnAction" class="btn btn-success pull-right" style="cursor: pointer;
-              " onclick="submitForm()">
-        <%= request.path.match(/new/) ? "Save" : "Update" %> User
-      </button>
-
-    </td>
-  </tr>
-</table>
-
-<script>
-
-    var timerHnd;
-
-    // var good = <%= request.path.match(/new/) ? false : true %>
-
-    function submitForm() {
-        // if (validateForm() && good) {
-        if (validateForm()) {
-            document.getElementsByTagName('form')[0].submit();
-        }
-
-    }
-
-    function validateForm() {
-        username = document.getElementById('user_username');
-        first_name = document.getElementById('user_first_name');
-        last_name = document.getElementById('user_last_name');
-        user_role = document.getElementById('user_role');
-        password = document.getElementById('user_plain_password');
-        password_confirm = document.getElementById('user_confirm_password');
-        email_address = document.getElementById('user_email');
-       
-        if (username.value == '') {
-            showMsg("Please enter username ...");
-            return false;
-        } else if (first_name.value == '') {
-            showMsg("Please enter user first name ...");
-            return false;
-        } else if (last_name.value == '') {
-            showMsg("Please enter user last name ...");
-            return false;
-        } else if (user_role.value == '') {
-            showMsg("Please select user role ...");
-            return false;
-        } else if (password && password.value == '') {
-            showMsg("Please enter password ...");
-            return false;
-        } else if (password && password.value.length < 6) {
-            showMsg("Please password should be at least six(6) characters...");
-            return false;
-        } else if (password && password.value.length > 20) {
-            showMsg("Please password cannot be more than twenty(20) characters...");
-            return false;    
-        } else if (password && password_confirm && password.value != password_confirm.value) {
-            showMsg("The two passwords you enter do not match ...");
-            return false;
-        } else if (email_address && email_address.value == '') {
-            showMsg("Please enter email...");
-            return false;
-        }
-        
-
-        return true;
-    }
-
-    var timeSpacing = 500;
-
-    function checkUsername() {
-
-        clearTimeout(timerHnd);
-
-        username = document.getElementById('user_username').value;
-
-        if (username == "Username" || username.trim().length == 0) {
-            timerHnd = setTimeout("checkUsername()", timeSpacing);
-
-            return;
-        }
-
-        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-            xmlhttp = new XMLHttpRequest();
-        } else {// code for IE6, IE5
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                var results = xmlhttp.responseText;
-
-                timerHnd = setTimeout("checkUsername()", timeSpacing);
-
-                if (results == 'undefined' || results == '' || results == '"not validate"') {
-                    return;
-                } else {
-                    if (results == 'available') {
-                        good = true;
-
-                        document.getElementById('notice').innerHTML = 'Username ' + results;
-                        document.getElementById('notice').style.color = 'green';
-
-                        if (document.getElementById('btnAction')) {
-                            document.getElementById('btnAction').disabled = false;
-                            document.getElementById('btnAction').className = "blue";
-                        }
-                    } else {
-                        good = false;
-
-                        document.getElementById('notice').innerHTML = 'Username ' + results + "!";
-                        document.getElementById('notice').style.color = 'red';
-
-                        if (document.getElementById('btnAction')) {
-                            document.getElementById('btnAction').disabled = 'disabled';
-                            document.getElementById('btnAction').className = "gray";
-                        }
-                    }
-                }
-            }
-        }
-        xmlhttp.open("GET", "/username_availability?search_str=" + username, true);
-        xmlhttp.send();
-
-    }
-
-    <% if request.path.match(/new/) %>
-
-    // timerHnd = setTimeout("checkUsername()", timeSpacing);
-
-    <% else %>
-
-    if (document.getElementById("user_username")) {
-
-        document.getElementById("user_username").disabled = true;
-
-    }
-
-    <% end %>
-    
-    function enableField(selected) {
-    
-     if (selected.value.toLowerCase() == "certificate signatory"){
-        
-         $("#user_signature").removeAttr("disabled");
-         $("#user_signature").attr("required",true);
-        
-     }else {
-     
-        $("#user_signature").attr("disabled","disabled");
-        $("#user_signature").removeAttr("required");
-     }
-    
-    }
-    
-    function validateFiles(inputFile) {
-			var maxExceededMessage = "This file exceeds the maximum allowed file size (1 MB)";
-			var extErrorMessage = "Only image file with extension: .jpg, .jpeg, .gif or .png is allowed";
-			var allowedExtension = ["jpg", "jpeg", "gif", "png"];
-		
-			var extName;
-			var maxFileSize = $(inputFile).data('max-file-size');
-			var sizeExceeded = false;
-			var extError = false;
-		
-			$.each(inputFile.files, function() {
-				if (this.size && maxFileSize && this.size > parseInt(maxFileSize)) {sizeExceeded=true;};
-				extName = this.name.split('.').pop();
-				if ($.inArray(extName, allowedExtension) == -1) {extError=true;};
-			});
-			if (sizeExceeded) {
-				window.alert(maxExceededMessage);
-				$(inputFile).val('');
-			};
-		
-			if (extError) {
-				window.alert(extErrorMessage);
-				$(inputFile).val('');
-			};
-		}
-    
-</script>
+  </div>
+</div>
 <script type="text/javascript">
-
-    function showMsg(msg, height, width, action) {
-
-        showShield(undefined, true);
-
-        if (!__$("shield")) {
-
-            showShield(undefined, true);
-
-        }
-
-        var popup = document.createElement("div");
-        popup.id = "popup";
-        popup.style.position = "absolute";
-        popup.style.minHeight = (height == undefined ? "150px" : height);
-        popup.style.top = "20%";
-        popup.style.width = (width == undefined ? "330px" : width);
-        popup.style.left = ((window.innerWidth - 330) / 2) + "px";
-        popup.style.backgroundColor = "#eee";
-        popup.style.zIndex = 1300;
-        popup.style.border = "2px outset #eee";
-        popup.style.borderRadius = "8px";
-        popup.style.padding = "3px";
-
-        document.body.appendChild(popup);
-
-        var table = document.createElement("table");
-        table.width = "100%";
-        table.style.fontSize = "14px";
-
-        popup.appendChild(table);
-
-        var tbody = document.createElement("tbody");
-
-        table.appendChild(tbody);
-
-        var tr1 = document.createElement("tr");
-
-        tbody.appendChild(tr1);
-
-        var th = document.createElement("th");
-        th.innerHTML = "Info";
-        th.style.backgroundColor = "darkgray";
-        th.style.color = "black";
-        th.style.borderTopLeftRadius = "8px";
-        th.style.borderTopRightRadius = "8px";
-        th.colSpan = "2";
-        th.style.padding = "5px";
-
-        tr1.appendChild(th);
-
-        var tr2 = document.createElement("tr");
-
-        tbody.appendChild(tr2);
-
-        var td1_1 = document.createElement("td");
-        td1_1.colSpan = "2";
-        td1_1.style.padding = "5px";
-        td1_1.style.paddingTop = "15px";
-        td1_1.style.paddingBottom = "15px";
-        td1_1.align = "center";
-        td1_1.innerHTML = msg;
-        td1_1.style.lineHeight = "120%";
-        td1_1.style.fontSize = "14px";
-
-        tr2.appendChild(td1_1);
-
-        var tr3 = document.createElement("tr");
-
-        tbody.appendChild(tr3);
-
-        var td2_2 = document.createElement("td");
-        td2_2.align = "center";
-        td2_2.style.padding = "10px";
-        td2_2.colSpan = "2";
-
-        tr3.appendChild(td2_2);
-
-        var btnYes = document.createElement("button");
-        btnYes.className = "blue";
-        btnYes.innerHTML = "OK";
-        btnYes.style.width = "50px";
-        btnYes.style.cursor = "pointer";
-        btnYes.style.fontSize = "14px";
-        btnYes.style.minHeight = "30px";
-        btnYes.setAttribute("act", action);
-
-        td2_2.appendChild(btnYes);
-
-        btnYes.onmousedown = function () {
-
-            if(this.getAttribute("act") != null){
-
-                eval(this.getAttribute("act"));
-
-            }
-
-            if (__$("popup")) {
-
-                document.body.removeChild(__$("popup"));
-
-            }
-
-            if (__$("shield")) {
-
-                document.body.removeChild(__$("shield"));
-
-            }
-
-        }
-
-    }
-
-
-
-    function showShield(action, clickCloses) {
-
-        if (clickCloses == undefined) {
-
-            clickCloses = true;
-
-        }
-
-        if (__$("shield")) {
-
-            if (__$("popup")) {
-
-                document.body.removeChild(__$("popup"));
-
-            }
-
-            if (__$("popupkeyboard")) {
-
-                if (action != undefined) {
-
-                    eval(action);
-
-                }
-
-                document.body.removeChild(__$('popupkeyboard'));
-
-            }
-
-            document.body.removeChild(__$("shield"));
-
-        } else {
-
-            var shield = document.createElement("div");
-            shield.style.position = "absolute";
-            shield.style.backgroundColor = "rgba(0,0,0,0.07)";
-            shield.style.top = "0px";
-            shield.style.left = "0px";
-            shield.style.width = "100%";
-            shield.style.height = "100%";
-            shield.id = "shield";
-
-            if (action != undefined) {
-
-                shield.setAttribute("action", action);
-
-            }
-
-            if (clickCloses) {
-
-                shield.onmousedown = function () {
-
-                    if (this.getAttribute("action") != null) {
-                        showShield(this.getAttribute("action"));
-                    } else {
-                        showShield();
-                    }
-
-                }
-
-            }
-
-            document.body.appendChild(shield);
-
-        }
-
-    }
-
-    function __$(id){
-        return document.getElementById(id);
-    }
+		var validations = {};
+		function matchPassword(){
+			var password = $("#password").val();
+			var confirm = $("#confirm_password").val();
+			if(password == confirm){
+				validations["Passwords don't match"] = true;
+			}else{
+				validations["Passwords don't match"]= false;
+				showMessageModal("Password validation","Passwords don't match");
+			}
+		}
+		function showMessageModal(title,message){
+			$("#modal-title").html(title);
+			$("#modal-message").html(message);
+			$("#myModal").modal();
+		}
+		$(document).ready(function() {
+		console.log(validations);
+		  $('#new_user').on('submit', function(e){
+		    var valid;
+		    var validations_keys = Object.keys(validations);
+		    console.log(validations_keys);
+		    for (var i = 0 ;i < validations_keys.length ; i++){
+		    	if(validations[validations_keys[i]]){
+		    		valid = true;
+		    	}
+		    	else{
+		    		valid =false;
+		    		showMessageModal("Password validation",validations_keys[i]);
+		    		break;
+		    	}
+		    }
+		    if(valid) {
+		      
+		    }else{
+		    	e.preventDefault();
+		    }
+		  });
+		});
 </script>

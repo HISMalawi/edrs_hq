@@ -115,6 +115,8 @@ Rails.application.routes.draw do
   get "/manage_duplicates" => "hq#manage_duplicates"
 
   get '/tasks' => 'hq#tasks'
+  get '/rejected_cases_tasks' =>"hq#rejected_cases_tasks"
+  get '/special_cases_tasks' => "hq#special_cases_tasks"
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
