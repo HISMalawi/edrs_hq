@@ -665,41 +665,21 @@ class HqController < ApplicationController
       @tasks << ['Potential duplicates','View potential duplicates','/approve_potential_duplicates','']
     end
 
-    if has_role("Make ammendments")
-      @tasks << ['View requests','View requests','/view_requests','']
-    end
-
-    if has_role("Authorise printing")
-      @tasks << ['Approve for printing','Approve for printing','/approve_for_printing','']
-      @tasks << ['Print Certificates','Print Certificates','/print','']
-      @tasks << ['Re-print certificates','Re-print certificates','/re_print','']
-      @tasks << ['Dispatch print outs','View dispatched print outs','/dispatch_printouts','']
-    end 
-
-    if has_role("Authorise reprinting of a certificate")
-      @tasks << ['Approve re-printing','Approve for re-printing','/approve_reprint','']
-    end
-
     if has_role(("Assess certificate quality"))
       @tasks << ['Verify certificates','Verify certificates','/verify_certificates','']
     end
-
-
+     @section ="Manage Cases"
 
   end
 
   def rejected_cases_tasks
     @tasks = []
-    if has_role("Reject a record")
-      @tasks << ['Reject record','Reject record','/dm_reject','']
+     if has_role("Manage incomplete records") 
+      @tasks << ['Approve for printing','Approved records by DM for printing that were marked as incomplete by DS','','']
+      @tasks << ['Rejected cases','Incomplete records waiting to be sent to DC for editing','/rejected_cases','']
+      @tasks << ['Edited records from DC','Corrected records from DC after DS rejected them','','']
     end
-    if has_role("Manage incomplete records") 
-      @tasks << ['Reject cases','Reject cases','/rejected_cases','']
-    end
-    if has_role("Manage incomplete records") 
-      @tasks << ['Re-approve cases','Re-approve cases','/re_approved_cases','']
-      @tasks << ['Reject/Approve cases','Reject/Approve cases','/rejected_and_approved_cases','']
-    end
+     @section ="Rejected Cases"
     render :template => "/hq/tasks"
   end
 
@@ -709,15 +689,63 @@ class HqController < ApplicationController
     @tasks << ['Unclaimed bodies','Unclaimed bodies record','','']
     @tasks << ['Missing persons','Missing persons record','','']
     @tasks << ['Death abroad','Death abroad record','','']
+    @section ="Special Cases"
     render :template => "/hq/tasks"
   end
 
   def duplicate_cases_tasks
-    
+     @tasks = []
+     if has_role("Manage incomplete records") 
+      @tasks << ['Potential Duplicates','Records marked as potential duplicates','','']
+      @tasks << ['Can Confirm Duplicates','Can be sent to DC or Voided upon DM approval','','']
+      @tasks << ['Confirmed Duplicates','Confirmed duplicates','','']
+      @tasks << ['Approved for Printing','All potential duplicates that were approved and printed by DS, Option to view comments','','']
+    end
+    @section ="Duplicate Cases"
+    render :template => "/hq/tasks"
   end
 
   def amendment_cases_tasks
-    
+    @tasks = []
+    if has_role("Make ammendments")
+      @tasks << ['Lost/Damaged','All records that have been requested to be reprinted after first copy of the certificates was Lost/Damaged','/view_requests','']
+      @tasks << ['Amendments','All records that has under gone changes after the certificate was printed','/view_requests','']
+    end
+    @section ="Re-prints and amendments"
+    render :template => "/hq/tasks"
+  end
+
+  def print_out_tasks
+    @tasks = []
+    if has_role("Authorise printing")
+      @tasks << ['Approve for printing','Approve for printing','/approve_for_printing','']
+      @tasks << ['Print Certificates','Print Certificates','/print','']
+    end 
+    if has_role("Authorise reprinting of a certificate")
+      @tasks << ['Approve re-printing','Approve for re-printing','/approve_reprint','']
+    end
+     if has_role("Authorise printing")
+      @tasks << ['Re-print certificates','Re-print certificates','/re_print','']
+      @tasks << ['Dispatch print outs','View dispatched print outs','/dispatch_printouts','']
+      @tasks << ['Closed Re-printed certificates','All reprinteed records, those didn’t pass QC, option to view comments','']
+    end 
+    @section ="Print out"
+    render :template => "/hq/tasks"
+  end
+
+  def keep
+    @tasks = []
+    if has_role("Reject a record")
+      @tasks << ['Reject record','Reject record','/dm_reject','']
+    end
+    if has_role("Manage incomplete records") 
+      @tasks << ['Re-approve cases','Re-approve cases','/re_approved_cases','']
+      @tasks << ['Reject/Approve cases','Reject/Approve cases','/rejected_and_approved_cases','']
+      @tasks << ['Rejected cases','Rejected cases','/rejected_cases','']
+    end
+    if has_role("Make ammendments")
+      @tasks << ['View requests','View requests','/view_requests','']
+    end
   end
 
   def sec_to_readable(person)
