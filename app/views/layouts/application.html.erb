@@ -406,14 +406,20 @@
                   <%end%>
                   <% if has_role("Assess certificate quality") %>
                   <li class="">
-                      <a href="/view_print_outs" class="">
+                      <a href="/verify_certificates" class="">
                           <i class="icon_document_alt"></i>
                           <span>Verify Certificates</span>
                       </a>
                   </li>       
                   <%end%>
-                  <% if has_role("Authorise printing") || has_role( "Activate User") || has_role("Deactivate User") || has_role("Create User") || has_role( "Update User") || has_role("View Users")%>
-                  <li class="sub-menu ">
+                  <% if has_role("Authorise printing") || has_role( "Activate User") || has_role("Deactivate User") || has_role("Create User") || has_role( "Update User") || has_role("View Users") || has_role( "Add cause of death")%>
+                    <li class="sub-menu">
+                      <a href="/reports" class="">
+                          <i class="fa fa-users"></i>
+                          <span>Reports</span>
+                      </a>
+                  </li>
+                  <!--li class="sub-menu ">
                       <a href="javascript:;" class="">
                           <i class="icon_documents_alt"></i>
                           <span>Reports</span>
@@ -428,7 +434,7 @@
                             <li><a href="#">Voided Records</a></li>     
 
                       </ul>
-                  </li>
+                  </li-->
                   <% end %>
                   <% if has_role("Create User") %>
                   <li class="sub-menu">

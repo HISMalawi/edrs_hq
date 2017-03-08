@@ -646,23 +646,13 @@ class HqController < ApplicationController
     end
 
     if has_role("View closed cases")
-      @tasks << ['Dispatched cases','View dispatched certificates','/dispatched','dispatch.png']
-      @tasks << ['Conflict cases','View cases with queries','/conflict','conflict_case.png']
-    end
-
-    if has_role("View closed cases")
-      @tasks << ['Closed case','View all closed cases','/dispatched','close-case.png']
-      @tasks << ['Conflict cases','View cases with queries','/conflict','']
+      @tasks << ['Dispatched records','Dispatched records with an option of viewing a copy of printed certificate','/dispatched','dispatch.png']
+      @tasks << ['View printed records','All printed','','']
     end
 
     if has_role("Void outstanding records")
       @tasks << ['Void cases','Void cases','/void_cases','']
       @tasks << ['Voided cases','View void cases','/voided_cases','']
-    end
-
-    if has_role("View closed cases")
-      @tasks << ['Approve for re-printing','Approve for re-printing','/approve_for_reprinting','']
-      @tasks << ['Potential duplicates','View potential duplicates','/approve_potential_duplicates','']
     end
 
     if has_role(("Assess certificate quality"))
@@ -746,6 +736,18 @@ class HqController < ApplicationController
     if has_role("Make ammendments")
       @tasks << ['View requests','View requests','/view_requests','']
     end
+     if has_role("View closed cases")
+      @tasks << ['Conflict cases','View cases with queries','/conflict','conflict_case.png']
+    end
+    if has_role("View closed cases")
+      @tasks << ['Closed case','View all closed cases','/dispatched','close-case.png']
+      @tasks << ['Conflict cases','View cases with queries','/conflict','']
+    end
+    if has_role("View closed cases")
+      @tasks << ['Approve for re-printing','Approve for re-printing','/approve_for_reprinting','']
+      @tasks << ['Potential duplicates','View potential duplicates','/approve_potential_duplicates','']
+    end
+    return @tasks
   end
 
   def sec_to_readable(person)

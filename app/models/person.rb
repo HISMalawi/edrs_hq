@@ -26,9 +26,9 @@ class Person < CouchRest::Model::Base
 
   before_save NameCodes.new("informant_middle_name")
 
-  after_initialize :decrypt_data
+  #after_initialize :decrypt_data
 
-  before_save :encrypt_data
+  #before_save :encrypt_data
 
   before_save :set_facility_code,:set_district_code
 
