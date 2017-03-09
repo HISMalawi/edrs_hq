@@ -119,11 +119,13 @@
         padding-bottom: 7px;
         padding-left: 15px;
         background: #f8f8ff;
+
     }
 
     .form-control{
         background: rgb(254, 254, 254);
         width: 98%;
+        margin-bottom: 1%;
     }
     #summary {
        width:  98%;
@@ -186,31 +188,36 @@
                 Person details
               </label>
         </div>
-        <div id="cause_of_death_radio" class="radio radio-primary" onmousedown="showControls('cause_of_death')">
+         <div id="cause_of_death_check_radio" class="radio radio-primary" onmousedown="showControls('cause_of_death_check')">
           <input type="radio" name="radio" id="radio1">
               <label for="radio1">
+                Check question
+              </label>
+        </div>
+        <div id="cause_of_death_radio" class="radio radio-primary" onmousedown="showControls('cause_of_death')">
+          <input type="radio" name="radio" id="radio2">
+              <label for="radio2">
                 Cause of death
               </label>
         </div>
 
         <div id="manner_of_death_radio" class="radio radio-primary" onmousedown="showControls('manner_of_death')">
-            <input type="radio" name="radio" id="radio2">
-                <label for="radio2">
+            <input type="radio" name="radio" id="radio3">
+                <label for="radio3">
                     Manner of death
                 </label>
         </div>
 
-
         <div id="certification_radio" class="radio radio-primary" onmousedown="showControls('certification')">
-            <input type="radio" name="radio" id="radio3">
-                <label for="radio3">
+            <input type="radio" name="radio" id="radio4">
+                <label for="radio4">
                     Certification
                 </label>
         </div>
 
         <div id="icd_10_radio" class="radio radio-primary" onmousedown="showControls('icd_10')">
-            <input type="radio" name="radio" id="radio4">
-                <label for="radio4">
+            <input type="radio" name="radio" id="radio5">
+                <label for="radio5">
                     ICD 10 Code
                 </label>
         </div>
@@ -389,7 +396,22 @@
                     </tr>
                   </table>
               </div>
-              <div onclick="hit('cause_of_death_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
+              <div onclick="hit('cause_of_death_check_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
+          </div>
+          <div id="cause_of_death_check" class="container custom">
+            <div class="form-group">
+              <div class="col-lg-12 col-md-12">
+                      <label for="cause_of_death_available">Is cause of death informantion available? </label>
+                      <select name="cause_of_death_available" id="cause_of_death_available" load="<%= @person.cause_of_death_available rescue '' %>" class="form-control" >
+                          <option>Yes</option>
+                          <option>No</option>
+                      </select>
+               </div>
+              </div>
+              <div onclick="hit('person_details_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
+              <div onclick="checkCauseFunction()" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
+            </div>
+
           </div>
           <div id="cause_of_death" class="container custom">
               <input name="person_id" value="<%= @person.id%>" type="hidden" type="text" />
@@ -498,7 +520,7 @@
                 </div>
               </div>
 
-              <div onclick="hit('person_details_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
+              <div onclick="hit('cause_of_death_check_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
               <div onclick="hit('manner_of_death_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
             </div>
 
@@ -814,5 +836,12 @@
         $('#onset_death_interval'+pos).focus();
       }
       
+    }
+    function checkCauseFunction(){
+        if($("#cause_of_death_available").val() == "No"){
+            window.location.href ="/nocause_available/<%=params[:person_id]%>";
+        }else{
+            hit('cause_of_death_radio');
+        }
     }
 </script>

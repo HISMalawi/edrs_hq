@@ -119,71 +119,71 @@
 
     <td class="" style="width: 30%;border: 1px solid gray">
 
-          <div id="first" class="radio radio-primary" onmousedown="showControls('barcode')">
-            <input type="radio" name="radio" id="radio">
-            <label for="radio">
+          <div id="barcode_radio"  class="radio radio-primary" onmousedown="showControls('barcode')">
+            <input type="radio" name="radio" id="radio0">
+            <label for="radio0">
               By Barcode
             </label>
           </div>
 
-          <div id="first" class="radio radio-primary" onmousedown="showControls('den')">
-            <input type="radio" name="radio" id="radio">
-            <label for="radio">
+          <div id="den_radio"  class="radio radio-primary" onmousedown="showControls('den')">
+            <input type="radio" name="radio" id="radio1">
+            <label for="radio1">
               By Death Entry Number
             </label>
           </div>
 
-          <div class="radio radio-primary" onmousedown="showControls('drn')">
-            <input type="radio" name="radio" id="radio0">
-            <label for="radio0">
+          <div id="drn_radio"  class="radio radio-primary" onmousedown="showControls('drn')">
+            <input type="radio" name="radio" id="radio2">
+            <label for="radio2">
               By Death Registration Number
             </label>
           </div>
 
-          <div class="radio radio-primary" onmousedown="showControls('details_of_deceased')">
-            <input type="radio" name="radio" id="radio1">
-            <label for="radio1">
+          <div id="details_of_deceased_radio"  class="radio radio-primary" onmousedown="showControls('details_of_deceased')">
+            <input type="radio" name="radio" id="radio3">
+            <label for="radio3">
               By Personal Details of Deceased
             </label>
           </div>
-          <div class="radio radio-primary" onmousedown="showControls('home_address')">
-            <input type="radio" name="radio" id="radio2">
-            <label for="radio2">
+          <div id="home_address_radio"  class="radio radio-primary" onmousedown="showControls('home_address')">
+            <input type="radio" name="radio" id="radio4">
+            <label for="radio4">
               By Home Address
             </label>
           </div>
 
-          <div class="radio radio-primary" onmousedown="showControls('mother')">
-            <input type="radio" name="radio" id="radio3">
-            <label for="radio3">
+          <div id="mother_radio"  class="radio radio-primary" onmousedown="showControls('mother')">
+            <input type="radio" name="radio" id="radio5">
+            <label for="radio5">
               By Name of Mother
             </label>
           </div>
 
-          <div class="radio radio-primary" onmousedown="showControls('father')">
-            <input type="radio" name="radio" id="radio4">
-            <label for="radio4">
+          <div id="father_radio"  class="radio radio-primary" onmousedown="showControls('father')">
+            <input type="radio" name="radio" id="radio6">
+            <label for="radio6">
               By Name of Father
             </label>
           </div>
 
-          <div class="radio radio-primary" onmousedown="showControls('informant_name')">
+          <div id="informant_radio"  class="radio radio-primary" onmousedown="showControls('informant_name')">
             <input type="radio" name="radio" id="radio7">
             <label for="radio7">
               By Name Informant
             </label>
           </div>
 
-          <div class="radio radio-primary" onmousedown="showControls('informant_address')">
-            <input type="radio" name="radio" id="radio5">
-            <label for="radio5">
+          <div id="informant_address_radio"  class="radio radio-primary" onmousedown="showControls('informant_address')">
+            <input type="radio" name="radio" id="radio8">
+            <label for="radio8">
               By Informant Address
             </label>
           </div>
 
-          <div class="radio radio-primary" onmousedown="showControls('place_of_death')">
-            <input type="radio" name="radio" id="radio6">
-            <label for="radio6">
+          <div id="place_of_death_radio"  class="radio radio-primary" onmousedown="showControls('place_of_death')">
+            <input type="radio" name="radio" id="radio9">
+            <label for="radio9">
               By Place of death
             </label>
           </div>
@@ -191,15 +191,15 @@
 
     <% else %>
          <td class="" style="width: 30%;border: 1px solid gray">
-             <div id="first" class="radio radio-primary" onmousedown="showControls('barcode')">
-                <input type="radio" name="radio" id="radio">
+             <div id="barcode_radio" class="radio radio-primary" onmousedown="showControls('barcode')">
+                <input type="radio" name="radio" id="radio0">
                 <label for="radio">
                   By Barcode
                 </label>
               </div>
 
-              <div id="first" class="radio radio-primary" onmousedown="showControls('den')">
-                <input type="radio" name="radio" id="radio">
+              <div id="den_radio" class="radio radio-primary" onmousedown="showControls('den')">
+                <input type="radio" name="radio" id="radio1">
                 <label for="radio">
                   By Death Entry Number
                 </label>
@@ -448,7 +448,9 @@
 <script>
   function showControls(id){
       $(".custom").hide();
-      $("#" + id).show();
+      $("#" + id).show(); 
+      var d = document.getElementById(id+"_radio");
+      $(d).find("input").prop('checked', 'checked')
   }
 
   function __$(id){
@@ -517,7 +519,7 @@
   var interval = setInterval("checkConditions()", 200);
 
 
-  showControls('barcode');
+  showControls('barcode',0);
   $("#barcode").click();
 
 </script>

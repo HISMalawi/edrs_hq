@@ -162,11 +162,18 @@ class HqController < ApplicationController
         @person[k] = params[k]
       end
     end
-
+    @person.cause_of_death_available = "Yes"
     @person.save
 
     flash[:success] = "Record updated successfully"
     redirect_to "/search?person_id=#{params[:person_id]}"
+  end
+
+  def nocause_available
+    person = Person.find(params[:id])
+    person.cause_of_death_available = "No"
+    person.save
+    redirect_to "/"
   end
 
   def cause_of_death_preview
