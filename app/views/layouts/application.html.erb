@@ -364,7 +364,7 @@
                       </a>
                   </li>       
                   <%end%>
-                  <% if has_role("Manage incomplete records") %>
+                  <% if has_role("Manage incomplete records") || has_role("Reject a record") %>
                     <li class="">
                       <a href="/rejected_cases_tasks" class="">
                           <i class="icon_document_alt"></i>

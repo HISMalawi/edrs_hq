@@ -261,9 +261,10 @@
               <div onclick= "<%= onclick %>" class="dynamic-button btn btn-small btn-primary pull-right <%= task['class'].downcase rescue ''%>"><span><%= task['button_name']%></span></div>
           <% end %>
 
-          <% if comment == true && @current_user.role == "Data Checking Clerk"%>
+          <% if comment == true && false%>
             <div onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary"><span>View Comments</span></div>
           <% end %>
+          <div id="comment_div" onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary" style="visibility: hidden;"><span>View Comments</span></div>
         </th>
       </tr>
       </tfoot>
@@ -406,7 +407,7 @@
 
                     <div style="width: 100%;margin-top: 20px;border-top: 1px solid #d3d3d3">
                         <form id="comment-form" action="/ajax_save_comment">
-                          <textarea name="comment" placeholder="New Comment" id="textarea" style="width: 90%;margin-top: 4px;"></textarea>
+                          <textarea class="form-control" name="comment" placeholder="New Comment" id="textarea" style="width: 98%;margin-top: 4px;margin-bottom: 4px;"></textarea>
 
                           <div onclick="saveComment();" class="btn btn-sm btn-primary pull-left">Submit</div>
                         </form>
@@ -438,6 +439,7 @@
 <% end %>
 
 <script>
+    var next_status ="";
     function loadPopup(id){
         __$(id).style.display = "block";
     }
@@ -473,6 +475,7 @@
 
                 if(status_arr.indexOf(status) >= 0){
                     var link = "<%= (session[:return_url] || '/')%>".trim();
+                    next_status = status;
                     ajaxPullComments(link);
                 }else {
                     window.parent.location = "<%= (session[:return_url] || request.referrer)%>";
@@ -539,15 +542,16 @@
     }
 
     function saveComment(){
-
+        var url = "/ajax_save_comment?person_id=<%= params[:person_id]%>&next_status="+next_status+"&comment="
         jQuery.ajax(
                 {
-                    url: "/ajax_save_comment?person_id=<%= params[:person_id]%>&comment=",
+                    url: url,
                     data: {
                         'comment' : __$("textarea").value,
                         "authenticity_token": "<%= form_authenticity_token %>"
                     },
                     success: function(result){
+                        console.log(url);
                         result = JSON.parse(result);
                         var parent = document.getElementById("comments-list");
                         var clone = document.getElementById("clone_me");
@@ -572,7 +576,23 @@
                 }
         )
     }
-
+    $(document).ready(function(){
+        jQuery.ajax(
+                {
+                    url: "/get_comments?person_id=<%= params[:person_id]%>",
+                    success: function(results){
+                        results = JSON.parse(results);
+                        if(results.length > 0){
+                            console.log($("#comment_div"));
+                            $("#comment_div").css("visibility", "visible"); 
+                        }
+                    },
+                    error: function(e){
+                        alert("Something went wrong!")
+                    }
+                }
+        )
+    });
 </script>
 <style>
   #completeness, #printers, #comments{

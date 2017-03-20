@@ -600,7 +600,7 @@ class HqController < ApplicationController
       "user_id" => @current_user.id,
       "record_id" => @person.id,
       "level" => "Person",
-      "type" => (params["next_status"].gsub(/\-/, '') rescue nil),
+      "audit_type" => (params["next_status"].gsub(/\-/, '') rescue nil),
       "site_id" => CONFIG['district_code']
     )
 
@@ -675,6 +675,9 @@ class HqController < ApplicationController
       @tasks << ['Approve for printing','Approved records by DM for printing that were marked as incomplete by DS','','']
       @tasks << ['Rejected cases','Incomplete records waiting to be sent to DC for editing','/rejected_cases','']
       @tasks << ['Edited records from DC','Corrected records from DC after DS rejected them','','']
+    end
+    if has_role("Reject a record")
+      @tasks << ['Reject record','Reject record','/dm_reject','']
     end
      @section ="Rejected Cases"
     render :template => "/hq/tasks"

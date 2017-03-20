@@ -34,8 +34,6 @@ class Person < CouchRest::Model::Base
 
   after_create :create_status
 
-  cattr_accessor :duplicate
-  
   def decrypt_data
     encryptable = ["first_name","last_name",
                    "middle_name","last_name",
@@ -52,7 +50,7 @@ class Person < CouchRest::Model::Base
       self.send("#{attribute[0]}=", (attribute[1].decrypt rescue attribute[1])) unless attribute[1].blank?
     end
   end
-  
+
   def encrypt_data
     encryptable = ["first_name","last_name",
                    "middle_name","last_name",
@@ -71,33 +69,13 @@ class Person < CouchRest::Model::Base
   end
 
   def create_status
-    
-    if self.duplicate.nil?
-      PersonRecordStatus.create({
+
+    PersonRecordStatus.create({
                                   :person_record_id => self.id.to_s,
                                   :status => "NEW",
                                   :district_code => CONFIG['district_code'],
-                                  :created_by => User.current_user.id})
-    else
-      
-      change_log = [{:duplicates => self.duplicate.to_s}]
+                                  :created_by => User.current_user.id});
 
-      Audit.create({
-                      :record_id  => self.id.to_s,
-                      :audit_type => "POTENTIAL DUPLICATE",
-                      :reason     => "Record is a potential",
-                      :change_log => change_log
-      })
-      PersonRecordStatus.create({
-                                  :person_record_id => self.id.to_s,
-                                  :status => "DC POTENTIAL DUPLICATE",
-                                  :district_code => CONFIG['district_code'],
-                                  :created_by => User.current_user.id})
-
-      self.duplicate = nil
-
-    end
-    
   end
 
   #Person methods
@@ -133,267 +111,252 @@ class Person < CouchRest::Model::Base
     audit.save
   end
 
- def set_district_code
-    unless self.district_code.present?
-      self.district_code = CONFIG["district_code"]
-    end      
-  end
-
   def set_facility_code
-    unless self.facility_code.present?
-      self.facility_code = (CONFIG['facility_code'] rescue nil)
-    end 
+
+    if CONFIG['site_type'] =="facility"
+
+      self.facility_code = CONFIG["facility_code"]
+
+    else
+      self.facility_code = nil
+    end
+
   end
 
-  def status
-    PersonRecordStatus.by_person_recent_status.key(self.id).last.status
+  def set_district_code
+
+    self.district_code = CONFIG["district_code"]
+
   end
 
-  def change_status(nextstatus)
-    status = PersonRecordStatus.by_person_recent_status.key(self.id.to_s).last
-    status.update_attributes({:voided => true})
-    PersonRecordStatus.create({
-                        :person_record_id => self.id.to_s,
-                        :status => nextstatus,
-                        :district_code =>(self.district_code rescue CONFIG['district_code']),
-                        :creator => User.current_user.id})
-  end
+  def self.create_person(params)
+    if !params[:nationality].blank?
 
-  def self.create_person(parameters)
-      params = parameters[:person]
+      params[:nationality_id] = Nationality.by_nationality.key(params[:nationality]).first.id
 
-      params[:acknowledgement_of_receipt_date] = Time.now
+    end
+    if !params[:place_of_death_district].blank?
 
-      if !params[:nationality].blank?
+      district = District.by_name.key(params[:place_of_death_district]).first
 
-        params[:nationality_id] = Nationality.by_nationality.key(params[:nationality]).first.id
+      params[:place_of_death_district_id] = district.id
 
-      end
-      if !params[:place_of_death_district].blank?
+      if !params[:hospital_of_death].blank? && params[:place_of_death].downcase.match("hospital")
 
-            district = District.by_name.key(params[:place_of_death_district]).first
+        health_facility = HealthFacility.by_district_id_and_name.key([district.id, params[:hospital_of_death]]).first
 
-            params[:place_of_death_district_id] = district.id
+        params[:hospital_of_death_id] = health_facility.id
+      else
 
-            if !params[:hospital_of_death].blank? && params[:place_of_death].downcase.match("health facility")
+        if !params[:place_of_death_ta].blank?
 
-                health_facility = HealthFacility.by_district_id_and_name.key([district.id, params[:hospital_of_death]]).first
+          place_ta = TraditionalAuthority.by_district_id_and_name.key([district.id,params[:place_of_death_ta]]).first
 
-                params[:hospital_of_death_id] = health_facility.id
-            else
+          params[:place_of_death_ta_id] = place_ta.id
 
-                if !params[:place_of_death_ta].blank? && params[:place_of_death_ta] != "Other"
+          if !params[:place_of_death_village].blank?
+            place_village = Village.by_ta_id_and_name.key([place_ta.id,params[:place_of_death_village]]).first
+            params[:place_of_death_village_id] = place_village.id
 
-                     place_ta = TraditionalAuthority.by_district_id_and_name.key([district.id,params[:place_of_death_ta]]).first
-
-                     params[:place_of_death_ta_id] = place_ta.id
-
-                     if !params[:place_of_death_village].blank? && params[:place_of_death_village] != "Other"
-                        place_village = Village.by_ta_id_and_name.key([place_ta.id,params[:place_of_death_village]]).first
-                        params[:place_of_death_village_id] = place_village.id
-                       
-                     end
-                  
-                end
-
-            end
-
-      end
-
-      if !params[:current_country].blank?
-
-          params[:current_country_id] = Country.by_name.key(params[:current_country]).first.id
-
-      end
-
-      if !params[:home_district].blank?
-        
-          home_district = District.by_name.key(params[:home_district]).first
-
-          params[:home_district_id] = home_district.id
-
-          if !params[:home_ta].blank? && params[:home_ta] != "Other"
-
-               ta = TraditionalAuthority.by_district_id_and_name.key([home_district.id,params[:home_ta]]).first
-
-               params[:home_ta_id] = ta.id
-
-               if !params[:home_village].blank? && params[:home_village] != "Other"
-                  village = Village.by_ta_id_and_name.key([ta.id,params[:home_village]]).first
-                  params[:home_village_id] = village.id
-                 
-               end
-            
           end
+
+        end
+
       end
+
+    end
+
+    if !params[:current_country].blank?
+
+      params[:current_country_id] = Nationality.by_nationality.key(params[:current_country]).first.id
+
+    end
+
+    if !params[:home_district].blank?
+
+      home_district = District.by_name.key(params[:home_district]).first
+
+      params[:home_district_id] = home_district.id
+
+      if !params[:home_ta].blank?
+
+        ta = TraditionalAuthority.by_district_id_and_name.key([home_district.id,params[:home_ta]]).first
+
+        params[:home_ta_id] = ta.id
+
+        if !params[:home_village].blank?
+          village = Village.by_ta_id_and_name.key([ta.id,params[:home_village]]).first
+          params[:home_village_id] = village.id
+
+        end
+
+      end
+    end
 
     if !params[:home_country].blank?
 
-          params[:home_country_id] = Country.by_name.key(params[:home_country]).first.id
+      params[:home_country_id] = Nationality.by_nationality.key(params[:home_country]).first.id
+
+    end
+
+    if !params[:current_district].blank?
+
+      current_district = District.by_name.key(params[:current_district]).first
+
+      params[:current_district_id] = current_district.id
+
+      if !params[:current_ta].blank?
+
+        current_ta = TraditionalAuthority.by_district_id_and_name.key([current_district.id,params[:current_ta]]).first
+
+        params[:current_ta_id] = current_ta.id
+
+        if !params[:current_village].blank?
+
+          current_village = Village.by_ta_id_and_name.key([current_ta.id,params[:current_village]]).first
+
+          params[:current_village_id] = current_village.id
+
+        end
 
       end
+    end
 
-      if !params[:current_district].blank?
-        
-          current_district = District.by_name.key(params[:current_district]).first
+    if !params[:informant_current_district].blank?
 
-          params[:current_district_id] = current_district.id
+      informant_district = District.by_name.key(params[:informant_current_district]).first
 
-          if !params[:current_ta].blank? && params[:current_ta] != "Other"
+      params[:informant_current_district_id] = informant_district.id
 
-               current_ta = TraditionalAuthority.by_district_id_and_name.key([current_district.id,params[:current_ta]]).first
+      if !params[:informant_current_ta].blank?
 
-               params[:current_ta_id] = current_ta.id
+        informant_ta = TraditionalAuthority.by_district_id_and_name.key([informant_district.id,params[:informant_current_ta]]).first
 
-               if !params[:current_village].blank? && params[:current_village] != "Other"
+        params[:informant_current_ta_id] = informant_ta.id
 
-                  current_village = Village.by_ta_id_and_name.key([current_ta.id,params[:current_village]]).first
+        if !params[:informant_current_village].blank?
 
-                  params[:current_village_id] = current_village.id
-                 
-               end
-            
-          end
+          informant_village = Village.by_ta_id_and_name.key([informant_ta.id,params[:informant_current_village]]).first
+
+          params[:informant_current_village_id] = informant_village.id
+        end
+
       end
+    end
 
-      if !params[:informant_current_district].blank?
-        
-          informant_district = District.by_name.key(params[:informant_current_district]).first
+    Person.create(params)
 
-          params[:informant_current_district_id] = informant_district.id
-
-          if !params[:informant_current_ta].blank? && params[:informant_current_ta] != "Other"
-
-               informant_ta = TraditionalAuthority.by_district_id_and_name.key([informant_district.id,params[:informant_current_ta]]).first
-
-               params[:informant_current_ta_id] = informant_ta.id
-
-               if !params[:informant_current_village].blank? && params[:informant_current_village] != "Other"
-
-                  informant_village = Village.by_ta_id_and_name.key([informant_ta.id,params[:informant_current_village]]).first
-
-                  params[:informant_current_village_id] = informant_village.id
-               end
-            
-          end
-      end
-
-      if params[:potential_duplicate].present?
-            Person.duplicate = params[:potential_duplicate]
-      end
-      
-      Person.create(params)
-    
   end
 
   def update_person(id,params)
 
-      person = Person.find(id)
+    person = Person.find(id)
 
-       if !params[:place_of_death_district].blank?
 
-            district = District.by_name.key(params[:place_of_death_district]).first
+    if !params[:place_of_death_district].blank?
 
-            params[:place_of_death_district_id] = district.id
+      district = District.by_name.key(params[:place_of_death_district]).first
 
-            if !params[:hospital_of_death].blank? && params[:place_of_death].downcase.match("health facility")
+      params[:place_of_death_district_id] = district.id
 
-                health_facility = HealthFacility.by_district_id_and_name.key([district.id, params[:hospital_of_death]]).first
+      if !params[:hospital_of_death].blank? && params[:place_of_death].downcase.match("hospital")
 
-                params[:hospital_of_death_id] = health_facility.id
-            else
+        health_facility = HealthFacility.by_district_id_and_name.key([district.id, params[:hospital_of_death]]).first
 
-                if !params[:place_of_death_ta].blank? && params[:place_of_death_ta] != "Other"
+        params[:hospital_of_death_id] = health_facility.id
+      else
 
-                     place_ta = TraditionalAuthority.by_district_id_and_name.key([district.id,params[:place_of_death_ta]]).first
+        if !params[:place_of_death_ta].blank?
 
-                     params[:place_of_death_ta_id] = place_ta.id
+          place_ta = TraditionalAuthority.by_district_id_and_name.key([district.id,params[:place_of_death_ta]]).first
 
-                     if !params[:place_of_death_village].blank? && params[:place_of_death_village] != "Other"
-                        place_village = Village.by_ta_id_and_name.key([place_ta.id,params[:place_of_death_village]]).first
-                        params[:place_of_death_village_id] = place_village.id
-                       
-                     end
-                  
-                end
+          params[:place_of_death_ta_id] = place_ta.id
 
-            end
+          if !params[:place_of_death_village].blank?
+            place_village = Village.by_ta_id_and_name.key([place_ta.id,params[:place_of_death_village]]).first
+            params[:place_of_death_village_id] = place_village.id
 
-      end
-
-      if !params[:home_country].blank?
-
-          params[:home_country_id] = Country.by_name.key(params[:home_country]).first.id
-
-      end
-
-      if !params[:home_district].blank?
-        
-          home_district = District.by_name.key(params[:home_district]).first
-
-          params[:home_district_id] = home_district.id
-
-          if !params[:home_ta].blank? && params[:home_ta] != "Other"
-
-               ta = TraditionalAuthority.by_district_id_and_name.key([home_district.id,params[:home_ta]]).first
-
-               params[:home_ta_id] = ta.id
-
-               if !params[:home_village].blank? && params[:home_village] != "Other"
-                  village = Village.by_ta_id_and_name.key([ta.id,params[:home_village]]).first
-                  params[:home_village_id] = village.id
-                 
-               end
-            
           end
+
+        end
+
       end
 
-      if !params[:current_district].blank?
-        
-          current_district = District.by_name.key(params[:current_district]).first
+    end
 
-          params[:current_district_id] = current_district.id
+    if !params[:home_country].blank?
 
-          if !params[:current_ta].blank? && params[:current_ta] != "Other"
+      params[:home_country_id] = Nationality.by_nationality.key(params[:home_country]).first.id
 
-               current_ta = TraditionalAuthority.by_district_id_and_name.key([current_district.id,params[:current_ta]]).first
+    end
 
-               params[:current_ta_id] = current_ta.id
+    if !params[:home_district].blank?
 
-               if !params[:current_village].blank? && params[:place_of_death_ta] != "Other"
+      home_district = District.by_name.key(params[:home_district]).first
 
-                  current_village = Village.by_ta_id_and_name.key([current_ta.id,params[:current_village]]).first
+      params[:home_district_id] = home_district.id
 
-                  params[:current_village_id] = current_village.id
-                 
-               end
-            
-          end
+      if !params[:home_ta].blank?
+
+        ta = TraditionalAuthority.by_district_id_and_name.key([home_district.id,params[:home_ta]]).first
+
+        params[:home_ta_id] = ta.id
+
+        if !params[:home_village].blank?
+          village = Village.by_ta_id_and_name.key([ta.id,params[:home_village]]).first
+          params[:home_village_id] = village.id
+
+        end
+
       end
+    end
 
-      if !params[:informant_current_district].blank? 
-        
-          informant_district = District.by_name.key(params[:informant_current_district]).first
+    if !params[:current_district].blank?
 
-          params[:informant_current_district_id] = informant_district.id
+      current_district = District.by_name.key(params[:current_district]).first
 
-          if !params[:informant_current_ta].blank? && params[:informant_current_ta] != "Other"
+      params[:current_district_id] = current_district.id
 
-               informant_ta = TraditionalAuthority.by_district_id_and_name.key([informant_district.id,params[:informant_current_ta]]).first
+      if !params[:current_ta].blank?
 
-               params[:informant_current_ta_id] = informant_ta.id
+        current_ta = TraditionalAuthority.by_district_id_and_name.key([current_district.id,params[:current_ta]]).first
 
-               if !params[:informant_current_village].blank? && params[:informant_current_village] != "Other"
+        params[:current_ta_id] = current_ta.id
 
-                  informant_village = Village.by_ta_id_and_name.key([informant_ta.id,params[:informant_current_village]]).first
+        if !params[:current_village].blank?
 
-                  params[:informant_village_id] = informant_village.id
-               end
-            
-          end
+          current_village = Village.by_ta_id_and_name.key([current_ta.id,params[:current_village]]).first
+
+          params[:current_village_id] = current_village.id
+
+        end
+
       end
+    end
 
-      person.update_attributes(params)
+    if !params[:informant_current_district].blank?
+
+      informant_district = District.by_name.key(params[:informant_current_district]).first
+
+      params[:informant_current_district_id] = informant_district.id
+
+      if !params[:informant_current_ta].blank?
+
+        informant_ta = TraditionalAuthority.by_district_id_and_name.key([informant_district.id,params[:informant_current_ta]]).first
+
+        params[:informant_current_ta_id] = informant_ta.id
+
+        if !params[:informant_current_village].blank?
+
+          informant_village = Village.by_ta_id_and_name.key([informant_ta.id,params[:informant_current_village]]).first
+
+          params[:informant_village_id] = informant_village.id
+        end
+
+      end
+    end
+
+    person.update_attributes(params)
 
   end
 
@@ -407,11 +370,8 @@ class Person < CouchRest::Model::Base
   def barcode
       PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id,"Form Barcode"]).first.identifier
   end
-  def drn
-      return PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id, "DEATH REGISTRATION NUMBER"]).first.identifier
-  end
 
-  #Person properties
+#Person properties
   property :first_name, String
   property :middle_name, String
   property :last_name, String
@@ -691,6 +651,9 @@ class Person < CouchRest::Model::Base
 
     view :by_last_name_code
 
+    view :by_last_name_and_first_name
+
+    view :by_last_name_and_first_name_and_gender
 
     view :by_specific_birthdate,
          :map => "function(doc) {
@@ -950,7 +913,7 @@ class Person < CouchRest::Model::Base
     view :by_demographics,
          :map => "function(doc) {
                   if (doc['type'] == 'Person') {
-                    emit([doc['first_name_code'], doc['last_name_code'], doc['gender'],doc['birthdate'],doc['date_of_death'], doc['place_of_death']], 1);
+                    emit([doc['first_name_code'], doc['last_name_code'], doc['gender'], doc['date_of_death'], doc['birthdate'], doc['place_of_death_district']], 1);
                   }
                 }"
     view :by_demographics_and_informant,
@@ -965,7 +928,7 @@ class Person < CouchRest::Model::Base
                               doc['informant_first_name_code'],
                               doc['informant_last_name_code']], 1);
                     }
-              }"
+                }"
     view :by_demographics_with_place,
          :map => "function(doc) {
                   if (doc['type'] == 'Person') {
@@ -1006,7 +969,29 @@ class Person < CouchRest::Model::Base
     view :by_approved
 
     filter :facility_sync, "function(doc,req) {return req.query.facility_code == doc.facility_code}"
+
     filter :district_sync, "function(doc,req) {return req.query.district_code == doc.district_code}"
+
+    view :by_home_country_id,
+         :map => "function(doc) {
+                  if (doc['type'] == 'Person' && doc['home_country_id'] != null) {
+                    emit(doc['home_country_id'], 1);
+                  }
+                }"
+
+    view :by_home_village_id,
+         :map => "function(doc) {
+                  if (doc['type'] == 'Person' && doc['home_village_id'] != null) {
+                    emit(doc['home_village_id'], 1);
+                  }
+                }"
+
+    view :by_informant_current_village_id,
+         :map => "function(doc) {
+                  if (doc['type'] == 'Person' && doc['informant_current_village_id'] != null) {
+                    emit(doc['informant_current_village_id'], 1);
+                  }
+                }"
 
   end
 

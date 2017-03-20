@@ -331,7 +331,7 @@ class CaseController < ApplicationController
     @statuses = [PersonRecordStatus.by_person_recent_status.key(@person.id).last.status]
 
     @status = PersonRecordStatus.by_person_recent_status.key(params[:id]).last
-
+    
     @person_place_details = place_details(@person)
 
   end
