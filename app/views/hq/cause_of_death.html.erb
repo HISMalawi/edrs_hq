@@ -169,7 +169,7 @@
         float: right;
         margin-right: 8%;
     }*/
-    #number_field{
+    .messagebox{
             position: absolute;
             top: 30%;
             left: 35%;
@@ -195,28 +195,28 @@
               </label>
         </div>
         <div id="cause_of_death_radio" class="radio radio-primary" onmousedown="showControls('cause_of_death')">
-          <input type="radio" name="radio" id="radio2">
+          <input type="radio" name="radio" id="radio2" disabled="true">
               <label for="radio2">
                 Cause of death
               </label>
         </div>
 
         <div id="manner_of_death_radio" class="radio radio-primary" onmousedown="showControls('manner_of_death')">
-            <input type="radio" name="radio" id="radio3">
+            <input type="radio" name="radio" id="radio3" disabled="true">
                 <label for="radio3">
                     Manner of death
                 </label>
         </div>
 
         <div id="certification_radio" class="radio radio-primary" onmousedown="showControls('certification')">
-            <input type="radio" name="radio" id="radio4">
+            <input type="radio" name="radio" id="radio4" disabled="true">
                 <label for="radio4">
                     Certification
                 </label>
         </div>
 
         <div id="icd_10_radio" class="radio radio-primary" onmousedown="showControls('icd_10')">
-            <input type="radio" name="radio" id="radio5">
+            <input type="radio" name="radio" id="radio5" disabled="true">
                 <label for="radio5">
                     ICD 10 Code
                 </label>
@@ -401,7 +401,7 @@
           <div id="cause_of_death_check" class="container custom">
             <div class="form-group">
               <div class="col-lg-12 col-md-12">
-                      <label for="cause_of_death_available">Is cause of death informantion available? </label>
+                      <label for="cause_of_death_available">Has the form been completed? </label>
                       <select name="cause_of_death_available" id="cause_of_death_available" load="<%= @person.cause_of_death_available rescue '' %>" class="form-control" >
                           <option>Yes</option>
                           <option>No</option>
@@ -413,7 +413,7 @@
             </div>
 
           </div>
-          <div id="cause_of_death" class="container custom">
+          <div id="cause_of_death" class="container custom" disabled="true">
               <input name="person_id" value="<%= @person.id%>" type="hidden" type="text" />
                <div class="form-group">
                <div class="col-lg-12 col-md-12">
@@ -525,7 +525,7 @@
             </div>
 
 
-          <div id="manner_of_death" class="container custom" style="display: none;">
+          <div id="manner_of_death" class="container custom" style="display: none;" disabled="true">
               <div class="form-group">
                 <label for="manner">Manner of death </label>
                 <select name="manner_of_death" id="manner" load="<%= @person.manner_of_death%>" class="form-control">
@@ -565,7 +565,7 @@
               <div onclick="hit('certification_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
           </div>
 
-          <div id="certification" class="container custom" style="display: none;">
+          <div id="certification" class="container custom" style="display: none;" disabled="true">
             <div class="form-group">
               <label for="certifier_signed">Certifier Signed</label>
               <select name="certifier_signed" load="<%= @person.certifier_signed %>" id="certifier_signed" class="form-control">
@@ -605,7 +605,7 @@
              <div onclick="hit('manner_of_death_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
               <div onclick="hit('icd_10_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
           </div>
-           <div id="icd_10" class="container custom" style="display: none;">
+           <div id="icd_10" class="container custom" style="display: none;" disabled="true">
                 <div class="form-group">
                       <table style="width:80%; margin:auto">
                             <thead>
@@ -652,7 +652,7 @@
     </td>
 </tr>
 </table>
-<div id="number_field" class="">
+<div id="number_field" class="messagebox">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header btn-primary" >
@@ -670,6 +670,31 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" onclick="$('#number_field').css('display', 'none')" > Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="messagebox" class="messagebox" >
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header btn-primary" >
+        <button type="button" class="close"  onclick="$('#messagebox').css('display','none')">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title" id="title">Title</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-lg-12" id="message">
+              Message...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" onclick="$('#messagebox').css('display', 'none')" > Close</button>
           </div>
         </div>
       </div>
@@ -717,8 +742,13 @@
                }
     });
     function showControls(id){
-        $(".custom").hide();
-        $("#" + id).show();
+        var target = $("#"+id);
+        if(target.attr('disabled')){
+
+        }else{
+          $(".custom").hide();
+          $("#" + id).show();
+        }
     }
 
     function hit(id){
@@ -839,8 +869,17 @@
     }
     function checkCauseFunction(){
         if($("#cause_of_death_available").val() == "No"){
-            window.location.href ="/nocause_available/<%=params[:person_id]%>";
+
+            $("#messagebox").show();
+            //window.location.href ="/nocause_available/<%=params[:person_id]%>";
         }else{
+            var containers = $(".container custom");
+            for(var i = 0 ; i < containers.length; i++){
+                containers[i].removeAttr('disabled');
+            }
+            for(var i = 3 ; i <= 5 ; i++){
+                $("#radio"+i).removeAttr("disabled");
+            }
             hit('cause_of_death_radio');
         }
     }
