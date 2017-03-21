@@ -173,7 +173,7 @@ class HqController < ApplicationController
     person = Person.find(params[:id])
     person.cause_of_death_available = "No"
     person.save
-    redirect_to "/"
+    redirect_to "/search"
   end
 
   def cause_of_death_preview

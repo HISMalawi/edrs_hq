@@ -46,7 +46,7 @@ class CaseController < ApplicationController
 
   def approve_for_reprinting
     @title = "Approve for Reprinting"
-    @statuses = ["DC REAPPROVED", "DC AMMENDED", "DC REPRINT"]
+    @statuses = ["DC REAPPROVED", "DC AMENDED", "DC REPRINT"]
     @page = 1
     session[:return_url] = request.path
 
@@ -289,7 +289,7 @@ class CaseController < ApplicationController
 
   def view_requests
     @title = "View Dispatch Printouts"
-    @statuses = ["DC AMMEND"]
+    @statuses = ["DC AMENDED"]
     @page = 1
     session[:return_url] = request.path
 

@@ -1,3 +1,6 @@
+<script type="text/javascript">
+      var status = "<%= @person.status%>"
+</script>
 <link href="/assets/jquery-ui/jquery-ui.min.css" rel="stylesheet">
 <style>
 
@@ -128,12 +131,18 @@
         margin-bottom: 1%;
     }
     #summary {
-       width:  98%;
+       width:  100%;
        margin: auto;
 
     }
     #summary td {
         padding: 0.5em;
+        color :#242020;
+    }
+
+    #summary th{
+      background: #1a2732;
+      color:#ffffff;
     }
     
     /*.ui-state-default{
@@ -171,10 +180,20 @@
     }*/
     .messagebox{
             position: absolute;
-            top: 30%;
+            top: 25%;
             left: 35%;
             display: none;
 
+    }
+    #shield{
+      position: absolute;
+      width: 100% !important;
+      height: 100% !important;
+      left: 0px;
+      top: 0px;
+      background: rgba(128,128,128,0.35);
+      z-index: 1050;
+      display: none;
     }
 </style>
  <link rel="stylesheet" href="/select2/select2.min.css">
@@ -652,11 +671,12 @@
     </td>
 </tr>
 </table>
-<div id="number_field" class="messagebox">
+<div id="shield">
+      <div id="number_field" class="messagebox">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header btn-primary" >
-        <button type="button" class="close"  onclick="$('#number_field').css('display','none')">
+        <button type="button" class="close"  onclick="$('#shield').css('display','none');$('#number_field').css('display','none')">
           <span aria-hidden="true">&times;</span>
           <span class="sr-only">Close</span>
         </button>
@@ -669,7 +689,7 @@
               Field is for numbers only
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" onclick="$('#number_field').css('display', 'none')" > Close</button>
+            <button type="button" class="btn btn-default" onclick="$('#shield').css('display','none');$('#number_field').css('display', 'none')" > Close</button>
           </div>
         </div>
       </div>
@@ -681,7 +701,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header btn-primary" >
-        <button type="button" class="close"  onclick="$('#messagebox').css('display','none')">
+        <button type="button" class="close"  onclick="$('#shield').css('display','none');$('#messagebox').css('display','none')">
           <span aria-hidden="true">&times;</span>
           <span class="sr-only">Close</span>
         </button>
@@ -694,12 +714,14 @@
               Message...
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" onclick="$('#messagebox').css('display', 'none')" > Close</button>
+            <button type="button" class="btn btn-default pull-left" onclick="$('#shield').css('display','none');$('#messagebox').css('display', 'none')" > Close</button>
+            <button id="finish" class="btn btn-success pull-right" onclick="hideMessage()">Finish</button>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 </div>
 <script src="assets/jquery-ui/jquery-ui.min.js"></script>
 <script src="/select2/select2.full.min.js"></script>
@@ -869,18 +891,68 @@
     }
     function checkCauseFunction(){
         if($("#cause_of_death_available").val() == "No"){
-
-            $("#messagebox").show();
-            //window.location.href ="/nocause_available/<%=params[:person_id]%>";
+            showMessage("Message", 
+              "Section 2 for this form is not filled please proceed to next form","/nocause_available/<%=params[:person_id]%>");
         }else{
-            var containers = $(".container custom");
-            for(var i = 0 ; i < containers.length; i++){
-                containers[i].removeAttr('disabled');
+            var pending = ["HQ INCOMPLETE","HQ POTENTIAL INCOMPLETE",
+                          "HQ CONFIRMED INCOMPLETE","HQ CONFLIT",
+                          "HQ POTENTIAL DUPLICATE","HQ DUPLICATE"
+                          ]
+            var rejected = ["HQ REJECTED","HQ CONFIRMED DUPLICATE"]
+
+            var inprocess = ["DC REAPPROVED","DC APPROVED","HQ COMPLETE", "DC REPRINT","DC AMENDED"]
+
+            var available = ["HQ APPROVED","HQ REAPPROVED","HQ PRINT","HQ CLOSED","HQ DISPATCHED","HQ REPRINT"]
+            if(available.indexOf(status) >= 0){
+                var containers = $(".container custom");
+                for(var i = 0 ; i < containers.length; i++){
+                    containers[i].removeAttr('disabled');
+                }
+                for(var i = 3 ; i <= 5 ; i++){
+                    $("#radio"+i).removeAttr("disabled");
+                }
+                hit('cause_of_death_radio');
             }
-            for(var i = 3 ; i <= 5 ; i++){
-                $("#radio"+i).removeAttr("disabled");
+
+            if(pending.indexOf(status) >= 0){
+                showMessage("Message", 
+                "Record has issues so it id in pending queue to processed by NRB  check again after 5 days",
+                "/search");
             }
-            hit('cause_of_death_radio');
+
+            if(rejected.indexOf(status) >= 0){
+                 showMessage("Message", 
+                "Record is rejected by NRB",
+                "/search");
+            }
+
+            if(inprocess.indexOf(status) >= 0){
+                 showMessage("Message", 
+                "Record is being processed by NRB check after 5 days",
+                "/search");
+            }
         }
+    }
+
+    function showMessage(title, message,link){
+        $("#shield").show();
+        $("#messagebox").show();
+        $("#title").html(title);
+        $("#message").html(message);
+        if(link){
+          $("#finish").attr("onclick","hideMessage(redirectTo('"+link+"'))");
+        }  
+    }
+
+    function hideMessage(callBack){
+        $('#shield').css('display','none');
+        $("#finish").attr("onclick",hideMessage());
+        if(callBack){
+           callBack();
+        }
+    }
+
+    function redirectTo(link){
+        window.location.href = link;
     }
 </script>
