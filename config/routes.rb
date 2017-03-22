@@ -43,6 +43,7 @@ Rails.application.routes.draw do
   get '/re_open_cases' => 'case#re_open_cases'
   get '/re_approved_cases' => 'case#re_approved_cases'
   get 'rejected_and_approved_cases' => 'case#rejected_and_approved_cases'
+  get '/corrected_from_dc' => "case#corrected_from_dc"
 
   get '/get_comments' => 'hq#get_comments'
   get '/ajax_save_comment' => 'hq#ajax_save_comment'
@@ -67,6 +68,10 @@ Rails.application.routes.draw do
 
 
   get 'add_more_open_cases/:page_number' => 'case#more_open_cases'
+  get '/add_more_open_cases_with_prev_status/:page_number' => "case#more_open_cases_with_prev_status"
+  get '/add_more_special_cases/:page_number' => "case#more_special_cases"
+  get '/special_cases'=>"case#special_cases"
+  get '/approved_incomplete' => "case#approved_for_print_marked_incomplete"
   get 'view_cases/:person_id' => 'case#view_cases'
   get '/incomplete_cases' => 'case#incomplete_cases'
   get '/rejected_cases' => 'case#rejected_cases'
@@ -123,6 +128,8 @@ Rails.application.routes.draw do
   get '/print_out_tasks' => "hq#print_out_tasks"
   get '/duplicate_cases_tasks' =>"hq#duplicate_cases_tasks"
   get '/amendment_cases_tasks' =>"hq#amendment_cases_tasks"
+  get '/amendment_requests' =>"case#amendment_requests"
+  get '/reprint_requests' => "case#reprint_requests"
 
   get '/reports' => "reports#index"
   # The priority is based upon order of creation: first created -> highest priority.

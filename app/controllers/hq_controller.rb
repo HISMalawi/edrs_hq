@@ -261,6 +261,7 @@ class HqController < ApplicationController
       PersonRecordStatus.create(:person_record_id => person.id, 
                                 :district_code => status.district_code,
                           			:creator => @current_user.id, 
+                                :prev_status => status.status,
                                 :status => "HQ CLOSED")
       
       id = person.id
@@ -672,9 +673,8 @@ class HqController < ApplicationController
   def rejected_cases_tasks
     @tasks = []
      if has_role("Manage incomplete records") 
-      @tasks << ['Approve for printing','Approved records by DM for printing that were marked as incomplete by DS','','']
-      @tasks << ['Rejected cases','Incomplete records waiting to be sent to DC for editing','/rejected_cases','']
-      @tasks << ['Edited records from DC','Corrected records from DC after DS rejected them','','']
+      @tasks << ['Approved for printing','Approved records by DM for printing that were marked as incomplete by DS','/approved_incomplete','']
+      @tasks << ['Rejected records','Incomplete records waiting to be sent to DC for editing','/rejected_cases','']
     end
     if has_role("Reject a record")
       @tasks << ['Reject record','Reject record','/dm_reject','']
@@ -685,10 +685,12 @@ class HqController < ApplicationController
 
   def special_cases_tasks
     @tasks = []
-    @tasks << ['Unnatural','Unnatural death record','','']
-    @tasks << ['Unclaimed bodies','Unclaimed bodies record','','']
-    @tasks << ['Missing persons','Missing persons record','','']
-    @tasks << ['Death abroad','Death abroad record','','']
+    @tasks << ['Unnatural','Unnatural death record','/special_cases?registration_type=Unnatural Deaths','']
+    @tasks << ['Unclaimed bodies','Unclaimed bodies record','/special_cases?registration_type=Unclaimed bodies','']
+    @tasks << ['Missing persons','Missing persons record','/special_cases?registration_type=Missing Person','']
+    @tasks << ['Death abroad','Death abroad record','/special_cases?registration_type=Deaths Abroad','']
+    @tasks << ['Printed/Dispatched Certificates','Printed/Dispatched Certificates','','']
+    @tasks << ['Rejected special cases','Rejected special cases','','']
     @section ="Special Cases"
     render :template => "/hq/tasks"
   end
@@ -708,8 +710,10 @@ class HqController < ApplicationController
   def amendment_cases_tasks
     @tasks = []
     if has_role("Make ammendments")
-      @tasks << ['Lost/Damaged','All records that have been requested to be reprinted after first copy of the certificates was Lost/Damaged','/view_requests','']
-      @tasks << ['Amendments','All records that has under gone changes after the certificate was printed','/view_requests','']
+      @tasks << ['Lost/Damaged','All records that have been requested to be reprinted after first copy of the certificates was Lost/Damaged','/reprint_requests','']
+      @tasks << ['Amendments','All records that has under gone changes after the certificate was printed','/amendment_requests','']
+      @tasks << ['Rejected amended','All records that has under gone changes after the certificate was printed','/view_requests','']
+      @tasks << ['Printed/Dispatched Certificates','Printed/Dispatched Certificates','','']
     end
     @section ="Re-prints and amendments"
     render :template => "/hq/tasks"

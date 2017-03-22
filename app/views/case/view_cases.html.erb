@@ -36,8 +36,23 @@
 
       font-weight: bold;
   }
-    th{
-        padding: 8px;
+
+  th{
+      padding: 8px;
+  }
+
+  #shield{
+      position: absolute;
+      width: 100% !important;
+      height: 100% !important;
+      left: 0px;
+      top: 0px;
+      background: rgba(128,128,128,0.35);
+      z-index: 1050;
+      display: none;
+    }
+    .modal-body{
+      background: #ffffff;
     }
 </style>
 
@@ -275,8 +290,7 @@
     </table>
   </div>
 </div>
-
-
+<div id="shield">
 <div class="" id="printers">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -304,7 +318,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" onclick="__$('frm').submit()" > Print </button>
-            <button type="button" class="btn btn-default" onclick="__$('printers').style.display = 'none'" > Close</button>
+            <button type="button" class="btn btn-default" onclick="__$('printers').style.display = 'none';hideModal()" > Close</button>
           </div>
         </div>
       </div>
@@ -382,7 +396,7 @@
 
         <button type="button" class="btn btn-success" onclick="ajaxChange('<%= @next_state[@current_user.role][0] rescue nil%>')" > Complete </button>
         <button type="button" class="btn btn-danger"onclick="ajaxChange('<%= @next_state[@current_user.role][1] rescue nil%>')" > Incomplete </button>
-        <button type="button" class="btn btn-default" onclick="__$('completeness').style.display = 'none'" > Close</button>
+        <button type="button" class="btn btn-default" onclick="__$('completeness').style.display = 'none';hideModal()" > Close</button>
       </div>
     </div>
   </div>
@@ -421,15 +435,15 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button id="comment_close" type="button" class="btn btn-sm btn-default" onclick="__$('textarea').value = '';
-                    __$('comments').style.display = 'none'" > Finish </button>
+            <button type="button" class="btn btn-sm btn-default pull-left" onclick="__$('comments').style.display = 'none';hideModal()" > Close </button>
+            <button id="comment_close" type="button" class="btn btn-sm btn-success" onclick="__$('textarea').value = ''; hideModal()" > Finish </button>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
+</div>
 <div id="clone_me" class="media" style="padding: 5px;display:none;border-top: 1px solid lightgrey;">
   <div class="media-body" style="width: 550px;">
     <h4 class="media-heading user_name"><a class="name"> <small class="role"> </small></a></h4>
@@ -445,6 +459,7 @@
 <script>
     var next_status ="";
     function loadPopup(id){
+        $("#shield").show()
         __$(id).style.display = "block";
     }
 
@@ -525,7 +540,7 @@
 
                             parent.appendChild(dup);
                         }
-
+                        jQuery("#shield").show();
                         jQuery("#comments").show();
 
                         parent.scrollTop = parent.scrollHeight;
@@ -597,6 +612,10 @@
                 }
         )
     });
+
+    function hideModal(){
+        $("#shield").css('display','none')
+    }
 </script>
 <style>
   #completeness, #printers, #comments{

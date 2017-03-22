@@ -53,6 +53,14 @@ class CaseController < ApplicationController
     render :template => "case/default"
   end
 
+  def corrected_from_dc
+    @title = "Corrected from DC"
+    @statuses = ["DC REAPPROVED"]
+    @page = 1
+    session[:return_url] = request.path
+    render :template => "case/default"
+  end
+
   def approve_potential_duplicates
     @title = "Approve Potential Duplicates"
     @statuses = ["HQ DUPLICATE"]
@@ -161,6 +169,17 @@ class CaseController < ApplicationController
     render :template => "case/default"
   end
 
+  def approved_for_print_marked_incomplete
+    @title = "Marked incomplete but approved for print"
+    @prev_status = "HQ INCOMPLETE"
+    @status = "HQ PRINT"
+    @statuses = ["HQ PRINT"]
+    @page = 1
+    session[:return_url] = request.path
+
+    render :template => "case/default"
+  end
+
   def ajax_change_status
 
     next_status = params[:next_status].gsub(/\-/, ' ') rescue nil
@@ -174,6 +193,7 @@ class CaseController < ApplicationController
         :person_record_id => params[:person_id],
         :district_code => status.district_code,
         :creator => @current_user.id,
+        :prev_status => status.status,
         :status => next_status
     )
 
@@ -196,6 +216,7 @@ class CaseController < ApplicationController
         PersonRecordStatus.create(
             :person_record_id => params[:person_id],
             :district_code => status.district_code,
+            :prev_status => status.status,
             :creator => @current_user.id,
             :status => "HQ POTENTIAL DUPLICATE"
         )
@@ -296,6 +317,24 @@ class CaseController < ApplicationController
     render :template => "case/default"
   end
 
+  def amendment_requests
+    @title = "Amendment reques"
+    @statuses = ["DC AMENDED"]
+    @page = 1
+    session[:return_url] = request.path
+
+    render :template => "case/default"
+  end
+
+  def reprint_requests
+    @title = "Amendment reques"
+    @statuses = ["DC AMENDED"]
+    @page = 1
+    session[:return_url] = request.path
+
+    render :template => "case/default"
+  end
+
   def more_open_cases
     keys = []
     ((params[:statuses].split("|") rescue []) || []).each{|status|
@@ -312,6 +351,53 @@ class CaseController < ApplicationController
       cases << {
         drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
         den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
+        first_name: person.first_name,
+        middle_name:  person.middle_name,
+        last_name:  person.last_name,
+        dob:        person.birthdate.strftime("%d/%b/%Y"),
+        gender:     person.gender,
+        person_id:  person.id
+      }
+    end 
+
+    render text: cases.to_json and return
+  end
+
+  def more_open_cases_with_prev_status  
+    cases = []
+    
+    (PersonRecordStatus.by_prev_status_and_status.key([params[:prev_status],params[:status]]).page(params[:page_number]).per(10) || []).each do |status|
+      
+      person = status.person
+     
+      cases << {
+        drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
+        den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
+        first_name: person.first_name,
+        middle_name:  person.middle_name,
+        last_name:  person.last_name,
+        dob:        person.birthdate.strftime("%d/%b/%Y"),
+        gender:     person.gender,
+        person_id:  person.id
+      }
+    end 
+
+    render text: cases.to_json and return
+  end
+
+  def special_cases
+      @title = params[:registration_type].humanize
+      @statuses = ["DC AMENDED"]
+      @page = 1
+      session[:return_url] = request.path
+      render :template => "case/default"
+  end
+  def more_special_cases
+     cases = []
+    (Person.by_registration_type.key(params[:registration_type]).page(params[:page_number]).per(10) || []).each do |person|
+      cases << {
+        drn: person.drn,
+        den: person.den,
         first_name: person.first_name,
         middle_name:  person.middle_name,
         last_name:  person.last_name,

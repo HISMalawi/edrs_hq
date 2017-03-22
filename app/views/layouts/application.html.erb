@@ -375,6 +375,14 @@
                       </a>
                   </li> 
                   <%end%>
+                  <% if has_role("Manage incomplete records")  %>
+                     <li class="">
+                      <a href="/corrected_from_dc" class="">
+                          <i class="icon_document_alt"></i>
+                          <span>Edited from DC</span>
+                      </a>
+                  </li> 
+                  <%end%>
                   <% if has_role("Manage incomplete records")  || has_role("Create User") %>
                   <li class="">
                       <a href="/special_cases_tasks" class="">

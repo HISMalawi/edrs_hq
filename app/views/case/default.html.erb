@@ -1,5 +1,7 @@
 <script>
 var dataTable = null;
+var prev_status = "<%=@prev_status%>"
+var registration_type ="<%= params[:registration_type] rescue '' %>"
 
 function addRows(data, skip_parse) {
   if (skip_parse == true){
@@ -43,7 +45,8 @@ function addRows(data, skip_parse) {
 
 var current_page = parseInt(<%=(@page.to_i rescue 0)%>);
 
-function getCases() {                                                      
+function getCases() {    
+  var url                                                   
 
   if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari  
     xmlhttp=new XMLHttpRequest();                                             
@@ -63,18 +66,31 @@ function getCases() {
         addRows(results);                                                           
       }                                                                       
     }                                                                         
-  }                                                                           
+  } 
 
-    var status = ""
-  <% @statuses.each {|s|%>
-    if (status == ""){
-        status = "<%= s.split(/\s+/).join('_')%>";
-    }else{
-        status += ("|" + "<%= s.split(/\s+/).join('_')%>");
-    }
-  <% } %>
+  var url ="";                                                                  
+  if(prev_status && prev_status.length > 0){
+      var status = "";
+      <% @statuses.each {|s|%>
+        status = "<%= s%>";
+      <% } %>
+      url = ("/add_more_open_cases_with_prev_status/"+current_page + "?status="+status+"&prev_status=<%=@prev_status%>")
+  }else if(registration_type && registration_type.length > 0){
+      url = ("/add_more_special_cases/"+current_page + "?registration_type="+registration_type)
+  }else{
+       var status = ""
+      <% @statuses.each {|s|%>
+        if (status == ""){
+            status = "<%= s.split(/\s+/).join('_')%>";
+        }else{
+            status += ("|" + "<%= s.split(/\s+/).join('_')%>");
+        }
+      <% } %>
+      url = ("/add_more_open_cases/"+current_page + "?statuses=" + status)
+  }
+ 
 
-  xmlhttp.open("GET",("/add_more_open_cases/"+current_page + "?statuses=" + status),true);
+  xmlhttp.open("GET",url,true);
   xmlhttp.send();                                                             
 }
 

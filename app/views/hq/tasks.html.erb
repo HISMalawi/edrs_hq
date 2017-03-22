@@ -26,33 +26,36 @@
   display: table;
   margin-top: 10px;
   cursor:pointer;
-  box-shadow: 10px 10px 5px #888888;
+  box-shadow: 5px 5px 2.5px #888888;
   text-align: center; 
-  background-color: white;
-  border: 1px solid #2e6da4;
+  background-color:#f7f8f9;
+  border: 1px solid #d1d1d1;
 }
-
+#main{
+  width: 100%;
+  background: #ffffff;
+  margin-top: 10px !important;
+  min-height: 553px;
+  box-shadow: 1.5px 1.5px 1px #888888;
+}
 </style>
+<div id="main" >
+  <h3 style="padding-left: 15px;"><%= @section rescue 'Case management' %></h3>
+  <div id="button-container">
+        <%(@tasks || []).each do |title, desc, link, icon|%>
 
-<h3 style="padding-left: 15px;"><%= @section rescue 'Case management' %></h3>
-
-
-<div id="button-container">
-      <%(@tasks || []).each do |title, desc, link, icon|%>
-
-            <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" onclick="window.location='<%= link%>'">
-              <div class="divbtn">
-                  <span class="icons">
-                      <img class="icon-attr" src="/assets/folder.png">
-                      <p><%=title%></p>
-                  </span>
+              <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" onclick="window.location='<%= link%>'">
+                <div class="divbtn">
+                    <span class="icons">
+                        <img class="icon-attr" src="/assets/folder.png">
+                        <p><%=title%></p>
+                    </span>
+                </div>
+                
               </div>
-              
-            </div>
-       <%end%>
-</div>
-
-     
+         <%end%>
+  </div>
+</div>    
 
 
 
