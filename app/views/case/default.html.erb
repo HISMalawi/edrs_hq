@@ -101,30 +101,41 @@ function getCases() {
   <tfoot>
   </tfoot>
 </table-->
+<style type="text/css">
+    #containt_table{
+      width: 100%;
+      padding: 2%;
+      background: #ffffff;
+      box-shadow: 1.0px 1.0px 0.5px #adaba8;
+    }
+    table th{
+      color :#394a59 !important;
+    }
+    table td {
+        color :#394a59;
+    }
+</style>
+<div id="containt_table">
+    <table class="table table-striped table-advance table-hover" id="cases">
 
+    <thead>
+      <tr>
+        <th><i class=""></i> DRN</th>
+        <th><i class=""></i> DEN</th>
+        <th><i class=""></i> First name</th>
+        <th><i class=""></i> Middle name</th>
+        <th><i class=""></i> Last name</th>
+        <th><i class=""></i> Gender</th>
+        <th><i class=""></i> DOB</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
 
-<table class="table table-striped table-advance table-hover" id="cases">
+    <tfoot>
+    </tfoot>
 
-<thead>
-  <tr>
-    <th><i class=""></i> DRN</th>
-    <th><i class=""></i> DEN</th>
-    <th><i class=""></i> First name</th>
-    <th><i class=""></i> Middle name</th>
-    <th><i class=""></i> Last name</th>
-    <th><i class=""></i> Gender</th>
-    <th><i class=""></i> DOB</th>
-    <th>&nbsp;</th>
-  </tr>
-</thead>
-
-<tfoot>
-</tfoot>
-
-</table>
- 
-
-
+    </table>
+</div>
 <script>
 
 function initDataTable(){        
