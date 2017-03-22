@@ -35,7 +35,7 @@ class CaseController < ApplicationController
     render :template => "case/default"
   end
 
-  def dm_reject
+  def hq_incomplete
     @title = "Reject Incomplete Cases"
     @statuses = ["HQ INCOMPLETE"]
     @page = 1
@@ -174,6 +174,17 @@ class CaseController < ApplicationController
     @prev_status = "HQ INCOMPLETE"
     @status = "HQ PRINT"
     @statuses = ["HQ PRINT"]
+    @page = 1
+    session[:return_url] = request.path
+
+    render :template => "case/default"
+  end
+
+  def reprinted_certificates
+    @title = "Re printed Certificates"
+    @prev_status = "HQ REPRINT"
+    @status = "HQ CLOSED"
+    @statuses = ["HQ CLOSED","HQ DISPATCHED"]
     @page = 1
     session[:return_url] = request.path
 

@@ -34,10 +34,11 @@ Rails.application.routes.draw do
   ################## cases routes ############################
   get '/open_cases' => 'case#open'
   get '/closed_cases' => 'case#closed'
-  get '/dm_reject' => 'case#dm_reject'
+  get '/hq_incomplete' => 'case#hq_incomplete'
   get '/conflict' => 'case#conflict'
   get '/approve_potential_duplicates' => 'case#approve_potential_duplicates'
   get '/approve_for_reprinting' => 'case#approve_for_reprinting'
+  get '/reprinted_certificates' =>"case#reprinted_certificates"
   get '/local_cases' => 'case#local_cases'
   get '/remote_cases' => 'case#remote_cases'
   get '/re_open_cases' => 'case#re_open_cases'
