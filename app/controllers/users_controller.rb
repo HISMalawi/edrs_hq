@@ -287,6 +287,10 @@ class UsersController < ApplicationController
       @tasks << ['Signature','Add signatures','/signature','signatures.jpeg']
     end
                     
+    if has_role("Update system") 
+      @tasks << ['Build MySQL DB','Copy data to MySQL database','/build_mysql_database','MySQL_DB.png']
+    end
+
     if has_role("Change own password") 
     end 
 

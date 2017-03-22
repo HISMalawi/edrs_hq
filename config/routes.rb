@@ -4,12 +4,12 @@ Rails.application.routes.draw do
 
   root 'hq#dashboard'
 
+  ################## users routes starts ############################
+  get '/build_mysql_database' => 'users#build_mysql_database'
+  get 'create_mysql_database/:page_number' => 'users#create_mysql_database'
   get "/login" => "users#login"
-
   post "/login" => "users#login"
-
   get "/logout" => "users#logout"
-
   get "/view_users" => "users#view"
   get "/query_users" => "users#query"
   get "/search_user" => "users#search"
@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   get '/manage_users' => "users#manage_users"
   get 'my_account' => "users#my_account"
   get 'profile/:user_id' => 'users#profile'
+  ################## users routes ends ############################
   
   ################## cases routes ############################
   get '/open_cases' => 'case#open'
