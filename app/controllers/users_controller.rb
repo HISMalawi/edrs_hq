@@ -423,7 +423,11 @@ EOF
         elsif statement[:type] == 'Time'
           sql_statement += '"' + "#{statement[:data].to_time.strftime('%Y-%m-%d %H:%M:%S')}" + '",'
         else
-          sql_statement += '"' + "#{statement[:data]}" + '",'
+          if statement[:data].to_s.match(/"/)
+            sql_statement += "'" + "#{statement[:data]}" + "',"
+          else
+            sql_statement += '"' + "#{statement[:data]}" + '",'
+          end
         end
       end
       sql_statement = sql_statement[0..-2] + '),'
