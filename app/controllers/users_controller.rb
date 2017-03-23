@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
 
+  @@file_path = "#{Rails.root.to_s}/app/assets/data/MySQL_data/edrs.sql"
+
 	def login 
 		reset_session
 
@@ -301,6 +303,131 @@ class UsersController < ApplicationController
                ['View details','View details','/',''],
                ['Password','Password','/','']
             ]
+  end
+
+  def build_mysql_database
+    start_date = "1900-01-01 00:00:00".to_time
+    end_date = (Date.today - 1.day).to_date.strftime("%Y-%m-%d 23:59:59").to_time
+
+    #Create insert statments for all documets
+    #Ducument path: app/assets/data/MySQL_data/
+     
+    person_table = <<EOF
+    DROP TABLE IF EXISTS people;
+    CREATE TABLE `people` (
+    `person_id` VARCHAR(225) NOT NULL,
+EOF
+
+    (Person.properties || []).each do |property|
+      field_name = property.name
+      case property.type.to_s
+        when 'String'
+          field_type = "VARCHAR(255) DEFAULT NULL"
+        when 'Date'
+          field_type = "date DEFAULT NULL"
+        when 'Integer'
+          field_type = "INT(11) DEFAULT NULL"
+        when 'Time'
+          field_type = "datetime DEFAULT NULL"
+        when 'TrueClass'
+          field_type = "tinyint(1) NOT NULL  DEFAULT '0'"
+        else
+          field_type = "TEXT DEFAULT NULL" 
+      end
+      person_table += <<EOF
+      `#{field_name}` #{field_type},
+EOF
+
+    end
+
+    person_table += <<EOF
+      PRIMARY KEY (`person_id`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+EOF
+
+    if !File.exists?(@@file_path)
+      file = File.new(@@file_path, 'w')
+    end
+
+    #deleting all file contents
+    File.open(@@file_path, 'w') do |f|
+      f.truncate(0)
+    end
+
+    File.open(@@file_path, 'a') do |f|
+      f.puts person_table
+    end
+
+    @count_couchdb = Person.by_updated_at.startkey(start_date).endkey(end_date).count
+  end
+
+  def create_mysql_database
+    start_date = "1900-01-01 00:00:00".to_time
+    end_date = (Date.today - 1.day).to_date.strftime("%Y-%m-%d 23:59:59").to_time
+
+    data = [] ; sql_insert_field_plus_data = {}
+
+    count = Person.by_updated_at.startkey(start_date).endkey(end_date).page(1).per(100).count
+
+    if count > 0
+      count_couchdb = Person.by_updated_at.startkey(start_date).endkey(end_date).page(1).per(100).each
+      sql_statement =<<EOF
+
+EOF
+      sql_statement += "INSERT INTO people (person_id, "
+    else
+      render text: data.to_json  and return
+    end
+
+    (count_couchdb || []).each do |person|
+      sql_insert_field_plus_data[person.id] = [] if sql_insert_field_plus_data[person.id].blank?
+      (person.properties || []).each do |property|
+        sql_insert_field_plus_data[person.id] << {
+          name: "#{property.name}" , data: person.send(property.name),
+          type: property.type.to_s
+        }    
+      end
+    end 
+
+    (sql_insert_field_plus_data || []).each do |id, statements|
+      (statements || []).each do |statement|
+        sql_statement += "#{statement[:name]}, "
+      end
+      break
+    end
+    sql_statement = ("#{sql_statement[0..-3]}) VALUES ")
+
+    File.open(@@file_path, 'a') do |f|
+      f.puts sql_statement
+    end
+
+
+
+    sql_statement = ''
+    (sql_insert_field_plus_data || []).each do |id, statements|
+      sql_statement += "('#{id}', "
+      (statements || []).each do |statement|
+        if statement[:data].blank? 
+          sql_statement += "NULL, "
+        elsif statement[:type] == 'Integer' || statement[:type] == 'TrueClass'
+          sql_statement += "#{statement[:data]},"
+        elsif statement[:type] == 'Date'
+          sql_statement += '"' + "#{statement[:data].to_date.strftime('%Y-%m-%d')}" + '",'
+        elsif statement[:type] == 'Time'
+          sql_statement += '"' + "#{statement[:data].to_time.strftime('%Y-%m-%d %H:%M:%S')}" + '",'
+        else
+          sql_statement += '"' + "#{statement[:data]}" + '",'
+        end
+      end
+      sql_statement = sql_statement[0..-2] + '),'
+    end
+    sql_statement = sql_statement[0..-2] + ";"
+
+    File.open(@@file_path, 'a') do |f|
+      f.puts sql_statement
+    end
+
+    render text: data.to_json  and return
   end
 
   private

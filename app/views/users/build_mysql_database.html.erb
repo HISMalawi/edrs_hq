@@ -1,48 +1,79 @@
 <style>
-  .main-table  {
-    display: table;
-    width: 100%;
-    padding: 0px 1px 0px 1px;
-  }
+#main-table  {
+  width: 100%;
+}
 
-  .table-row  {
-    display: table-row;
-  }
-
-  .table-cell {
-    display: table-cell;
-  }
+#main-table_paginate, #main-table_info, #main-table_filter, #main-table_length {
+  display: none;
+}
 
 </style>
 
 
 <h1>Build MySQL database</h1>
 
-<div class="main-table">
-  <div class="table-row">
-    <div class="table-cell">
-       <img src="" class = "icons"> 
-    </div>
-    <div class="table-cell">
-      <%=image_tag("", class: 'icons')%>
-    </div>
-    <div class="table-cell">
-      <%=image_tag("", class: 'icons')%>
-    </div>
-  </div>
-</div>
+<table id="main-table">
+  <thead>
+    <tr>
+      <th>CouchDB</th>
+      <th>MySQL DB</th>
+      <th>Transferred</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
 
+  <tbody>
+    <tr>
+      <td id="couchdb">No.of records:&nbsp;<%=@count_couchdb%></td>
+      <td id="mysqldb">No. of records:</td>
+      <td id="transfers"></td>
+      <td style="width: 20%;">
+        <table style="width: 100%;">
+          <tr>
+            <td><a href="javascript:startTransfer();" class="btn btn-info">Start transfer</a></td>
+            <td><a href="#" class="btn btn-danger">Stop transfer</a></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <script>
 
-var images = ['CouchDB.png','forward.png','MySQL_DB.png'];
-icons = document.getElementsByClassName('icons');
+var page_number = 1
 
-function setupImages() {
-  for(var i = 0; i < icons.length; i++) {
-    icons[i].setAttribute('src','/images/' + images[i]);
-    //images/manage-cases-icons/CouchDB.png
+function initDataTable(){        
+  try {  
+    dataTable = $('#main-table').dataTable();
+  }catch(e){
+    alert(e);
   }
 }
+
+function startTransfer() {
+  if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari  
+    xmlhttp=new XMLHttpRequest();                                             
+  }else{// code for IE6, IE5                                                  
+    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");                           
+  }
+                                                                           
+  xmlhttp.onreadystatechange=function() {                                     
+    if (xmlhttp.readyState==4 && xmlhttp.status==200) {                       
+      var results = xmlhttp.responseText;
+
+      if(results == 'undefined' || results == '' || results == '"not validate"' || results.length == 0) {
+        return;                                                               
+      }else{
+        //addRows(results);                                                           
+      }                                                                       
+    }                                                                         
+  }
+
+  xmlhttp.open("GET",("/create_mysql_database/" + page_number),true);
+  xmlhttp.send(); 
+}
+
+initDataTable()
 
 </script>

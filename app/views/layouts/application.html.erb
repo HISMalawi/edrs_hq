@@ -488,7 +488,7 @@
               <%#=javascript_include_tag "bootstrap/jquery.scrollTo.min" %>                          
               <%#=javascript_include_tag "bootstrap/jquery.nicescroll" %>                          
               <%#=javascript_include_tag "bootstrap/scripts" %>                          
-              <% if (controller.controller_name == 'case' &&  controller.action_name != "view_cases") || controller.action_name == 'do_search'%>
+              <% if (controller.controller_name == 'case' &&  controller.action_name != "view_cases") || controller.action_name == 'do_search' || controller.action_name == 'build_mysql_database'%>
 
                 <!--script src="assets/DataTables/jquery.js"></script-->
                 <script src="/assets/DataTables/jquery.dataTables.min.js"></script>
