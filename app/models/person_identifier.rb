@@ -111,7 +111,7 @@ class PersonIdentifier < CouchRest::Model::Base
                     :identifier => new_den,
                     :creator => creator,
                     :den_sort_value => (year.to_s + num).to_i,
-                    :district_code => CONFIG['district_code']
+                    :district_code => (person.district_code rescue CONFIG['district_code'])
                 })
 
 
@@ -135,16 +135,16 @@ class PersonIdentifier < CouchRest::Model::Base
   end
 
   def self.assign_drn(person, creator)
-
-    drn, drn_sort_value = self.generate_drn(person)
-
+    drn_values = self.generate_drn(person)
+    drn = drn_values[0]
+    drn_sort_value = drn_values[1].to_i
     self.create({
                     :person_record_id=>person.id.to_s,
                     :identifier_type =>"DEATH REGISTRATION NUMBER",
                     :identifier => drn,
                     :creator => creator,
                     :drn_sort_value => drn_sort_value,
-                    :district_code => CONFIG['district_code']
+                    :district_code => (person.district_code rescue CONFIG['district_code'])
                 })
   end
 

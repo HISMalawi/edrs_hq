@@ -1,6 +1,7 @@
 class PersonRecordStatus < CouchRest::Model::Base
 
 	before_save :set_district_code,:set_facility_code
+	cattr_accessor :nextstatus
 
 	property :person_record_id, String
 	property :status, String #DC Active|HQ Active|HQ Approved|Printed|Reprinted...
@@ -43,7 +44,18 @@ class PersonRecordStatus < CouchRest::Model::Base
 	                    	emit(doc['status'], 1);
 	                  }
 	                }"
-
+	    view :by_marked_for_approval,
+	    		:map =>"function(doc){
+		    			   if (doc['type'] == 'PersonRecordStatus' && doc['voided'] == false && doc['status']=='MARKED APPROVAL'){
+		                    	emit(doc['status'], 1);
+		                  	}
+	    			   }"
+	    view :by_marked_for_hq_approval,
+	    		:map => "function(doc){
+	    					 if (doc['type'] == 'PersonRecordStatus' && doc['voided'] == false && doc['status']=='MARKED HQ APPROVAL'){
+		                    	emit(doc['status'], 1);
+		                  	}
+	    				}"			               
 	    filter :district_sync, "function(doc,req) {return req.query.district_code == doc.district_code}"
 	    filter :facility_sync, "function(doc,req) {return req.query.facility_code == doc.facility_code}"
 
@@ -68,6 +80,6 @@ class PersonRecordStatus < CouchRest::Model::Base
                                   :status => currentstatus,
                                   :prev_status => status.status,
                                   :district_code =>status.district_code,
-                                  :creator => User.current_user.id})
+                                  :creator => (User.current_user.id rescue nil)})
 	end
 end
