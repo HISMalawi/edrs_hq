@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  @@file_path = "#{Rails.root.to_s}/app/assets/data/MySQL_data/edrs.sql"
+  @@file_path = "#{Rails.root.to_s}/app/assets/data/MySQL_data/"
 
 	def login 
 		reset_session
@@ -309,56 +309,43 @@ class UsersController < ApplicationController
     start_date = "1900-01-01 00:00:00".to_time
     end_date = (Date.today - 1.day).to_date.strftime("%Y-%m-%d 23:59:59").to_time
 
-    #Create insert statments for all documets
-    #Ducument path: app/assets/data/MySQL_data/
-     
-    person_table = <<EOF
-    DROP TABLE IF EXISTS people;
-    CREATE TABLE `people` (
-    `person_id` VARCHAR(225) NOT NULL,
-EOF
+    @couchdb_files = {
+      'Person' => {count: Person.count, name: 'Person doc.', id: 'person_doc', 
+        doc_primary_key: 'person_id', table_name: 'people'},
 
-    (Person.properties || []).each do |property|
-      field_name = property.name
-      case property.type.to_s
-        when 'String'
-          field_type = "VARCHAR(255) DEFAULT NULL"
-        when 'Date'
-          field_type = "date DEFAULT NULL"
-        when 'Integer'
-          field_type = "INT(11) DEFAULT NULL"
-        when 'Time'
-          field_type = "datetime DEFAULT NULL"
-        when 'TrueClass'
-          field_type = "tinyint(1) NOT NULL  DEFAULT '0'"
-        else
-          field_type = "TEXT DEFAULT NULL" 
-      end
-      person_table += <<EOF
-      `#{field_name}` #{field_type},
-EOF
+      'PersonIdentifier' => {count: PersonIdentifier.count, name: 'PersonIdentifier doc.', 
+        id: 'person_dentifier_doc', doc_primary_key: 'person_dentifier_id', table_name: 'person_identifier'},
 
+      'PersonRecordStatus' => {count: PersonRecordStatus.count, name: 'PersonRecordStatus doc.', 
+        id: 'person_record_status_doc', doc_primary_key: 'person_record_status_id', table_name: 'person_record_status'},
+      
+      'District' => {count: District.count, name: 'District doc.', 
+        id: 'district_doc', doc_primary_key: 'district_id', table_name: 'district'},
+
+      'Nationality' => {count: Nationality.count, name: 'Nationality doc.', 
+        id: 'nationality_doc', doc_primary_key: 'nationality_id', table_name: 'nationality'},
+
+      'Village' => {count: Village.count, name: 'Village doc.', 
+        id: 'village_doc', doc_primary_key: 'village_id', table_name: 'village'},
+
+      'TraditionalAuthority' => {count: TraditionalAuthority.count, name: 'TraditionalAuthority doc.', 
+        id: 'traditional_authority_doc', doc_primary_key: 'traditional_authority_id', table_name: 'traditional_authority'},
+
+      'User' => {count: User.count, name: 'User doc.', 
+        id: 'user_doc', doc_primary_key: 'user_id', table_name: 'user'},
+
+      'Role' => {count: Role.count, name: 'Role doc.', 
+        id: 'role_doc', doc_primary_key: 'role_id', table_name: 'role'},
+
+      'Country' => {count: Country.count, name: 'Country doc.', 
+        id: 'country_doc', doc_primary_key: 'country_id', table_name: 'country'}
+
+    }
+
+    (@couchdb_files || []).each do |doc, data|
+      create_file(data[:doc_primary_key], doc, data[:table_name])
     end
 
-    person_table += <<EOF
-      PRIMARY KEY (`person_id`)
-    ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
-EOF
-
-    if !File.exists?(@@file_path)
-      file = File.new(@@file_path, 'w')
-    end
-
-    #deleting all file contents
-    File.open(@@file_path, 'w') do |f|
-      f.truncate(0)
-    end
-
-    File.open(@@file_path, 'a') do |f|
-      f.puts person_table
-    end
-
-    @count_couchdb = Person.by_updated_at.startkey(start_date).endkey(end_date).count
   end
 
   def create_mysql_database
@@ -366,15 +353,30 @@ EOF
     end_date = (Date.today - 1.day).to_date.strftime("%Y-%m-%d 23:59:59").to_time
 
     data = [] ; sql_insert_field_plus_data = {}
+    set_model = eval(params[:model_name])
+    table_name = params[:table_name]
+    records_per_page = params[:records_per_page].to_i
+    page_number = params[:page_number].to_i
+    table_primary_key = params[:table_primary_key]
 
-    count = Person.by_updated_at.startkey(start_date).endkey(end_date).page(params[:page_number].to_i).per(1).each.count
+    begin
+      count = set_model.by_updated_at.startkey(start_date).endkey(end_date).page(page_number).per(records_per_page).each.count
+    rescue
+      count = set_model.all.page(page_number).per(records_per_page).each.count
+    end
 
     if count > 0
-      count_couchdb = Person.by_updated_at.startkey(start_date).endkey(end_date).page(params[:page_number].to_i).per(1).each
+      begin
+        count_couchdb = set_model.by_updated_at.startkey(start_date).endkey(end_date).page(page_number).per(records_per_page).each
+      rescue
+        count_couchdb = set_model.all.page(page_number).per(records_per_page).each
+      end
+
       sql_statement =<<EOF
 
 EOF
-      sql_statement += "INSERT INTO people (person_id, "
+
+      sql_statement += "INSERT INTO #{table_name} (#{table_primary_key}, "
     else
       render text: {people_count: count }.to_json  and return
     end
@@ -397,7 +399,7 @@ EOF
     end
     sql_statement = ("#{sql_statement[0..-3]}) VALUES ")
 
-    File.open(@@file_path, 'a') do |f|
+    File.open(@@file_path + "#{table_name}.sql", 'a') do |f|
       f.puts sql_statement
     end
 
@@ -406,6 +408,7 @@ EOF
     sql_statement = ''
     (sql_insert_field_plus_data || []).each do |id, statements|
       sql_statement += "('#{id}', "
+
       (statements || []).each do |statement|
         if statement[:data].blank?
           if statement[:type] == 'TrueClass'
@@ -427,7 +430,7 @@ EOF
     end
     sql_statement = sql_statement[0..-2] + ";"
 
-    File.open(@@file_path, 'a') do |f|
+    File.open(@@file_path + "#{table_name}.sql", 'a') do |f|
       f.puts sql_statement
     end
 
@@ -446,4 +449,69 @@ EOF
   def user_params
     params.require(:user).permit(:username, :active, :created_at, :creator, :email, :first_name, :last_name, :notify, :plain_password, :role, :signature,:updated_at, :_rev)
   end
+
+  def create_file(doc_primary_key, doc, table_name)
+    #Create insert statments for all documets
+    #Ducument path: app/assets/data/MySQL_data/
+    
+    if doc_primary_key.blank?
+      doc_primary_key = 'id'
+      person_table = <<EOF
+        DROP TABLE IF EXISTS `#{table_name}`;
+        CREATE TABLE `#{table_name}` (
+        `#{doc_primary_key}` INT(11)  NOT NULL AUTO_INCREMENT,
+EOF
+    
+    else
+      person_table = <<EOF
+        DROP TABLE IF EXISTS `#{table_name}`;
+        CREATE TABLE `#{table_name}` (
+        `#{doc_primary_key}` VARCHAR(225) NOT NULL,
+EOF
+    
+    end
+
+    (eval(doc).properties || []).each do |property|
+      field_name = property.name
+      case property.type.to_s
+        when 'String'
+          field_type = "VARCHAR(255) DEFAULT NULL"
+        when 'Date'
+          field_type = "date DEFAULT NULL"
+        when 'Integer'
+          field_type = "INT(11) DEFAULT NULL"
+        when 'Time'
+          field_type = "datetime DEFAULT NULL"
+        when 'TrueClass'
+          field_type = "tinyint(1) NOT NULL  DEFAULT '0'"
+        else
+          field_type = "TEXT DEFAULT NULL" 
+      end
+      person_table += <<EOF
+      `#{field_name}` #{field_type},
+EOF
+
+    end
+
+    person_table += <<EOF
+      PRIMARY KEY (`#{doc_primary_key}`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+EOF
+
+    if !File.exists?(@@file_path + "#{table_name}.sql")
+      file = File.new(@@file_path + "#{table_name}.sql", 'w')
+    end
+
+    #deleting all file contents
+    File.open(@@file_path + "#{table_name}.sql", 'w') do |f|
+      f.truncate(0)
+    end
+
+    File.open(@@file_path + "#{table_name}.sql", 'a') do |f|
+      f.puts person_table
+    end
+
+    return true
+  end
+
 end

@@ -7,40 +7,73 @@
   display: none;
 }
 
+.counts {
+  text-align: right;
+  margin-right: 25px;
+  width: 20%;
+}
+
+.myProgress {
+  width: 100%;
+  background-color: #ddd;
+}
+
+.myBars {
+  width: 0%;
+  height: 30px;
+  background-color: #4CAF50;
+  color: white;
+  text-align: center;
+}
+
 </style>
 
+<script>
+ var attr = [];
+</script>
 
 <h1>Build MySQL database</h1>
+
+<div style="text-align: right;">
+  <table style="width: 100%;">
+    <tr>
+      <td><a href="javascript:startTransfer();" class="btn btn-info" id="startBTN">Start transfer</a></td>
+      <td style="width:10%;"><a href="#" class="btn btn-danger">Stop transfer</a></td>
+    </tr>
+  </table>
+</div>
 
 <table id="main-table">
   <thead>
     <tr>
       <th>CouchDB</th>
-      <th>MySQL DB</th>
-      <th>MySQL installation file</th>
-      <th>&nbsp;</th>
+      <th class="counts">CouchDB&nbsp;No.&nbsp;of records</th>
+      <th>MySQL data file build (.sql)</th>
     </tr>
   </thead>
 
   <tbody>
+    <%(@couchdb_files || []).sort_by{|m, d| m}.each do |model, data|%>
     <tr>
-      <td id="couchdb">No.of records:&nbsp;<%=@count_couchdb%></td>
-      <td id="mysqldb">No. of records:</td>
-      <td id="transfers">Completion %:&nbsp;<span id="installation_per">0</span></td>
-      <td style="width: 20%;">
-        <table style="width: 100%;">
-          <tr>
-            <td><a href="javascript:startTransfer();" class="btn btn-info">Start transfer</a></td>
-            <td><a href="#" class="btn btn-danger">Stop transfer</a></td>
-          </tr>
-        </table>
+      <td id="<%=data[:id]%>"><%=data[:name]%></td>
+      <td class="counts" id="<%=data[:id]%>_count"><%=data[:count]%></td>
+      <td class="transfer_percentage">
+      
+        <div id="<%=data[:id]%>_myProgress" class="myProgress">
+          <div id="<%=data[:id]%>_myBar" class="myBars"></div>
+        </div>
+      
       </td>
     </tr>
+    <script>attr.push(["<%=model%>","<%=data[:table_name]%>","<%=data[:id]%>","<%=data[:doc_primary_key]%>"]);</script>
+    <%end%>
   </tbody>
 </table>
 
 <script>
 
+var attr_counter = 0;
+var num_of_records_per_page = 100;
 var page_number = 1
 
 function initDataTable(){        
@@ -52,6 +85,26 @@ function initDataTable(){
 }
 
 function startTransfer() {
+  try {
+    var model_name = attr[attr_counter][0];
+    var table_name = attr[attr_counter][1];
+    var progress_bar_id = attr[attr_counter][2];
+    var table_primary_key = attr[attr_counter][3];
+
+    var progress_bar = document.getElementById(progress_bar_id + "_myBar");
+    var total_count = document.getElementById(progress_bar_id + "_count");
+
+  }catch(e){
+    var model_name = '';
+    var table_name = '';
+  }
+
+  if(model_name.length < 1 || table_name.length < 1) {
+    var startBTN = document.getElementById('startBTN');
+    startBTN.disabled = true;
+    return;
+  }
+
   if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari  
     xmlhttp=new XMLHttpRequest();                                             
   }else{// code for IE6, IE5                                                  
@@ -66,17 +119,32 @@ function startTransfer() {
         return;                                                               
       }else{
         var data = JSON.parse(results);
-        alert(parseInt(data['people_count']));
+        //console.log(model_name);
 
         if(parseInt(data['people_count']) > 0) {
+          var created = (num_of_records_per_page * page_number);
+          var currrent_percent = ((created * 100) / parseInt(total_count.innerHTML));
+          if(currrent_percent > 100)
+            currrent_percent = 100;
+
+          progress_bar.style.width = (Math.floor(currrent_percent) + "%");
+          progress_bar.innerHTML = progress_bar.style.width;
+
           page_number += 1;
+          startTransfer();
+        }else{
+          attr_counter += 1;
+          page_number = 1;
           startTransfer();
         }                                                    
       }                                                                       
     }                                                                         
   }
 
-  xmlhttp.open("GET",("/create_mysql_database/" + page_number),true);
+  var url = "/create_mysql_database/" + page_number + "/" + num_of_records_per_page + "/";
+  url += model_name + "/" + table_name + "/" + table_primary_key;
+
+  xmlhttp.open("GET", url, true);
   xmlhttp.send(); 
 }
 
