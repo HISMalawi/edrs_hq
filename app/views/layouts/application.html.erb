@@ -133,7 +133,7 @@
                 <ul class="nav pull-right top-menu">
                     
                     <!-- task notificatoin start -->
-                    <li id="task_notificatoin_bar" class="dropdown">
+                    <!--li id="task_notificatoin_bar" class="dropdown">
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                             <i class="icon-bell-l"></i>
                             <span class="badge bg-important">5</span>
@@ -215,7 +215,7 @@
                                 <a href="#">See All Tasks</a>
                             </li>
                         </ul>
-                    </li>
+                    </li-->
                     <!-- task notificatoin end -->
                     <!-- inbox notificatoin start-->
                  
@@ -518,7 +518,7 @@
               <%#=javascript_include_tag "bootstrap/jquery.scrollTo.min" %>                          
               <%#=javascript_include_tag "bootstrap/jquery.nicescroll" %>                          
               <%#=javascript_include_tag "bootstrap/scripts" %>                          
-              <% if (controller.controller_name == 'case' &&  controller.action_name != "view_cases") || controller.action_name == 'do_search' || controller.action_name == 'build_mysql_database'%>
+              <% if (controller.controller_name == 'case' &&  controller.action_name != "view_cases") || controller.action_name == 'do_search' || controller.action_name == 'build_mysql_database' || controller.action_name == 'database_load' %>
 
                 <!--script src="assets/DataTables/jquery.js"></script-->
                 <script src="/assets/DataTables/jquery.dataTables.min.js"></script>

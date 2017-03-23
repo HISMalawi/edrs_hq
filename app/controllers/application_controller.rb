@@ -46,6 +46,10 @@ class ApplicationController < ActionController::Base
 
   end
 
+   def mysql_connection
+     YAML.load_file(File.join(Rails.root, "config", "mysql_connection.yml"))['connection']
+   end
+
   protected
   def check_user
 
