@@ -367,16 +367,16 @@ EOF
 
     data = [] ; sql_insert_field_plus_data = {}
 
-    count = Person.by_updated_at.startkey(start_date).endkey(end_date).page(1).per(100).count
+    count = Person.by_updated_at.startkey(start_date).endkey(end_date).page(params[:page_number].to_i).per(1).each.count
 
     if count > 0
-      count_couchdb = Person.by_updated_at.startkey(start_date).endkey(end_date).page(1).per(100).each
+      count_couchdb = Person.by_updated_at.startkey(start_date).endkey(end_date).page(params[:page_number].to_i).per(1).each
       sql_statement =<<EOF
 
 EOF
       sql_statement += "INSERT INTO people (person_id, "
     else
-      render text: data.to_json  and return
+      render text: {people_count: count }.to_json  and return
     end
 
     (count_couchdb || []).each do |person|
@@ -407,8 +407,12 @@ EOF
     (sql_insert_field_plus_data || []).each do |id, statements|
       sql_statement += "('#{id}', "
       (statements || []).each do |statement|
-        if statement[:data].blank? 
-          sql_statement += "NULL, "
+        if statement[:data].blank?
+          if statement[:type] == 'TrueClass'
+            sql_statement += "0, "
+          else 
+            sql_statement += "NULL, "
+          end
         elsif statement[:type] == 'Integer' || statement[:type] == 'TrueClass'
           sql_statement += "#{statement[:data]},"
         elsif statement[:type] == 'Date'
@@ -427,7 +431,7 @@ EOF
       f.puts sql_statement
     end
 
-    render text: data.to_json  and return
+    render text: {people_count: count }.to_json  and return
   end
 
   private
