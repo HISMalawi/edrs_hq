@@ -135,9 +135,9 @@ class PersonIdentifier < CouchRest::Model::Base
   end
 
   def self.assign_drn(person, creator)
-
-    drn, drn_sort_value = self.generate_drn(person)
-
+    drn_values = self.generate_drn(person)
+    drn = drn_values[0]
+    drn_sort_value = drn_values[1].to_i
     self.create({
                     :person_record_id=>person.id.to_s,
                     :identifier_type =>"DEATH REGISTRATION NUMBER",

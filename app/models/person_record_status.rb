@@ -52,7 +52,7 @@ class PersonRecordStatus < CouchRest::Model::Base
 	    			   }"
 	    view :by_marked_for_hq_approval,
 	    		:map => "function(doc){
-	    					 if (doc['type'] == 'PersonRecordStatus' && doc['voided'] == false && doc['status']=='MARK FOR HQ APPROVAL'){
+	    					 if (doc['type'] == 'PersonRecordStatus' && doc['voided'] == false && doc['status']=='MARKED HQ APPROVAL'){
 		                    	emit(doc['status'], 1);
 		                  	}
 	    				}"			               

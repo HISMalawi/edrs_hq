@@ -198,8 +198,8 @@ class CaseController < ApplicationController
 
     
     if ["HQ PRINT", "HQ REPRINT", "HQ APPROVED", "HQ REAPPROVED"].include?(next_status)
-      #generate DRN
       drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([params[:person_id], "DEATH REGISTRATION NUMBER"]).last
+
       if drn.blank?
         if PersonRecordStatus.nextstatus.present?
            PersonRecordStatus.nextstatus[params[:person_id]] = next_status
@@ -207,7 +207,7 @@ class CaseController < ApplicationController
           PersonRecordStatus.nextstatus = {}
           PersonRecordStatus.nextstatus[params[:person_id]] = next_status
         end
-        PersonRecordStatus.change_status(Person.find(params[:person_id]),"MARK FOR HQ APPROVAL")
+        PersonRecordStatus.change_status(Person.find(params[:person_id]),"MARKED HQ APPROVAL")
         render :text => "ok" and return
       end
     end

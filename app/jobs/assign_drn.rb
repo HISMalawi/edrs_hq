@@ -18,7 +18,7 @@ class AssignDrn
         status = PersonRecordStatus.by_person_recent_status.key(record.person_record_id.to_s).last
 
         status.update_attributes({:voided => true})
-
+        PersonIdentifier.assign_drn(person, record.creator)
         PersonRecordStatus.create({
                                   :person_record_id => person.id.to_s,
                                   :status => (PersonRecordStatus.nextstatus[person.id] rescue "HQ PRINT"),
@@ -26,8 +26,6 @@ class AssignDrn
                                   :creator => record.creator})
         PersonRecordStatus.nextstatus.delete(person.id)
         person.update_attributes({:approved =>"Yes",:approved_at=> (Time.now)})
-
-        PersonIdentifier.assign_drn(person, record.creator)
 
         Audit.create(record_id: record.id,
                        audit_type: "Audit",
