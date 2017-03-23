@@ -5,12 +5,19 @@
     #user_table{
         border-collapse: collapse;
     }
+    #user_table tr:nth-child(even) {
+        background: #f8fbfd;
+    }
     #user_table th{
         color: #ffffff;
         background: #1a2732;
+        padding-left: 2%;
+        font-size: 1.1em !important;
     }
     #user_table td{
         border: 1px solid black;
+        color:#1a2732;
+        padding-left: 2%;
     }
 </style>
 
@@ -20,6 +27,7 @@
     <th>Username</th>
     <th> Role</th>
     <th>Status</th>
+    <th>Action</th>
   </tr>
     <% @users.each do |user|%>
     <tr>
@@ -28,8 +36,10 @@
            <td><%= user.role%></td>
            <%if user.active%>
                 <td><i class="fa fa-check"></i></td>
+                <td><button class="btn btn-danger">Block</button></td>
            <%else%>
                 <td><i class="fa fa-ban"></i></td>
+                <td><button class="btn btn-primary">Unblock</button></td>
            <%end%>
     </tr>
     <%end%>

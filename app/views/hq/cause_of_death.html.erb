@@ -121,8 +121,7 @@
         padding: 3px;
         padding-bottom: 7px;
         padding-left: 15px;
-        background: #f8f8ff;
-
+        background: #dfeafd;
     }
 
     .form-control{
@@ -133,8 +132,8 @@
     #summary {
        width:  100%;
        margin: auto;
-
     }
+    
     #summary td {
         padding: 0.5em;
         color :#242020;
@@ -195,12 +194,22 @@
       z-index: 1050;
       display: none;
     }
+    .table{
+        border: none;
+        box-shadow: 1.0px 1.0px 0.5px #adaba8;
+    }
+    .table td{
+        border: 1px solid #adaba8 !important;
+    }
+    input, select ,option{
+        color:#1a2732 !important;
+    }
 </style>
  <link rel="stylesheet" href="/select2/select2.min.css">
 
 <table class="table" style="background: white;height: 97%;width: 99.5%">
     <tr class="" style="width: 100%">
-      <td class="" style="width: 25%;border: 1px solid gray">
+      <td class="" style="width: 20%;border: 1px solid gray">
         <div id="person_details_radio" class="radio radio-primary" onmousedown="showControls('person_details')">
           <input type="radio" name="radio" id="radio0">
               <label for="radio0">
@@ -764,9 +773,10 @@
                }
     });
     function showControls(id){
+
         var target = $("#"+id);
         if(target.attr('disabled')){
-
+           alert(id);
         }else{
           $(".custom").hide();
           $("#" + id).show();
@@ -904,11 +914,11 @@
 
             var available = ["HQ APPROVED","HQ REAPPROVED","HQ PRINT","HQ CLOSED","HQ DISPATCHED","HQ REPRINT"]
             if(available.indexOf(status) >= 0){
-                var containers = $(".container custom");
+                var containers = $(".custom");
                 for(var i = 0 ; i < containers.length; i++){
-                    containers[i].removeAttr('disabled');
+                    containers[i].removeAttribute('disabled');
                 }
-                for(var i = 3 ; i <= 5 ; i++){
+                for(var i = 2 ; i <= 5 ; i++){
                     $("#radio"+i).removeAttr("disabled");
                 }
                 hit('cause_of_death_radio');

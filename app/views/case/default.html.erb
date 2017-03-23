@@ -1,5 +1,7 @@
 <script>
 var dataTable = null;
+var prev_status = "<%=@prev_status%>"
+var registration_type ="<%= params[:registration_type] rescue '' %>"
 
 function addRows(data, skip_parse) {
   if (skip_parse == true){
@@ -43,7 +45,8 @@ function addRows(data, skip_parse) {
 
 var current_page = parseInt(<%=(@page.to_i rescue 0)%>);
 
-function getCases() {                                                      
+function getCases() {    
+  var url                                                   
 
   if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari  
     xmlhttp=new XMLHttpRequest();                                             
@@ -63,18 +66,31 @@ function getCases() {
         addRows(results);                                                           
       }                                                                       
     }                                                                         
-  }                                                                           
+  } 
 
-    var status = ""
-  <% @statuses.each {|s|%>
-    if (status == ""){
-        status = "<%= s.split(/\s+/).join('_')%>";
-    }else{
-        status += ("|" + "<%= s.split(/\s+/).join('_')%>");
-    }
-  <% } %>
+  var url ="";                                                                  
+  if(prev_status && prev_status.length > 0){
+      var status = "";
+      <% @statuses.each {|s|%>
+        status = "<%= s%>";
+      <% } %>
+      url = ("/add_more_open_cases_with_prev_status/"+current_page + "?status="+status+"&prev_status=<%=@prev_status%>")
+  }else if(registration_type && registration_type.length > 0){
+      url = ("/add_more_special_cases/"+current_page + "?registration_type="+registration_type)
+  }else{
+       var status = ""
+      <% @statuses.each {|s|%>
+        if (status == ""){
+            status = "<%= s.split(/\s+/).join('_')%>";
+        }else{
+            status += ("|" + "<%= s.split(/\s+/).join('_')%>");
+        }
+      <% } %>
+      url = ("/add_more_open_cases/"+current_page + "?statuses=" + status)
+  }
+ 
 
-  xmlhttp.open("GET",("/add_more_open_cases/"+current_page + "?statuses=" + status),true);
+  xmlhttp.open("GET",url,true);
   xmlhttp.send();                                                             
 }
 
@@ -101,30 +117,41 @@ function getCases() {
   <tfoot>
   </tfoot>
 </table-->
+<style type="text/css">
+    #containt_table{
+      width: 100%;
+      padding: 1%;
+      background: #ffffff;
+      box-shadow: 1.0px 1.0px 0.5px #adaba8;
+    }
+    table th{
+      color :#394a59 !important;
+    }
+    table td {
+        color :#394a59;
+    }
+</style>
+<div id="containt_table">
+    <h3><%= @title.humanize rescue ''%></h3>
+    <table class="table table-striped table-advance table-hover" id="cases">
+    <thead>
+      <tr>
+        <th><i class=""></i> DRN</th>
+        <th><i class=""></i> DEN</th>
+        <th><i class=""></i> First name</th>
+        <th><i class=""></i> Middle name</th>
+        <th><i class=""></i> Last name</th>
+        <th><i class=""></i> Gender</th>
+        <th><i class=""></i> DOB</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
 
+    <tfoot>
+    </tfoot>
 
-<table class="table table-striped table-advance table-hover" id="cases">
-
-<thead>
-  <tr>
-    <th><i class=""></i> DRN</th>
-    <th><i class=""></i> DEN</th>
-    <th><i class=""></i> First name</th>
-    <th><i class=""></i> Middle name</th>
-    <th><i class=""></i> Last name</th>
-    <th><i class=""></i> Gender</th>
-    <th><i class=""></i> DOB</th>
-    <th>&nbsp;</th>
-  </tr>
-</thead>
-
-<tfoot>
-</tfoot>
-
-</table>
- 
-
-
+    </table>
+</div>
 <script>
 
 function initDataTable(){        
