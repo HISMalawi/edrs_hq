@@ -196,6 +196,22 @@ class CaseController < ApplicationController
     next_status = params[:next_status].gsub(/\-/, ' ') rescue nil
     render :text => "Error!" and return if next_status.blank?
 
+    
+    if ["HQ PRINT", "HQ REPRINT", "HQ APPROVED", "HQ REAPPROVED"].include?(next_status)
+      #generate DRN
+      drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([params[:person_id], "DEATH REGISTRATION NUMBER"]).last
+      if drn.blank?
+        if PersonRecordStatus.nextstatus.present?
+           PersonRecordStatus.nextstatus[params[:person_id]] = next_status
+        else
+          PersonRecordStatus.nextstatus = {}
+          PersonRecordStatus.nextstatus[params[:person_id]] = next_status
+        end
+        PersonRecordStatus.change_status(Person.find(params[:person_id]),"MARK FOR HQ APPROVAL")
+        render :text => "ok" and return
+      end
+    end
+
     status = PersonRecordStatus.by_person_recent_status.key(params[:person_id]).last
     status.voided  = true
     status.save
@@ -207,14 +223,6 @@ class CaseController < ApplicationController
         :prev_status => status.status,
         :status => next_status
     )
-
-    if ["HQ PRINT", "HQ REPRINT", "HQ APPROVED", "HQ REAPPROVED"].include?(next_status)
-      #generate DRN
-      drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([params[:person_id], "DEATH REGISTRATION NUMBER"]).last
-      if drn.blank?
-        PersonIdentifier.assign_drn(Person.find(params[:person_id]), @current_user.id)
-      end
-    end
 
     if next_status == "HQ COMPLETE"
       @person = Person.find(params[:person_id])
@@ -431,6 +439,19 @@ class CaseController < ApplicationController
     
     @person_place_details = place_details(@person)
 
+    if @person.status == "DC REAPPROVED"
+            @next_state ={
+                "Data Checking Clerk" => ["HQ COMPLETE", "HQ POTENTIAL INCOMPLETE"],
+                "Data Supervisor" => ["HQ COMPLETE", "HQ INCOMPLETE"],
+                "Data Manager" => ["HQ PRINT", "HQ CONFIRMED INCOMPLETE"]
+            }
+    else
+          @next_state ={
+                "Data Checking Clerk" => ["HQ COMPLETE", "HQ POTENTIAL INCOMPLETE"],
+                "Data Supervisor" => ["HQ CONFLICT", "HQ INCOMPLETE"],
+                "Data Manager" => ["HQ PRINT", "HQ CONFIRMED INCOMPLETE"]
+            }
+    end
   end
 
 
