@@ -452,7 +452,7 @@ EOF
   end
 
   def database_load_progress
-    db_result = `nice mysql -uroot edrs -proot.letusout! -e "select count(*) as c from #{params[:table_name]};"`
+    db_result = `nice mysql -u#{mysql_connection['username']} #{mysql_connection['database']} -p#{mysql_connection['password']} -e "select count(*) as c from #{params[:table_name]};"`
     dbcount = db_result.split("\n")[1].to_i rescue 0
     render text: { count: dbcount }.to_json and return
   end
