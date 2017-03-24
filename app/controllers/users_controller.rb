@@ -314,7 +314,7 @@ class UsersController < ApplicationController
         doc_primary_key: 'person_id', table_name: 'people'},
 
       'PersonIdentifier' => {count: PersonIdentifier.count, name: 'PersonIdentifier doc.', 
-        id: 'person_dentifier_doc', doc_primary_key: 'person_dentifier_id', table_name: 'person_identifier'},
+        id: 'person_identifier_doc', doc_primary_key: 'person_identifier_id', table_name: 'person_identifier'},
 
       'PersonRecordStatus' => {count: PersonRecordStatus.count, name: 'PersonRecordStatus doc.', 
         id: 'person_record_status_doc', doc_primary_key: 'person_record_status_id', table_name: 'person_record_status'},
@@ -439,6 +439,22 @@ EOF
     end
 
     render text: {people_count: count }.to_json  and return
+  end
+
+  def database_load
+    @documents = {}
+    (params[:documents] || {}).each do |doc, count|
+      sql_file_name = "#{doc}.sql"
+      @documents[sql_file_name] = count.to_i
+    end
+
+    #raise @documents.inspect
+  end
+
+  def database_load_progress
+    db_result = `nice mysql -u#{mysql_connection['username']} #{mysql_connection['database']} -p#{mysql_connection['password']} -e "select count(*) as c from #{params[:table_name]};"`
+    dbcount = db_result.split("\n")[1].to_i rescue 0
+    render text: { count: dbcount }.to_json and return
   end
 
   private
