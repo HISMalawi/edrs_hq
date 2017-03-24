@@ -76,6 +76,7 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     erubis (2.7.0)
     execjs (2.7.0)
+    global_phone (1.0.1)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
     highcharts-rails (5.0.7)
@@ -195,6 +196,7 @@ DEPENDENCIES
   byebug
   coffee-rails (~> 4.1.0)
   couchrest_model
+  global_phone
   highcharts-rails
   jbuilder (~> 2.0)
   jquery-rails

@@ -44,6 +44,7 @@ gem 'aescrypt'
 
 gem 'sucker_punch', '~> 2.0'
 
+gem 'global_phone'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
