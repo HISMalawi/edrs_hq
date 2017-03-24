@@ -64,8 +64,9 @@ class PersonRecordStatus < CouchRest::Model::Base
 	def set_district_code
 		self.district_code = self.person.district_code
 	end
+	
 	def set_facility_code
-		self.district_code = self.person.facility_code
+		self.facility_code = self.person.facility_code
 	end
 
 	def person
@@ -74,12 +75,21 @@ class PersonRecordStatus < CouchRest::Model::Base
 
 	def self.change_status(person,currentstatus)
 		status = PersonRecordStatus.by_person_recent_status.key(person.id).last
-		status.update_attributes({:voided => true})
-		PersonRecordStatus.create({
+		if status.present?
+			status.update_attributes({:voided => true})
+			PersonRecordStatus.create({
                                   :person_record_id => person.id.to_s,
                                   :status => currentstatus,
                                   :prev_status => status.status,
-                                  :district_code =>status.district_code,
+                                  :district_code => person.district_code,
                                   :creator => (User.current_user.id rescue nil)})
+		else
+			PersonRecordStatus.create({
+                                  :person_record_id => person.id.to_s,
+                                  :status => currentstatus,
+                                  :prev_status => nil,
+                                  :district_code => person.district_code,
+                                  :creator => (User.current_user.id rescue nil)})
+		end
 	end
 end
