@@ -253,17 +253,7 @@ class HqController < ApplicationController
       person = Person.find(key.strip)
 
       next if person.blank?
-      
-      status = PersonRecordStatus.by_person_recent_status.key(person.id).last
-      status.voided = true
-      status.save
-
-      PersonRecordStatus.create(:person_record_id => person.id, 
-                                :district_code => status.district_code,
-                          			:creator => @current_user.id, 
-                                :prev_status => status.status,
-                                :status => "HQ CLOSED")
-      
+      Person.change_status(person,"HQ CLOSED")
       id = person.id
       
       print_url = "wkhtmltopdf --zoom #{zoom} --page-size #{paper_size} --username #{CONFIG["print_user"]} --password #{CONFIG["print_password"]} #{CONFIG["protocol"]}://#{request.env["SERVER_NAME"]}:#{request.env["SERVER_PORT"]}/death_certificate/#{id} #{CONFIG['certificates_path']}#{id}.pdf\n"    
@@ -646,7 +636,7 @@ class HqController < ApplicationController
     end
 
     if has_role("Manage incomplete records")
-      @tasks << ['Incomplete records from DV','View incomplete cases','/incomplete_cases','']
+      @tasks << ['Incomplete records from   DV','View incomplete cases','/incomplete_cases','']
     end
 
     if has_role("View closed cases")

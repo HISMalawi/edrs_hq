@@ -414,6 +414,28 @@ class CaseController < ApplicationController
     render text: cases.to_json and return
   end
 
+  def more_amended_or_reprinted_cases   
+    cases = []
+    
+    (PersonRecordStatus.by_amend_or_reprint.page(params[:page_number]).per(10) || []).each do |status|
+      
+      person = status.person
+     
+      cases << {
+        drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
+        den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
+        first_name: person.first_name,
+        middle_name:  person.middle_name,
+        last_name:  person.last_name,
+        dob:        person.birthdate.strftime("%d/%b/%Y"),
+        gender:     person.gender,
+        person_id:  person.id
+      }
+    end 
+
+    render text: cases.to_json and return
+  end
+
   def special_cases
       @title = params[:registration_type].humanize
       @statuses = ["DC AMENDED"]
