@@ -1,3 +1,12 @@
+GIT
+  remote: https://github.com/sstephenson/global_phone.git
+  revision: dd0894061f58479884e6cfa2d00382542dc77d5a
+  ref: dd0894061f58479884e6cfa2d00382542dc77d5a
+  specs:
+    global_phone (1.0.1)
+    global_phone_dbgen (1.0.1)
+      nokogiri (~> 1.5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -195,6 +204,8 @@ DEPENDENCIES
   byebug
   coffee-rails (~> 4.1.0)
   couchrest_model
+  global_phone!
+  global_phone_dbgen
   highcharts-rails
   jbuilder (~> 2.0)
   jquery-rails

@@ -67,7 +67,7 @@ Rails.application.routes.draw do
   get '/potential' => 'case#potential'
   get '/can_confirm' => 'case#can_confirm'
   get '/confirmed' => 'case#confirmed'
-  get '/view_requests' => 'case#view_requests'
+  get '/rejected_requests' => 'case#rejected_requests'
   get '/verify_certificates' => 'case#dispatch_printouts'
 
 

@@ -4,7 +4,7 @@ class AssignDrn
 
   def perform()
     queue = PersonRecordStatus.by_marked_for_hq_approval.each
-    job_interval = CONFIG['ben_assignment_interval']
+    job_interval = CONFIG['drn_assignment_interval']
     job_interval = 1.5 if job_interval.blank?
     job_interval = job_interval.to_f
 

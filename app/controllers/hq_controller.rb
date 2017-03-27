@@ -706,10 +706,12 @@ class HqController < ApplicationController
 
   def amendment_cases_tasks
     @tasks = []
-    if has_role("Make ammendments")
+    if has_role("Make ammendments") || has_role("Manage duplicates")
       @tasks << ['Lost/Damaged','All records that have been requested to be reprinted after first copy of the certificates was Lost/Damaged','/reprint_requests','']
       @tasks << ['Amendments','All records that has under gone changes after the certificate was printed','/amendment_requests','']
-      @tasks << ['Rejected amended','All records that has under gone changes after the certificate was printed','/view_requests','']
+      if has_role("Make ammendments")
+        @tasks << ['Rejected amended','All records that has under gone changes after the certificate was printed','/rejected_requests','']
+      end
       @tasks << ['Printed/Dispatched Certificates','Printed/Dispatched Certificates','','']
     end
     @section ="Re-prints and amendments"

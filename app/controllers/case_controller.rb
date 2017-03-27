@@ -153,7 +153,7 @@ class CaseController < ApplicationController
 
   def print
     @title = "Print Certificates"
-    @statuses = ["HQ PRINT"]
+    @statuses = ["HQ PRINT","HQ PRINT AMEND","HQ REPRINT REQUEST"]
     @page = 1
     session[:return_url] = request.path
 
@@ -337,9 +337,9 @@ class CaseController < ApplicationController
   end
 
 
-  def view_requests
-    @title = "View Dispatch Printouts"
-    @statuses = ["DC AMENDED"]
+  def rejected_requests
+    @title = "Rejected "
+    @statuses = ["HQ REJECTED AMEND","HQ REJECTED REPRINT"]
     @page = 1
     session[:return_url] = request.path
 
