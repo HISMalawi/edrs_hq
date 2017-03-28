@@ -364,6 +364,16 @@ class CaseController < ApplicationController
     render :template => "case/default"
   end
 
+  def printed_amended_or_reprint
+    @title = "Reprinted and amended Certificates"
+    @statuses = ["DC REPRINT"]
+    @amendment = "AMENDED"
+    @page = 1
+    session[:return_url] = request.path
+
+    render :template => "case/default"
+  end
+
   def more_open_cases
     keys = []
     ((params[:statuses].split("|") rescue []) || []).each{|status|

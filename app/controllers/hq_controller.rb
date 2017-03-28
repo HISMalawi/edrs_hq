@@ -253,7 +253,7 @@ class HqController < ApplicationController
       person = Person.find(key.strip)
 
       next if person.blank?
-      Person.change_status(person,"HQ CLOSED")
+      PersonRecordStatus.change_status(person,"HQ CLOSED")
       id = person.id
       
       print_url = "wkhtmltopdf --zoom #{zoom} --page-size #{paper_size} --username #{CONFIG["print_user"]} --password #{CONFIG["print_password"]} #{CONFIG["protocol"]}://#{request.env["SERVER_NAME"]}:#{request.env["SERVER_PORT"]}/death_certificate/#{id} #{CONFIG['certificates_path']}#{id}.pdf\n"    
@@ -702,7 +702,7 @@ class HqController < ApplicationController
       if has_role("Make ammendments")
         @tasks << ['Rejected amended','All records that has under gone changes after the certificate was printed','/rejected_requests','']
       end
-      @tasks << ['Printed/Dispatched Certificates','Printed/Dispatched Certificates','','']
+      @tasks << ['Printed/Dispatched Certificates','Printed/Dispatched Certificates','/printed_amended_or_reprint','']
     end
     @section ="Re-prints and amendments"
     render :template => "/hq/tasks"

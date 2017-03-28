@@ -86,7 +86,7 @@ class PersonRecordStatus < CouchRest::Model::Base
 			if ["HQ PRINT AMEND","HQ REPRINT REQUEST"].include? (status.status)
 				reprint = true
 			else
-				reprint = false
+				reprint = (status.reprint rescue false)
 			end
 			status.update_attributes({:voided => true})
 			PersonRecordStatus.create({

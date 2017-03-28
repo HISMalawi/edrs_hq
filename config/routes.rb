@@ -69,6 +69,7 @@ Rails.application.routes.draw do
   get '/confirmed' => 'case#confirmed'
   get '/rejected_requests' => 'case#rejected_requests'
   get '/verify_certificates' => 'case#dispatch_printouts'
+  get '/printed_amended_or_reprint' => "case#printed_amended_or_reprint"
 
 
   get 'add_more_open_cases/:page_number' => 'case#more_open_cases'
