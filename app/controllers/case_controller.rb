@@ -153,7 +153,7 @@ class CaseController < ApplicationController
 
   def print
     @title = "Print Certificates"
-    @statuses = ["HQ PRINT"]
+    @statuses = ["HQ PRINT","HQ PRINT AMEND","HQ REPRINT REQUEST"]
     @page = 1
     session[:return_url] = request.path
 
@@ -195,7 +195,7 @@ class CaseController < ApplicationController
 
     next_status = params[:next_status].gsub(/\-/, ' ') rescue nil
     render :text => "Error!" and return if next_status.blank?
-
+    person = Person.find(params[:person_id])
     
     if ["HQ PRINT", "HQ REPRINT", "HQ APPROVED", "HQ REAPPROVED"].include?(next_status)
       drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([params[:person_id], "DEATH REGISTRATION NUMBER"]).last
@@ -208,6 +208,16 @@ class CaseController < ApplicationController
           PersonRecordStatus.nextstatus[params[:person_id]] = next_status
         end
         PersonRecordStatus.change_status(Person.find(params[:person_id]),"MARKED HQ APPROVAL")
+
+        last_run_time = File.mtime("#{Rails.root}/public/sentinel").to_time
+        job_interval = CONFIG['ben_assignment_interval']
+        job_interval = 1.5 if job_interval.blank?
+        job_interval = job_interval.to_f
+        now = Time.now
+        if (now - last_run_time).to_f > job_interval
+          AssignDrn.perform_in(1)
+        end
+
         render :text => "ok" and return
       end
     end
@@ -218,7 +228,7 @@ class CaseController < ApplicationController
 
     PersonRecordStatus.create(
         :person_record_id => params[:person_id],
-        :district_code => status.district_code,
+        :district_code => person.district_code,
         :creator => @current_user.id,
         :prev_status => status.status,
         :status => next_status
@@ -234,7 +244,7 @@ class CaseController < ApplicationController
 
         PersonRecordStatus.create(
             :person_record_id => params[:person_id],
-            :district_code => status.district_code,
+            :district_code => person.district_code,
             :prev_status => status.status,
             :creator => @current_user.id,
             :status => "HQ POTENTIAL DUPLICATE"
@@ -327,9 +337,9 @@ class CaseController < ApplicationController
   end
 
 
-  def view_requests
-    @title = "View Dispatch Printouts"
-    @statuses = ["DC AMENDED"]
+  def rejected_requests
+    @title = "Rejected "
+    @statuses = ["HQ REJECTED AMEND","HQ REJECTED REPRINT"]
     @page = 1
     session[:return_url] = request.path
 
@@ -337,8 +347,8 @@ class CaseController < ApplicationController
   end
 
   def amendment_requests
-    @title = "Amendment reques"
-    @statuses = ["DC AMENDED"]
+    @title = "Amendment request"
+    @statuses = ["DC AMEND"]
     @page = 1
     session[:return_url] = request.path
 
@@ -346,8 +356,18 @@ class CaseController < ApplicationController
   end
 
   def reprint_requests
-    @title = "Amendment reques"
-    @statuses = ["DC AMENDED"]
+    @title = "Reprint request"
+    @statuses = ["DC REPRINT"]
+    @page = 1
+    session[:return_url] = request.path
+
+    render :template => "case/default"
+  end
+
+  def printed_amended_or_reprint
+    @title = "Reprinted and amended Certificates"
+    @statuses = ["DC REPRINT"]
+    @amendment = "AMENDED"
     @page = 1
     session[:return_url] = request.path
 
@@ -386,6 +406,28 @@ class CaseController < ApplicationController
     cases = []
     
     (PersonRecordStatus.by_prev_status_and_status.key([params[:prev_status],params[:status]]).page(params[:page_number]).per(10) || []).each do |status|
+      
+      person = status.person
+     
+      cases << {
+        drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
+        den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
+        first_name: person.first_name,
+        middle_name:  person.middle_name,
+        last_name:  person.last_name,
+        dob:        person.birthdate.strftime("%d/%b/%Y"),
+        gender:     person.gender,
+        person_id:  person.id
+      }
+    end 
+
+    render text: cases.to_json and return
+  end
+
+  def more_amended_or_reprinted_cases   
+    cases = []
+    
+    (PersonRecordStatus.by_amend_or_reprint.page(params[:page_number]).per(10) || []).each do |status|
       
       person = status.person
      

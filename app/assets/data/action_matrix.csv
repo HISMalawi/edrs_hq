@@ -2,13 +2,12 @@
 NEW,,,"1,2",3,1,,2,,,
 DC COMPLETE,,,,"3,4",,,,,,
 DC PENDING,,,1,,,,,,,
-DC AMENDED,,,,"3,23
-",,,,,,
+DC AMEND,,,,"3,23",,"28,15",,,,
 DC REJECTED,,,1,,,,,,,
 DC POTENTIAL DUPLICATE,,,,"5,8,24",,,,,,
 DC DUPLICATE,,,,9,,,,,,
 HQ REJECTED,,,,3,,,,,,
-DC REPRINT,,,,,,,,,,
+DC REPRINT,,,,,,"15,31",,,,
 DC APPROVED,,,,,1,,,,,27
 DC REAPPROVED,,,,,,1,,,,27
 HQ APPROVED,,,,,,,"17,18",,,27
@@ -26,7 +25,11 @@ HQ CONFIRMED INCOMPLETE,,,,,,15,,,,27
 HQ CONFLICT,,,,,,,"22,21,8",,,27
 HQ REPRINT,,,,,,,,"17,18",,27
 HQ AMMEND,,,,,,,,,,
+HQ PRINT AMEND,,,,,,,"17,18,29",,,27
+HQ REPRINT REQUEST,,,,,,,"17,18,30",,,27
 HQ REOPENED,,,,,,15,,,,
+HQ REJECTED REPRINT,,,,,,"15",,,,
+HQ REJECTED AMEND,,,,,,"15",,,,
 ,,,,,,,,,,
 END,,,,,,,,,,
 Action Codes,Description,Button Name,ajax_route,Route,popup,Btn Class,,,"
@@ -58,4 +61,8 @@ Action Codes,Description,Button Name,ajax_route,Route,popup,Btn Class,,,"
 25,Approve printing,Approve,/ajax_change_status?next_status=HQ-PRINT,,,btn-success,,,,
 26,Dispatch certifcates,Dispatch,/ajax_change_status?next_status=HQ-DISPATCHED,,,Btn-success,,,,
 27,Enter cause of death,Cause of death,,,,,,,,
+28,Approve Amendment,Approve Amendment,/ajax_change_status?next_status=HQ-PRINT AMEND,,,Btn-success,,,,
+29,Reject Amendment,Reject Amendment,/ajax_change_status?next_status=HQ-REJECTED AMEND,,,Btn-danger,,,,
+30,Reject re-print,Reject re-print,/ajax_change_status?next_status=HQ-REJECTED REPRINT,,,Btn-danger,,,,
+31,Approve re-print,Approve re-print,/ajax_change_status?next_status=HQ-REPRINT REQUEST,,,Btn-success,,,,
 END CODES,,,,,,,,,,

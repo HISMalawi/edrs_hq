@@ -67,13 +67,15 @@ Rails.application.routes.draw do
   get '/potential' => 'case#potential'
   get '/can_confirm' => 'case#can_confirm'
   get '/confirmed' => 'case#confirmed'
-  get '/view_requests' => 'case#view_requests'
+  get '/rejected_requests' => 'case#rejected_requests'
   get '/verify_certificates' => 'case#dispatch_printouts'
+  get '/printed_amended_or_reprint' => "case#printed_amended_or_reprint"
 
 
   get 'add_more_open_cases/:page_number' => 'case#more_open_cases'
   get '/add_more_open_cases_with_prev_status/:page_number' => "case#more_open_cases_with_prev_status"
   get '/add_more_special_cases/:page_number' => "case#more_special_cases"
+  get '/add_more_reprint_or_amended/:page_number' => "case#more_amended_or_reprinted_cases"
   get '/special_cases'=>"case#special_cases"
   get '/approved_incomplete' => "case#approved_for_print_marked_incomplete"
   get 'view_cases/:person_id' => 'case#view_cases'

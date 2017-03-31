@@ -253,17 +253,7 @@ class HqController < ApplicationController
       person = Person.find(key.strip)
 
       next if person.blank?
-      
-      status = PersonRecordStatus.by_person_recent_status.key(person.id).last
-      status.voided = true
-      status.save
-
-      PersonRecordStatus.create(:person_record_id => person.id, 
-                                :district_code => status.district_code,
-                          			:creator => @current_user.id, 
-                                :prev_status => status.status,
-                                :status => "HQ CLOSED")
-      
+      PersonRecordStatus.change_status(person,"HQ CLOSED")
       id = person.id
       
       print_url = "wkhtmltopdf --zoom #{zoom} --page-size #{paper_size} --username #{CONFIG["print_user"]} --password #{CONFIG["print_password"]} #{CONFIG["protocol"]}://#{request.env["SERVER_NAME"]}:#{request.env["SERVER_PORT"]}/death_certificate/#{id} #{CONFIG['certificates_path']}#{id}.pdf\n"    
@@ -646,7 +636,7 @@ class HqController < ApplicationController
     end
 
     if has_role("Manage incomplete records")
-      @tasks << ['Incomplete records from DV','View incomplete cases','/incomplete_cases','']
+      @tasks << ['Incomplete records from   DV','View incomplete cases','/incomplete_cases','']
     end
 
     if has_role("View closed cases")
@@ -706,11 +696,13 @@ class HqController < ApplicationController
 
   def amendment_cases_tasks
     @tasks = []
-    if has_role("Make ammendments")
+    if has_role("Make ammendments") || has_role("Manage duplicates")
       @tasks << ['Lost/Damaged','All records that have been requested to be reprinted after first copy of the certificates was Lost/Damaged','/reprint_requests','']
       @tasks << ['Amendments','All records that has under gone changes after the certificate was printed','/amendment_requests','']
-      @tasks << ['Rejected amended','All records that has under gone changes after the certificate was printed','/view_requests','']
-      @tasks << ['Printed/Dispatched Certificates','Printed/Dispatched Certificates','','']
+      if has_role("Make ammendments")
+        @tasks << ['Rejected amended','All records that has under gone changes after the certificate was printed','/rejected_requests','']
+      end
+      @tasks << ['Printed/Dispatched Certificates','Printed/Dispatched Certificates','/printed_amended_or_reprint','']
     end
     @section ="Re-prints and amendments"
     render :template => "/hq/tasks"

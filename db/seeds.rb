@@ -272,7 +272,12 @@ json.each do |district, traditional_authorities|
 end
 puts "Village count : #{Village.all.count}"
 
+Audit.count
+PersonIdentifier.count
+Sync.count
+PersonRecordStatus.count
 Person.count rescue nil
+
 puts "Application setup succesfully!!!"
 
 puts "Login details username: #{user.username} password: password"

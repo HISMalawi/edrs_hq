@@ -2,6 +2,7 @@
 var dataTable = null;
 var prev_status = "<%=@prev_status%>"
 var registration_type ="<%= params[:registration_type] rescue '' %>"
+var amendment = "<%=@amendment rescue ''%>";
 
 function addRows(data, skip_parse) {
   if (skip_parse == true){
@@ -77,6 +78,8 @@ function getCases() {
       url = ("/add_more_open_cases_with_prev_status/"+current_page + "?status="+status+"&prev_status=<%=@prev_status%>")
   }else if(registration_type && registration_type.length > 0){
       url = ("/add_more_special_cases/"+current_page + "?registration_type="+registration_type)
+  }else if(amendment && amendment.length > 0){
+      url = ("/add_more_reprint_or_amended/"+current_page)
   }else{
        var status = ""
       <% @statuses.each {|s|%>
