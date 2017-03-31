@@ -1,13 +1,12 @@
 <header class="panel-heading">Statistics</header>
-
-
 <table class="table table-striped table-advance table-hover" style="width: 98%;">
-  <tbody>
-    <tr>
-      <th style="padding: 5px; border: 1px solid #d3d3d3;background: #808080; color: black;"><b>State</b></th>
-      <th style="padding: 5px; border: 1px solid #d3d3d3; background: #808080; color: black;"><b>Count</b></th>
-    </tr>
-
+    <thead>
+      <tr>
+        <th style="padding: 5px; border: 1px solid #d3d3d3;background: #808080; color: black;"><b>State</b></th>
+        <th style="padding: 5px; border: 1px solid #d3d3d3; background: #808080; color: black;"><b>Count</b></th>
+      </tr>
+    </thead>
+    <tbody id="tbody">
     <tr>
       <th>Newly Received (HQ)</th>
       <td id="dc_approved">-</td>
@@ -42,5 +41,23 @@
       <th>Printed and Dispatched</th>
       <td id="hq_dispatched">-</td>
     </tr>
-
+    </tbody>
   </table>
+  <script type="text/javascript">
+       function loadTable(dashboard_data) {
+          var table = $("tbody");
+          table.empty();
+          var table_data = dashboard_data['cummulative'];
+          var keys = Object.keys(table_data);
+          for (var i =  0 ; i < keys.length ; i++){
+            var tr = document.createElement("tr");
+            table.append(tr);
+            var td = document.createElement("td");
+            td.innerHTML = keys[i];
+            tr.appendChild(td);
+            var td = document.createElement("td");
+            td.innerHTML = table_data[keys[i]];
+            tr.appendChild(td);
+          }
+    }
+  </script>

@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   get 'reports/index'
 
   root 'hq#dashboard'
+  get  'dashbord_data'=>"hq#dashbord_data"
 
   ################## users routes starts ############################
   get '/build_mysql_database' => 'users#build_mysql_database'

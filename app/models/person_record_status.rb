@@ -62,7 +62,8 @@ class PersonRecordStatus < CouchRest::Model::Base
 		    			   if (doc['type'] == 'PersonRecordStatus' && doc['reprint'] == true){
 		                    	emit(doc['status'], 1);
 		                  	}
-	    			   }"		               
+	    			   }"
+	    view :by_status_and_created_at		               
 	    filter :district_sync, "function(doc,req) {return req.query.district_code == doc.district_code}"
 	    filter :facility_sync, "function(doc,req) {return req.query.facility_code == doc.facility_code}"
 

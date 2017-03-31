@@ -20,6 +20,12 @@ class HqController < ApplicationController
     end
   end
 
+  def dashbord_data
+    file_name = Rails.root.join('app/assets/data/', 'dashboard.json')
+    fileinput = JSON.parse(File.read(file_name))
+    render :text => fileinput.to_json
+    
+  end
   def search
     @title = "Search Death Records"
   end
