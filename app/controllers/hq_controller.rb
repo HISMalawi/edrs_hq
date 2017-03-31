@@ -31,6 +31,7 @@ class HqController < ApplicationController
   end
 
   def do_search
+
     results = []
     @title = "Search Results"
     @statuses = []
@@ -85,6 +86,19 @@ class HqController < ApplicationController
           village_id = Village.by_ta_id_and_name.key([ta_id, params[:informant_village]]).last.id rescue nil
           results = Person.by_informant_current_village_id.key(village_id)
         end
+      when "general_search"
+        require 'sql_search'
+        map = {
+                "details_of_deceased" => ['first_name', 'last_name', 'gender'],
+                "home_address" => ['home_country', 'home_ta', 'home_village'],
+                "mother" => ['mother_first_name', 'mother_last_name'],
+                "father" => ['father_first_name', 'father_last_name'],
+                "informant" => ['informant_first_name', 'informant_last_name'],
+                "informant_address" => ['informant_current_district', 'informant_current_ta', 'informant_current_village'],
+                "place_death" => ['place_of_death', 'place_of_death_district', 'place_of_death_ta', 'place_of_death_village', 'hospital_of_death', 'other_place_of_death']
+              }
+
+        results = SQLSearch.query(map, params)
     end
 
     if has_role( "Add cause of death") && results.length > 0
@@ -413,6 +427,38 @@ class HqController < ApplicationController
     end
 
     render :text =>  ([""] + list.collect { |w| w.nationality}.uniq)
+
+  end
+
+  def countries
+    countries = Country.all
+    malawi = Country.by_country.key("Malawi").last
+    list = []
+    countries.each do |n|
+      if n.name =="Unknown"
+        next if params[:special].blank?
+      end
+      if n.name =="Malawi"
+        next unless params[:exclude].blank?
+      end
+      if !params[:search_string].blank?
+        list << n if n.name.match(/#{params[:search_string]}/i)
+      else
+        list << n
+      end
+    end
+
+    if ("Malawi".match(/#{params[:search_string]}/i) || params[:search_string].blank?) && params[:exclude] != "Malawi"
+      list = [malawi] + list
+    end
+
+    countries = list.collect {|c| c.name}.sort
+
+    if ("Malawi".match(/#{params[:search_string]}/i) || params[:search_string].blank?) && params[:exclude] != "Malawi"
+      countries = [malawi.name] + countries
+    end
+
+    render :text => ([""] + countries.uniq)#.collect { |c| "<li>#{c}" }.join("</li>")+"</li>"
 
   end
 

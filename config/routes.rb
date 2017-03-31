@@ -112,6 +112,8 @@ Rails.application.routes.draw do
 
   get '/nationalities' => "hq#nationalities"
 
+  get '/countries' => "hq#countries"
+
   get '/districts' => "hq#districts"
 
   get "/tas" => "hq#tas"
