@@ -44,7 +44,7 @@ gem 'aescrypt'
 
 gem 'sucker_punch', '~> 2.0'
 
-gem 'global_phone', :git => 'https://github.com/sstephenson/global_phone.git', :ref => 'dd0894061f58479884e6cfa2d00382542dc77d5a'
+gem 'global_phone' #, :git => 'https://github.com/sstephenson/global_phone.git', :ref => 'dd0894061f58479884e6cfa2d00382542dc77d5a'
 gem 'global_phone_dbgen'
 
 # Use ActiveModel has_secure_password

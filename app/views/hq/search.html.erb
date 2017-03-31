@@ -111,6 +111,42 @@
         max-width: 350px;
         margin: auto;
     }
+
+    input[type="checkbox"] {
+        display: none;
+    }
+    label {
+        cursor: pointer;
+    }
+
+    input[type='checkbox']  + label:before {
+        border: 1px solid #7f83a2;
+        content: "\00a0";
+        display: inline-block;
+        font: 20px/1em sans-serif;
+        height: 20px;
+        margin: 0 .25em 0 0;
+        padding: 6;
+        vertical-align: middle;
+        width: 20px;
+    }
+
+    input[type="checkbox"]:checked + label:before {
+        background: dodgerblue;
+        color: white;
+        content: "\2713";
+        text-align: center;
+    }
+    input[type="checkbox"]:checked + label:after {
+        font-weight: bold;
+    }
+
+    .panel table{
+        display: none;
+    }
+    .panel table label{
+        font-weight: normal !important;
+    }
 </style>
 <table class="search-criteria-table" style="width: 99.5%;background: white;padding: 0px; margin:0px;">
     <tr>
@@ -215,7 +251,7 @@
 
                       <div class="panel panel-default" style="border: 1px solid gray">
                         <div class="panel-heading ">
-                          <input type="checkbox" name="checkbox" id="deceased" onmousedown="enableControls('details_of_deceased')">
+                          <input type="checkbox" name="details_of_deceased" id="deceased" onchange="enableControls('details_of_deceased')">
                           <label for="deceased">
                             By Personal Details of Deceased
                           </label>
@@ -252,7 +288,7 @@
 
                 <div class="panel panel-default" style="border: 1px solid gray">
                   <div class="panel-heading ">
-                    <input type="checkbox" name="checkbox" id="home"  onmousedown="enableControls('home_address')">
+                    <input type="checkbox" name="home_address" id="home"  onchange="enableControls('home_address')">
                     <label for="home">
                       By Home Address
                     </label>
@@ -297,303 +333,197 @@
                         </td>
                       </tr>
                     </table>
+                </div>
+
+                <div class="panel panel-default" style="border: 1px solid gray">
+                  <div class="panel-heading">
+                    <input type="checkbox" name="mother" id="mother"  onchange="enableControls('mother_name')">
+                    <label for="mother">
+                      By Name of Mother
+                    </label>
                   </div>
 
-                    <div id="mother_radio"  class="radio radio-primary" onmousedown="showControls('mother')">
-                      <input type="radio" name="radio" id="radio5">
-                      <label for="radio5">
-                        By Name of Mother
-                      </label>
-                    </div>
+                  <table id="mother_name"  class="table  table-condensed table-bordered" >
+                    <tr>
+                      <td style="width: 50%;">
+                        <div class="form-group">
+                          <label for="mother_first_name">Mother First Name </label>
+                          <input name="mother_first_name" id="mother_first_name" class="form-control" type="text" />
+                        </div>
+                      </td>
+                      <td style="width: 50%;">
+                        <div class="form-group">
+                          <label for="mother_last_name">Mother Last Name </label>
+                          <input name="mother_last_name" id="mother_last_name" class="form-control" type="text" />
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
 
-                    <div id="father_radio"  class="radio radio-primary" onmousedown="showControls('father')">
-                      <input type="radio" name="radio" id="radio6">
-                      <label for="radio6">
-                        By Name of Father
-                      </label>
-                    </div>
+                <div class="panel panel-default" style="border: 1px solid gray">
+                  <div class="panel-heading">
+                    <input type="checkbox" name="father" id="father"  onchange="enableControls('father_name')">
+                    <label for="father">
+                      By Name of Father
+                    </label>
+                  </div>
 
-                    <div id="informant_radio"  class="radio radio-primary" onmousedown="showControls('informant_name')">
-                      <input type="radio" name="radio" id="radio7">
-                      <label for="radio7">
-                        By Name Informant
-                      </label>
-                    </div>
+                  <table id="father_name"  class="table  table-condensed table-bordered" >
+                    <tr>
+                      <td style="width: 50%;">
+                        <div class="form-group">
+                          <label for="father_first_name">Father First Name </label>
+                          <input name="father_first_name" id="father_first_name" class="form-control" type="text" />
+                        </div>
+                      </td>
+                      <td style="width: 50%;">
+                        <div class="form-group">
+                          <label for="father_last_name">Father Last Name </label>
+                          <input name="father_last_name" id="father_last_name" class="form-control" type="text" />
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
 
-                    <div id="informant_address_radio"  class="radio radio-primary" onmousedown="showControls('informant_address')">
-                      <input type="radio" name="radio" id="radio8">
-                      <label for="radio8">
+                <div class="panel panel-default" style="border: 1px solid gray">
+                  <div class="panel-heading">
+                    <input type="checkbox" name="informant" id="informant_name_input"  onchange="enableControls('informant_name')">
+                    <label for="informant_name_input">
+                      By Name of Informant
+                    </label>
+                  </div>
+
+                  <table id="informant_name"  class="table  table-condensed table-bordered" >
+                    <tr>
+                      <td style="width: 50%;">
+                        <div class="form-group">
+                          <label for="informant_first_name">Informant First Name </label>
+                          <input name="informant_first_name" id="informant_first_name" class="form-control" type="text" />
+                        </div>
+                      </td>
+                      <td style="width: 50%;">
+                        <div class="form-group">
+                          <label for="informant_last_name">Informant Last Name </label>
+                          <input name="informant_last_name" id="informant_last_name" class="form-control" type="text" />
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div class="panel panel-default" style="border: 1px solid gray">
+                    <div class="panel-heading">
+                      <input type="checkbox" name="informant_address" id="informant_address_input"  onchange="enableControls('informant_address')">
+                      <label for="informant_address_input">
                         By Informant Address
                       </label>
                     </div>
 
-                    <div id="place_of_death_radio"  class="radio radio-primary" onmousedown="showControls('place_of_death')">
-                      <input type="radio" name="radio" id="radio9">
-                      <label for="radio9">
-                        By Place of death
+                    <table id="informant_address"  class="table  table-condensed table-bordered" >
+                      <tr>
+                        <td style="width: 50%;">
+                          <div class="form-group">
+                            <label for="informant_current_district">Informant Current District of Residence</label>
+                            <select name="informant_current_district" id="informant_current_district"
+                                    onchange="ajaxify('/tas?district={informant_current_district}', 'informant_current_ta', ['informant_current_ta', 'informant_current_village'])" class="form-control conditional" type="text" >
+                            </select>
+                          </div>
+                        </td>
+                        <td style="width: 50%;">
+                          <div class="form-group">
+                            <label for="informant_current_ta">Informant TA of Residence</label>
+                            <select name="informant_current_ta" id="informant_current_ta"
+                                    onchange="ajaxify('/villages?district={informant_current_district}&ta={informant_current_ta}', 'informant_current_village', ['informant_current_village'])" class="form-control conditional" type="text" >
+                            </select>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 50%;">
+                          <div class="form-group">
+                            <label for="informant_current_village">Informant Village of Residence</label>
+                            <select name="informant_current_village" id="informant_current_village" class="form-control" type="text">
+                            </select>
+                          </div>
+                        </td>
+                        <td style="width: 50%;">
+                        </td>
+                      </tr>
+
+                    </table>
+                </div>
+
+                  <div class="panel panel-default" style="border: 1px solid gray">
+                    <div class="panel-heading">
+                      <input type="checkbox" name="place_death" id="place_of_death_input"  onchange="enableControls('place_of_death')">
+                      <label for="place_of_death_input">
+                        By Place of Death
                       </label>
                     </div>
+
+                    <table id="place_of_death"  class="table  table-condensed table-bordered" >
+                      <tr>
+                        <td style="width: 50%;">
+                          <div class="form-group">
+                            <label for="filter">Place of Death</label>
+                            <select name="place_of_death" id="place" class="form-control">
+                              <option value=""></option>
+                              <option>Home</option>
+                              <option>Hospital/Institution</option>
+                              <option>Other</option>
+
+                            </select>
+                          </div>
+                        </td>
+                        <td style="width: 50%;">
+                          <div class="form-group">
+                            <label for="place_of_death_district">District of Death</label>
+                            <input name="place_of_death_district" id="place_of_death_district" class="form-control" type="text" />
+                          </div>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td style="width: 50%;">
+                          <div class="form-group">
+                            <label for="place_of_death_ta">TA of Death</label>
+                            <input name="place_of_death_ta" id="place_of_death_ta" class="form-control" type="text" />
+                          </div>
+                        </td>
+                        <td style="width: 50%;">
+                          <div class="form-group">
+                            <label for="place_of_death_village">Village of Death</label>
+                            <input name="place_of_death_village" id="place_of_death_village" class="form-control" type="text" />
+                          </div>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td style="width: 50%;">
+                          <div class="form-group">
+                            <label for="hospital_of_death">Hospital of Death</label>
+                            <input name="hospital_of_death" id="hospital_of_death" class="form-control" type="text" />
+                          </div>
+                        </td>
+                        <td style="width: 50%;">
+                          <div class="form-group">
+                            <label for="other_place_of_death">Other Place of Death</label>
+                            <input name="other_place_of_death" id="other_place_of_death" class="form-control" type="text" />
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
                   </td>
                 </tr>
               </table>
 
-
-
-              <div class="form-group">
-                <label for="mother_first_name">Mother First Name </label>
-                <input name="mother_first_name" id="mother_first_name" class="form-control" type="text" />
-              </div>
-
-              <div class="form-group">
-                <label for="mother_last_name">Mother Last Name </label>
-                <input name="mother_last_name" id="mother_last_name" class="form-control" type="text" />
-              </div>
-
-
-              <div class="form-group">
-                <label for="informant_first_name">Informant First Name </label>
-                <input name="informant_first_name" id="informant_first_name" class="form-control" type="text" />
-              </div>
-
-              <div class="form-group">
-                <label for="informant_last_name">Informant Last Name </label>
-                <input name="informant_last_name" id="informant_last_name" class="form-control" type="text" />
-              </div>
-
-
-
-              <div class="form-group">
-                <label for="filter">Place of Death</label>
-                <select name="gender" id="gender" class="form-control">
-                  <option value=""></option>
-                  <option>Home</option>
-                  <option>Hospital/Institution</option>
-                  <option>Other</option>
-
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="place_of_death_district">District of Death</label>
-                <input name="place_of_death_district" id="place_of_death_district" class="form-control" type="text" />
-              </div>
-
-              <div class="form-group">
-                <label for="place_of_death_ta">TA of Death</label>
-                <input name="place_of_death_ta" id="place_of_death_ta" class="form-control" type="text" />
-              </div>
-
-              <div class="form-group">
-                <label for="village_of_death">Village of Death</label>
-                <input name="village_of_death" id="village_of_death" class="form-control" type="text" />
-              </div>
-
-              <div class="form-group">
-                <label for="place_of_death_hospital">Hospital of Death</label>
-                <input name="place_of_death_hospital" id="place_of_death_hospital" class="form-control" type="text" />
-              </div>
-
-
-              <div class="form-group">
-                <label for="other_place_of_death">Other Place of Death</label>
-                <input name="other_place_of_death" id="other_place_of_death" class="form-control" type="text" />
-              </div>
-
-
-              <div class="form-group">
-                <label for="informant_district">Informant Current District of Residence</label>
-                <select name="informant_district" id="informant_district"
-                        onchange="ajaxify('/tas?district={informant_district}', 'informant_ta', ['informant_ta', 'informant_village'])" class="form-control conditional" type="text" >
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="informant_ta">Informant TA of Residence</label>
-                <select name="informant_ta" id="informant_ta"
-                        onchange="ajaxify('/villages?district={informant_district}&ta={informant_ta}', 'informant_village', ['informant_village'])" class="form-control conditional" type="text" >
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="informant_village">Informant Village of Residence</label>
-                <select name="informant_village" id="informant_village" class="form-control" type="text">
-                </select>
-              </div>
-
-
-              <button type="submit" class="btn btn-primary pull-right"><span class="fa fa-search"  aria-hidden="true"></span></button>
+              <button type="submit" class="btn btn-primary pull-right"
+                style ="margin: 10px;"><span class="fa fa-search"  aria-hidden="true"></span></button>
             </form>
           </div>
-
-          <div class="container custom" id="mother">
-            <form class="form-horizontal" role="form" action="/do_search">
-              <input name="search_type" value="mother" type="hidden" type="text" />
-              <div class="form-group">
-                <label for="mother_first_name">Mother First Name </label>
-                <input name="mother_first_name" id="mother_first_name" class="form-control" type="text" />
-              </div>
-
-              <div class="form-group">
-                <label for="mother_last_name">Mother Last Name </label>
-                <input name="mother_last_name" id="mother_last_name" class="form-control" type="text" />
-              </div>
-
-              <div class="form-group">
-                <label for="father_first_name">Father First Name </label>
-                <input name="father_first_name" id="father_first_name" class="form-control" type="text" />
-              </div>
-
-              <div class="form-group">
-                <label for="father_last_name">Father Last Name </label>
-                <input name="father_last_name" id="father_last_name" class="form-control" type="text" />
-              </div>
-
-              <button type="submit" class="btn btn-primary pull-right"><span class="fa fa-search"  aria-hidden="true"></span></button>
-            </form>
-          </div>
-
-          <div class="container custom" id="informant_name">
-            <form class="form-horizontal" role="form" action="/do_search">
-              <input name="search_type" value="informant_name" type="hidden" type="text" />
-              <div class="form-group">
-                <label for="informant_first_name">Informant First Name </label>
-                <input name="informant_first_name" id="informant_first_name" class="form-control" type="text" />
-              </div>
-
-              <div class="form-group">
-                <label for="informant_last_name">Informant Last Name </label>
-                <input name="informant_last_name" id="informant_last_name" class="form-control" type="text" />
-              </div>
-
-              <button type="submit" class="btn btn-primary pull-right"><span class="fa fa-search"  aria-hidden="true"></span></button>
-            </form>
-          </div>
-
-
-          <div class="container custom" id="father">
-            <form class="form-horizontal" role="form" action="/do_search">
-              <input name="search_type" value="father" type="hidden" type="text" />
-              <div class="form-group">
-                <label for="father_first_name">Father First Name </label>
-                <input name="father_first_name" id="father_first_name" class="form-control" type="text" />
-              </div>
-
-              <div class="form-group">
-                <label for="father_last_name">Father Last Name </label>
-                <input name="father_last_name" id="father_last_name" class="form-control" type="text" />
-              </div>
-
-              <button type="submit" class="btn btn-primary pull-right"><span class="fa fa-search"  aria-hidden="true"></span></button>
-            </form>
-          </div>
-
-          <div class="container custom" id="home_address">
-            <form class="form-horizontal" role="form" action="/do_search">
-              <input name="search_type" value="home_address" type="hidden" type="text" />
-              <div class="form-group">
-                <label for="home_country">Home Country</label>
-                    <select name="home_country" id="home_country" onchange="ajaxify('/districts', 'home_district', ['home_district', 'home_ta', 'home_village'])" class="form-control" type="text" >
-                    </select>
-              </div>
-
-              <div class="form-group">
-                <label for="home_district">Home District</label>
-                <select name="home_district" id="home_district"
-                        onchange="ajaxify('/tas?district={home_district}', 'home_ta', ['home_ta', 'home_village'])" class="form-control conditional" type="text" >
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="home_ta">Home TA</label>
-                <select name="home_ta" id="home_ta"
-                        onchange="ajaxify('/villages?ta={home_ta}&district={home_district}', 'home_village', ['home_village'])" class="form-control conditional" type="text">
-
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="home_village">Home Village</label>
-                <select name="home_village" id="home_village" class="form-control conditional" type="text">
-
-                </select>
-              </div>
-              <button type="submit" class="btn btn-primary pull-right"><span class="fa fa-search"  aria-hidden="true"></span></button>
-            </form>
-          </div>
-
-          <div class="container custom" id="place_of_death">
-            <form class="form-horizontal" role="form" action="/do_search">
-              <input name="search_type" value="place_of_death" type="hidden" type="text" />
-
-              <div class="form-group">
-                <label for="filter">Place of Death</label>
-                <select name="gender" id="gender" class="form-control">
-                  <option value=""></option>
-                  <option>Home</option>
-                  <option>Hospital/Institution</option>
-                  <option>Other</option>
-
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="place_of_death_district">District of Death</label>
-                <input name="place_of_death_district" id="place_of_death_district" class="form-control" type="text" />
-              </div>
-
-              <div class="form-group">
-                <label for="place_of_death_ta">TA of Death</label>
-                <input name="place_of_death_ta" id="place_of_death_ta" class="form-control" type="text" />
-              </div>
-
-              <div class="form-group">
-                <label for="village_of_death">Village of Death</label>
-                <input name="village_of_death" id="village_of_death" class="form-control" type="text" />
-              </div>
-
-              <div class="form-group">
-                <label for="place_of_death_hospital">Hospital of Death</label>
-                <input name="place_of_death_hospital" id="place_of_death_hospital" class="form-control" type="text" />
-              </div>
-
-
-              <div class="form-group">
-                <label for="other_place_of_death">Other Place of Death</label>
-                <input name="other_place_of_death" id="other_place_of_death" class="form-control" type="text" />
-              </div>
-
-              <button type="submit" class="btn btn-primary pull-right"><span class="fa fa-search" aria-hidden="true"></span></button>
-            </form>
-          </div>
-
-
-          <div class="container custom" id="informant_address">
-            <form class="form-horizontal" role="form" action="/do_search">
-              <input name="search_type" value=informant_address type="hidden" type="text" />
-
-              <div class="form-group">
-                <label for="informant_district">Informant Current District of Residence</label>
-                <select name="informant_district" id="informant_district"
-                        onchange="ajaxify('/tas?district={informant_district}', 'informant_ta', ['informant_ta', 'informant_village'])" class="form-control conditional" type="text" >
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="informant_ta">Informant TA of Residence</label>
-                <select name="informant_ta" id="informant_ta"
-                        onchange="ajaxify('/villages?district={informant_district}&ta={informant_ta}', 'informant_village', ['informant_village'])" class="form-control conditional" type="text" >
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="informant_village">Informant Village of Residence</label>
-                <select name="informant_village" id="informant_village" class="form-control" type="text">
-                </select>
-              </div>
-              <button type="submit" class="btn btn-primary pull-right"><span class="fa fa-search"  aria-hidden="true"></span></button>
-            </form>
-          </div>
-
     </td>
 </tr>
 </table>
@@ -610,7 +540,6 @@
   }
 
  function ajaxify(url, id, clear_arr){
-
       if (url.match(/{(.*?)}/)){
           url = url.replace(/{(.*?)}/, __$(url.match(/{(.*?)}/)[1]).value);
           if (url.match(/{(.*?)}/)){
@@ -643,13 +572,13 @@
       )
   }
 
-  ajaxify("/nationalities", 'home_country', ["home_district", "home_ta", "home_village"])
-  ajaxify("/districts", 'informant_district', ["informant_district", "informant_ta", "informant_village"])
+  ajaxify("/countries", 'home_country', ["home_district", "home_ta", "home_village"])
+  ajaxify("/districts", 'informant_current_district', ["informant_current_district", "informant_current_ta", "informant_current_village"])
 
   var h = {
-      "home_district" : ['home_country', 'Malawian'],
-      "home_ta" : ['home_country', 'Malawian'],
-      "home_village" : ['home_country', 'Malawian']
+      "home_district" : ['home_country', 'Malawi'],
+      "home_ta" : ['home_country', 'Malawi'],
+      "home_village" : ['home_country', 'Malawi']
   }
 
   function checkConditions() {
@@ -665,6 +594,16 @@
           }else{
               node.removeAttribute('disabled');
           }
+      }
+  }
+
+  function enableControls(id){
+      jQuery("#" + id + " input").val("");
+      jQuery("#" + id + " select").val("");
+      if(jQuery("#" + id).is(":visible")){
+          jQuery("#" + id).hide();
+      }else{
+          jQuery("#" + id).show();
       }
   }
 
