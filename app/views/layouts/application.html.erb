@@ -18,6 +18,44 @@
     window.addEventListener('popstate', function(event) {
       history.pushState(null, null, null);
     })
+
+    Object.defineProperty(Date.prototype, "format", {
+       value: function (format) {
+               var date = this;
+               var result = "";
+
+               if (!format) {
+
+                            format = ""
+
+               }
+
+                var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September",
+                            "October", "November", "December"];
+
+                if (format.match(/YYYY\-mm\-dd/)) {
+
+                            result = date.getFullYear() + "-" + padZeros((parseInt(date.getMonth()) + 1), 2) + "-" + padZeros(date.getDate(), 2);
+
+                } else if (format.match(/mmm\/d\/YYYY/)) {
+
+                            result = months[parseInt(date.getMonth())] + "/" + date.getDate() + "/" + date.getFullYear();
+
+                } else if (format.match(/d\smmmm,\sYYYY/)) {
+
+                            result = date.getDate() + " " + monthNames[parseInt(date.getMonth())] + ", " + date.getFullYear();
+
+                } else {
+
+                            result = date.getDate() + "/" + months[parseInt(date.getMonth())] + "/" + date.getFullYear();
+
+                }
+
+                        return result;
+               }
+    });
   </script> 
 
     <!-- Bootstrap CSS -->    
@@ -46,7 +84,8 @@
         -webkit-user-select: none;  /* Chrome all / Safari all */
         -moz-user-select: none;     /* Firefox all */
         -ms-user-select: none;      /* IE 10+ */
-        user-select: none;          /* Likely future */      
+        user-select: none;          /* Likely future */   
+        color:#394a59 !important;   
       }
 
       
@@ -91,7 +130,7 @@
       label{
         font-weight: 600;
         color:  #2d2c2c;
-     }
+      }
      input{
        color: #222121;
      }
@@ -112,21 +151,25 @@
       cursor:pointer;
       box-shadow: 5px 5px 2.5px #888888;
       text-align: center; 
-      background-color:#f7f8f9;
+      background-color:#ffffff;
       border: 1px solid #d1d1d1;
       padding: 1em;
     }
     #main{
       width: 100%;
-      background: #ffffff;
+      background: #f8f8ff;
       margin-top: 10px !important;
       min-height: 553px;
       box-shadow: 1.5px 1.5px 1px #888888;
-      border: 1px solid #f0f0f0;
+      border: 1px solid #efeff2;
+      border-top: 2px solid darkgoldenrod;
     }
+    
     #main h3{
         margin-left: 1%;
+        font-family: Arial, Helvetica, sans-serif;
     }
+
     </style>
 
   </head>
@@ -451,7 +494,7 @@
                     <li class="">
                       <a href="/amendment_cases_tasks" class="">
                           <i class="icon_document_alt"></i>
-                          <span>Amendment cases</span>
+                          <span>Amendments</span>
                       </a>
                   </li>  
                   <%end%>
@@ -510,7 +553,9 @@
                           <span class="menu-arrow arrow_carrot-right"></span>
                       </a>
                       <ul class="sub">
+                       <% if has_role("Create User") %>
                           <li><a class="" href="/settings">Settings</a></li>
+                        <%end%>
                           <li><a class="" href="/my_account">My account</a></li>
                       </ul>
                   </li>
@@ -554,7 +599,6 @@
                 <link href="/assets/DataTables/jquery.dataTables.css" rel="stylesheet">
                 <link href="/assets/DataTables/demo_table_jui.css" rel="stylesheet">
                 <link href="/assets/DataTables/demo_page.css" rel="stylesheet">
-
                 <link href="/assets/DataTables/jquery-ui.css" rel="stylesheet">
 
               <%end%>

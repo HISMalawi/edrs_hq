@@ -2,12 +2,18 @@
 		form{
 			margin: auto;
 			background: #ffffff;
+			color: #344351;
 		}
 		fieldset{
 			width: 96%;
 			margin:auto;
 		}
-
+		input, select ,option{
+	        color:#1a2732 !important;
+	    }
+	    label{
+	    	color: #344351;
+	    }
 </style>
 <%= form_for @user, :url => '/users/create' ,:method => :post, :html => {:class => "form-horizontal",:role=>"form"} do |f| %>
 	<fieldset>

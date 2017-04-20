@@ -117,11 +117,12 @@
     }
 
     .form-group{
-        border: 1px dotted lightblue;
+        border: 1px solid lightgray;
         padding: 3px;
         padding-bottom: 7px;
         padding-left: 15px;
-        background: #dfeafd;
+        border-radius: 2px;
+        background: #eeeeee;
     }
 
     .form-control{
@@ -446,7 +447,7 @@
                <div class="form-group">
                <div class="col-lg-12 col-md-12">
                       <label for="cause_of_death1">Cause of Death 1 </label>
-                      <select name="cause_of_death1" id="cause_of_death1" load="<%= @person.cause_of_death1%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,1)" >
+                      <select name="cause_of_death1" id="cause_of_death1" load="<%= @person.cause_of_death1 rescue (@person.other_cause_of_death1 rescue '')%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,1)" >
                       </select>
                </div>
                  <div class="col-md-6">
@@ -469,7 +470,7 @@
               <div class="form-group">
                 <div class="col-lg-12 col-md-12">
                     <label for="">Cause of Death 2 </label>
-                     <select name="cause_of_death2" id="cause_of_death2" load="<%= @person.cause_of_death2%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,2)">
+                     <select name="cause_of_death2" id="cause_of_death2" load="<%= @person.cause_of_death2 rescue (@person.other_cause_of_death2 rescue '')%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,2)">
                       <option value=""></option>
                     </select>
                 </div>
@@ -493,7 +494,7 @@
               <div class="form-group">
                 <div class="col-lg-12 col-md-12">
                     <label for="">Cause of Death 3</label>
-                     <select name="cause_of_death3" id="cause_of_death3" load="<%= @person.cause_of_death3%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,3)">
+                     <select name="cause_of_death3" id="cause_of_death3" load="<%= @person.cause_of_death3 rescue (@person.other_cause_of_death3 rescue '')%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,3)">
                       <option value=""></option>
                     </select>
                 </div>
@@ -634,8 +635,7 @@
               <div onclick="hit('icd_10_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
           </div>
            <div id="icd_10" class="container custom" style="display: none;" disabled="true">
-                <div class="form-group">
-                      <table style="width:80%; margin:auto">
+                      <table style="width:100%; margin:auto; margin-bottom: 5%" >
                             <thead>
                               <tr>
                                   <th colspan="2">Person's sex,other details and cause of death</th>
@@ -664,8 +664,6 @@
                                   
                              </tbody>
                       </table>
-                </div>
-
                 <div class="form-group">
                   <label for="icd_10_code">ICD-10 Code</label>
                   <input name="icd_10_code" id="icd_10_code" value="<%= @person.icd_10_code%>" class="form-control" type="text" />
@@ -681,102 +679,65 @@
 </tr>
 </table>
 <div id="shield">
-      <div id="number_field" class="messagebox">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header btn-primary" >
-        <button type="button" class="close"  onclick="$('#shield').css('display','none');$('#number_field').css('display','none')">
-          <span aria-hidden="true">&times;</span>
-          <span class="sr-only">Close</span>
-        </button>
-        <h4 class="modal-title">Field validation</h4>
-      </div>
-      <div class="modal-body">
+    <div id="number_field" class="messagebox">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header btn-primary" >
+              <button type="button" class="close"  onclick="$('#shield').css('display','none');$('#number_field').css('display','none')">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title">Field validation</h4>
+            </div>
+            <div class="modal-body">
 
-        <div class="row">
-          <div class="col-lg-12">
-              Field is for numbers only
+              <div class="row">
+                <div class="col-lg-12">
+                    Field is for numbers only
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" onclick="$('#shield').css('display','none');$('#number_field').css('display', 'none')" > Close</button>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" onclick="$('#shield').css('display','none');$('#number_field').css('display', 'none')" > Close</button>
+        </div>
+      </div>
+
+    <div id="messagebox" class="messagebox" >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header btn-primary" >
+            <button type="button" class="close"  onclick="$('#shield').css('display','none');$('#messagebox').css('display','none')">
+              <span aria-hidden="true">&times;</span>
+              <span class="sr-only">Close</span>
+            </button>
+            <h4 class="modal-title" id="title">Title</h4>
+          </div>
+          <div class="modal-body">
+
+            <div class="row">
+              <div class="col-lg-12" id="message">
+                  Message...
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" onclick="$('#shield').css('display','none');$('#messagebox').css('display', 'none')" > Close</button>
+                <button id="finish" class="btn btn-success pull-right" onclick="hideMessage()">Finish</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-
-<div id="messagebox" class="messagebox" >
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header btn-primary" >
-        <button type="button" class="close"  onclick="$('#shield').css('display','none');$('#messagebox').css('display','none')">
-          <span aria-hidden="true">&times;</span>
-          <span class="sr-only">Close</span>
-        </button>
-        <h4 class="modal-title" id="title">Title</h4>
-      </div>
-      <div class="modal-body">
-
-        <div class="row">
-          <div class="col-lg-12" id="message">
-              Message...
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default pull-left" onclick="$('#shield').css('display','none');$('#messagebox').css('display', 'none')" > Close</button>
-            <button id="finish" class="btn btn-success pull-right" onclick="hideMessage()">Finish</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 </div>
 <script src="assets/jquery-ui/jquery-ui.min.js"></script>
 <script src="/select2/select2.full.min.js"></script>
 <script>
-    Object.defineProperty(Date.prototype, "format", {
-       value: function (format) {
-               var date = this;
-               var result = "";
-
-               if (!format) {
-
-                            format = ""
-
-               }
-
-                var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-                var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September",
-                            "October", "November", "December"];
-
-                if (format.match(/YYYY\-mm\-dd/)) {
-
-                            result = date.getFullYear() + "-" + padZeros((parseInt(date.getMonth()) + 1), 2) + "-" + padZeros(date.getDate(), 2);
-
-                } else if (format.match(/mmm\/d\/YYYY/)) {
-
-                            result = months[parseInt(date.getMonth())] + "/" + date.getDate() + "/" + date.getFullYear();
-
-                } else if (format.match(/d\smmmm,\sYYYY/)) {
-
-                            result = date.getDate() + " " + monthNames[parseInt(date.getMonth())] + ", " + date.getFullYear();
-
-                } else {
-
-                            result = date.getDate() + "/" + months[parseInt(date.getMonth())] + "/" + date.getFullYear();
-
-                }
-
-                        return result;
-               }
-    });
     function showControls(id){
 
         var target = $("#"+id);
         if(target.attr('disabled')){
-           alert(id);
+           //alert(id);
         }else{
           $(".custom").hide();
           $("#" + id).show();

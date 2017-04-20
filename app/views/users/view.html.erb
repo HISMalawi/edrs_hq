@@ -10,17 +10,23 @@
     }
     #user_table th{
         color: #ffffff;
-        background: #1a2732;
+        background: #344351;
+        padding: 0.5em;
         padding-left: 2%;
-        font-size: 1.1em !important;
+        font-size: 1em !important;
+        border: 1px solid #344351;
     }
     #user_table td{
-        border: 1px solid black;
+        border: 1px solid #344351;
         color:#1a2732;
         padding-left: 2%;
     }
 </style>
-
+<script src="/assets/DataTables/jquery.dataTables.js"></script>
+<link href="/assets/DataTables/jquery.dataTables.css" rel="stylesheet">
+<link href="/assets/DataTables/demo_table_jui.css" rel="stylesheet">
+<link href="/assets/DataTables/demo_page.css" rel="stylesheet">
+<link href="/assets/DataTables/jquery-ui.css" rel="stylesheet">
 <table width="100%" id="user_table">
   <tr>
     <th>Name</th>
@@ -35,10 +41,10 @@
            <td><%= user.username%></td>
            <td><%= user.role%></td>
            <%if user.active%>
-                <td><i class="fa fa-check"></i></td>
+                <td style="text-align:center"><i class="fa fa-check" style="color:green"></i></td>
                 <td><button class="btn btn-danger">Block</button></td>
            <%else%>
-                <td><i class="fa fa-ban"></i></td>
+                <td style="text-align:center; color:red"><i class="fa fa-ban"></i></td>
                 <td><button class="btn btn-primary">Unblock</button></td>
            <%end%>
     </tr>
@@ -49,7 +55,7 @@
 
 <script>
     $(document).ready(function(){
-         $('#user_table').dataTable();
+        
     });
 
 </script>

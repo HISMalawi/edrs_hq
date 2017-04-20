@@ -176,14 +176,21 @@ class HqController < ApplicationController
     end
     #tobe revised
     params[:cause_of_death_conditions] = params[:cause_of_death_conditions].join(",").to_s
+   
+    diagnosis_list = CSV.foreach("#{Rails.root}/app/assets/data/diagnoses_csv.csv", :headers => false).collect{|row| row[1] unless row[1].blank?}
 
-    @person.keys.each do |k|
-      if params.keys.include?(k)
-        @person[k] = params[k]
+    params.keys.each do |k|
+      if k.include?("cause_of_death") && k !='cause_of_death_available'
+        if diagnosis_list.include?(params[k]) 
+
+        else
+
+            params["other_#{k}"] = params[k] 
+            params[k] = nil
+        end
       end
     end
-    @person.cause_of_death_available = "Yes"
-    @person.save
+    @person.update_attributes(params)
 
     flash[:success] = "Record updated successfully"
     redirect_to "/search?person_id=#{params[:person_id]}"
@@ -198,7 +205,7 @@ class HqController < ApplicationController
 
   def cause_of_death_preview
     @person = Person.find(params[:person_id])
-    @person = sec_to_readable(@person)
+    @person = to_readable(@person)
   end
   
   def print_preview
@@ -742,6 +749,10 @@ class HqController < ApplicationController
       @tasks << ['Confirmed Duplicates','Confirmed duplicates','','']
       @tasks << ['Approved for Printing','All potential duplicates that were approved and printed by DS, Option to view comments','','']
     end
+    if has_role("Reject a record")
+       @tasks << ['Resolve Duplicates','Records marked as potential duplicates','','']
+       @tasks << ['Approved for Printing','All potential duplicates that were approved and printed by DS, Option to view comments','','']
+    end
     @section ="Duplicate Cases"
     render :template => "/hq/tasks"
   end
@@ -805,8 +816,11 @@ class HqController < ApplicationController
     return @tasks
   end
 
-  def sec_to_readable(person)
+  def to_readable(person)
     (1..4).each do |i|
+      if person["cause_of_death#{i}"].blank?
+        person["cause_of_death#{i}"] = (person["other_cause_of_death#{i}"] rescue "")
+      end
       secs = person["onset_death_interval#{i}"].to_i
       time_to_string = [[60, :second], [60, :minute], [24, :hour], [365, :day],[1000, :year]].map{ |count, name|
         if secs > 0

@@ -16,10 +16,10 @@ class GenerateStats
   			start_date = beginning
   			end_date = beginning.end_of_month
   			registered << Person.by_created_at.startkey(start_date).endkey(end_date).each.count
-  			approved << PersonRecordStatus.by_status_and_created_at.startkey(["DC APPROVED",start_date.strftime("%Y-%m-%dT00:00:000Z")]).endkey(["DC APPROVED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
+  			approved << PersonRecordStatus.by_status_and_created_at.startkey(["DC APPROVED",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey(["DC APPROVED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
         
-        closed  = PersonRecordStatus.by_status_and_created_at.startkey(["HQ CLOSED",start_date.strftime("%Y-%m-%dT00:00:000Z")]).endkey(["HQ CLOSED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
-  			dispatched = PersonRecordStatus.by_status_and_created_at.startkey(["HQ DISPATCHED",start_date.strftime("%Y-%m-%dT00:00:000Z")]).endkey(["HQ DISPATCHED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
+        closed  = PersonRecordStatus.by_status_and_created_at.startkey(["HQ CLOSED",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey(["HQ CLOSED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
+  			dispatched = PersonRecordStatus.by_status_and_created_at.startkey(["HQ DISPATCHED",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey(["HQ DISPATCHED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
         
         printed << closed.to_i + dispatched.to_i
   			beginning = beginning + 1.months
@@ -39,7 +39,7 @@ class GenerateStats
       cummulatives["Printed"] = PersonRecordStatus.by_record_status.key("HQ CLOSED").each.count rescue 0
       cummulatives["Printed and dispatched"] =  PersonRecordStatus.by_record_status.keys(["HQ CLOSED","HQ DISPATCHED"]).each.count rescue 0
       stats[:cummulative] = cummulatives;
-      puts "Stats generated :)::::::::::::::)::::::::::::::)::::::::::::::):::::::::::::)::::::::::::::::::::)"
+      #puts "Stats generated :)::::::::::::::)::::::::::::::)::::::::::::::):::::::::::::)::::::::::::::::::::)"
   		if newfile
   			 newfile.syswrite(stats.to_json)
   		else
