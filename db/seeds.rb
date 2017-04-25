@@ -61,6 +61,45 @@ roles = {
             "View sync report"
         ]
     },
+     "Remote" => {
+        "Data Clerk" => [
+            "Register a record",
+            "View a record",
+            "Change own password"
+        ],
+        "Logistics Officer" => [
+            "Register a record",
+            "View a record",
+            "Edit a record",
+            "Check completeness",
+            "Check for duplicates",
+            "View closed cases",
+            "Change own password"
+        ],
+        "ADR" => [
+            "View a record",
+            "Edit a record",
+            "Check completeness",
+            "Manage duplicates",
+            "Approve a record",
+            "Void a record",
+            "Request to open a closed case",
+            "View closed cases",
+            "Change own password"
+        ],
+        "System Administrator" => [
+            "Activate User",
+            "Deactivate User",
+            "Create User",
+            "Update User",
+            "Void outstanding records",
+            "Change own password",
+            "View voided records",
+            "Initialise Sync",
+            "View audit report",
+            "View sync report"
+        ]
+    },
     "HQ" => {
         "Coder" => [
             "Add cause of death"
