@@ -199,16 +199,7 @@ class CaseController < ApplicationController
     
     if ["HQ PRINT", "HQ REPRINT", "HQ APPROVED", "HQ REAPPROVED"].include?(next_status)
       drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([params[:person_id], "DEATH REGISTRATION NUMBER"]).last
-
       if drn.blank?
-        if PersonRecordStatus.nextstatus.present?
-           PersonRecordStatus.nextstatus[params[:person_id]] = next_status
-        else
-          PersonRecordStatus.nextstatus = {}
-          PersonRecordStatus.nextstatus[params[:person_id]] = next_status
-        end
-        PersonRecordStatus.change_status(Person.find(params[:person_id]),"MARKED HQ APPROVAL")
-
         last_run_time = File.mtime("#{Rails.root}/public/sentinel").to_time
         job_interval = CONFIG['ben_assignment_interval']
         job_interval = 1.5 if job_interval.blank?
@@ -218,7 +209,29 @@ class CaseController < ApplicationController
           AssignDrn.perform_in(1)
         end
 
-        render :text => "ok" and return
+        if PersonRecordStatus.nextstatus.present?
+           PersonRecordStatus.nextstatus[params[:person_id]] = next_status
+        else
+          PersonRecordStatus.nextstatus = {}
+          PersonRecordStatus.nextstatus[params[:person_id]] = next_status
+        end
+        potential_duplicate = potential_duplicate_full_text?(person)
+        ids = potential_duplicate.collect{|dup| dup[0] if dup[0] != params[:person_id]}
+        
+        if ids.blank?
+          PersonRecordStatus.change_status(Person.find(params[:person_id]),"MARKED HQ APPROVAL")
+          render :text => "ok" and return
+        else
+          change_log = [{:duplicates => ids.to_s}]
+          Audit.create({
+                        :record_id  => person.id.to_s,
+                        :audit_type => "POTENTIAL DUPLICATE",
+                        :reason     => "Record is a potential",
+                        :change_log => change_log
+          })
+          PersonRecordStatus.change_status(Person.find(params[:person_id]),"HQ POTENTIAL DUPLICATE")
+          render :text => "duplicate" and return
+        end
       end
     end
 
@@ -474,6 +487,14 @@ class CaseController < ApplicationController
   def view_cases
 
     @person = Person.find(params[:person_id])
+
+    title = "#{@person.first_name} #{@person.last_name}"
+    content =  format_content(@person)
+
+    query = "INSERT INTO documents(couchdb_id,title,content,date_added,created_at,updated_at) 
+              VALUES('#{@person.id}','#{title}','#{title} #{content}','#{@person.created_at}',NOW(),NOW())"
+
+    SQLSearch.query_exec(query)
 
     @statuses = [PersonRecordStatus.by_person_recent_status.key(@person.id).last.status]
 

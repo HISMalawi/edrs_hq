@@ -5,3 +5,4 @@ require "bantu_soundex"
 Rails.application.initialize!
 
 require "encryption"
+require "sql_search"
