@@ -216,7 +216,7 @@ class CaseController < ApplicationController
           PersonRecordStatus.nextstatus[params[:person_id]] = next_status
         end
         potential_duplicate = potential_duplicate_full_text?(person)
-        ids = potential_duplicate.collect{|dup| dup[0] if dup[0] != params[:person_id]}
+        ids = [] #potential_duplicate.collect{|dup| dup[0] if dup[0] != params[:person_id]}
         
         if ids.blank?
           PersonRecordStatus.change_status(Person.find(params[:person_id]),"MARKED HQ APPROVAL")
