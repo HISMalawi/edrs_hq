@@ -215,20 +215,27 @@ class CaseController < ApplicationController
           PersonRecordStatus.nextstatus = {}
           PersonRecordStatus.nextstatus[params[:person_id]] = next_status
         end
-        potential_duplicate = potential_duplicate_full_text?(person)
-        ids = [] #potential_duplicate.collect{|dup| dup[0] if dup[0] != params[:person_id]}
+        potential_duplicate =  potential_duplicate_full_text?(person)
         
-        if ids.blank?
+        if potential_duplicate.blank?
           PersonRecordStatus.change_status(Person.find(params[:person_id]),"MARKED HQ APPROVAL")
           render :text => "ok" and return
         else
+          existing = []
+          ids = []
+          duplicate.each do |dup| 
+            if dup[0] != params[:id]
+              existing << dup
+              ids << dup[0]
+            end
+          end
           change_log = [{:duplicates => ids.to_s}]
           Audit.create({
-                        :record_id  => person.id.to_s,
-                        :audit_type => "POTENTIAL DUPLICATE",
-                        :reason     => "Record is a potential",
-                        :change_log => change_log
-          })
+                      :record_id  => person.id.to_s,
+                      :audit_type => "POTENTIAL DUPLICATE",
+                      :reason     => "Record is a potential",
+                      :change_log => change_log
+             })
           PersonRecordStatus.change_status(Person.find(params[:person_id]),"HQ POTENTIAL DUPLICATE")
           render :text => "duplicate" and return
         end

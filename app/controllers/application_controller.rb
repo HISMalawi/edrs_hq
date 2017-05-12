@@ -50,7 +50,7 @@ class ApplicationController < ActionController::Base
      YAML.load_file(File.join(Rails.root, "config", "mysql_connection.yml"))['connection']
   end
 
- def potential_duplicate_full_text?(person)
+  def potential_duplicate_full_text?(person)
       if person.middle_name.blank?
         score = (CONFIG['duplicate_score'].to_i - 1)
       else
@@ -71,7 +71,6 @@ class ApplicationController < ActionController::Base
       end
       return potential_duplicates
    end
-   
    #Format content
    def format_content(person)
      
