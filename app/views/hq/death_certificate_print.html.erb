@@ -146,12 +146,12 @@
                 place_of_death = ""
 
                case @person["place_of_death"]
-                 when "Home(Place of residence)"
+                 when "Home"
                     place_of_death = "#{@person.place_of_death_village}#{(!@person.place_of_death_village.blank? ?
                             ", " : "")}#{@person.place_of_death_ta}#{(!@person.place_of_death_ta.blank? ?
                             ", " : "")}#{@person.place_of_death_district}"
 
-                 when "Hospital/Institution"
+                 when "Health Facility"
 
                     place_of_death = "#{@person.hospital_of_death}"
 

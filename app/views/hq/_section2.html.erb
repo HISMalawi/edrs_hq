@@ -48,7 +48,7 @@
 
              <tr>
                <td rowspan="2">2</td>
-               <td rowspan="2">Manner of death</td>
+               <td rowspan="2"><b>Manner of death</b></td>
                <% ['Natural','Accident','Homicide','Suicide','Pending Investigation'].each do |manner| %>
                     <%if @person.manner_of_death.present? && manner == @person.manner_of_death %>
                           <td><%= manner %> <span style="color:red" class="glyphicon glyphicon-check"></span></td>
@@ -77,7 +77,7 @@
             </tr>
             <tr>
                 <td rowspan="2" style="background-color:#dbdada;">3</td>
-                <td rowspan="2">If accidental death, how did it occur:</td>
+                <td rowspan="2"><b>If accidental death, how did it occur:</b></td>
 
                 <% if @person.death_by_accident.present? && @person.death_by_accident.match("driver").present? %>
                     <td>Motor Vehicle(driver)<span style="color:red" class="glyphicon glyphicon-check"></span></td>
@@ -116,16 +116,16 @@
 
             <tr>
                 <td rowspan="3">4</td>
-                <td colspan="7">I certify that to the best of my knowledge and belief, the above named peron died on the date and fromethr cause of death stated herein</td>
+                <td colspan="7"><b>I certify that to the best of my knowledge and belief, the above named peron died on the date and fromethr cause of death stated herein</b></td>
             </tr>
             <tr>
-              <td>Date</td>
+              <td><b>Date</b></td>
               <td><%= Date.parse(@person.date_certifier_signed.to_s).strftime("%d/%b/%Y") rescue "" %> </td>
-              <td>Name</td>
+              <td><b>Name</b></td>
               <td colspan="4"> <%= @person.certifier_first_name %> <%= @person.certifier_last_name%></td>
             </tr>
             <tr>
-                <td>Designation of the medical certifier</td>
+                <td><b>Designation of the medical certifier</b></td>
                 <%['Physician','Clinical Officer','Medical Assistant'].each do |position| %>
                     <%if @person.position_of_certifier.present? && position == @person.position_of_certifier %>
                           <td><%= position %> <span style="color:red" class="glyphicon glyphicon-check"></span></td>
