@@ -1,3 +1,5 @@
+
+
 class Person < CouchRest::Model::Base
 
   #use_database "death"
