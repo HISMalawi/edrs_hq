@@ -12,6 +12,7 @@ development: &development
   print_user:
   print_password:
   printer_name:
+  duplicate_score: 6
   barcodes_path: /home/usr/barcodes/ 
   certificates_path: /home/usr/certificates/
   dispatch_path: /home/usr/dispatch/ 

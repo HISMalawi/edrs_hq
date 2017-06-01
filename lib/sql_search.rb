@@ -7,7 +7,7 @@ class SQLSearch
     where_ext = ""
 
     options.keys.each do |group|
-      next if selected[group].blank? && selected[group] != 'On'
+      #next if selected[group].blank? && selected[group] != 'On'
       fields = options[group]
       fields.each do |field|
         next if !accept_blanks && selected[field].blank?
@@ -16,6 +16,9 @@ class SQLSearch
     end
 
     query = "SELECT person_id FROM people #{join_ext} WHERE #{where_ext}"
+
+    puts query
+
     self.exec(query)
   end
 
@@ -23,10 +26,19 @@ class SQLSearch
     ids = (((`mysql -u #{CONFIGS['username']} -p#{CONFIGS['password']} #{CONFIGS['database']} -e "#{query}"`).split(/\n/) rescue []) - ['person_id']) rescue []
     people = []
     ids.each do |id|
-      people << Person.find(id)
+      person = Person.find(id)
+      if CONFIG['site_type'] == "remote"
+              next if (User.current_user.district_code != person.district_code ) && (user.role !="System Administrator") && (user.site_code != "HQ")
+          end
+      people << person
     end
 
     people
+  end
+
+  def self.query_exec(query)
+    insert = `mysql -u #{CONFIGS['username']} -p#{CONFIGS['password']} #{CONFIGS['database']} -e "#{query}"`
+    return insert
   end
 
 end

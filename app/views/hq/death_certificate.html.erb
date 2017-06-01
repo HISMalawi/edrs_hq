@@ -1,3 +1,4 @@
+<% if File.exists?("#{CONFIG['barcodes_path']}#{@person.id}.png")%>
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -165,12 +166,12 @@
                 place_of_death = ""
 
                case @person["place_of_death"]
-                 when "Home(Place of residence)"
+                 when "Home"
                     place_of_death = "#{@person.place_of_death_village}#{(!@person.place_of_death_village.blank? ?
                             ", " : "")}#{@person.place_of_death_ta}#{(!@person.place_of_death_ta.blank? ?
                             ", " : "")}#{@person.place_of_death_district}"
 
-                 when "Hospital/Institution"
+                 when "Health Facility"
 
                     place_of_death = "#{@person.hospital_of_death}"
 
@@ -270,3 +271,51 @@
 
 </body>
 </html>
+<%else %>
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Barcode file not exit</title>
+    </head>
+    <style type="text/css">
+      #message{
+              width: 60%;
+              margin: auto;
+              margin-top:10%;
+              text-align: center;
+      }
+      #message img{
+            width: 65px;
+            height: 65px;
+      }
+      #progress{
+         color: blue;
+         font-size: 3.5em;
+      }
+    </style>
+    <body>
+        <div id="message">
+              <img src="/assets/coa.png">
+              <h2>Generating Barcode</h2>
+              <h2>Please wait </h2>
+              <font id="progress">.</font>
+        </div>
+    </body>
+    </html>
+    <script type="text/javascript">
+        setTimeout(function(){
+              window.location.reload();
+        },4000);
+
+        var dots = 1;
+
+        setInterval(function(){
+              var dotted = "";
+              for(var i = 0; i < dots; i++){
+                dotted = dotted +".";
+              }
+              document.getElementById("progress").innerHTML = dotted;
+              dots++;
+        },500);
+    </script>
+<%end%>
