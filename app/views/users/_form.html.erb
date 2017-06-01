@@ -18,11 +18,11 @@
 <%= form_for @user, :url => '/users/create' ,:method => :post, :html => {:class => "form-horizontal",:role=>"form"} do |f| %>
 	<fieldset>
 		<legend>Enter user details</legend>
-			 <% if flash[:notice].present? %>
+			<!-- <% if flash[:notice].present? %>
 			 	<div style="width:60%;text-align:center;color:red">
 			 		<p><%= flash[:notice] %></p>
 			 	</div>    
-	          <% end %>
+	          <% end %>-->
 	          <% if @user.errors.any? %>
               <div id="error_explanation">
                 <h3><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h3>
