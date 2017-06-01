@@ -3,7 +3,49 @@ var dataTable = null;
 var prev_status = "<%=@prev_status%>"
 var registration_type ="<%= params[:registration_type] rescue '' %>"
 var amendment = "<%=@amendment rescue ''%>";
+function __$(id){
+        return document.getElementById(id);
+}
 
+function ___$(clas){
+        return document.getElementsByClassName(clas)[0];
+}
+
+function hideModal(){
+        $("#shield").css('display','none')
+}
+
+var selected = {}
+function checkRecord(element){
+      if(eval(element.checked)){
+            selected[element.id] = true
+            $("#print_btn").removeClass("hidden")
+      }else{
+          delete selected[element.id];
+          if(Object.keys(selected).length == 0){
+            $("#print_btn").addClass("hidden")
+          }
+      }
+}
+
+function printSelected(){
+    var ids = Object.keys(selected);
+    var param_selected = "";
+    for(var i = 0 ; i <ids.length ; i++){
+      if (param_selected.length == 0) {
+            param_selected = ids[i];
+      }else{
+          param_selected = param_selected + "|" +ids[i];
+      }
+    }
+
+    window.location.href = "hq/do_print_these?selected="+param_selected;
+}
+
+function loadPopup(id){
+        $("#shield").show()
+        __$(id).style.display = "block";
+}
 function addRows(data, skip_parse) {
   if (skip_parse == true){
       people = data;
@@ -21,7 +63,7 @@ function addRows(data, skip_parse) {
     dob = people[i]["dob"];
     person_id = people[i]["person_id"];
     spam = document.createElement("spam");
-
+    select = "<input type = 'checkbox' id='"+person_id+"' onclick='checkRecord(this)'/>";
     var btn = document.createElement("input");
       btn.setAttribute("type", "button");
       btn.setAttribute("value", "View");
@@ -33,7 +75,7 @@ function addRows(data, skip_parse) {
       /*age = patients[i]["age"];
       patient_id = patients[i]["patient_id"];
       account_number = patients[i]["account_number"];*/
-    dataTable.api().row.add([drn, den, first_name, middle_name, last_name, gender, dob, spam.innerHTML]).draw();
+    dataTable.api().row.add([drn, den, first_name, middle_name, last_name, gender, dob, spam.innerHTML,select]).draw();
 
   }
 
@@ -142,6 +184,19 @@ function getCases() {
         width: 7% !important;
         text-align: center;
     }
+    #shield{
+      position: absolute;
+      width: 100% !important;
+      height: 100% !important;
+      left: 0px;
+      top: 0px;
+      background: rgba(128,128,128,0.35);
+      z-index: 1050;
+      display: none;
+    }
+    .modal-dialog{
+      margin-top:10%; 
+    }
 </style>
 <div id="containt_table">
     <h3><%= @title.humanize rescue ''%></h3>
@@ -156,6 +211,7 @@ function getCases() {
         <th><i class=""></i> Gender</th>
         <th><i class=""></i> DOB</th>
         <th>&nbsp;</th>
+        <th>Select</th>
       </tr>
     </thead>
 
@@ -163,6 +219,47 @@ function getCases() {
     </tfoot>
 
     </table>
+</div>
+<div style=" height:30px;width: 100%;padding: 1%;background: #ffffff;box-shadow: 1.0px 1.0px 0.5px #adaba8;border-bottom: 2px solid darkgoldenrod;margin-bottom:1%">
+    
+</div>
+<button id="print_btn" class="btn btn-success pull-right hidden " onclick="loadPopup('printers')">Print Selected</button>
+
+<div id="shield">
+<div class="" id="printers">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header btn-primary" >
+        <button type="button" class="close"  onclick="__$('printers').style.display = 'none'">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Select a printer</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-lg-12">
+            <table class="table table-condensed table-striped table-hover">
+              <tbody>
+                <% @available_printers.each do |printer| %>
+                    <tr onmousedown="updateValue(this)" value="<%= printer %>" class="table-row" style="cursor: pointer">
+                      <td class="table-cell"><input type="radio" class="printer_radio_button" value="<%= printer %>" name="printer_name"/></td>
+                      <td class="table-cell" style="text-align: left; padding-left:50px;"><%= printer %></td>
+                    </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" onclick="printSelected()" > Print </button>
+            <button type="button" class="btn btn-default" onclick="__$('printers').style.display = 'none';hideModal()" > Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 <script>
 
