@@ -299,7 +299,7 @@
                     </tr>
                     <tr>
                       <td rowspan="4">8</td>
-                      <td class="clickable"  >Place of birth</td>
+                      <td class="clickable"  >Place of death</td>
                       <td colspan="9"><%= @person.place_of_death %></td>
                     </tr>
                     <tr>
@@ -433,11 +433,11 @@
                       <label for="cause_of_death_available">Has the form been completed? </label>
 
                       <div id="form_completed_yes_radio" class="radio radio-primary" onmousedown="">
-                       <input type="radio" name="radio" id="radioY">
+                       <input type="radio" name="cause_of_death_available" id="radioY">
                        <label for="radioY">Yes</label>
                       </div>
                       <div id="form_completed_no_radio" class="radio radio-primary" onmousedown="">
-                       <input type="radio" name="radio" id="radioN">
+                       <input type="radio" name="cause_of_death_available" id="radioN">
                         <label for="radioN">No</label>
                       </div>
 
@@ -623,36 +623,75 @@
 
           <div id="manner_of_death" class="container custom" style="display: none;" disabled="true">
               <div class="form-group">
-                <label for="manner">Manner of death </label>
-                <select name="manner_of_death" id="manner" load="<%= @person.manner_of_death%>" class="form-control">
-                  <option value=""></option>
-                  <option>Natural</option>
-                  <option>Accident</option>
-                  <option>Homicide</option>
-                  <option>Suicide</option>
-                  <option>Pending Investigation</option>
-                  <option>Could not be determined</option>
-                  <option>Other</option>
-                </select>
+                <label class="col-md-12" for="manner">Manner of death </label>
 
-                <label for="">Other manners of death</label>
+               
+                     <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
+                         <input type="radio" name="manner_of_death" id="manner_natural" load="<%= @person.manner_of_death%>">
+                          <label for="manner_natural">Natural</label>                                  
+                    </div>
+
+                      <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
+                         <input type="radio" name="manner_of_death" id="manner_accident" load="<%= @person.manner_of_death%>">
+                          <label for="manner_accident">Accident</label>                                 
+                      </div>
+                      <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
+                         <input type="radio" name="manner_of_death" id="manner_homicide" load="<%= @person.manner_of_death%>">
+                          <label for="manner_homicide">Homicide</label>                                  
+                      </div>
+                      <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
+                         <input type="radio" name="manner_of_death" id="manner_suicide" load="<%= @person.manner_of_death%>">
+                          <label for="manner_suicide">Suicide</label>                                  
+                      </div>
+                      <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
+                         <input type="radio" name="manner_of_death" id="manner_pending_investigation" load="<%= @person.manner_of_death%>">
+                          <label for="manner_pending_investigation">Pending Investigation</label>                                  
+                      </div>
+                      <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
+                         <input type="radio" name="manner_of_death" id="manner_not_determined" load="<%= @person.manner_of_death%>">
+                          <label for="manner_not_determined">Could not be determined</label>                                  
+                      </div>
+                      <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
+                         <input type="radio" name="manner_of_death" id="manner_other" load="<%= @person.manner_of_death%>">
+                          <label for="manner_other">Other</label>                                  
+                      </div>
+
+                
+
+                <label class="col-md-12" for="">Other manners of death</label>
                 <input name="other_manner_of_death"
                        value="<%= @person.other_manner_of_death%>" id="other_manner_of_death" class="form-control" type="text" />
               </div>
 
               <div class="form-group">
-                <label for="">How did injury/accident occur?</label>
-                <select
-                        name="death_by_accident" load="<%= @person.death_by_accident%>" id="death_by_accident" class="form-control">
-                  <option value=""></option>
-                  <option>Motor vehicle(driver)</option>
-                  <option>Motor vehicle(passenger)</option>
-                  <option>Motor</option>
-                  <option>Drowning</option>
-                  <option>Other</option>
-                </select>
+                <label class="col-md-12" for="">How did injury/accident occur?</label>
+                   <div name="death_by_accident" load="<%= @person.death_by_accident%>" id="death_by_accident" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" >
+                         <input type="radio" name="death_by_accident" id="motor_vehicle_driver" load=""<%= @person.death_by_accident%>">
+                          <label for="motor_vehicle_driver">Motor vehicle(driver)</label>                    
+                    </div>
 
-                <label for="other_death_by_accident">Other accident specify</label>
+                    <div name="death_by_accident" load="<%= @person.death_by_accident%>" id="death_by_accident" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" >
+                         <input type="radio" name="death_by_accident" id="motor_vehicle_passenger" load=""<%= @person.death_by_accident%>">
+                          <label for="motor_vehicle_passenger">Motor vehicle(passenger)</label>                     
+                    </div>
+
+                    <div name="death_by_accident" load="<%= @person.death_by_accident%>" id="death_by_accident" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" >
+                         <input type="radio" name="death_by_accident" id="motor" load=""<%= @person.death_by_accident%>">
+                          <label for="motor">Motor vehicle</label>                                  
+                    </div>
+
+                    <div name="death_by_accident" load="<%= @person.death_by_accident%>" id="death_by_accident" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" >
+                         <input type="radio" name="death_by_accident" id="drowning" load=""<%= @person.death_by_accident%>">
+                          <label for="drowning">Drowning</label>                                  
+                    </div>
+
+                    <div name="death_by_accident" load="<%= @person.death_by_accident%>" id="death_by_accident" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" >
+                         <input type="radio" name="death_by_accident" id="other" load=""<%= @person.death_by_accident%>">
+                          <label for="other">Other</label>                                  
+                    </div>
+
+
+                <label class="col-md-12" for="other_death_by_accident">Other accident specify</label>
                 <input name="other_death_by_accident"
                        value="<%= @person.other_death_by_accident%>" id="other_death_by_accident" class="form-control" type="text" />
               </div>
@@ -664,12 +703,19 @@
           <div id="certification" class="container custom" style="display: none;" disabled="true">
             <div class="form-group">
               <label for="certifier_signed">Certifier Signed</label>
-              <select name="certifier_signed" load="<%= @person.certifier_signed %>" id="certifier_signed" class="form-control">
-                <option value=""></option>
-                <option>Yes</option>
-                <option>No</option>
-              </select>
+       
 
+                   <div id="certifier_signed_yes_radio" class="radio radio-primary" onmousedown="">
+                         <input type="radio" name="certifier_signed" id="radiocsy">
+                          <label for="radiocsy">Yes</label>                                          
+                      </div>
+                      
+                       <div id="certifier_signed_no_radio" class="radio radio-primary" onmousedown="">
+                          <input type="radio" name="certifier_signed" id="radiocsn">
+                          <label for="radiocsn">No</label>
+                      </div>
+
+              
               <label for="">Date certifier signed</label>
                 <input name="date_certifier_signed" value="<%= @person.date_certifier_signed%>" id="date_certifier_signed" class="form-control" type="text" />
       </i>
@@ -688,16 +734,30 @@
             </div>
 
             <div class="form-group">
-              <label for="">Designation of medical certifier</label>
-              <select name="position_of_certifier" load="<%= @person.position_of_certifier%>" id="position_of_certifier" class="form-control">
-                <option value=""></option>
-                <option>Medical Doctor</option>
-                <option>Clinic Officer</option>
-                <option>Medical Assistant</option>
-                <option>Other</option>
-              </select>
+              <label  class="col-md-12" for="">Designation of medical certifier</label>
 
-              <label for="other_position_of_certifier">Other Designation of medical certifier</label>
+
+                    <div id="certifier_signed_yes_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
+                         <input type="radio" name="position_of_certifier" load="<%= @person.position_of_certifier%>" id="position_of_certifier_doctor">
+                          <label for="position_of_certifier_doctor">Medical Doctor</label>                                          
+                      </div>
+                      <div id="certifier_signed_yes_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
+                         <input type="radio" name="position_of_certifier" load="<%= @person.position_of_certifier%>" id="position_of_certifier_officer">
+                          <label for="position_of_certifier_officer">Clinic Oficer</label>                                          
+                      </div>
+
+                      
+                       <div id="certifier_signed_yes_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
+                         <input type="radio" name="position_of_certifier" load="<%= @person.position_of_certifier%>" id="position_of_certifier_assistant">
+                          <label for="position_of_certifier_assistant">Medical Assistant</label>                                          
+                      </div>
+
+                      <div id="certifier_signed_yes_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
+                         <input type="radio" name="position_of_certifier" load="<%= @person.position_of_certifier%>" id="position_of_certifier_other">
+                          <label for="position_of_certifier_other">Other</label>                                          
+                      </div>
+
+            <label for="other_position_of_certifier">Other Designation of medical certifier</label>
               <input name="other_position_of_certifier"
                      value="<%= @person.other_position_of_certifier%>" id="other_position_of_certifier" class="form-control" type="text" />
             </div>
