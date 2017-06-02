@@ -156,8 +156,8 @@ class CaseController < ApplicationController
     @statuses = ["HQ PRINT","HQ PRINT AMEND","HQ REPRINT REQUEST"]
     @page = 1
     session[:return_url] = request.path
-
-    render :template => "case/default"
+    @available_printers = CONFIG["printer_name"].split(',')
+    render :template => "case/default_batch"
   end
 
   def re_print
@@ -165,8 +165,8 @@ class CaseController < ApplicationController
     @statuses = ["HQ REPRINT"]
     @page = 1
     session[:return_url] = request.path
-
-    render :template => "case/default"
+    @available_printers = CONFIG["printer_name"].split(',')
+    render :template => "case/default_batch"
   end
 
   def approved_for_print_marked_incomplete

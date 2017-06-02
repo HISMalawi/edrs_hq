@@ -450,11 +450,21 @@
           </div>
           <div id="cause_of_death" class="container custom" disabled="true">
               <input name="person_id" value="<%= @person.id%>" type="hidden" type="text" />
+<<<<<<< HEAD
+            <fieldset>
+              <legend>Part I</legend>
+              <p>Disease or condition directly leading to death <i style='color: red'>*</i></p>
+               <div class="form-group" style=" padding-bottom:1%">
+               <div class="col-lg-12 col-md-12">
+                      <label for="cause_of_death1">Cause of Death 1 </label>
+                      <select name="cause_of_death1" id="cause_of_death1" load="<%= @person.cause_of_death1 rescue (@person.other_cause_of_death1 rescue '')%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,1)" >
+=======
                <div class="form-group">
 
                <div class="col-md-6">
                     <label for="onset_death_interval1">cause of Death 1 </label>
                     <select name="cause_of_death1" id="cause_of_death1" load="<%= @person.cause_of_death1 rescue (@person.other_cause_of_death1 rescue '')%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,1)" >
+>>>>>>> a2ec91bf7b6aa3b58a78524f223d93f4854f067e
                       </select>
                 </div>
 
@@ -483,9 +493,15 @@
                     </select>
                 </div>
                </div>
+<<<<<<< HEAD
+              <p><b>Antecedent cause : </b> Morbid conditions, if any. giving rise to the above cause , stating th underlying cindition last</p>
+              <div class="form-group" style=" padding-bottom:1%">
+                <div class="col-lg-12 col-md-12">
+=======
 
               <div class="form-group">
                 <div class="col-md-6">
+>>>>>>> a2ec91bf7b6aa3b58a78524f223d93f4854f067e
                     <label for="">Cause of Death 2 </label>
                      <select name="cause_of_death2" id="cause_of_death2" load="<%= @person.cause_of_death2 rescue (@person.other_cause_of_death2 rescue '')%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,2)">
                       <option value=""></option>
@@ -514,10 +530,14 @@
                       <option>Year(s)</option>
                     </select>
                 </div>
+<<<<<<< HEAD
+                <div class="col-lg-12 col-md-12">
+=======
               </div>
 
               <div class="form-group">
                 <div class="col-md-6">
+>>>>>>> a2ec91bf7b6aa3b58a78524f223d93f4854f067e
                     <label for="">Cause of Death 3</label>
                      <select name="cause_of_death3" id="cause_of_death3" load="<%= @person.cause_of_death3 rescue (@person.other_cause_of_death3 rescue '')%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,3)">
                       <option value=""></option>
@@ -545,11 +565,15 @@
                       <option>Year(s)</option>
                     </select>
                 </div>
+<<<<<<< HEAD
+              <div class="col-lg-12 col-md-12">
+=======
               </div>
 
 
               <div class="form-group">
               <div class="col-md-6">
+>>>>>>> a2ec91bf7b6aa3b58a78524f223d93f4854f067e
                   <label for="">Cause of Death 4</label>
                   <select name="cause_of_death4" id="cause_of_death4" load="<%= @person.cause_of_death4%>" class="form-control select2" style="width:100%" onchange ="setRequired(this,4)">
                     <option value=""></option>
@@ -579,16 +603,19 @@
                     </select>
                 </div>
               </div>
-
+            </fieldset>
+            <fieldset style="margin-bottom:2%">
+              <legend>Part II</legend>
+              <p>Other significant conditions contributing to death , but not related to the disease or condition causing it</p>
               <div class="form-group">
-                <div class="col-lg-12 col-md-12">
-                  <label for="">Other significant conditions contributing to death , but not related to the disease or condition causing it</label>
+                <div class="col-lg-12 col-md-12" style=" padding-bottom:2%">
+                  <label for=""></label>
                   <!--input type="" name="cause_of_death_conditions" load="<%= @person.cause_of_death_conditions%>" class="form-control" style="width:100%"-->
-                  <select name="cause_of_death_conditions[]" id="cause_of_death_conditions" class="form-control select2" style="width:100%" multiple="multiple" multiple=true>
+                  <select name="cause_of_death_conditions[]" id="cause_of_death_conditions" class="form-control select2" style="width:100%; margin-bottom:2%" multiple="multiple" multiple=true>
                   </select>
                 </div>
               </div>
-
+            </fieldset>
               <div onclick="hit('cause_of_death_check_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
               <div onclick="hit('manner_of_death_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
             </div>
@@ -702,7 +729,7 @@
               <label for="">Certifier first name</label>
               <input name="certifier_first_name" value="<%= @person.certifier_first_name%>" id="certifier_first_name" class="form-control" type="text" />
 
-              <label for="">Certifier License Number</label>
+              <label for="">MCM Registration No.</label>
               <input name="certifier_license_number" value="<%= @person.certifier_license_number%>" id="certifier_first_name" class="form-control" type="text" />
             </div>
 
