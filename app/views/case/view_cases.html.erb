@@ -102,7 +102,7 @@
         <td style="border-right:none"><b>DEN : </b></td>
         <td style="color:#4775a1;border-left:none"><%= @person.den%></td>
         <td style="border-right:none"><b>DRN : </b></td>
-        <td style="color:#4775a1;border-left:none"><%= @person.drn%></td>
+        <td style="color:#4775a1;border-left:none"><%= @person.drn rescue ''%></td>
       </tr>
       <tr>
         <th colspan="11">Section 1 : Particulars of the deceased</th>
