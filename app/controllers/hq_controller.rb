@@ -181,8 +181,8 @@ class HqController < ApplicationController
 
     params.keys.each do |k|
       if k.include?("cause_of_death") && k !='cause_of_death_available'
-        if diagnosis_list.include?(params[k]) 
-
+        if diagnosis_list.include?(params[k])  || true
+ 
         else
 
             params["other_#{k}"] = params[k] 
