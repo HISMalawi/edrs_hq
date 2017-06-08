@@ -1,6 +1,15 @@
 <style type="text/css">
        input[type=radio].css-checkbox {
-          position:absolute; z-index:-1000; left:-1000px; overflow: hidden; clip: rect(0 0 0 0); height:1px; width:1px; margin:-1px; padding:0; border:0;
+          position:absolute;
+           z-index:-1000; 
+           left:-1000px; 
+           overflow: hidden; 
+           clip: rect(0 0 0 0); 
+           height:1px; 
+           width:1px; 
+           margin:-1px; 
+           padding:0; 
+           border:0;
         }
 
         input[type=radio].css-checkbox + label.css-label {
@@ -28,6 +37,7 @@
             -ms-user-select: none;
             user-select: none;
             color: #31404d;
+            font-weight: normal;
         }
 </style>
 <table class="summary">
@@ -144,7 +154,8 @@
                               <input type="radio" name="radio" id="<%= 'Other' %>" class="css-checkbox" disabled>
                                 <label for="<%= 'Other' %> " class="css-label radGroup2">
                                    Other 
-                                </label></td>
+                                </label>
+                          </td>
                           <td>Specify</td>
                           <td colspan="4"></td>
                 <%end%>
@@ -155,42 +166,92 @@
                 <td rowspan="2"><b>If accidental death, how did it occur:</b></td>
 
                 <% if @person.death_by_accident.present? && @person.death_by_accident.match("driver").present? %>
-                    <td>Motor Vehicle(driver)<span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                    <td>
+                        <input type="radio" name="radio1" id="<%= 'Motor Vehicle(driver)' %>" class="css-checkbox" checked="true" disabled>
+                                <label for="<%= 'Motor Vehicle(driver)' %> " class="css-label radGroup2">
+                                   Motor Vehicle(driver)
+                                </label>
+                    </td>
                 <%else%>
-                     <td>Motor Vehicle(driver)</td>
+                     <td>
+                          <input type="radio" name="radio1" id="<%= 'Motor Vehicle(driver)' %>" class="css-checkbox" disabled>
+                                <label for="<%= 'Motor Vehicle(driver)' %> " class="css-label radGroup2">
+                                   Motor Vehicle(driver)
+                          </label>
+                     </td>
                 <%end%>
                  <% if @person.death_by_accident.present? && @person.death_by_accident.match("passenger").present? %>
-                    <td  colspan="2">Motor Vehicle(passenger)<span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                    <td  colspan="2">
+                        <input type="radio" name="radio1" id="<%= 'Motor Vehicle(passenger)' %>" class="css-checkbox" checked="true" disabled>
+                                <label for="<%= 'Motor Vehicle(passenger)' %> " class="css-label radGroup2">
+                                   Motor Vehicle(passenger)
+                                </label>
+                    </td>
                 <%else%>
-                     <td  colspan="2">Motor Vehicle(passenger)</td>
+                     <td  colspan="2">
+                          <input type="radio" name="radio1" id="<%= 'Motor Vehicle(passenger)' %>" class="css-checkbox" disabled>
+                                <label for="<%= 'Motor Vehicle(passenger)' %> " class="css-label radGroup2">
+                                   Motor Vehicle(passenger)
+                                </label> 
+                     </td>
                 <%end%>
 
                  <% if @person.death_by_accident.present? && @person.death_by_accident.match("pedestrian").present? %>
-                    <td  colspan="3">Motor Vehicle(pedestrian)<span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                    <td  colspan="3">
+                           <input type="radio" name="radio1" id="<%= 'Motor Vehicle(padestrian)' %>" class="css-checkbox" checked="true" disabled>
+                                <label for="<%= 'Motor Vehicle(padestrian)' %> " class="css-label radGroup2">
+                                   Motor Vehicle(padestrian)
+                                </label>
+                    </td>
                 <%else%>
-                     <td  colspan="3">Motor Vehicle(pedestrian)</td>
+                     <td  colspan="3">
+                           <input type="radio" name="radio1" id="<%= 'Motor Vehicle(padestrian)' %>" class="css-checkbox"  disabled>
+                                <label for="<%= 'Motor Vehicle(padestrian)' %> " class="css-label radGroup2">
+                                   Motor Vehicle(padestrian)
+                                </label>
+                     </td>
                 <%end%>
             </tr>
             <tr>
                  <% if @person.death_by_accident.present? && @person.death_by_accident.match("Drowning").present? %>
-                    <td>Drowning<span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                    <td>
+                           <input type="radio" name="radio1" id="<%= 'Drowning' %>" class="css-checkbox" checked="true" disabled>
+                                <label for="<%= 'Drowning' %> " class="css-label radGroup2">
+                                   Drowning
+                                </label>
+                    </td>
                 <%else%>
-                     <td>Drowning</td>
+                     <td>
+                          <input type="radio" name="radio1" id="<%= 'Drowning' %>" class="css-checkbox" disabled>
+                                <label for="<%= 'Drowning' %> " class="css-label radGroup2">
+                                   Drowning
+                                </label>
+                     </td>
                 <%end%>
                  <% if @person.death_by_accident.present? && @person.death_by_accident.match("Other").present? %>
-                    <td>Other<span style="color:red" class="glyphicon glyphicon-check"></span></td>
-                     <td>Specifiy</td>
+                    <td>
+                            <input type="radio" name="radio1" id="<%= 'Other' %>" class="css-checkbox" checked="true" disabled>
+                                <label for="<%= 'Other' %> " class="css-label radGroup2">
+                                  Other
+                                </label>
+                    </td>
+                     <td>Specify</td>
                     <td colspan="3"><%= @person.other_death_by_accident rescue ""%></td>
                 <%else%>
-                     <td>Other</td>
-                      <td>Specifiy</td>
+                     <td>
+                        <input type="radio" name="radio1" id="<%= 'Other' %>" class="css-checkbox" disabled>
+                        <label for="<%= 'Other' %> " class="css-label radGroup2">
+                                  Other
+                        </label>
+                     </td>
+                      <td><Specify</td>
                       <td colspan="3"></td>
                 <%end%>
                
             </tr>
 
             <tr>
-                <td rowspan="3">4</td>
+                <td rowspan="4">4</td>
                 <td colspan="7"><b>I certify that to the best of my knowledge and belief, the above named peron died on the date and from the cause of death stated herein</b></td>
             </tr>
             <tr>
@@ -200,22 +261,44 @@
               <td colspan="4"> <%= @person.certifier_first_name %> <%= @person.certifier_last_name%></td>
             </tr>
             <tr>
-                <td><b>Designation of the medical certifier</b></td>
+                <td rowspan="2"><b>Designation of the medical certifier</b></td>
                 <%['Physician','Clinical Officer','Medical Assistant'].each do |position| %>
                     <%if @person.position_of_certifier.present? && position == @person.position_of_certifier %>
-                          <td><%= position %> <span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                          <td colspan="2">
+                              <input type="radio" name="radio1" id="<%= position %>" checked="true" class="css-checkbox" disabled>
+                            <label for="<%= position %>   " class="css-label radGroup2">
+                                    <%= position %>  
+                            </label>
+                        </td>
                     <%else%>
-                          <td><%= position %> <span ></span></td>
+                          <td colspan="2">
+                            <input type="radio" name="radio1" id="<%= position %>" class="css-checkbox" disabled>
+                            <label for="<%= position %>   " class="css-label radGroup2">
+                                    <%= position %>  
+                            </label>
+                          </td>
                     <%end%>
                 <%end%>
+            </tr>
+            <tr>
                 <%if @person.position_of_certifier.present? && @person.position_of_certifier =="Other" %>
-                          <td><%= "Other" %> <span style="color:red" class="glyphicon glyphicon-check"></span></td>
+                          <td>
+                              <input type="radio" name="radio1" id="Other" class="css-checkbox" checked="true" disabled>
+                              <label for="Other" class="css-label radGroup2">
+                                      Other
+                              </label> 
+                          </td>
                           <td>Specify</td>
-                          <td><%= @person.other_position_of_certifier recsue "" %></td>
+                          <td colspan="4"><%= @person.other_position_of_certifier recsue "" %></td>
                     <%else%>
-                          <td><%= "Other" %> <span ></span></td>
+                          <td>
+                              <input type="radio" name="radio1" id="Other" class="css-checkbox" disabled>
+                              <label for="Other" class="css-label radGroup2">
+                                      Other
+                              </label>
+                          </td>
                           <td>Specify</td>
-                          <td></td>
+                          <td colspan="4"></td>
                     <%end%>
                 
             </tr>
