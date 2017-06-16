@@ -27,7 +27,7 @@ Rails.application.routes.draw do
   get "/unblock_user/:id" => "users#unblock_user"
   get "/block" => "users#block"
   get "/unblock" => "users#unblock"
-  get "/users/edit"
+  get "/users/edit_account" => "users#edit_account"
   patch "/users/edit"
   get '/settings' => 'users#settings'
   get '/manage_users' => "users#manage_users"
