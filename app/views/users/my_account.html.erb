@@ -1,70 +1,84 @@
-<style>
-</style>
 
-<h3>My Account</h3>
+<style type="text/css">
+  .left{
+    float: left;
+  }
+  .right {
+      float: right;
+  }
+  #details {
+      width: 100%;
+      border-collapse: collapse;
+      margin-left: 1%;
+      margin-top: 4%
+  }
 
-
-<div id="button-container"></div>
-
-
-<script>
-var button_container = document.getElementById("button-container");
-
-function buildUI() {
-  var row = document.createElement('div');
-
-  button_container.appendChild(row);
-  counter = 0;
+  #details tr:nth-child(odd){
+    background: #dcdbdb;
+  }
+  #details td, #details th {
+     border: 1px solid lightgray;
+     font-size: 1.1em;
+     padding: 1em;
+  }
+  #details th{
+    background: #4c79a3;
+    color:#ffffff;
+    font-size: 1.2em;
+    padding: 0.8em;
+  }
+  .btn-primary{
+    background-color:  #4c79a3;
+     border: 1px solid lightgray;
+  }
   
-  <%(@tasks || []).each do |title, desc, link, icon|%>
-/*
-*/
+</style>
+<div id="main" >
+  <div id="button-container">
+      <div class="left" style="width:90%; text-align:center">
+            <table id="details">
+                  <tr>
+                      <th colspan="2" style="text-align: center;">Details</th>
+                  </tr>
+                  <tr>
+                      <td>Username</td>
+                      <td><%= @user.username%></td>
+                  </tr>
+                  <tr>
+                      <td>First name</td>
+                      <td><%= @user.first_name %></td>
+                  </tr>
+                  <tr>
+                    <td>Surname</td>
+                    <td><%= @user.last_name%></td>
+                  </tr>
+                  <tr>
+                      <td>Role</td>
+                      <td><%= @user.role%></td>
+                  </tr>
+                  <tr>
+                    <td>Email</td>
+                    <td><%= @user.email%></td>
+                  </tr>
+                   <tr>
+                    <td>Created at</td>
+                    <td><%= @user.created_at.to_date.strftime("%d/%b/%Y") rescue nil %></td>
+                  </tr>
+                  <tr>
+                    <td>Updated at</td>
+                    <td><%= @user.updated_at.to_date.strftime("%d/%b/%Y") rescue nil %></td>
+                  </tr>
+            </table>
+              
+      </div>
+    </div>
+  </div>
 
-      <%if icon.blank? %>
-        var icon_path = '/assets/folder.png'
-      <%else%>
-        var icon_path = '/assets/manage-cases-icons/<%=icon%>'
-      <%end%>
-      first_div = document.createElement('div');
-      first_div.setAttribute('class','col-xs-6 col-sm-4 col-md-3 col-lg-2');
-      row.appendChild(first_div);
-      row.setAttribute("onclick", "window.location = '<%=link%>'");
+  <div class="table-container-footer" style="padding: 0px;margin-top:1%;">
+    <button class="btn btn-primary pull-left" onclick="window.location = '/users/edit_account'"">Edit Demographics</button>
+ </div>
 
-      second_div = document.createElement('div');
-      first_div.appendChild(second_div);
-      second_div.setAttribute('class','divbtn');
+ <div class="table-container-footer" style="padding: 0px;margin-top:1%;">
+    <button class="btn btn-primary pull-right">Change Password</button>
+ </div>
 
-      span = document.createElement('span');
-      span.setAttribute('class','icons');
-
-      img = document.createElement('img');
-      img.setAttribute('class','icon-attr');
-      img.setAttribute('src', icon_path);
-      span.appendChild(img);
-
-      p = document.createElement('p');
-      p.setAttribute('style','color: black; font-weight: bold;');
-      p.innerHTML = "<%=title%>";
-      span.appendChild(p);
-
-      second_div.appendChild(span);
-      
-      counter++;
-
-      if(counter == 2){
-        /*row = document.createElement('div');
-        row.innerHTML = "&nbsp;";
-        button_container.appendChild(row);
-        row = document.createElement('div');
-        button_container.appendChild(row);
-        counter = 0;*/
-      }
-  <%end%>
-
-
-}
-
-
-buildUI();
-
-</script>

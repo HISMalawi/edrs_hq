@@ -74,6 +74,19 @@ class UsersController < ApplicationController
     end
   end
 
+  def edit_account
+     
+    @user = @current_user
+
+    @keyboards = ['abc', 'qwerty']
+
+    @section = "Edit Account"
+
+    @targeturl = ""
+
+
+  end
+
   def edit
 
     redirect_to "/" and return if !has_role("Update User")
@@ -101,7 +114,7 @@ class UsersController < ApplicationController
     redirect_to "/" and return if !has_role("View Users")
 
     @section = "Search for User"
-    @targeturl = "/users"
+    @targeturl = "/users/my_account"
     @user = @current_user if @user.blank?
   end
 
@@ -303,6 +316,14 @@ class UsersController < ApplicationController
                ['View details','View details','/',''],
                ['Password','Password','/','']
             ]
+
+          #  redirect_to "/" and return if !(User.current_user.activities_by_level(@facility_type).include?("Change own password"))
+
+    @section = "My Account"
+
+    @user = User.current_user
+
+   # render :layout => "landing"
   end
 
   def build_mysql_database
