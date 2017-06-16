@@ -122,11 +122,12 @@ class HqController < ApplicationController
       @cases << {
           drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
           den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
-          first_name: person.first_name,
-          middle_name:  person.middle_name,
-          last_name:  person.last_name,
-          dob:        person.birthdate.strftime("%d/%b/%Y"),
+          name: "#{person.first_name} #{person.middle_name rescue ''} #{person.last_name}",
           gender:     person.gender,
+          dob:        person.birthdate.strftime("%d/%b/%Y"),
+          dob:  person.date_of_death.strftime("%d/%b/%Y"),
+          place_of_death: "",
+          physical_address: "",
           person_id:  person.id
       }
     end

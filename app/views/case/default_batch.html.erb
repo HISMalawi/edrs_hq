@@ -72,11 +72,12 @@ function addRows(data, skip_parse) {
   for (var i = 0; i < people.length; i++) {
     den = people[i]['den'],
     drn = people[i]['drn'],
-    first_name = people[i]['first_name'];
-    middle_name = people[i]['middle_name'];
-    last_name = people[i]['last_name'];
-    gender = people[i]["gender"];
-    dob = people[i]["dob"];
+    name = people[i]['name'];
+    gender = people[i]['gender'];
+    dob = people[i]['dob'];
+    dob = people[i]['dod'];
+    place_of_death = people[i]['place_of_death'];
+    physical_address = people[i]["physical_address"];
     person_id = people[i]["person_id"];
     spam = document.createElement("spam");
     select = "<input type = 'checkbox' id='"+person_id+"' onclick='checkRecord(this)'/>";
@@ -91,7 +92,7 @@ function addRows(data, skip_parse) {
       /*age = patients[i]["age"];
       patient_id = patients[i]["patient_id"];
       account_number = patients[i]["account_number"];*/
-    dataTable.api().row.add([drn, den, first_name, middle_name, last_name, gender, dob, spam.innerHTML,select]).draw();
+    dataTable.api().row.add([drn, den, name, gender,dob,dob, place_of_death,spam.innerHTML,select]).draw();
 
   }
 
@@ -221,11 +222,11 @@ function getCases() {
       <tr>
         <th><i class=""></i> DRN</th>
         <th><i class=""></i> DEN</th>
-        <th><i class=""></i> First name</th>
-        <th><i class=""></i> Middle name</th>
-        <th><i class=""></i> Last name</th>
+        <th><i class=""></i> Name</th>
         <th><i class=""></i> Gender</th>
         <th><i class=""></i> DOB</th>
+        <th><i class=""></i> DOD</th>
+        <th><i class=""></i> Place of Death</th>
         <th>&nbsp;</th>
         <th>Select</th>
       </tr>

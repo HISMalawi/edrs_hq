@@ -4,7 +4,7 @@ class CaseController < ApplicationController
     @statuses = ["DC APPROVED"]
     @page = 1
     session[:return_url] = request.path
-
+    @drn_available = true
     render :template => "case/default"
   end
 
@@ -382,42 +382,60 @@ class CaseController < ApplicationController
     
     cases = []
     
-    (PersonRecordStatus.by_record_status.keys(keys).page(params[:page_number]).per(10) || []).each do |status|
-      
+    (PersonRecordStatus.by_record_status.keys(keys).page(params[:page_number]).per(10) || []).each do |status|      
       person = status.person
-     
-      cases << {
-        drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
-        den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
-        first_name: person.first_name,
-        middle_name:  person.middle_name,
-        last_name:  person.last_name,
-        dob:        person.birthdate.strftime("%d/%b/%Y"),
-        gender:     person.gender,
-        person_id:  person.id
-      }
+      cases << fields_for_data_table(person)
     end 
 
     render text: cases.to_json and return
   end
 
+  def fields_for_data_table(person)
+      place_of_death = ""
+
+      case person.place_of_death
+      when "Home"
+          place_of_death = "#{person.place_of_death_district} #{person.place_of_death_ta} #{person.place_of_death_village}"
+      when "Health Facility"
+          place_of_death = "#{person.hospital_of_death rescue ''}"
+      else  
+          place_of_death = "#{person.other_place_of_death}"
+      end
+
+      if person.place_of_death && person.place_of_death.strip.downcase.include?("facility")
+                 place_of_death  = person.hospital_of_death;
+      elsif person.place_of_death_foreign && person.place_of_death_foreign.strip.downcase.include?("facility")
+                 place_of_death  = person.place_of_death_foreign_hospital
+      elsif person.place_of_death_foreign && person.place_of_death_foreign.strip !="facility"
+                 place_of_death  = (person.place_of_death_foreign_state rescue "") +" " 
+                  + (person.place_of_death_foreign_district rescue  "" ) + " "+ 
+                   ( person.place_of_death_foreign_village  rescue "");
+
+      elsif person.place_of_death  && person.place_of_death =="Other"
+                 place_of_death  = person.other_place_of_death;
+
+      elsif person.place_of_death  && person.place_of_death =="Home"
+                 place_of_death  = person.place_of_death_district +" " + person.place_of_death_ta + " "+  person.place_of_death_village;
+
+      end
+
+      return {
+          drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
+          den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
+          name: "#{person.first_name} #{person.middle_name rescue ''} #{person.last_name}",
+          gender:     person.gender,
+          dob:        person.birthdate.strftime("%d/%b/%Y"),
+          dod:        person.date_of_death.strftime("%d/%b/%Y"),
+          place_of_death: place_of_death,
+          person_id:  person.id
+        }
+  end
   def more_open_cases_with_prev_status  
     cases = []
     
-    (PersonRecordStatus.by_prev_status_and_status.key([params[:prev_status],params[:status]]).page(params[:page_number]).per(10) || []).each do |status|
-      
+    (PersonRecordStatus.by_prev_status_and_status.key([params[:prev_status],params[:status]]).page(params[:page_number]).per(10) || []).each do |status|     
       person = status.person
-     
-      cases << {
-        drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
-        den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
-        first_name: person.first_name,
-        middle_name:  person.middle_name,
-        last_name:  person.last_name,
-        dob:        person.birthdate.strftime("%d/%b/%Y"),
-        gender:     person.gender,
-        person_id:  person.id
-      }
+      cases << fields_for_data_table(person)
     end 
 
     render text: cases.to_json and return
@@ -426,20 +444,9 @@ class CaseController < ApplicationController
   def more_amended_or_reprinted_cases   
     cases = []
     
-    (PersonRecordStatus.by_amend_or_reprint.page(params[:page_number]).per(10) || []).each do |status|
-      
+    (PersonRecordStatus.by_amend_or_reprint.page(params[:page_number]).per(10) || []).each do |status|   
       person = status.person
-     
-      cases << {
-        drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
-        den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
-        first_name: person.first_name,
-        middle_name:  person.middle_name,
-        last_name:  person.last_name,
-        dob:        person.birthdate.strftime("%d/%b/%Y"),
-        gender:     person.gender,
-        person_id:  person.id
-      }
+      cases << fields_for_data_table(person)
     end 
 
     render text: cases.to_json and return
@@ -455,16 +462,7 @@ class CaseController < ApplicationController
   def more_special_cases
      cases = []
     (Person.by_registration_type.key(params[:registration_type]).page(params[:page_number]).per(10) || []).each do |person|
-      cases << {
-        drn: person.drn,
-        den: person.den,
-        first_name: person.first_name,
-        middle_name:  person.middle_name,
-        last_name:  person.last_name,
-        dob:        person.birthdate.strftime("%d/%b/%Y"),
-        gender:     person.gender,
-        person_id:  person.id
-      }
+      cases << fields_for_data_table(person)
     end 
 
     render text: cases.to_json and return
