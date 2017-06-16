@@ -59,7 +59,7 @@ class ApplicationController < ActionController::Base
       searchables = "#{person.first_name} #{person.last_name} #{ format_content(person)}"
       sql_query = "SELECT couchdb_id,title,content,MATCH (title,content) AGAINST ('#{searchables}' IN BOOLEAN MODE) AS score 
                   FROM documents WHERE MATCH(title,content) AGAINST ('#{searchables}' IN BOOLEAN MODE) ORDER BY score DESC LIMIT 5"
-      results = SQLSearch.query_exec(sql_query).split(/\n/)
+      results = SimpleSQL.query_exec(sql_query).split(/\n/)
       results = results.drop(1)
 
       potential_duplicates = []
@@ -142,7 +142,7 @@ class ApplicationController < ActionController::Base
                     PRIMARY KEY (id),
                     FULLTEXT KEY content (content)
                   ) ENGINE=MyISAM DEFAULT CHARSET=utf8;"
-    SQLSearch.query_exec(create_query)
+    SimpleSQL.query_exec(create_query)
                       
   end
 

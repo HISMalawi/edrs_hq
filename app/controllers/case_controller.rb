@@ -478,7 +478,7 @@ class CaseController < ApplicationController
     query = "INSERT INTO documents(couchdb_id,title,content,date_added,created_at,updated_at) 
               VALUES('#{@person.id}','#{title}','#{title} #{content}','#{@person.created_at}',NOW(),NOW())"
 
-    SQLSearch.query_exec(query)
+    SimpleSQL.query_exec(query)
 
     @statuses = [PersonRecordStatus.by_person_recent_status.key(@person.id).last.status]
 

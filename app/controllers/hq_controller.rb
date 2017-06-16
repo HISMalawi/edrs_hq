@@ -98,7 +98,7 @@ class HqController < ApplicationController
                 "place_death" => ['place_of_death', 'place_of_death_district', 'place_of_death_ta', 'place_of_death_village', 'hospital_of_death', 'other_place_of_death']
               }
 
-        results = SQLSearch.query(map, params)
+        results = SimpleSQL.query(map, params)
     end
 
     if has_role( "Add cause of death") && results.length > 0
