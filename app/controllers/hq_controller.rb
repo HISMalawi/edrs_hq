@@ -175,21 +175,7 @@ class HqController < ApplicationController
        i +=1
     end
     #tobe revised
-    params[:cause_of_death_conditions] = params[:cause_of_death_conditions].join(",").to_s
-   
-    diagnosis_list = CSV.foreach("#{Rails.root}/app/assets/data/diagnoses_csv.csv", :headers => false).collect{|row| row[1] unless row[1].blank?}
-
-    params.keys.each do |k|
-      if k.include?("cause_of_death") && k !='cause_of_death_available'
-        if diagnosis_list.include?(params[k]) 
-
-        else
-
-            params["other_#{k}"] = params[k] 
-            params[k] = nil
-        end
-      end
-    end
+   # params[:cause_of_death_conditions] = params[:cause_of_death_conditions].join(",").to_s if  params[:cause_of_death_conditions].present?
     @person.update_attributes(params)
 
     flash[:success] = "Record updated successfully"
