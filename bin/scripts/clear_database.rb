@@ -80,26 +80,24 @@ if Rails.env == "development"
 
     puts "Drop person_record_status"   
 
-    if CONFIG['site_type'] != "facility"
-        create_query_den_table = "DROP TABLE dens;
-        						  CREATE TABLE IF NOT EXISTS dens (
-                                      den_id int(11) NOT NULL AUTO_INCREMENT,
+    create_query_den_table = "DROP TABLE IF EXISTS drns;
+        					  CREATE TABLE IF NOT EXISTS drns(
+                                      drn_id int(11) NOT NULL AUTO_INCREMENT,
                                       person_id varchar(225) NOT NULL,
-                                      den varchar(15) NOT NULL,
-                                      den_sort_value varchar(15) NOT NULL,
+                                      drn varchar(15) NOT NULL,
+                                      drn_sort_value varchar(15) NOT NULL,
                                       created_at datetime NOT NULL,
                                       updated_at datetime NOT NULL,
-                                      PRIMARY KEY (den_id),
-                                      UNIQUE KEY den (den),
+                                      PRIMARY KEY (drn_id),
+                                      UNIQUE KEY drn (drn),
                                       KEY person_id (person_id),
-                                      CONSTRAINT dens_ibfk_1 FOREIGN KEY (person_id) REFERENCES people (person_id)
+                                      CONSTRAINT drn_person FOREIGN KEY (person_id) REFERENCES people (person_id)
                                   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;"
-          SimpleSQL.query_exec(create_query_den_table)
+    SimpleSQL.query_exec(create_query_den_table)
 
-          puts "Drop dens"   
-    end
+    puts "Drop drn table"   
 
-    create_people_table = "SET FOREIGN_KEY_CHECKS = 0;
+   create_people_table = "SET FOREIGN_KEY_CHECKS = 0;
                           DROP TABLE IF EXISTS people;
                           CREATE TABLE people (
                             person_id varchar(225) NOT NULL,
@@ -323,6 +321,7 @@ if Rails.env == "development"
                             certifier_first_name varchar(255) DEFAULT NULL,
                             certifier_middle_name varchar(255) DEFAULT NULL,
                             certifier_last_name varchar(255) DEFAULT NULL,
+                            certifier_license_number varchar(255) DEFAULT NULL,
                             certifier_signed varchar(255) DEFAULT NULL,
                             date_certifier_signed date DEFAULT NULL,
                             position_of_certifier varchar(255) DEFAULT NULL,

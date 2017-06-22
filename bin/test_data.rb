@@ -90,7 +90,7 @@ def send_person_to_mysql(person)
 
 def create
   
-  (1.upto(30)).each do |n|
+  (1.upto(5)).each do |n|
     gender = ["Male","Female"].sample
     person = Person.new()
     person.first_name = Faker::Name.first_name
@@ -154,13 +154,14 @@ def create
     send_person_to_mysql(person)
 
     #status = ["NEW","MARKED APPROVAL"].sample
-    status = "MARKED APPROVAL"
+    status = "MARKED HQ APPROVAL"
 
     PersonRecordStatus.create({
                                       :person_record_id => person.id.to_s,
                                       :status => status,
                                       :district_code =>  person.district_code,
                                       :created_by => User.current_user.id})
+
 
     PersonIdentifier.create({
                                       :person_record_id => person.id.to_s,
@@ -169,6 +170,7 @@ def create
                                       :site_code => CONFIG['site_code'],
                                       :district_code => CONFIG['district_code'],
                                       :creator => User.current_user.id})
+
 
     title = "#{person.first_name} #{person.last_name}"
     content =  format_content(person)

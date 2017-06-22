@@ -235,11 +235,27 @@ class PersonIdentifier < CouchRest::Model::Base
     end
   end
 
+  def self.generate_drn(person)
+    last_record = PersonIdentifier.by_drn_sort_value.last.drn_sort_value rescue nil
+    drn_sort_value = last_record.to_i + 1 rescue 1
+    nat_serial_num = drn_sort_value
+    drn = "%010d" % drn_sort_value
+    infix = ""
+    if person.gender.match(/^F/i)
+      infix = "1"
+    elsif person.gender.match(/^M/i)
+      infix = "2"
+    end
+
+    drn = "#{drn[0, 5]}#{infix}#{drn[5, 9]}"
+    return drn, nat_serial_num
+  end
+
   def self.assign_drn(person, creator)
     drn_values = self.generate_drn(person)
     drn = drn_values[0]
     drn_sort_value = drn_values[1].to_i
-    self.create({
+    drn_record = self.create({
                     :person_record_id=>person.id.to_s,
                     :identifier_type =>"DEATH REGISTRATION NUMBER",
                     :identifier => drn,
@@ -247,6 +263,28 @@ class PersonIdentifier < CouchRest::Model::Base
                     :drn_sort_value => drn_sort_value,
                     :district_code => (person.district_code rescue CONFIG['district_code'])
                 })
+    if drn_record.present? 
+         status = PersonRecordStatus.by_person_recent_status.key(person.id.to_s).last
+
+        status.update_attributes({:voided => true})
+        
+        PersonRecordStatus.create({
+                                  :person_record_id => person.id.to_s,
+                                  :status => (PersonRecordStatus.nextstatus[person.id] rescue "HQ PRINT"),
+                                  :district_code => (person.district_code rescue CONFIG['district_code']),
+                                  :creator => creator})
+
+        PersonRecordStatus.nextstatus.delete(person.id) if PersonRecordStatus.nextstatus.present?
+        
+        person.update_attributes({:approved =>"Yes",:approved_at=> (drn_record.created_at.to_time rescue Time.now)})
+
+        Audit.create(record_id: person.id,
+                       audit_type: "Audit",
+                       user_id: creator,
+                       level: "Person",
+                       reason: "Approved record at HQ")
+    else
+    end
   end
 
   def self.insert_in_mysql(record)

@@ -38,7 +38,7 @@ class User < CouchRest::Model::Base
 
   design do
     view :by_active
-
+    view :by_role
     # active views
     view :active_users,
          :map => "function(doc){
@@ -48,6 +48,7 @@ class User < CouchRest::Model::Base
               creator: doc.creator, notify: doc.notify, updated_at: doc.updated_at});
             }
           }"
+
 
   end
 

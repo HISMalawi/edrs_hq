@@ -198,6 +198,7 @@ class CaseController < ApplicationController
     person = Person.find(params[:person_id])
     
     if ["HQ PRINT", "HQ REPRINT", "HQ APPROVED", "HQ REAPPROVED"].include?(next_status)
+      
       drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([params[:person_id], "DEATH REGISTRATION NUMBER"]).last
       if drn.blank?
         last_run_time = File.mtime("#{Rails.root}/public/sentinel").to_time

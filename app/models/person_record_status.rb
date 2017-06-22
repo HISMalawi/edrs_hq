@@ -1,6 +1,7 @@
 class PersonRecordStatus < CouchRest::Model::Base
 
-	before_save :set_district_code,:set_facility_code
+	before_save :set_district_code,:set_facility_code,:set_registration_type
+	after_create :insert_in_mysql
 	cattr_accessor :nextstatus
 
 	property :person_record_id, String
@@ -10,6 +11,7 @@ class PersonRecordStatus < CouchRest::Model::Base
 	property :facility_code, String
 	property :voided, TrueClass, :default => false
 	property :reprint, TrueClass, :default => false
+	property :registration_type, String
 	property :creator, String
 
 	timestamps!
@@ -79,9 +81,13 @@ class PersonRecordStatus < CouchRest::Model::Base
 	def set_district_code
 		self.district_code = self.person.district_code
 	end
-	
+
 	def set_facility_code
 		self.facility_code = self.person.facility_code
+	end
+
+	def set_registration_type
+		self.registration_type = self.person.registration_type
 	end
 
 	def person
@@ -112,5 +118,43 @@ class PersonRecordStatus < CouchRest::Model::Base
                                   :district_code => person.district_code,
                                   :creator => (User.current_user.id rescue (@current_user.id rescue nil))})
 		end
+	end
+
+	def insert_in_mysql
+		query = "INSERT INTO person_record_status(
+				  		person_record_status_id,
+				  		person_record_id,
+				  		status,
+				  		prev_status,
+				  		district_code,
+				  		facility_code,
+				  		registration_type,
+				  		creator,
+				  		updated_at,
+				  		created_at) VALUES (
+				  		'#{self.id}',
+				  		'#{self.person_record_id}',
+				  		'#{self.status}',
+				  		'#{(self.prev_status rescue 'NULL')}',
+				  		'#{self.district_code}',
+				  		'#{self.facility_code rescue 'NULL'}',
+				  		'#{self.registration_type}',
+				  		'#{self.creator}',
+				  		'#{self.updated_at}',
+				  		'#{self.created_at}')"
+
+      	SimpleSQL.query_exec(query)
+	end
+
+	def update_status_to_mysql(status)
+		query = "UPDATE person_record_status SET 
+				  		person_record_id = '#{status.person_record_id}',
+				  		status = '#{status.status}',
+				  		prev_status = '#{status.prev_status}',
+				  		voided = '#{status.voided}',
+				  		updated_at = '#{status.updated_at}' 
+				  		WHERE person_record_status_id = '#{status.id}'"
+
+      	SimpleSQL.query_exec(query)
 	end
 end

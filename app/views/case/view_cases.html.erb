@@ -100,7 +100,7 @@
         <td colspan="2" style="border-right:none"><b>Record Status : </b></td>
         <td colspan="2" style="color:#4775a1;border-left:none"><%= @person.status%></td>
         <td style="border-right:none"><b>DEN : </b></td>
-        <td style="color:#4775a1;border-left:none"><%= @person.den%></td>
+        <td style="color:#4775a1;border-left:none"><%= @person.den rescue ''%></td>
         <td style="border-right:none"><b>DRN : </b></td>
         <td style="color:#4775a1;border-left:none"><%= @person.drn rescue ''%></td>
       </tr>
@@ -440,18 +440,12 @@
               <table class="table table-condensed table-striped table-bordered table-hover">
                 <tbody>
                     <tr class="table-row">
-                        <th class="table-cell">First Name</th>
-                        <td class="table-cell"><%= @person.first_name%></td>
+                        <th class="table-cell">Death Entry Number</th>
+                        <td class="table-cell"><%= @person.den%></td>
                     </tr>
-
                     <tr class="table-row">
-                      <th class="table-cell">Last Name</th>
-                      <td class="table-cell"><%= @person.last_name%></td>
-                    </tr>
-
-                    <tr class="table-row">
-                      <th class="table-cell">Sex</th>
-                      <td class="table-cell"><%= @person.gender%></td>
+                        <th class="table-cell"> Name</th>
+                        <td class="table-cell"><%= @person.first_name%> <%= @person.middle_name rescue ''%> <%= @person.last_name%></td>
                     </tr>
 
                     <tr class="table-row">
@@ -460,23 +454,28 @@
                     </tr>
 
                     <tr class="table-row">
+                      <th class="table-cell">Sex</th>
+                      <td class="table-cell"><%= @person.gender%></td>
+                    </tr>
+
+                    <tr class="table-row">
                       <th class="table-cell">Date of Death</th>
                       <td class="table-cell"><%= @person.date_of_death.to_date.strftime('%d/%b/%Y') rescue nil%></td>
                     </tr>
 
                     <tr class="table-row">
-                      <th class="table-cell">Informant First Name</th>
-                      <td class="table-cell"><%= @person.informant_first_name%></td>
+                      <th class="table-cell">Name of Mother</th>
+                      <td class="table-cell"><%= @person.mother_first_name%> <%= @person.mother_middle_name rescue ''%> <%= @person.mother_last_name%></td>
                     </tr>
 
                     <tr class="table-row">
-                      <th class="table-cell">Informant Last Name</th>
-                      <td class="table-cell"><%= @person.informant_last_name%></td>
+                      <th class="table-cell">Name of Father</th>
+                      <td class="table-cell"><%= @person.father_first_name%> <%= @person.father_middle_name rescue ''%> <%= @person.father_last_name%></td>
                     </tr>
 
                     <tr class="table-row">
-                      <th class="table-cell">Informant Signed</th>
-                      <td class="table-cell"><%= @person.informant_signed%></td>
+                      <th class="table-cell">Date of Registration</th>
+                      <td class="table-cell"><%= @person.created_at.to_date.strftime('%d/%b/%Y')%></td>
                     </tr>
                 </tbody>
               </table>
