@@ -29,9 +29,16 @@ Rails.application.routes.draw do
   get "/unblock" => "users#unblock"
   get "/users/edit_account" => "users#edit_account"
   patch "/users/edit"
+  post "/confirm_password" => "users#confirm_password"
+  get "/confirm_password" => "users#confirm_password"
+  get "/update_password" => "users#update_password"
+  post "/update_password" => "users#update_password"
+  post "/update_demographics" => "users#update_demographics"
+  get "/users/change_password" => "users#change_password"  
   get '/settings' => 'users#settings'
   get '/manage_users' => "users#manage_users"
   get 'my_account' => "users#my_account"
+  post 'my_account' => "users#my_account"
   get 'profile/:user_id' => 'users#profile'
   ################## users routes ends ############################
   

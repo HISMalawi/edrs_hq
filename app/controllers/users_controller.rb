@@ -75,14 +75,18 @@ class UsersController < ApplicationController
   end
 
   def edit_account
-     
-    @user = @current_user
 
-    @keyboards = ['abc', 'qwerty']
+   # @user = User.find(params[:id])
+
+    
+     
+   @user = @current_user
+
+   # @keyboards = ['abc', 'qwerty']
 
     @section = "Edit Account"
 
-    @targeturl = ""
+    @targeturl = "/update_demographics"
 
 
   end
@@ -310,6 +314,87 @@ class UsersController < ApplicationController
     end 
 
   end
+
+  def update_demographics
+     
+     # @user = @current_user
+
+      # raise params.inspect
+        
+  # redirect_to "/" and return if !has_role("Update User")
+   # @section = "Edit User"
+   # @targeturl = "/view_users"
+
+
+
+    
+
+      @user = User.find(params[:user][:id]) rescue nil
+          
+        
+      if @user.present?
+        @user.first_name = params[:user][:first_name]
+        @user.last_name = params[:user][:last_name]
+        @user.email = params[:user][:email]
+        @user.save
+        
+        redirect_to "/my_account"
+      else
+        redirect_to "/my_account"
+      end
+    
+       
+      
+  end
+
+
+  
+
+  def change_password
+   
+    #redirect_to "/" and return if !(User.current_user.activities_by_level(@facility_type).include?("Change own password"))
+
+    @section = "Change Password"
+
+    @targeturl = "/change_password"
+
+    @user = User.current_user
+
+
+
+  
+
+  end
+
+   def confirm_password
+      user = User.current_user rescue User.find(params[:user_id])
+      password = params[:old_password]
+
+      if user.password_matches?(password)
+          render :text => {:response => true}.to_json
+      else
+        render :text => {:response => false}.to_json
+      end
+        
+  end
+
+def update_password
+     
+    user = User.current_user
+    user.plain_password = params[:user][:new_password]
+    user.password_attempt = 0
+    user.last_password_date = Time.now
+    user.save
+    
+    flash["notice"] = "Your new password has been changed succesfully" 
+    Audit.create(record_id: user.id, audit_type: "Audit", level: "User", reason: "Updated user password")
+    
+    redirect_to '/my_account'
+
+  end
+
+
+
 
   def my_account
     @task = [
