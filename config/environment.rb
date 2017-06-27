@@ -6,3 +6,4 @@ Rails.application.initialize!
 
 require "encryption"
 require "sql_search"
+require "simple_sql"
