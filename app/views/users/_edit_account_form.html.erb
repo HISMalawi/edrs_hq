@@ -15,7 +15,52 @@
             color: #344351;
         }
 </style>
-<%= form_for @user, :url => '/users/create' ,:method => :post, :html => {:class => "form-horizontal",:role=>"form"} do |f| %>
+
+
+
+<style type="text/css">
+  .left{
+    float: left;
+  }
+  .right {
+      float: right;
+  }
+  #details {
+      width: 100%;
+      border-collapse: collapse;
+      margin-left: 1%;
+      margin-top: 4%
+  }
+
+  #details tr:nth-child(odd){
+    background: #dcdbdb;
+  }
+  #details td, #details th {
+     border: 1px solid lightgray;
+     font-size: 1.1em;
+     padding: 1em;
+  }
+  #details th{
+    background: #4c79a3;
+    color:#ffffff;
+    font-size: 1.2em;
+    padding: 0.8em;
+  }
+  .btn-primary{
+    background-color:  #4c79a3;
+     border: 1px solid lightgray;
+  }
+  
+</style>
+<div id="main" >
+  <div id="button-container">
+      <div class="left" style="width:90%; text-align:center">
+
+         <%= form_for @user, :url => '/update_demographics' ,:method => :post, :html => {:class => "form-horizontal",:role=>"form"} do |f| %>
+
+                 <input type="hidden" value="<%= @user.id %>" id="user_id" name="user[id]">
+
+
     <fieldset>
         <legend>Edit user details</legend>
             <!-- <% if flash[:notice].present? %>
@@ -34,47 +79,24 @@
                 </ul>
               </div>
           <% end %>
-            <div class="form-group">
-                <label class="control-label col-sm-2" for="username">Username</label>
-                <div class="col-sm-10">
-                  <input type="" class="form-control" id="username" name="user[username]" placeholder="<%= @user.username %>" required>
-                </div>
-              </div>
+
               <div class="form-group">
                 <label class="control-label col-sm-2" for="first_name">Firstname</label>
                 <div class="col-sm-10">
-                  <input type="first_name" class="form-control" id="first_name"  name="user[first_name]" placeholder="First name" required>
+                  <input type="first_name" class="form-control" id="first_name"  name="user[first_name]" <%= f.text_field :first_name, :class => "input_cell",  :required => true  %> 
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-sm-2" for="last_name">Surname</label>
                 <div class="col-sm-10">
-                  <input type="last_name" class="form-control" id="last_name"  name="user[last_name]" placeholder="Surname" required>
+                  <input type="last_name" class="form-control" id="last_name"  name="user[last_name]" <%= f.text_field :last_name, :class => "input_cell", :required => true %>
                 </div>
               </div>
-              <% @roles = [""] + Role.by_level.keys(["HQ"]).each.collect { |x| x.role }.uniq + ["Certificate Signatory"] %>
-              <div class="form-group">
-                <label class="control-label col-sm-2" for="role">Role</label>
-                <div class="col-sm-10">
-                  <%= select_tag "user[role]", options_for_select(@roles, @user.role), :class => 'form-control', :placeholder => "Select user role", :required => true %>
-                </div>
-              </div>
-               <div class="form-group">
-                <label class="control-label col-sm-2" for="password">Password</label>
-                <div class="col-sm-10">
-                  <input type="password" class="form-control"  name="user[plain_password]" id="password" required>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="control-label col-sm-2" for="confirm_password">Confirm Password</label>
-                <div class="col-sm-10">
-                  <input type="password" class="form-control" id="confirm_password" onblur="matchPassword()" required>
-                </div>
-              </div>
+               
               <div class="form-group">
                 <label class="control-label col-sm-2" for="email"  name="user[email]">Email</label>
                 <div class="col-sm-10">
-                  <input type="email" class="form-control" id="email" required>
+                  <input type="email" class="form-control" id="email" <%= f.text_field :email, :class => "input_cell", :required => true %> 
                 </div>
               </div>
                <div class="form-group">
@@ -87,12 +109,18 @@
               </div>
               <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
-                  <button class="btn btn-success pull-right">Save</button>
+                  <button class="btn btn-success pull-right">Update Demographics</button>
                 </div>
               </div>
     </fieldset>
     
 <%end%>
+
+      </div>
+  </div>
+</div>      
+  
+
 <div id="myModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
@@ -153,3 +181,15 @@
           });
         });
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
