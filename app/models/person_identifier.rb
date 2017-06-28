@@ -42,6 +42,7 @@ class PersonIdentifier < CouchRest::Model::Base
     view :by_district_code
     view :by_creator
     view :by_created_at
+    view :by_updated_at
     view :by_person_record_id_and_identifier_type
     filter :district_sync, "function(doc,req) {return req.query.district_code == doc.district_code}"
     filter :facility_sync, "function(doc,req) {return req.query.site_code == doc.site_code}"

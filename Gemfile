@@ -49,6 +49,8 @@ gem 'sucker_punch', '~> 2.0'
 gem 'global_phone' #, :git => 'https://github.com/sstephenson/global_phone.git', :ref => 'dd0894061f58479884e6cfa2d00382542dc77d5a'
 gem 'global_phone_dbgen'
 
+gem 'rake', '< 11.0'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'

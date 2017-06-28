@@ -22,6 +22,7 @@ class PersonRecordStatus < CouchRest::Model::Base
 		view :by_voided
 		view :by_creator
 		view :by_created_at
+		view :by_updated_at
 		view :by_person_record_id
 		view :by_prev_status
 		view :by_prev_status_and_status

@@ -14,6 +14,7 @@ class Sync < CouchRest::Model::Base
 		view :by_district_code
 		view :by_facility_code
 		view :by_created_at
+		view :by_updated_at
 		view :by_created_at_and_dc_sync_status
 		view :by_created_at_and_hq_sync_status
 		view :by_district_code_and_hq_sync_status

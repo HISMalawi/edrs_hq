@@ -15,6 +15,7 @@ class Village < CouchRest::Model::Base
       	   				}
       	   		   }"
     view :by_name
+    view :by_updated_at
     view :by_ta_id_and_name
   end
 

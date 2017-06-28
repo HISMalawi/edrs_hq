@@ -317,6 +317,8 @@ Sync.count
 PersonRecordStatus.count
 Person.count rescue nil
 
+`rake edrs:build_mysql`
+
 puts "Application setup succesfully!!!"
 
 puts "Login details username: #{user.username} password: password"

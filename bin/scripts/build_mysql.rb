@@ -209,8 +209,7 @@ EOF
     return
 end
 
-def generate_files
- 
+def generate_files 
   (@couchdb_files || []).each do |doc, data|
       count  = eval(doc).count
       puts count

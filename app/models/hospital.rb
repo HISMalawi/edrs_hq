@@ -19,6 +19,7 @@ class Hospital < CouchRest::Model::Base
   timestamps!
 
   design do
+    view :by_updated_at
     view :by_district,
          :map => "function(doc) {
                   if ((doc['type'] == 'Hospital')) {
