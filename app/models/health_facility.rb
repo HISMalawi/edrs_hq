@@ -19,6 +19,7 @@ class HealthFacility < CouchRest::Model::Base
     view :by_facility_code
     view :by_facility_type
     view :by_f_type
+    view :by_updated_at
     view :by_district_id,
          :map=>"function(doc){
                     if(doc.type == 'HealthFacility'){

@@ -9,6 +9,7 @@ class Role < CouchRest::Model::Base
     view :by_role
     view :by_level
     view :by_level_and_role
+    view :by_updated_at
 
   end
 

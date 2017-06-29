@@ -8,6 +8,7 @@ class TraditionalAuthority < CouchRest::Model::Base
 
   design do
     view :by__id
+    view :by_updated_at
     view :by_district_id,
          :map => "function(doc){
 

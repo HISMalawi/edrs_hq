@@ -33,7 +33,8 @@ class Auditing < CouchRest::Model::Base
     view :by_site_id
     view :by_site_type
     view :by_voided
-
+    view :by_updated_at
+    
     filter :facility_sync, "function(doc,req) {return req.query.site_id == doc.site_id}"
 
   end

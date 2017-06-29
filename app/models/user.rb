@@ -39,7 +39,7 @@ class User < CouchRest::Model::Base
   design do
     view :by_active
     view :by_role
-    # active views
+    view :by_updated_at
     view :active_users,
          :map => "function(doc){
             if (doc['type'] == 'User' && doc['active'] == true){
