@@ -97,6 +97,7 @@ start_date = (data[1] rescue "1900-01-01 00:00:00".to_time)
 end_date = Time.now.strftime("%Y-%m-%d %H:%M:%S").to_time
 
 @couchdb_files.keys.each do |key|
+  next if ['Village','TraditionalAuthority','District','Country','Nationality'].include? key
   eval(key).by_updated_at.startkey(start_date).endkey(end_date).each do |record|
     insert_update(record,key)
   end

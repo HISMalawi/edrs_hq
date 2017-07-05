@@ -307,7 +307,7 @@ class UsersController < ApplicationController
     end
                     
     if has_role("Update system") 
-      @tasks << ['Build MySQL DB','Copy data to MySQL database','/build_mysql_database','MySQL_DB.png']
+      #@tasks << ['Build MySQL DB','Copy data to MySQL database','/build_mysql_database','MySQL_DB.png']
     end
 
     if has_role("Change own password") 

@@ -20,7 +20,7 @@ if Rails.env == "development"
  sql = "SET FOREIGN_KEY_CHECKS = 0;"
  SimpleSQL.query_exec(sql)
 
-	create_query = "DROP TABLE documents;
+	create_query = "DROP TABLE IF EXISTS documents;
 					CREATE TABLE IF NOT EXISTS documents (
                     id int(11) NOT NULL AUTO_INCREMENT,
                     couchdb_id varchar(255) NOT NULL UNIQUE,
@@ -38,7 +38,7 @@ if Rails.env == "development"
 
     puts "Drop documents"
 
-    create_status_table = "DROP TABLE person_record_status ;
+    create_status_table = "DROP TABLE IF EXISTS person_record_status ;
     					   CREATE TABLE IF NOT EXISTS person_record_status (
                             person_record_status_id varchar(225) NOT NULL,
                             person_record_id varchar(255) DEFAULT NULL,
@@ -58,7 +58,7 @@ if Rails.env == "development"
 
      puts "Drop person_record_status"  
 
-    create_identifier_table = "DROP TABLE person_identifier;
+    create_identifier_table = "DROP TABLE IF EXISTS person_identifier;
     						   CREATE TABLE person_identifier (
                                 person_identifier_id varchar(225) NOT NULL,
                                 person_record_id varchar(255) DEFAULT NULL,

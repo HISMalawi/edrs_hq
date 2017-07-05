@@ -1,9 +1,10 @@
- require 'sql_search'
+ require 'simple_sql'
 
  sql = "SET FOREIGN_KEY_CHECKS = 0;"
  SimpleSQL.query_exec(sql)
  PersonIdentifier.can_assign_den = false
  PersonIdentifier.can_assign_drn = false
+ LoadMysql.load_mysql = false
  @@file_path = "#{Rails.root.to_s}/app/assets/data/MySQL_data/"
  @couchdb_files = {
       'Person' => {count: Person.count, name: 'Person doc.', id: 'person_doc', 
@@ -252,6 +253,6 @@ load_sql_files
 
 PersonIdentifier.can_assign_den = true
 PersonIdentifier.can_assign_drn = true
-
+LoadMysql.load_mysql = true
 sql = "SET FOREIGN_KEY_CHECKS = 1;"
 SimpleSQL.query_exec(sql)
