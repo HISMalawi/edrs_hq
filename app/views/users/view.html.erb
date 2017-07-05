@@ -29,14 +29,19 @@
 <link href="/assets/DataTables/demo_table_jui.css" rel="stylesheet">
 <link href="/assets/DataTables/demo_page.css" rel="stylesheet">
 <link href="/assets/DataTables/jquery-ui.css" rel="stylesheet">
+
+
 <table width="100%" id="user_table">
-  <tr>
-    <th>Name</th>
-    <th>Username</th>
-    <th> Role</th>
-    <th>Status</th>
-    <th>Action</th>
-  </tr>
+ <thead>
+   <tr>
+     <th>Name</th>
+     <th>Username</th>
+     <th> Role</th>
+     <th>Status</th>
+     <th>Action</th>
+   </tr>
+  </thead> 
+<tbody>
     <% @users.each do |user|%>
     <tr>
            <td><%= user.first_name%> <%= user.last_name%></td>
@@ -52,11 +57,12 @@
     </tr>
     <%end%>
   
- 
+ </tbody>
 </table>
 
 <script>
     $(document).ready(function(){
+        $('#user_table').DataTable();
         
     });
 
