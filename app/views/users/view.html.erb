@@ -21,6 +21,10 @@
         color:#1a2732;
         padding-left: 2%;
     }
+    .btn-danger{
+    background-color:  #b41b1b;
+    border: 1px solid #b11a1a;
+  }
 </style>
        
               
@@ -38,7 +42,7 @@
      <th>Username</th>
      <th> Role</th>
      <th>Status</th>
-     <th>Action</th>
+     <th >Action</th>
    </tr>
   </thead> 
 <tbody>
@@ -47,12 +51,17 @@
            <td><%= user.first_name%> <%= user.last_name%></td>
            <td><%= user.username%></td>
            <td><%= user.role%></td>
-           <%if user.active%>
+            <%if user.active%>
                 <td style="text-align:center"><i class="fa fa-check" style="color:green"></i></td>
-                <td><button class="btn btn-danger">Block</button></td>
+                <td><button class="btn btn-info" onclick="window.location='/users/show/<%=user.id%>'">View</button>
+                
+               <button type="button"  id="block" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#myModal" data-id='<%= user.id%>' onclick="blockUser()">Block User</button></td>
+
+
            <%else%>
                 <td style="text-align:center; color:red"><i class="fa fa-ban"></i></td>
-                <td><button class="btn btn-primary">Unblock</button></td>
+                <td><button class="btn btn-info" onclick="window.location='/users/show/<%=user.id%>'">View</button>
+                <button class="btn btn-success" id="unblock"  data-toggle= "modal" data-target="#unblockModal" data-id= '<%= user.id%>' onclick="unBlockUser()">Unblock</button></td>
            <%end%>
     </tr>
     <%end%>
@@ -60,10 +69,187 @@
  </tbody>
 </table>
 
+
+
+        <!-- Modal -->
+          <div class="modal fade" id="myModal" role="dialog"  data-id="">
+            <div class="modal-dialog modal-sm">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Block User</h4>
+                </div>
+                <div class="modal-body">
+                  <p>Are you sure you want to block this user?</p>
+
+                     <div class="row">
+                          <div class="col-lg-12">
+
+                            <div class=" form-group">
+                              <div class="container">
+                                <div class="row" style="width: 550px;">
+
+                                    <div id="comments-list">
+                                         
+                                    </div>
+
+                                    <div style="width: 100%;margin-top: 20px;border-top: 1px solid #d3d3d3">
+                                        <form id="comment-form" >
+                                        <p>Please give a reason for blocking user</p>
+                                          <textarea class="form-control" name="comment" placeholder="New Comment" id="textarea" style="width: 98%;margin-top: 4px;margin-bottom: 4px;"></textarea>
+
+                                          
+                                        </form>
+                                    </div>
+                                  </div>
+                              </div>
+                            </div>
+
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default"  id="cancel" data-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-default" id="btn-ok"  onclick="blockUser()">Ok</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+</div>
+
+
+
+
+<!-- Modal -->
+          <div class="modal fade" id="unblockModal" role="dialog"  data-id="">
+            <div class="modal-dialog modal-sm">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">UnBlock User</h4>
+                </div>
+                <div class="modal-body">
+                  <p>Are you sure you want to unblock this user?</p>
+
+                     <div class="row">
+                          <div class="col-lg-12">
+
+                            <div class=" form-group">
+                              <div class="container">
+                                <div class="row" style="width: 550px;">
+
+                                    <div id="comments-list">
+                                         
+                                    </div>
+
+                                    <div style="width: 100%;margin-top: 20px;border-top: 1px solid #d3d3d3">
+                                        <form id="comment-form" >
+                                        <p>Please give a reason for un blocking user</p>
+                                          <textarea class="form-control" name="comment" placeholder="New Comment" id="unblockreason" style="width: 98%;margin-top: 4px;margin-bottom: 4px;"></textarea>
+
+                                          
+                                        </form>
+                                    </div>
+                                  </div>
+                              </div>
+                            </div>
+
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default"  id="unblock-cancel" data-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-default" id="unblock-btn-ok"  onclick="unBlockUser()">Ok</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+</div>
+
+
+
 <script>
+
+   function __$(id){
+        return document.getElementById(id);
+    }
+
+
     $(document).ready(function(){
         $('#user_table').DataTable();
         
     });
 
+
+    function blockUser() {
+
+
+
+        $('#myModal').on('shown.bs.modal', function (e) {
+
+          //Getting the users id
+            var id = e.relatedTarget.dataset.id;
+             $("#textarea").val('');
+             $("#textarea").focus()
+
+   
+             $("#myModal").on("click", "#btn-ok", function(){
+                
+               var comment= $("#textarea").val();
+               // alert(comment);
+                 //posting the id after an okey button                          
+                  window.location = '/users/block_user/'+ id + '?comment='+ comment;
+                 });
+             
+
+             });
+
+        }
+
+
+       function unBlockUser() {
+
+
+
+        $('#unblockModal').on('shown.bs.modal', function (e) {
+
+          //Getting the users id
+            var id = e.relatedTarget.dataset.id;
+             $("#unblockreason").val('');
+
+   
+             $("#unblockModal").on("click", "#unblock-btn-ok", function(){
+                
+               var comment= $("#unblockreason").val();
+               // alert(comment);
+                 //posting the id after an okey button                          
+                  window.location = '/users/unblock_user/'+ id + '?comment='+ comment;
+                 });
+             
+
+             });
+
+        }
+
+
+
+
+    function showModel()
+        {
+            $("#myModal").show()
+
+        }
+
 </script>
+
+
+<style >
+#myModal
+{
+    position : absolute;
+      left: 30%;
+      top: 13.5%;
+      display: none;
+}    
+
+</style>

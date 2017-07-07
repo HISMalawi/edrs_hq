@@ -113,6 +113,7 @@ class UsersController < ApplicationController
     end
   end
 
+
   def search
 
     redirect_to "/" and return if !has_role("View Users")
@@ -203,13 +204,16 @@ class UsersController < ApplicationController
   def block_user
 
     redirect_to "/" and return if !has_role("Deactivate User")
+    
 
     user = User.find(params[:id]) rescue nil
+     
+      
 
     if !user.nil?
 
-      user.update_attributes(:active => false, :un_or_block_reason => params[:reason]) if ((User.current_user.role.strip.downcase.match(/admin/) rescue false) ? true : false)
-      Audit.create(record_id: user.id, audit_type: "Audit", level: "User", reason: "Blocked user")
+      user.update_attributes(:active => false, :un_or_block_reason => params[:reason])
+      Audit.create(record_id: user.id, audit_type: "Audit", level: "User", reason: "Blocked user : #{params[:reason]}")
     end
 
     redirect_to "/view_users" and return
@@ -224,13 +228,12 @@ class UsersController < ApplicationController
 
     if !user.nil?
 
-      user.update_attributes(:active => true, :un_or_block_reason => params[:reason]) if ((User.current_user.role.strip.downcase.match(/admin/) rescue false) ? true : false)
-
-      Audit.create(record_id: user.id, audit_type: "Audit", level: "User", reason: "Un-blocked user")
+      user.update_attributes(:active => true, :un_or_block_reason => params[:reason]) 
+      Audit.create(record_id: user.id, audit_type: "Audit", level: "User", reason: "Un-blocked user: #{params[:reason]}")
 
     end
 
-    redirect_to "/view_users?title=View+Users" and return
+    redirect_to "/view_users" and return
 
   end
 
@@ -317,18 +320,7 @@ class UsersController < ApplicationController
 
   def update_demographics
      
-     # @user = @current_user
-
-      # raise params.inspect
-        
-  # redirect_to "/" and return if !has_role("Update User")
-   # @section = "Edit User"
-   # @targeturl = "/view_users"
-
-
-
     
-
       @user = User.find(params[:user][:id]) rescue nil
           
         
@@ -409,6 +401,12 @@ def update_password
     @user = User.current_user
 
    # render :layout => "landing"
+  end
+
+  def show
+    @section = "User Details"
+
+    @user = User.find(params[:id])
   end
 
   def build_mysql_database

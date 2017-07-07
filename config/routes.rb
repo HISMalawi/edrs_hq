@@ -23,10 +23,11 @@ Rails.application.routes.draw do
   get "/search_by_username/:id" => "users#search_by_username"
   get "/search_by_username" => "users#search_by_username"
   get "/username_availability" => "users#username_availability"
-  get "/block_user/:id" => "users#block_user"
-  get "/unblock_user/:id" => "users#unblock_user"
+  
+  get "/users/block_user/:id" => "users#block_user"
+  
   get "/block" => "users#block"
-  get "/unblock" => "users#unblock"
+  get "/users/unblock_user/:id" => "users#unblock_user"
   get "/users/edit_account" => "users#edit_account"
   patch "/users/edit"
   post "/confirm_password" => "users#confirm_password"
@@ -34,7 +35,8 @@ Rails.application.routes.draw do
   get "/update_password" => "users#update_password"
   post "/update_password" => "users#update_password"
   post "/update_demographics" => "users#update_demographics"
-  get "/users/change_password" => "users#change_password"  
+  get "/users/change_password" => "users#change_password" 
+  get "users/show/:id" => "users#show" 
   get '/settings' => 'users#settings'
   get '/manage_users' => "users#manage_users"
   get 'my_account' => "users#my_account"
