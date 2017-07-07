@@ -1,4 +1,4 @@
-
+LoadMysql.load_mysql = false
 puts "Initialising user roles"
 
 roles = {
@@ -319,6 +319,7 @@ Person.count rescue nil
 
 `rake edrs:build_mysql`
 
-puts "Application setup succesfully!!!"
+LoadMysql.load_mysql = true
 
+puts "Application setup succesfully!!!"
 puts "Login details username: #{user.username} password: password"

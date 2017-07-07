@@ -11,12 +11,3 @@ if Rails.env == 'development'
 else
   	UpdateSyncStatus.perform_in(1000)
 end
-LoadMysql.load_mysql = true
-if Rails.env == 'development'
-    LoadMysql.perform_in(3600)
-else
-    midnight = (Date.today).to_date.strftime("%Y-%m-%d 23:59:59").to_time
-    now = Time.now
-    diff = (midnight  - now).to_i
-  	LoadMysql.perform_in(diff)
-end
