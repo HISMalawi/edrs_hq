@@ -208,14 +208,16 @@ class UsersController < ApplicationController
 
     user = User.find(params[:id]) rescue nil
      
-      
 
     if !user.nil?
 
       user.update_attributes(:active => false, :un_or_block_reason => params[:reason])
       Audit.create(record_id: user.id, audit_type: "Audit", level: "User", reason: "Blocked user : #{params[:reason]}")
-    end
+      
+       flash["notice"] = "User Blocked successfully"
 
+    end
+    
     redirect_to "/view_users" and return
 
   end
@@ -230,9 +232,9 @@ class UsersController < ApplicationController
 
       user.update_attributes(:active => true, :un_or_block_reason => params[:reason]) 
       Audit.create(record_id: user.id, audit_type: "Audit", level: "User", reason: "Un-blocked user: #{params[:reason]}")
-
+      flash["notice"] = "User unblocked successfully"
     end
-
+    
     redirect_to "/view_users" and return
 
   end

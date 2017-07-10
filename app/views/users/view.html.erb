@@ -181,23 +181,17 @@
     });
 
 
-    function blockUser() {
-
-
-
+   function blockUser() {
         $('#myModal').on('shown.bs.modal', function (e) {
-
           //Getting the users id
             var id = e.relatedTarget.dataset.id;
              $("#textarea").val('');
-             $("#textarea").focus()
-
-   
+             $("#textarea").focus();
+  
              $("#myModal").on("click", "#btn-ok", function(){
                 
                var comment= $("#textarea").val();
-               // alert(comment);
-                 //posting the id after an okey button                          
+               //posting the id after an okey button                          
                   window.location = '/users/block_user/'+ id + '?comment='+ comment;
                  });
              
@@ -207,32 +201,23 @@
         }
 
 
-       function unBlockUser() {
-
-
-
+    function unBlockUser() {
         $('#unblockModal').on('shown.bs.modal', function (e) {
-
           //Getting the users id
             var id = e.relatedTarget.dataset.id;
              $("#unblockreason").val('');
-
+             $("#unblockreason").focus();
    
              $("#unblockModal").on("click", "#unblock-btn-ok", function(){
                 
                var comment= $("#unblockreason").val();
-               // alert(comment);
-                 //posting the id after an okey button                          
+                //posting the id after an okey button                          
                   window.location = '/users/unblock_user/'+ id + '?comment='+ comment;
                  });
              
-
              });
 
         }
-
-
-
 
     function showModel()
         {
@@ -245,11 +230,11 @@
 
 <style >
 #myModal
-{
-    position : absolute;
-      left: 30%;
-      top: 13.5%;
-      display: none;
-}    
+    {
+        position : absolute;
+          left: 30%;
+          top: 13.5%;
+          display: none;
+    }    
 
 </style>
