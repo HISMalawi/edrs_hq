@@ -23,7 +23,10 @@ Rails.application.routes.draw do
   get "/search_by_username/:id" => "users#search_by_username"
   get "/search_by_username" => "users#search_by_username"
   get "/username_availability" => "users#username_availability"
-  
+
+  get "/confirm_username" => "users#confirm_username"
+  post "/confirm_username" => "users#confirm_username"
+
   get "/users/block_user/:id" => "users#block_user"
   
   get "/block" => "users#block"

@@ -35,6 +35,25 @@ class UsersController < ApplicationController
     @targeturl = "/view_users"
   end
 
+
+  def confirm_username
+       
+
+
+      username = params[:username]
+
+       user = User.by_username.key(username).last
+          
+      if user
+          render :text => {:response => true}.to_json
+      else
+        render :text => {:response => false}.to_json
+      end
+        
+
+         
+  end
+
   def create
 
     redirect_to "/" and return if !has_role("Create User")
