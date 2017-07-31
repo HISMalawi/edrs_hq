@@ -37,9 +37,7 @@ class UsersController < ApplicationController
 
 
   def confirm_username
-       
-
-
+   
       username = params[:username]
 
        user = User.by_username.key(username).last
@@ -49,9 +47,7 @@ class UsersController < ApplicationController
       else
         render :text => {:response => false}.to_json
       end
-        
-
-         
+       
   end
 
   def create
@@ -355,12 +351,9 @@ class UsersController < ApplicationController
       else
         redirect_to "/my_account"
       end
-    
-       
+  
       
   end
-
-
   
 
   def change_password
