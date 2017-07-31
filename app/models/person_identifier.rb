@@ -18,7 +18,7 @@ class PersonIdentifier < CouchRest::Model::Base
 
   timestamps!
 
-  #validates_uniqueness_of :identifier
+  unique_id :identifier
 
   design do
     view :by__id
