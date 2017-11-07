@@ -37,9 +37,7 @@ class UsersController < ApplicationController
 
 
   def confirm_username
-       
-
-
+   
       username = params[:username]
 
        user = User.by_username.key(username).last
@@ -49,9 +47,7 @@ class UsersController < ApplicationController
       else
         render :text => {:response => false}.to_json
       end
-        
-
-         
+       
   end
 
   def create
@@ -94,14 +90,9 @@ class UsersController < ApplicationController
   end
 
   def edit_account
-
-   # @user = User.find(params[:id])
-
     
-     
-   @user = @current_user
-
-   # @keyboards = ['abc', 'qwerty']
+   @user = User.find(params[:id])
+   
 
     @section = "Edit Account"
 
@@ -350,17 +341,19 @@ class UsersController < ApplicationController
         @user.last_name = params[:user][:last_name]
         @user.email = params[:user][:email]
         @user.save
+
         
-        redirect_to "/my_account"
+           if User.current_user.role=="System Administrator"
+            redirect_to "/view_users"
+           else
+            redirect_to "/my_account"
+          end
       else
-        redirect_to "/my_account"
+        redirect_to "/"
       end
-    
-       
+  
       
   end
-
-
   
 
   def change_password
@@ -395,6 +388,7 @@ def update_password
      
     user = User.current_user
     user.plain_password = params[:user][:new_password]
+    
     user.password_attempt = 0
     user.last_password_date = Time.now
     user.save

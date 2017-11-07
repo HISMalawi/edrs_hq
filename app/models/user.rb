@@ -23,6 +23,7 @@ class User < CouchRest::Model::Base
   property :un_or_block_reason, String
   property :signature, String
   property :_rev, String
+  
 
 
   timestamps!
