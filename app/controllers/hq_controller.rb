@@ -210,7 +210,13 @@ class HqController < ApplicationController
     @drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([@person.id, "DEATH REGISTRATION NUMBER"]).last.identifier
     @den = PersonIdentifier.by_person_record_id_and_identifier_type.key([@person.id, "DEATH ENTRY NUMBER"]).last.identifier
 
-    @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
+    if File.exists?("#{CONFIG['barcodes_path']}#{@person.id}.png")
+
+      @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
+
+    else
+      @barcode = nil
+    end
 
     if @barcode.nil?
       process = Process.fork{`bin/generate_barcode #{@drn} #{@person.id} #{CONFIG['barcodes_path']}`}

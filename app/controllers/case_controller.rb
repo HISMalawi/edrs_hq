@@ -416,7 +416,7 @@ class CaseController < ApplicationController
                  place_of_death  = person.other_place_of_death;
 
       elsif person.place_of_death  && person.place_of_death =="Home"
-                 place_of_death  = person.place_of_death_district +" " + person.place_of_death_ta + " "+  person.place_of_death_village;
+                # place_of_death  = person.place_of_death_district +" " + person.place_of_death_ta + " "+  person.place_of_death_village;
 
       end
 
