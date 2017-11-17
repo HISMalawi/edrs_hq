@@ -1,20 +1,20 @@
 <style type="text/css">
        input[type=radio].css-checkbox {
           position:absolute;
-           z-index:-1000; 
-           left:-1000px; 
-           overflow: hidden; 
-           clip: rect(0 0 0 0); 
-           height:1px; 
-           width:1px; 
-           margin:-1px; 
-           padding:0; 
+           z-index:-1000;
+           left:-1000px;
+           overflow: hidden;
+           clip: rect(0 0 0 0);
+           height:1px;
+           width:1px;
+           margin:-1px;
+           padding:0;
            border:0;
         }
 
         input[type=radio].css-checkbox + label.css-label {
                   padding-left:24px;
-                  height:19px; 
+                  height:19px;
                   display:inline-block;
                   line-height:19px;
                   background-repeat:no-repeat;
@@ -42,7 +42,9 @@
 </style>
 <table class="summary">
               <tr>
-                <th colspan="9" >Section-2: Medical Certificate of Death and Cause of Death (FOR HEALTH FACILITY DEATH ONLY)</th>
+                <th colspan="9" >Section-2: Medical Certificate of Death and
+
+                Cause of Death (FOR HEALTH FACILITY DEATH ONLY)</th>
               </tr>
               <tr>
                   <td colspan="2"><b>Barcode Number : </b><%= @person.barcode rescue ""%></td>
@@ -68,7 +70,7 @@
                   </td>
                   <td colspan="3"><%= @person.onset_death_interval1 rescue "" %></td>
               </tr>
-              <tr>   
+              <tr>
                   <td colspan="3">(b) <font id="cause_of_death_2"><%= @person.cause_of_death2 rescue "" %></font><br/>
                     <%if @person.cause_of_death3.present? %>
                        <i style="font-size:0.9em">Due to (or as a consequence of)</i>
@@ -76,7 +78,7 @@
                   </td>
                   <td colspan="3"><%= @person.onset_death_interval2 rescue "" %></td>
               </tr>
-              <tr>   
+              <tr>
                   <td colspan="3">(c) <font id="cause_of_death_3"><%= @person.cause_of_death3 rescue "" %></font><br/>
                   <%if @person.cause_of_death4.present? %>
                       <i style="font-size:0.9em">Due to (or as a consequence of)</i>
@@ -85,7 +87,7 @@
                   </td>
                   <td colspan="3"><%= @person.onset_death_interval3 rescue "" %></td>
               </tr>
-              <tr>   
+              <tr>
                   <td colspan="3">(d) <font id="cause_of_death_4"><%= @person.cause_of_death4 rescue "" %></font></td>
                   <td colspan="3"><%= @person.onset_death_interval4 rescue "" %></td>
               </tr>
@@ -96,7 +98,7 @@
               </tr>
               <tr>
                   <td colspan="7" >
-                    <font style="font-size:11px;font-weight:bold">This does not mean the mode of dying, e.g heart failure, 
+                    <font style="font-size:11px;font-weight:bold">This does not mean the mode of dying, e.g heart failure,
                     respiratory failure. It means the disease, injury, or complication that caused death
                     </font>
                   </td>
@@ -110,14 +112,14 @@
                           <td>
                                 <input type="radio" name="radio" id="<%= manner %>" class="css-checkbox"  checked ="true" disabled>
                                 <label for="<%= manner %>" class="css-label radGroup2">
-                                    <%= manner %> 
+                                    <%= manner %>
                                 </label>
                           </td>
                     <%else%>
                           <td>
                               <input type="radio" name="radio" id="<%= manner %>" class="css-checkbox" disabled>
                                 <label for="<%= manner %>" class="css-label radGroup2">
-                                    <%= manner %> 
+                                    <%= manner %>
                                 </label>
                           </td>
                     <%end%>
@@ -136,7 +138,7 @@
                           <td>
                               <input type="radio" name="radio" id="<%= 'Could not be determined' %>" class="css-checkbox"  disabled>
                                 <label for="<%= 'Could not be determined' %> " class="css-label radGroup2">
-                                   Could not be determined 
+                                   Could not be determined
                                 </label>
                           </td>
                 <%end%>
@@ -150,16 +152,16 @@
                           <td>Specify</td>
                           <td colspan="4"><%= @person.other_manner_of_death rescue ""%></td>
                 <%else%>
-                          <td> 
+                          <td>
                               <input type="radio" name="radio" id="<%= 'Other' %>" class="css-checkbox" disabled>
                                 <label for="<%= 'Other' %> " class="css-label radGroup2">
-                                   Other 
+                                   Other
                                 </label>
                           </td>
                           <td>Specify</td>
                           <td colspan="4"></td>
                 <%end%>
-              
+
             </tr>
             <tr>
                 <td rowspan="2" style="background-color:#dbdada;">3</td>
@@ -192,7 +194,7 @@
                           <input type="radio" name="radio1" id="<%= 'Motor Vehicle(passenger)' %>" class="css-checkbox" disabled>
                                 <label for="<%= 'Motor Vehicle(passenger)' %> " class="css-label radGroup2">
                                    Motor Vehicle(passenger)
-                                </label> 
+                                </label>
                      </td>
                 <%end%>
 
@@ -247,7 +249,7 @@
                       <td><Specify</td>
                       <td colspan="3"></td>
                 <%end%>
-               
+
             </tr>
 
             <tr>
@@ -267,14 +269,14 @@
                           <td colspan="2">
                               <input type="radio" name="radio1" id="<%= position %>" checked="true" class="css-checkbox" disabled>
                             <label for="<%= position %>   " class="css-label radGroup2">
-                                    <%= position %>  
+                                    <%= position %>
                             </label>
                         </td>
                     <%else%>
                           <td colspan="2">
                             <input type="radio" name="radio1" id="<%= position %>" class="css-checkbox" disabled>
                             <label for="<%= position %>   " class="css-label radGroup2">
-                                    <%= position %>  
+                                    <%= position %>
                             </label>
                           </td>
                     <%end%>
@@ -286,7 +288,7 @@
                               <input type="radio" name="radio1" id="Other" class="css-checkbox" checked="true" disabled>
                               <label for="Other" class="css-label radGroup2">
                                       Other
-                              </label> 
+                              </label>
                           </td>
                           <td>Specify</td>
                           <td colspan="4"><%= @person.other_position_of_certifier recsue "" %></td>
@@ -300,6 +302,6 @@
                           <td>Specify</td>
                           <td colspan="4"></td>
                     <%end%>
-                
+
             </tr>
       </table>
