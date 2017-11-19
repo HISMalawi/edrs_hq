@@ -12,7 +12,7 @@
 
     input[type=radio].css-checkbox + label.css-label {
               padding-left:24px;
-              height:19px; 
+              height:19px;
               display:inline-block;
               line-height:19px;
               background-repeat:no-repeat;
@@ -167,7 +167,7 @@
        width:  100%;
        margin: auto;
     }
-    
+
     #summary td {
         padding: 0.5em;
         color :#242020;
@@ -211,7 +211,13 @@
       font-weight: bold;
       font-size: 0.9em;
       color: #31404d !important;
-  }
+   }
+    .icon_plus_alt,.icon_minus_alt{
+        font-size: 2.5em;
+    }
+    .icon_minus_alt{
+        margin-top: 20%;
+    }
 </style>
  <link rel="stylesheet" href="/select2/select2.min.css">
 
@@ -496,19 +502,14 @@
                     <label for="onset_death_interval1">cause of Death 1 </label>
                     <input name="cause_of_death1" id="cause_of_death1" value="<%= @person.cause_of_death1 rescue (@person.other_cause_of_death1 rescue '')%>" class="form-control select2" style="width:100%" onkeyup="addCauseField(this);checkSpace(this)" />
                 </div>
-                <% if false%>
-                <div class="col-md-6">
-                    <label for="icd_10_1">ICD-10 </label>
-                    <input name="icd_10_1" id="icd_10_1"  value="" class="form-control" type="text" onkeyup="" />
-                </div>
-                 <%end%>  
 
-               
-              <div class="col-md-6">
+
+
+              <div class="col-md-4">
                     <label for="onset_death_interval1">Onset to death Interval </label>
                     <input name="onset_death_interval1" id="onset_death_interval1"  value="<%= @person.onset_death_interval1%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label for="interval_unit1">Units</label>
                     <select name="interval_unit1" id="interval_unit1" load="" class="form-control" onchange="clearOnset(1)">
                       <option ></option>
@@ -522,25 +523,27 @@
 
                     </select>
                 </div>
+                <div class="col-md-4">
+                    <label for="icd_10_1">ICD-10 </label>
+                    <input name="icd_10_1" id="icd_10_1"  value="" class="form-control" type="text" onkeyup="" />
+                </div>
+
+
                </div>
               <p><b>Antecedent cause : </b> Morbid conditions, if any. giving rise to the above cause , stating the underlying condition last</p>
+
               <div class="form-group" style=" padding-bottom:1%">
                 <div class="col-md-12">
                     <label for="">Cause of Death 2 </label>
                      <input name="cause_of_death2" id="cause_of_death2" value="<%= @person.cause_of_death2 rescue (@person.other_cause_of_death2 rescue '')%>" class="form-control select2" style="width:100%" onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)" />
                 </div>
-                <% if false%> 
-                <div class="col-md-6">
-                    <label for="icd_10_2">ICD-10 </label>
-                    <input name="icd_10_2" id="icd_10_2"  value="" class="form-control" type="text" type="number" onkeyup="" />
-                </div>
-                 <%end%>
 
-                 <div class="col-md-6">
+
+                 <div class="col-md-4">
                     <label for="">Onset to death Interval </label>
                     <input name="onset_death_interval2" id="onset_death_interval2"  value="<%= @person.onset_death_interval2%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label for="">Units</label>
                     <select name="interval_unit2" id="interval_unit2"  load="" class="form-control" onchange="clearOnset(2)">
                       <option ></option>
@@ -553,6 +556,13 @@
                       <option>Year(s)</option>
                     </select>
                 </div>
+
+                    <div class="col-md-4">
+                    <label for="icd_10_2">ICD-10 </label>
+                    <input name="icd_10_2" id="icd_10_2"  value="" class="form-control" type="text" type="number" onkeyup="" />
+                </div>
+
+
               </div>
 
               <div class="form-group">
@@ -560,17 +570,13 @@
                     <label for="">Cause of Death 3</label>
                      <input name="cause_of_death3" id="cause_of_death3" value="<%= @person.cause_of_death3 rescue (@person.other_cause_of_death3 rescue '')%>" class="form-control select2" style="width:100%" onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)"/>
                 </div>
-              <% if false%>
-               <div class="col-md-6">
-                    <label for="icd_10_3">ICD-10 </label>
-                    <input name="icd_10_3" id="icd_10_3"  value="" class="form-control" type="text" type="number" onkeyup="" />
-                </div>
-                <%end%>
-                <div class="col-md-6">
+
+
+                <div class="col-md-4">
                     <label for="">Onset to death Interval </label>
                     <input name="onset_death_interval3" id="onset_death_interval3"  value="<%= @person.onset_death_interval3%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)"/>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label for="">Units</label>
                     <select name="interval_unit3" id="interval_unit3"  load="" class="form-control" onchange="clearOnset(3)">
                      <option ></option>
@@ -583,6 +589,12 @@
                       <option>Year(s)</option>
                     </select>
                 </div>
+
+                   <div class="col-md-4">
+                    <label for="icd_10_3">ICD-10 </label>
+                    <input name="icd_10_3" id="icd_10_3"  value="" class="form-control" type="text" type="number" onkeyup="" />
+                </div>
+
               </div>
 
 
@@ -591,18 +603,12 @@
                   <label for="">Cause of Death 4</label>
                   <input name="cause_of_death4" id="cause_of_death4" value="<%= @person.cause_of_death4%>" class="form-control select2" style="width:100%" onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)"/>
                 </div>
-                <% if false%>
-                <div class="col-md-6">
-                    <label for="icd_10_4">ICD-10 </label>
-                    <input name="icd_10_4" id="icd_10_4"  value="" class="form-control" type="text" type="number" onkeyup="" />
-                </div>
-                <%end%>
 
-                 <div class="col-md-6">
+                 <div class="col-md-4">
                     <label for="">Onset to death Interval </label>
                     <input name="onset_death_interval4" id="onset_death_interval4"  value="<%= @person.onset_death_interval4%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" />
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label for="">Units</label>
                     <select name="interval_unit4" id="interval_unit4"  load="" class="form-control" onchange="clearOnset(4)">
                       <option ></option>
@@ -615,19 +621,35 @@
                       <option>Year(s)</option>
                     </select>
                 </div>
+
+                    <div class="col-md-4">
+                    <label for="icd_10_4">ICD-10 </label>
+                    <input name="icd_10_4" id="icd_10_4"  value="" class="form-control" type="text" type="number" onkeyup="" />
+                </div>
+
               </div>
             </fieldset>
             <fieldset style="margin-bottom:2%">
-              <legend>Part II</legend>
+             <legend>Part II</legend>
               <p>Other significant conditions contributing to death , but not related to the disease or condition causing it</p>
-              <div class="form-group">
-                <div class="col-lg-12 col-md-12" style=" padding-bottom:2%">
-                  <label for=""></label>
-                  <!--input type="" name="cause_of_death_conditions" load="<%= @person.cause_of_death_conditions%>" class="form-control" style="width:100%"-->
-                  <select name="cause_of_death_conditions[]" id="cause_of_death_conditions" class="form-control select2" style="width:100%; margin-bottom:2%" multiple="multiple" multiple=true>
-                  </select>
+                <table><tr onclick="addEntry()"><td><i class="icon_plus_alt"></i></td><td><span style="font-size:1.2em">Add another entry</span></td></tr></table>
+              <div class="form-group" id="other_significant_cause_field">
+                <div class="col-md-12" id="other_significant_cause_div_1">
+                 <div class="col-md-6">
+                  <label for="">Cause</label>
+                  <input name="other_significant_cause[1]" id="other_significant_cause_1" class="form-control select2" style="width:100%"/>
+                </div>
+                <div class="col-md-4">
+                  <label for="">ICD10 Code</label>
+                  <input name="other_significant_cause_icd_code[1]" id="other_significant_cause_icd_code_1" class="form-control select2" style="width:100%"/>
+                </div>
+                <div class="col-md-2">
+                  <b syle="color: #31404d;">Remove</b><br/>
+                  <i class="icon_minus_alt" onclick="removeElement('other_significant_cause_div_1')"></i>
+                </div>
                 </div>
               </div>
+
             </fieldset>
               <div onclick="hit('cause_of_death_check_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
               <div onclick="checkPrimaryCause('radio3','manner_of_death','manner_of_death_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
@@ -638,38 +660,38 @@
               <div class="form-group">
                 <label class="col-md-12" for="manner">Manner of death </label>
 
-               
+
                      <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
                          <input type="radio" name="manner_of_death" id="manner_natural" load="<%= @person.manner_of_death%>" onclick="enableOtherField(this,'other_manner_of_death')" value = "Natural">
-                          <label for="manner_natural">Natural</label>                                  
+                          <label for="manner_natural">Natural</label>
                     </div>
 
                       <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
                          <input type="radio" name="manner_of_death" id="manner_accident" load="<%= @person.manner_of_death%>" onclick="enableOtherField(this,'other_manner_of_death')" value = "Accident">
-                          <label for="manner_accident">Accident</label>                                 
+                          <label for="manner_accident">Accident</label>
                       </div>
                       <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
                          <input type="radio" name="manner_of_death" id="manner_homicide" load="<%= @person.manner_of_death%>" onclick="enableOtherField(this,'other_manner_of_death')" value = "Homicide">
-                          <label for="manner_homicide">Homicide</label>                                  
+                          <label for="manner_homicide">Homicide</label>
                       </div>
                       <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
                          <input type="radio" name="manner_of_death" id="manner_suicide" load="<%= @person.manner_of_death%>" onclick="enableOtherField(this,'other_manner_of_death')" value = "Suicide">
-                          <label for="manner_suicide">Suicide</label>                                  
+                          <label for="manner_suicide">Suicide</label>
                       </div>
                       <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" >
                          <input type="radio" name="manner_of_death" id="manner_pending_investigation" load="<%= @person.manner_of_death%>" onclick="enableOtherField(this,'other_manner_of_death')" value="Pending Investigation">
-                          <label for="manner_pending_investigation">Pending Investigation</label>                                  
+                          <label for="manner_pending_investigation">Pending Investigation</label>
                       </div>
                       <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" >
                          <input type="radio" name="manner_of_death" id="manner_not_determined" load="<%= @person.manner_of_death%>" onclick="enableOtherField(this,'other_manner_of_death')" value= "Could not be determined">
-                          <label for="manner_not_determined">Could not be determined</label>                                  
+                          <label for="manner_not_determined">Could not be determined</label>
                       </div>
                       <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
                          <input type="radio" name="manner_of_death" id="manner_other" load="<%= @person.manner_of_death%>" onclick="enableOtherField(this,'other_manner_of_death')" value="Other">
-                          <label for="manner_other">Other</label>                                  
+                          <label for="manner_other">Other</label>
                       </div>
 
-                
+
 
                 <label class="col-md-12" for="">Other manners of death</label>
                 <input name="other_manner_of_death"
@@ -680,27 +702,27 @@
                 <label class="col-md-12" for="">How did injury/accident occur?</label>
                    <div class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" >
                          <input type="radio" name="death_by_accident" id="motor_vehicle_driver" load="<%= @person.death_by_accident%>" value="Motor vehicle(driver)" onclick="enableOtherField(this,'other_death_by_accident')" disabled>
-                          <label for="motor_vehicle_driver">Motor vehicle(driver)</label>                    
+                          <label for="motor_vehicle_driver">Motor vehicle(driver)</label>
                     </div>
 
                     <div class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" >
                          <input type="radio" name="death_by_accident" id="motor_vehicle_passenger" load="<%= @person.death_by_accident%>" value="Motor vehicle(passenger)" onclick="enableOtherField(this,'other_death_by_accident')" disabled>
-                          <label for="motor_vehicle_passenger">Motor vehicle(passenger)</label>                     
+                          <label for="motor_vehicle_passenger">Motor vehicle(passenger)</label>
                     </div>
 
                     <div  class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" >
                          <input type="radio" name="death_by_accident" id="motor_vehicle" load="<%= @person.death_by_accident%>" value="Motor vehicle" onclick="enableOtherField(this,'other_death_by_accident')" disabled>
-                          <label for="motor_vehicle">Motor vehicle</label>                                  
+                          <label for="motor_vehicle">Motor vehicle</label>
                     </div>
 
                     <div class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" >
                          <input type="radio" name="death_by_accident" id="drowning" load="<%= @person.death_by_accident%>" value="Drowning" onclick="enableOtherField(this,'other_death_by_accident')" disabled>
-                          <label for="drowning">Drowning</label>                                  
+                          <label for="drowning">Drowning</label>
                     </div>
 
                     <div class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" >
                          <input type="radio" name="death_by_accident" id="other_accidents" value="Other" onclick="enableOtherField(this,'other_death_by_accident')" disabled>
-                          <label for="other_accidents">Other</label>                                  
+                          <label for="other_accidents">Other</label>
                     </div>
 
 
@@ -718,15 +740,15 @@
                 <label for="certifier_signed" class="col-lg-3 col-md-3">Certifier Signed ? </label>
                  <div id="certifier_signed_yes_radio" class="radio radio-primary col-lg-3 col-md-3" onmousedown="">
                   <input type="radio" name="certifier_signed" id="radiocsy" value="Yes" onclick="enableOtherCertifierFields(this,'date_certifier_signed','yes');addCertifierFields(this)">
-                      <label for="radiocsy">Yes</label>                                          
+                      <label for="radiocsy">Yes</label>
                   </div>
-                      
+
                   <div id="certifier_signed_no_radio" class="radio radio-primary col-lg-3 col-md-3" onmousedown="">
                       <input type="radio" name="certifier_signed" id="radiocsn" value="No" onclick="enableOtherCertifierFields(this,'date_certifier_signed','yes');addCertifierFields(this)">
                       <label for="radiocsn">No</label>
                   </div>
                 <br/>
-              
+
               <label for="" class="col-lg-12 col-md-12">Date certifier signed</label>
                 <input name="date_certifier_signed" value="<%= @person.date_certifier_signed%>" id="date_certifier_signed" class="form-control col-lg-8 col-md-8" style="margin-left:2%" type="text" onkeyup="addCertifierFields(this)" onchange="addCertifierFields(this)" disabled/>
       </i>
@@ -757,15 +779,15 @@
                           <label for="position_of_certifier_officer">Clinic Officer</label>
                       </div>
 
-                      
+
                        <div id="certifier_signed_yes_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
                          <input type="radio" name="position_of_certifier" load="<%= @person.position_of_certifier%>" id="position_of_certifier_assistant" value="Medical Assistant" onclick="enableOtherCertifierFields(this,'other_position_of_certifier','other');addCertifierFields(this)">
-                          <label for="position_of_certifier_assistant">Medical Assistant</label>                                          
+                          <label for="position_of_certifier_assistant">Medical Assistant</label>
                       </div>
 
                       <div id="certifier_signed_yes_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
                          <input type="radio" name="position_of_certifier" load="<%= @person.position_of_certifier%>" id="position_of_certifier_other" value= "Other" onclick="enableOtherCertifierFields(this,'other_position_of_certifier','other');addCertifierFields(this)">
-                          <label for="position_of_certifier_other">Other</label>                                          
+                          <label for="position_of_certifier_other">Other</label>
                       </div>
 
             <label for="other_position_of_certifier">Other Designation of medical certifier</label>
@@ -990,7 +1012,7 @@
         manner_keys = Object.keys(manner_fields);
         if(manner_keys.indexOf("manner_of_death") < 0){
               //console.log( manner_keys);
-                showMessage("Manner of death validatons!", 
+                showMessage("Manner of death validatons!",
               "Please select ("+(manner_fields["manner_of_death"]? manner_fields["manner_of_death"]: "Manner of death" )+")","");
                 return;
         }
@@ -1024,9 +1046,9 @@
               var field = __$(feilds[i]+prevpos);
               if(field){
                 showValidationMessage("Field empty !","Please fill the field ("+fields_map[feilds[i]]+" "+prevpos+") ",field);
-              } 
+              }
               return;
-              
+
             }
         }
     }
@@ -1059,7 +1081,7 @@
                       if(field){
                         showValidationMessage("Field empty !","Please fill the field ("+fields_map[fields[j]]+" "+pos+") ",field);
                         return;
-                      } 
+                      }
                       break;
                     }
                   }
@@ -1145,7 +1167,7 @@
         certifier_keys = Object.keys(certifier_fields);
         for(var i = 0 ; i < certifier_keys.length ; i++){
             if(__$(certifier_keys[i])){
-                
+
               if(__$(certifier_keys[i]).value == 0 &&  certifier_fields[certifier_keys[i]][1]){
                     showValidationMessage("Some field(s) empty !","Please fill or select fields ("+certifier_fields_maps[certifier_keys[i]]+")",certifier_keys[i]);
                     return;
@@ -1243,17 +1265,17 @@
       }else{
         $('#onset_death_interval'+pos).focus();
       }
-      
+
     }
     function checkCauseFunction(next_radio,next_div){
         if(eval(__$('radioN').checked)== false && eval(__$('radioY').checked) == false){
-            showMessage("Check question not responded !", 
+            showMessage("Check question not responded !",
               "Please select Yes or No for the question ","");
             return;
         }
 
         if(__$('radioN') && eval(__$('radioN').checked)){
-            showMessage("Message", 
+            showMessage("Message",
               "Section 2 for this form is not filled please proceed to next form","/nocause_available/<%=params[:person_id]%>");
         }else{
             var pending = ["HQ INCOMPLETE","HQ POTENTIAL INCOMPLETE",
@@ -1279,19 +1301,19 @@
             }
 
             if(pending.indexOf(status) >= 0){
-                showMessage("Message", 
+                showMessage("Message",
                 "Record has issues so it id in pending queue to processed by NRB  check again after 5 days",
                 "/search");
             }
 
             if(rejected.indexOf(status) >= 0){
-                 showMessage("Message", 
+                 showMessage("Message",
                 "Record is rejected by NRB",
                 "/search");
             }
 
             if(inprocess.indexOf(status) >= 0){
-                 showMessage("Message", 
+                 showMessage("Message",
                 "Record is being processed by NRB check after 5 days",
                 "/search");
             }
@@ -1312,7 +1334,7 @@
         $
         if(link){
           $("#finish").attr("onclick","hideMessage(redirectTo('"+link+"'))");
-        }  
+        }
     }
 
     function showValidationMessage(title, message,field){
@@ -1323,16 +1345,16 @@
         if(field){
           $("#ok").attr("onclick", "hideAndFocus('"+field.id+"')");
           $("#close").attr("onclick", "hideAndFocus('"+field.id+"')");
-        }  
+        }
     }
 
     function hideAndFocus(field){
          $('#shield').css('display','none');
          if(__$(field)){
           __$(field).focus();
-          __$(field).style.border = "1px solid red";        
+          __$(field).style.border = "1px solid red";
          }
-        
+
     }
 
     function hideMessage(callBack){
@@ -1345,6 +1367,68 @@
 
     function redirectTo(link){
         window.location.href = link;
+    }
+
+    var div_number = 1;
+
+    function removeElement(id){
+        $("#"+id).remove();
+        div_number = div_number - 1;
+    }
+
+    function addEntry(){
+        div_number = div_number + 1
+        var control = $("#other_significant_cause_field")
+        var div = document.createElement("div");
+        div.className = "col-md-12";
+        div.id = "other_significant_cause_"+div_number;
+        control.append(div);
+
+        var cause_div = document.createElement("div");
+        cause_div.className ="col-md-6";
+
+        var label = document.createElement("label");
+        label.innerHTML = "Cause";
+        label.setAttribute("for","other_significant_cause_"+div_number)
+        cause_div.appendChild(label);
+
+        var input = document.createElement("input");
+        input.name = "other_significant_cause["+div_number+"]";
+        input.id = "other_significant_cause_"+div_number;
+        input.className ="form-control"
+        cause_div.appendChild(input);
+        div.appendChild(cause_div);
+
+        var icd_10_div = document.createElement("div");
+        icd_10_div.className ="col-md-4";
+
+        var label = document.createElement("label");
+        label.innerHTML = "ICD10 Code";
+        label.setAttribute("for","icd_10_"+div_number)
+        icd_10_div.appendChild(label);
+
+        var input = document.createElement("input");
+        input.name = "other_significant_cause["+div_number+"]";
+        input.className ="form-control"
+        input.id = "icd_10_"+div_number
+        icd_10_div.appendChild(input)
+        div.appendChild(icd_10_div);
+
+        var remove_div = document.createElement("div");
+        remove_div.className ="col-md-2";
+        var font = document.createElement("font");
+        font.style.fontWeight = "bold";
+        font.innerHTML ="Remove"
+        font.style.color = "#3140404d";
+        remove_div.appendChild(font);
+
+        var i = document.createElement("i");
+        i.className ="icon_minus_alt";
+        i.setAttribute("onclick","removeElement('other_significant_cause_div_"+div_number+"')");
+
+        remove_div.appendChild(i);
+        div.appendChild(remove_div);
+
     }
 
     var place_of_death = "<%= @person.place_of_death %>"
