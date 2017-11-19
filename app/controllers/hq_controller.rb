@@ -154,10 +154,10 @@ class HqController < ApplicationController
 
   def save_cause_of_death
     @person = Person.find(params[:person_id])
+    
     i = 1
     while i < 4  do
        interval_unit = params["interval_unit#{i}"]
-
        case interval_unit
        when "Second(s)"
           params["onset_death_interval#{i}"] = params["onset_death_interval#{i}"]
@@ -176,7 +176,14 @@ class HqController < ApplicationController
        i +=1
     end
     #tobe revised
-   # params[:cause_of_death_conditions] = params[:cause_of_death_conditions].join(",").to_s if  params[:cause_of_death_conditions].present?
+    params[:cause_of_death_conditions] = {}
+
+    params[:other_significant_cause] = params[:other_significant_cause].delete_if { |key, value| value.to_s.strip == '' }
+    params[:other_significant_cause].keys.each do |key|
+      params[:cause_of_death_conditions][key] = {}
+      params[:cause_of_death_conditions][key][:cause] = params[:other_significant_cause][key]
+      params[:cause_of_death_conditions][key][:icd_code] = params[:other_significant_cause_icd_code][key]
+    end
     @person.update_attributes(params)
 
     flash[:success] = "Record updated successfully"

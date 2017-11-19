@@ -49,12 +49,13 @@
               <tr>
                   <td colspan="2"><b>Barcode Number : </b><%= @person.barcode rescue ""%></td>
                   <td colspan="3"><b>DEN </b>: <font id="den"><%= @person.den %></font></td>
-                  <td colspan="3"><b>ICD 10 Code</b> : <%= @person.icd_10_code rescue ""%></td>
+                  <td colspan="3"><b>Final ICD Code</b> : <%= @person.icd_10_code rescue ""%></td>
               </tr>
               <tr>
                   <td rowspan="7" style="background-color:#dbdada;">1</td>
-                  <td colspan="4"><b>Cause of Death </b></td>
-                  <td colspan="3"><b>Approximate interval between onset and death</b></td>
+                  <td colspan="3"><b>Cause of Death </b></td>
+                  <td colspan="2"><b>Time interval between onset and death</b></td>
+                  <td colspan="2"><b>ICD Code</b></td>
               </tr>
               <tr>
                   <td rowspan="4" style="width:20%">
@@ -63,38 +64,60 @@
                       <b>Antecedent cause</b><br/>
                       Morbid conditions, if any, giving rise to the above cause, stating the underlying condition last
                   </td>
-                  <td colspan="3">(a) <font id="cause_of_death_1"><%= @person.cause_of_death1 rescue "" %></font><br/>
+                  <td colspan="2">(a) <font id="cause_of_death_1"><%= @person.cause_of_death1 rescue "" %></font><br/>
                   <%if @person.cause_of_death2.present? %>
                       <i style="font-size:0.9em">Due to (or as a consequence of)</i>
                   <%end%>
                   </td>
-                  <td colspan="3"><%= @person.onset_death_interval1 rescue "" %></td>
+                  <td colspan="2"><%= @person.onset_death_interval1 rescue "" %></td>
+                  <td colspan="2"><%= @person.icd_10_1 rescue "" %></td>
               </tr>
               <tr>
-                  <td colspan="3">(b) <font id="cause_of_death_2"><%= @person.cause_of_death2 rescue "" %></font><br/>
+                  <td colspan="2">(b) <font id="cause_of_death_2"><%= @person.cause_of_death2 rescue "" %></font><br/>
                     <%if @person.cause_of_death3.present? %>
                        <i style="font-size:0.9em">Due to (or as a consequence of)</i>
                     <%end%>
                   </td>
-                  <td colspan="3"><%= @person.onset_death_interval2 rescue "" %></td>
+                  <td colspan="2"><%= @person.onset_death_interval2 rescue "" %></td>
+                  <td colspan="2"><%= @person.icd_10_2 rescue "" %></td>
               </tr>
               <tr>
-                  <td colspan="3">(c) <font id="cause_of_death_3"><%= @person.cause_of_death3 rescue "" %></font><br/>
+                  <td colspan="2">(c) <font id="cause_of_death_3"><%= @person.cause_of_death3 rescue "" %></font><br/>
                   <%if @person.cause_of_death4.present? %>
                       <i style="font-size:0.9em">Due to (or as a consequence of)</i>
                   <%end%>
 
                   </td>
-                  <td colspan="3"><%= @person.onset_death_interval3 rescue "" %></td>
+                  <td colspan="2"><%= @person.onset_death_interval3 rescue "" %></td>
+                  <td colspan="2"><%= @person.icd_10_3 rescue "" %></td>
               </tr>
               <tr>
-                  <td colspan="3">(d) <font id="cause_of_death_4"><%= @person.cause_of_death4 rescue "" %></font></td>
-                  <td colspan="3"><%= @person.onset_death_interval4 rescue "" %></td>
+                  <td colspan="2">(d) <font id="cause_of_death_4"><%= @person.cause_of_death4 rescue "" %></font></td>
+                  <td colspan="2"><%= @person.onset_death_interval4 rescue "" %></td>
+                  <td colspan="2"><%= @person.icd_10_4 rescue "" %></td>
               </tr>
 
               <tr>
                   <td><b>Part II</b> Other significant conditions contributing to the death, but not related to the disease or condition causing it</td>
-                  <td id="other_cause_of_death" colspan="6"><%= @person.cause_of_death_conditions rescue ""%></td>
+                  <td id="other_cause_of_death" colspan="6" style="padding:0px !important" valign="top">
+                      <table style="width:100%" style="margin:0px !important">
+
+                            <%  @person.cause_of_death_conditions.keys.each do |key| %>
+                            <tr>
+                              <td style="width:13%;border-right:none"><b>Condition :</b></td>
+                              <td style="border-left:none">
+                                  <%= @person.cause_of_death_conditions[key]["cause"]%>
+                                  
+                              </td>
+                              <td style="width:13%;border-right:none"><b>ICD Code :</b></td>
+                              <td  style="border-left:none">
+                                  <%= @person.cause_of_death_conditions[key]["icd_code"]%>
+                              </td>
+                             </tr>
+                            <%end%>
+                      </table>
+                    
+                  </td>
               </tr>
               <tr>
                   <td colspan="7" >
@@ -105,9 +128,57 @@
              </tr>
 
              <tr>
-               <td rowspan="2">2</td>
+                <td rowspan="2">2</td>
+                <td colspan="2">a)  Was an autopsy requested?</td>
+                 <td >
+                 <% if @person.autopsy_requested == "Yes" %> 
+                  <input type="radio" name="autopsy" class="css-checkbox" id="autopsy_certification_yes"  checked ="true" disabled>
+                 <%else%>
+                    <input type="radio" name="autopsy"  class="css-checkbox" id="autopsy_certification_yes"   disabled>
+                 <%end%>
+                 <label for="autopsy_yes" class="css-label radGroup2">
+                               Yes  
+                  </label>
+                </td>
+                <td colspan="4">
+                  <% if @person.autopsy_requested == "No" %> 
+                  <input type="radio" name="autopsy" class="css-checkbox" id="autopsy_certification_no" checked ="true" disabled>
+                  <%else%>
+                    <input type="radio" name="autopsy" class="css-checkbox" id="autopsy_certification_no" disabled>
+                  <%end%>
+                   <label for="autopsy_no" class="css-label radGroup2">
+                            No 
+                  </label>
+                </td>
+             </tr>
+              <tr>
+                <td colspan="2">b)  If yes, were the findings used for certification?</td>
+                <td >
+                <% if @person.autopsy_used_for_certification == "Yes" %> 
+                 <input type="radio" name="autopsy_certification" class="css-checkbox" id="autopsy_certification_yes"  checked ="true" disabled>
+                <%else%>
+                    <input type="radio" name="autopsy_certification" class="css-checkbox" id="autopsy_certification_yes"  disabled>
+                <%end%>
+                 <label for="autopsy_certification_yes" class="css-label radGroup2">
+                               Yes  
+                  </label>
+                </td>
+                <td colspan="4">
+                <% if @person.autopsy_used_for_certification == "No" %> 
+                    <input type="radio" name="autopsy_certification" class="css-checkbox" id="autopsy_certification_no" checked ="true" disabled>
+                <%else%>
+                    <input type="radio" name="autopsy_certification" class="css-checkbox" id="autopsy_certification_no" disabled>
+                <%end%>
+                   <label for="autopsy_certification_no" class="css-label radGroup2">
+                                No 
+                  </label>
+                </td>
+
+             </tr>
+             <tr>
+               <td rowspan="2" style="background-color:#dbdada;">3</td>
                <td rowspan="2"><b>Manner of death</b></td>
-               <% ['Natural','Accident','Homicide','Suicide','Pending Investigation'].each do |manner| %>
+               <% ['Natural','Accident','Homicide','Suicide','Poisoning','Pending Investigation'].each do |manner| %>
                     <%if @person.manner_of_death.present? && manner == @person.manner_of_death %>
                           <td>
                                 <input type="radio" name="radio" id="<%= manner %>" class="css-checkbox"  checked ="true" disabled>
@@ -124,7 +195,6 @@
                           </td>
                     <%end%>
                <%end%>
-               <td></td>
              </tr>
              <tr>
                 <%if @person.manner_of_death.present? && @person.manner_of_death=="Could not be determined" %>
@@ -164,7 +234,7 @@
 
             </tr>
             <tr>
-                <td rowspan="2" style="background-color:#dbdada;">3</td>
+                <td rowspan="2" ">4</td>
                 <td rowspan="2"><b>If accidental death, how did it occur:</b></td>
 
                 <% if @person.death_by_accident.present? && @person.death_by_accident.match("driver").present? %>
@@ -253,7 +323,7 @@
             </tr>
 
             <tr>
-                <td rowspan="4">4</td>
+                <td rowspan="4" style="background-color:#dbdada;">5</td>
                 <td colspan="7"><b>I certify that to the best of my knowledge and belief, the above named peron died on the date and from the cause of death stated herein</b></td>
             </tr>
             <tr>
@@ -264,16 +334,16 @@
             </tr>
             <tr>
                 <td rowspan="2"><b>Designation of the medical certifier</b></td>
-                <%['Physician','Clinical Officer','Medical Assistant'].each do |position| %>
+                <%['Physician','Medical Doctor','Clinical Officer','Medical Assistant'].each do |position| %>
                     <%if @person.position_of_certifier.present? && position == @person.position_of_certifier %>
-                          <td colspan="2">
+                          <td colspan="1">
                               <input type="radio" name="radio1" id="<%= position %>" checked="true" class="css-checkbox" disabled>
                             <label for="<%= position %>   " class="css-label radGroup2">
                                     <%= position %>
                             </label>
                         </td>
                     <%else%>
-                          <td colspan="2">
+                          <td colspan="1">
                             <input type="radio" name="radio1" id="<%= position %>" class="css-checkbox" disabled>
                             <label for="<%= position %>   " class="css-label radGroup2">
                                     <%= position %>
