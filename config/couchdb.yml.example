@@ -17,6 +17,9 @@ development: &development
   barcodes_path: /home/usr/barcodes/ 
   certificates_path: /home/usr/certificates/
   dispatch_path: /home/usr/dispatch/ 
+  duplicate_score: 6
+  ben_assignment_interval: 3
+  printer_name: ME,Printer2
 
 test:
   <<: *development
