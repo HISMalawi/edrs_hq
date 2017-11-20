@@ -1,4 +1,28 @@
 LoadMysql.load_mysql = false
+
+puts "Clearing Elasticsearch"
+SETTING = YAML.load_file("#{Rails.root}/config/elasticsearchsetting.yml")['elasticsearch']
+puts `curl -XDELETE #{SETTING['host']}:#{SETTING['port']}/#{SETTING['index']}`
+
+puts "Cleaning mysql"
+SimpleSQL.query_exec("DROP DATABASE #{MYSQL['database']}") 
+
+puts "Cleaning couch"
+db_settings = YAML.load_file("#{Rails.root}/config/couchdb.yml")
+couch_db_settings =  db_settings[Rails.env]
+
+couch_username = couch_db_settings["username"]
+couch_password = couch_db_settings["password"]
+couch_host = couch_db_settings["host"]
+couch_db = couch_db_settings["prefix"] + (couch_db_settings["suffix"] ? "_" + couch_db_settings["suffix"] : "" )
+couch_port = couch_db_settings["port"]
+
+`curl -X DELETE http://#{couch_username}:#{couch_password}@#{couch_host}:#{couch_port}/#{couch_db}`
+
+puts "Databases cleared"
+
+sleep 5
+
 puts "Initialising user roles"
 
 roles = {

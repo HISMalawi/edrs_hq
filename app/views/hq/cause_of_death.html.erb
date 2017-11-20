@@ -179,7 +179,7 @@
     }
     .messagebox{
             position: absolute;
-            top: 40%;
+            top: 25%;
             left: 35%;
             display: none;
 
@@ -807,7 +807,7 @@
               <input name="certifier_first_name" value="<%= @person.certifier_first_name%>" id="certifier_first_name" class="form-control col-lg-8 col-md-8" style="margin-left:2%" onkeyup="addCertifierFields(this)" />
 
               <p style="color:#1e1e23;font-weight:bold;margin-left:2%">MCM Registration No.</p>
-              <input name="certifier_license_number" value="<%= @person.certifier_license_number%>" id="certifier_license_number" class="form-control col-lg-8 col-md-8" style="margin-left:2%" onkeyup="addCertifierFields(this)" />
+              <input name="certifier_license_number" value="<%= @person.certifier_license_number%>" id="certifier_license_number" class="form-control col-lg-8 col-md-8" style="margin-left:2%" onkeyup="addCertifierFields(this)" onfocus="acivateMCMValidation(this)" />
             </div>
 
             <div class="form-group">
@@ -1238,12 +1238,26 @@
 
     /*** Validate ICD10 field**/
     function validateICD10Field(){
+
           if(__$('icd_10_code').value == 0){
-               showValidationMessage("Field empty !","Please fill(ICD 10)","icd_10_code");
-                    return;
-          }else{
-              document.getElementById('frm').submit()
+               showValidationMessage("Field empty !","Please fill  (ICD Code)","icd_10_code");
+               return;
           }
+
+          var icd_10_regex = /[A-TV-Z][0-9][A-Z0-9](\.?[A-Z0-9]{0,4})?/
+
+          var element = __$('icd_10_code')
+
+          var value = element.value;
+
+          if(icd_10_regex.test(value)){
+                  element.style.borderColor = "#b6b5b5";
+          }else{
+                  showValidationMessage("Code Validation", "Invade ICD Code",element);
+                  return;
+          }
+
+          document.getElementById('frm').submit()
     }
 
     $.getJSON("/cause_of_death_list",function(data){
@@ -1382,6 +1396,7 @@
     }
 
     function showMessage(title, message,link){
+        window.scrollTo(0, 0);
         $("#shield").show();
         $("#messagebox").show();
         $("#title").html(title);
@@ -1393,6 +1408,7 @@
     }
 
     function showValidationMessage(title, message,field){
+        window.scrollTo(0, 0);
         $("#shield").show();
         $("#fieldvalidation").show();
         $("#validationtitle").html(title);
@@ -1509,7 +1525,7 @@
         }
 
         function validateMCMNumber(element){
-            var mcm_number_regex = /\MCM\/(\w{2})\/\d+/
+            var mcm_number_regex = /\MCM\/(\D{2})\/\d+/
             var value = element.value;
 
             if(mcm_number_regex.test(value)){
@@ -1517,6 +1533,10 @@
             }else{
                   showValidationMessage("MCM Number validation", "Invade MCM Number",element)
             }
+        }
+
+        function acivateMCMValidation(element){
+             element.setAttribute("onblur","validateMCMNumber(this)");
         }
 
         $(document).ready(function(){

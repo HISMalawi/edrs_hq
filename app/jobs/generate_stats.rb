@@ -4,8 +4,8 @@ class GenerateStats
   
   	def perform()
   		data_file = "dashboard.json"
-      newfile = File.open("#{Rails.root}/app/assets/data/#{data_file}" , "w+")
-  		newfile = File.new("#{Rails.root}/app/assets/data/#{data_file}" , "w+") if newfile.blank?
+      newfile = File.open("#{Rails.root}/db/#{data_file}" , "w+")
+  		newfile = File.new("#{Rails.root}/db/#{data_file}" , "w+") if newfile.blank?
   		beginning= Time.now.beginning_of_year
   		stats = {}
   		current_month_num = (Time.now).month.to_i

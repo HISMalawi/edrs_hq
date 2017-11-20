@@ -29,5 +29,4 @@ Gemfile.lock
 .pdf
 /passenger*
 app/assets/data/MySQL_data/*.sql
-config/*.mysql_connection.yml
-./app/assets/data/dashboard.json
+./app/db/dashboard.json

@@ -21,7 +21,7 @@ class HqController < ApplicationController
   end
 
   def dashbord_data
-    file_name = Rails.root.join('app/assets/data/', 'dashboard.json')
+    file_name = Rails.root.join('db', 'dashboard.json')
     fileinput = JSON.parse(File.read(file_name))
     render :text => fileinput.to_json
     

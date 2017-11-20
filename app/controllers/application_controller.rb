@@ -47,7 +47,7 @@ class ApplicationController < ActionController::Base
   end
 
   def mysql_connection
-     YAML.load_file(File.join(Rails.root, "config", "mysql_connection.yml"))['connection']
+     YAML.load_file(File.join(Rails.root, "config", "database.yml"))[Rails.env]
   end
 
   def potential_duplicate_full_text?(person)
