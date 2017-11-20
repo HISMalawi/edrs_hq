@@ -473,13 +473,24 @@ class CaseController < ApplicationController
 
     @person = Person.find(params[:person_id])
 
-    title = "#{@person.first_name} #{@person.last_name}"
-    content =  format_content(@person)
-
-    query = "INSERT INTO documents(couchdb_id,title,content,date_added,created_at,updated_at) 
-              VALUES('#{@person.id}','#{title}','#{title} #{content}','#{@person.created_at}',NOW(),NOW())"
-
-    SimpleSQL.query_exec(query)
+    if SETTINGS["potential_duplicate"]
+          record = {}
+          record["first_name"] = @person.first_name
+          record["last_name"] = @person.last_name
+          record["middle_name"] = (@person.middle_name rescue nil)
+          record["gender"] = @person.gender
+          record["place_of_death_district"] = @person.place_of_death_district
+          record["birthdate"] = @person.birthdate
+          record["date_of_death"] = @person.date_of_death
+          record["mother_last_name"] = (@person.mother_last_name rescue nil)
+          record["mother_middle_name"] = (@person.mother_middle_name rescue nil)
+          record["mother_first_name"] = (@person.mother_first_name rescue nil)
+          record["father_last_name"] = (@person.father_last_name rescue nil)
+          record["father_middle_name"] = (@person.father_middle_name rescue nil)
+          record["father_first_name"] = (@person.father_first_name rescue nil)
+          record["id"] = @person.id
+          SimpleElasticSearch.add(record)
+    end
 
     @statuses = [PersonRecordStatus.by_person_recent_status.key(@person.id).last.status]
 

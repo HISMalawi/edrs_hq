@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+ruby '2.1.2'
+
 gem "highcharts-rails"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -34,8 +36,6 @@ gem 'passenger', '4.0.53'
 
 gem "bcrypt-ruby", :require => "bcrypt"
 
-gem 'whenever', require: false
-
 gem 'barby'
 
 gem 'rqrcode'
@@ -49,23 +49,10 @@ gem "faker", "~> 1.6.6"
 gem 'sucker_punch', '~> 2.0'
 
 gem 'global_phone' #, :git => 'https://github.com/sstephenson/global_phone.git', :ref => 'dd0894061f58479884e6cfa2d00382542dc77d5a'
+
 gem 'global_phone_dbgen'
 
 gem 'rake', '< 11.0'
 
-group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug'
-  gem 'rspec-rails'
-  gem 'spring-watcher-listen', '~> 2.0.0'
-  gem 'spring-commands-rspec'
-end
-
-group :development do
-  # Access an IRB console on exception pages or by using <%= console %> in views
-  gem 'web-console', '~> 2.0'
-
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
-end
+gem 'couch_tap'
 
