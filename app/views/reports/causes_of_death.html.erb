@@ -1,0 +1,222 @@
+
+
+
+
+
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+}
+
+td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+
+</style>
+
+<div style="background-color: rgb(98, 129, 167); color: rgb(238, 238, 238); padding: 1px;"><h4 align="center">   Causes Of Death Report  <br/>
+
+</h4></div>
+
+<table>
+        <tr>
+          <td><input type="checkbox" name="" onclick="enable(this,['district'])"></td>
+          <td>Select District: </td>
+          <td>
+              <select class="form-control" id="district" name = "district" style="border-radius: 0px; " required="true" disabled>
+                                    <option></option>
+
+                                      <option>Dowa</option>
+                                      <option>Kasungu</option>
+                                      <option>Nkhotakota</option>
+                                      <option>Ntchisi</option>
+                                      <option>Salima</option>
+                                      <option>Dedza</option>
+                                      <option>Lilongwe</option>
+                                      <option>Mchinji</option>
+                                      <option>Ntcheu</option>
+                                      <option>Chitipa</option>
+                                      <option>Karonga</option>
+                                      <option>Likoma</option>
+                                      <option>Mzimba</option>
+                                      <option>Nkhata-Bay</option>
+                                      <option>Rumphi</option>
+                                      <option>Balaka</option>
+                                      <option>Machinga</option>
+                                      <option>Mangochi</option>
+                                      <option>Mulanje</option>
+                                      <option>Phalombe</option>
+                                      <option>Zomba</option>
+                                      <option>Blantyre</option>
+                                      <option>Chikwawa</option>
+                                      <option>Chiradzulu</option>
+                                      <option>Mwanza</option>
+                                      <option>Neno</option>
+                                      <option>Nsanje</option>
+                                      <option>Thyolo</option>
+                                                                           
+                                  </select>
+                            </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" name="" onclick="enable(this,['start_date','end_date'])"></td>
+                        <td>Registration Date</td>
+                        <td></td>
+                        <td style="text-align: right;">Start date</td>
+                        <td><input type="" class="form-control" name="start_date" id="start_date" disabled></td>
+                        <td style="text-align: right;">End date</td>
+                        <td><input type="" class="form-control" name="end_date" id="end_date" disabled></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" name="" onclick="enable(this,['age_operator','start_age','end_age'])"></td>
+                        <td >Select age</td>
+                        <td>
+                            <select class="form-control" name="age_operator" id="age_operator" style="border-radius: 0px; " onchange="enableAge(this)" disabled>
+                              <option>=</option>
+                              <option><</option>
+                              <option><=</option>
+                              <option>></option>
+                              <option>=></option>
+                              <option>=> Age <=</option>
+                            </select>
+                        </td>
+                        <td style="text-align: right;" id="start_age_label">Age</td>
+                        <td><input type="number" id="start_age" class="form-control" min=0 max=130  disabled></td>
+                        <td style="text-align: right; visibility: hidden;" id="end_age_label">End Age</td>
+                        <td style="text-align: right; visibility: hidden;" ><input type="number" name="end_age" id="end_age" min= 0 class="form-control" max=130 disabled></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td ></td>
+                        <td></td>
+                        <td style="text-align: right;"></td>
+                        <td></td>
+                        <td ></td>
+                        <td style="text-align: right;">
+                          <button class="btn btn-success">Load Data</button>
+                        </td>
+                    </tr>
+    </table>
+
+
+<div style="background: white">
+  <div style="height: 535px; overflow: auto;padding: 0px; margin:0px;">
+
+<table>
+  <tr style="background-color: rgb(98, 129, 167)">
+    <th style="color: rgb(238, 238, 238)">Final ICD Code</th>
+    <th style="color: rgb(238, 238, 238)">Male</th>
+    <th style="color: rgb(238, 238, 238)">Female</th>
+    <th style="color: rgb(238, 238, 238)">Total</th>
+  </tr>
+  <tr>
+    <td> A000</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>A001</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>A009</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>A0100</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>A0101</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>A0102</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr><tr>
+    <td>A0103</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr><tr>
+    <td>A0104</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr><tr>
+    <td>A0105</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>A0109</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>A011</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>A012</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  
+ 
+  
+</table>
+</div>
+</div>
+
+<script type="text/javascript">
+  function enable(element, elements){
+
+    for(var i = 0 ; i < elements.length ; i++ ){
+      if(element.checked){
+        $("#"+elements[i]).removeAttr("disabled")
+      }else{
+        $("#"+elements[i]).attr("disabled","disabled")
+      }
+    }
+  }
+  function enableAge(element){
+    if (element.value == "=> Age <="){
+      $("#start_age_label").html("Start Age")
+      $("#end_age_label").html("End Age");
+      $("#end_age_label").css({"visibility":"visible"})
+      $("#end_age").css({"visibility":"visible"})
+    }else{
+      $("#start_age_label").html("Age")
+      $("#end_age_label").css({"visibility":"hidden"})
+      $("#end_age").css({"visibility":"hidden"})
+    }
+  }
+</script>

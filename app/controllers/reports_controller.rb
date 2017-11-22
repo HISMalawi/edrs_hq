@@ -11,6 +11,8 @@ class ReportsController < ApplicationController
 	    @tasks << ['Death reported','All records entered in the system','','']
 	    @tasks << ['Amendments report','All records amended','','']
 	    @tasks << ['Lost/Damaged','Reports on all lost/damaged records ','','']
+	    @tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
+	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
 	end
     @section ="Reports"
     render :template => "/hq/tasks"
