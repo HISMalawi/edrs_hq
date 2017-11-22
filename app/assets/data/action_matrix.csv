@@ -12,7 +12,7 @@ DC APPROVED,,,,,1,,,,,27
 DC REAPPROVED,,,,,,1,,,,27
 HQ APPROVED,,,,,,,"17,18",,,27
 HQ REAPPROVED,,,,,,,,,,27
-HQ COMPLETE,,,,,,,25,,,27
+HQ COMPLETE,,,,,,,"25,4",,,27
 HQ PRINT,,,,,,,"17,18",,,27
 HQ CLOSED,,,,23,,,"19,26",21,,27
 HQ DISPATCHED,,,,23,,,,,,27
@@ -28,8 +28,8 @@ HQ AMMEND,,,,,,,,,,
 HQ PRINT AMEND,,,,,,,"17,18,29",,,27
 HQ REPRINT REQUEST,,,,,,,"17,18,30",,,27
 HQ REOPENED,,,,,,15,,,,
-HQ REJECTED REPRINT,,,,,,"15",,,,
-HQ REJECTED AMEND,,,,,,"15",,,,
+HQ REJECTED REPRINT,,,,,,15,,,,
+HQ REJECTED AMEND,,,,,,15,,,,
 ,,,,,,,,,,
 END,,,,,,,,,,
 Action Codes,Description,Button Name,ajax_route,Route,popup,Btn Class,,,"
@@ -65,4 +65,5 @@ Action Codes,Description,Button Name,ajax_route,Route,popup,Btn Class,,,"
 29,Reject Amendment,Reject Amendment,/ajax_change_status?next_status=HQ-REJECTED AMEND,,,Btn-danger,,,,
 30,Reject re-print,Reject re-print,/ajax_change_status?next_status=HQ-REJECTED REPRINT,,,Btn-danger,,,,
 31,Approve re-print,Approve re-print,/ajax_change_status?next_status=HQ-REPRINT REQUEST,,,Btn-success,,,,
+,,,,,,,,,,
 END CODES,,,,,,,,,,

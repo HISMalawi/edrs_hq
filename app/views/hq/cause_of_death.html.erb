@@ -512,7 +512,7 @@
 
               <div class="col-md-4">
                     <label for="onset_death_interval1">Onset to death Interval </label>
-                    <input name="onset_death_interval1" id="onset_death_interval1"  value="<%= @person.onset_death_interval1%>" class="form-control" type="number" onkeyup="checkIfNumber(this)" />
+                    <input name="onset_death_interval1" id="onset_death_interval1"  value="<%= @person.onset_death_interval1%>" class="form-control" type="number" onkeyup="checkIfNumber(this)" min="1" />
                 </div>
                 <div class="col-md-4">
                     <label for="interval_unit1">Units</label>
@@ -546,7 +546,7 @@
 
                  <div class="col-md-4">
                     <label for="">Onset to death Interval </label>
-                    <input name="onset_death_interval2" id="onset_death_interval2"  value="<%= @person.onset_death_interval2%>" class="form-control" type="number" onkeyup="checkIfNumber(this)" />
+                    <input name="onset_death_interval2" id="onset_death_interval2"  value="<%= @person.onset_death_interval2%>" class="form-control" type="number" onkeyup="checkIfNumber(this)" min="1" />
                 </div>
                 <div class="col-md-4">
                     <label for="">Units</label>
@@ -579,7 +579,7 @@
 
                 <div class="col-md-4">
                     <label for="">Onset to death Interval </label>
-                    <input name="onset_death_interval3" id="onset_death_interval3"  value="<%= @person.onset_death_interval3%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)"/>
+                    <input name="onset_death_interval3" id="onset_death_interval3"  value="<%= @person.onset_death_interval3%>" class="form-control" type="text" type="number" onkeyup="checkIfNumber(this)" min="1"/>
                 </div>
                 <div class="col-md-4">
                     <label for="">Units</label>
@@ -606,7 +606,7 @@
               <div class="form-group">
               <div class="col-md-12">
                   <label for="">Cause of Death 4</label>
-                  <input name="cause_of_death4" id="cause_of_death4" value="<%= @person.cause_of_death4%>" class="form-control select2" style="width:100%" onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)"/>
+                  <input name="cause_of_death4" id="cause_of_death4" value="<%= @person.cause_of_death4%>" class="form-control select2" style="width:100%" onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)" min="1"/>
                 </div>
 
                  <div class="col-md-4">
@@ -1149,7 +1149,7 @@
         var reg = /^\d+$/;
         var value = element.value;
 
-        if(reg.test(value)){
+        if(reg.test(value) || value.indexOf("-") >= 0){
 
         }else{
 

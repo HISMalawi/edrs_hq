@@ -35,7 +35,10 @@
         id: 'role_doc', doc_primary_key: 'role_id', table_name: 'role'},
 
       'Country' => {count: Country.count, name: 'Country doc.', 
-        id: 'country_doc', doc_primary_key: 'country_id', table_name: 'country'}
+        id: 'country_doc', doc_primary_key: 'country_id', table_name: 'country'},
+
+      'ICDCode' => {count: ICDCode.count, name: 'ICDCode doc.', 
+        id: 'icd_code_doc', doc_primary_key: 'icd_code_id', table_name: 'icd_codes'}
 
 }
 def create_file(doc_primary_key, doc, table_name)
