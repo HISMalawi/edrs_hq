@@ -58,7 +58,7 @@ def insert_update(record,key)
         SimpleSQL.query_exec(update_query)
         puts "Record migration #{record.id} to #{table_name.humanize}"
     else
-        record_keys = record.keys.sort - ['_rev','type']
+        record_keys = record.keys.sort - ['_rev','type','source_id']
         insert_query = "INSERT INTO #{table_name} ("
         record_keys.each do |property|
             
@@ -103,8 +103,8 @@ end_date = Time.now.strftime("%Y-%m-%d %H:%M:%S").to_time
   end
 end
 
-add_migration_query = "INSERT INTO couch_mysql_migration (time_of_migration) VALUES('#{end_date}');"
-SimpleSQL.exec(add_migration_query)
+#add_migration_query = "INSERT INTO couch_mysql_migration (time_of_migration) VALUES('#{end_date}');"
+#SimpleSQL.exec(add_migration_query)
 
 puts "Couch to MSQL done"
 
