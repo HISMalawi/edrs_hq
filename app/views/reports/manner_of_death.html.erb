@@ -96,6 +96,22 @@ td{
                     		<td style="text-align: right; visibility: hidden;" ><input type="number" name="end_age" id="end_age" min= 0 class="form-control" max=130 disabled></td>
                     </tr>
                     <tr>
+                      <td><input type="checkbox" name="" onclick="enable(this,['autopsy_yes','autopsy_no'])"></td>
+                      <td>Autopsy Requested</td>
+                      <td>
+                          <div class="radio radio-primary" onmousedown="">
+                            <input type="radio" name="autopsy_requested" id="autopsy_yes" value="Yes" disabled>
+                            <label for="autopsy_yes">Yes</label>
+                          </div>
+                      </td>
+                      <td>
+                          <div  class="radio radio-primary" onmousedown="">
+                            <input type="radio" name="autopsy_requested" id="autopsy_no"  value="No" disabled>
+                            <label for="autopsy_no">No</label>
+                          </div>
+                      </td>
+                    </tr>
+                    <tr>
                     		<td></td>
                     		<td ></td>
                     		<td></td>

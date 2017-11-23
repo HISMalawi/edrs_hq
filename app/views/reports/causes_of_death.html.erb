@@ -28,7 +28,7 @@ td {
 <div style="background-color: rgb(98, 129, 167); color: rgb(238, 238, 238); padding: 1px;"><h4 align="center">   Causes Of Death Report  <br/>
 
 </h4></div>
-
+<form method="get" action="/causes_of_death">
 <table>
         <tr>
           <td><input type="checkbox" name="" onclick="enable(this,['district'])"></td>
@@ -97,6 +97,22 @@ td {
                         <td style="text-align: right; visibility: hidden;" ><input type="number" name="end_age" id="end_age" min= 0 class="form-control" max=130 disabled></td>
                     </tr>
                     <tr>
+                      <td><input type="checkbox" name="" onclick="enable(this,['autopsy_yes','autopsy_no'])"></td>
+                      <td>Autopsy Requested</td>
+                      <td>
+                          <div class="radio radio-primary" onmousedown="">
+                            <input type="radio" name="autopsy_requested" id="autopsy_yes" value="Yes" disabled>
+                            <label for="autopsy_yes">Yes</label>
+                          </div>
+                      </td>
+                      <td>
+                          <div  class="radio radio-primary" onmousedown="">
+                            <input type="radio" name="autopsy_requested" id="autopsy_no"  value="No" disabled>
+                            <label for="autopsy_no">No</label>
+                          </div>
+                      </td>
+                    </tr>
+                    <tr>
                         <td></td>
                         <td ></td>
                         <td></td>
@@ -107,8 +123,9 @@ td {
                           <button class="btn btn-success">Load Data</button>
                         </td>
                     </tr>
-    </table>
 
+    </table>
+    </form>
 
 <div style="background: white">
   <div style="height: 535px; overflow: auto;padding: 0px; margin:0px;">
@@ -120,77 +137,14 @@ td {
     <th style="color: rgb(238, 238, 238)">Female</th>
     <th style="color: rgb(238, 238, 238)">Total</th>
   </tr>
-  <tr>
-    <td> A000</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>A001</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>A009</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>A0100</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>A0101</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>A0102</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr><tr>
-    <td>A0103</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr><tr>
-    <td>A0104</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr><tr>
-    <td>A0105</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>A0109</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>A011</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>A012</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  
- 
+  <% @data_codes.each do |code| %>
+      <tr>
+          <td><%= code %></td>
+          <td><%= @data[code]['Male']%></td>
+          <td><%= @data[code]['Female']%></td>
+          <td><%= (@data[code]['Male'] + @data[code]['Female']) %></td>
+      </tr>
+  <%end%>
   
 </table>
 </div>
