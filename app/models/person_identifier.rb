@@ -1,7 +1,8 @@
 class PersonIdentifier < CouchRest::Model::Base
 
   before_save :set_site_code,:set_distict_code,:set_check_digit
-
+  after_create :insert_update_into_mysql
+  after_save :insert_update_into_mysql
   cattr_accessor :can_assign_den
   cattr_accessor :can_assign_drn
 
@@ -143,5 +144,22 @@ class PersonIdentifier < CouchRest::Model::Base
                        reason: "Approved record at HQ")
     else
     end
+  end
+
+  def insert_update_into_mysql
+      fields  = self.keys.sort
+      sql_record = RecordIdentifier.where(person_identifier_id: self.id).first
+      sql_record = RecordIdentifier.new if sql_record.blank?
+      fields.each do |field|
+        next if field == "type"
+        next if field == "_rev"
+        if field =="_id"
+            sql_record["person_identifier_id"] = self[field]
+        else
+            sql_record[field] = self[field]
+        end
+
+      end
+      sql_record.save
   end
 end

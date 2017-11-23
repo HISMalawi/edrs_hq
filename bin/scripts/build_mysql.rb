@@ -5,7 +5,7 @@
  PersonIdentifier.can_assign_den = false
  PersonIdentifier.can_assign_drn = false
  LoadMysql.load_mysql = false
- @@file_path = "#{Rails.root.to_s}/app/assets/data/MySQL_data/"
+ @@file_path = "#{Rails.root.to_s}/db/MySQL_data/"
  @couchdb_files = {
       'Person' => {count: Person.count, name: 'Person doc.', id: 'person_doc', 
         doc_primary_key: 'person_id', table_name: 'people'},
@@ -239,7 +239,7 @@ def load_sql_files
     password = mysql_connection['password']
     host = mysql_connection['host']
 
-    file_path =  Rails.root.to_s + '/app/assets/data/MySQL_data/'
+    file_path =  Rails.root.to_s + '/db/MySQL_data/'
 
     @documents = Dir.foreach(file_path) do |file|
         if file.match(".sql")

@@ -222,17 +222,7 @@ class CaseController < ApplicationController
       end
     end
 
-    status = PersonRecordStatus.by_person_recent_status.key(params[:person_id]).last
-    status.voided  = true
-    status.save
-
-    PersonRecordStatus.create(
-        :person_record_id => params[:person_id],
-        :district_code => person.district_code,
-        :creator => @current_user.id,
-        :prev_status => status.status,
-        :status => next_status
-    )
+    PersonRecordStatus.change_status(Person.find(params[:person_id]), next_status)
 
     if next_status == "HQ COMPLETE"
       @person = Person.find(params[:person_id])

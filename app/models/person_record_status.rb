@@ -1,6 +1,8 @@
 class PersonRecordStatus < CouchRest::Model::Base
 
 	before_save :set_district_code,:set_facility_code,:set_registration_type
+	after_create :insert_update_into_mysql
+	after_save :insert_update_into_mysql
 	cattr_accessor :nextstatus
 
 	property :person_record_id, String
@@ -118,5 +120,22 @@ class PersonRecordStatus < CouchRest::Model::Base
                                   :district_code => person.district_code,
                                   :creator => (User.current_user.id rescue (@current_user.id rescue nil))})
 		end
+	end
+
+	def insert_update_into_mysql
+	    fields  = self.keys.sort
+	    sql_record = RecordStatus.where(person_record_status_id: self.id).first
+	    sql_record = RecordStatus.new if sql_record.blank?
+	    fields.each do |field|
+	      next if field == "type"
+	      next if field == "_rev"
+	      if field =="_id"
+	          sql_record["person_record_status_id"] = self[field]
+	      else
+	          sql_record[field] = self[field]
+	      end
+
+	    end
+	    sql_record.save
 	end
 end
