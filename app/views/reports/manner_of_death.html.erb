@@ -133,43 +133,14 @@ td{
     <th style="color: rgb(238, 238, 238)">Female</th>
     <th style="color: rgb(238, 238, 238)">Total</th>
   </tr>
-  <tr>
-    <td>Natural Death</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Accident</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Homicide</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Suicide</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Poisoning</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Other</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  
+    <% @data_manners.each do |manner| %>
+      <tr>
+          <td><%= manner %></td>
+          <td><%= @data[manner]['Male']%></td>
+          <td><%= @data[manner]['Female']%></td>
+          <td><%= (@data[manner]['Male'] + @data[manner]['Female']) %></td>
+      </tr>
+  <%end%>
 </table>
 
 </div>

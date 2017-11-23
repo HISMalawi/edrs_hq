@@ -19,11 +19,15 @@ class ReportsController < ApplicationController
     render :template => "/hq/tasks"
   end
   def causes_of_death
-  	@data = Report.causes_of_death(nil,nil,nil, nil,nil,nil,nil)
+
+  	@data = Report.causes_of_death(params[:district],params[:start_date],params[:end_date], params[:age_operator],params[:start_age],params[:end_age],params[:autopsy_requested])
   	@data_codes = @data.keys
   	@section ="Causes of death Reports"
   end
   def manner_of_death
+  	@data = Report.manner_of_death(params[:district],params[:start_date],params[:end_date], params[:age_operator],params[:start_age],params[:end_age],params[:autopsy_requested])
   	
+  	@data_manners = @data.keys
+  	@section ="Manner of death Reports"
   end
 end
