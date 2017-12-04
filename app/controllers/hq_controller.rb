@@ -339,9 +339,9 @@ class HqController < ApplicationController
         (today - 7.months), (today - 6.months), (today - 5.months), (today - 4.months),
         (today - 3.months), (today - 2.months), (today - 1.months), (today)] .each do |date|
 
-        status = ["DC APPROVED", "HQ APPROVED","DC REAPPROVED", "HQ REAPPROVED", "HQ COMPLETE", "HQ INCOMPLETE", "HQ DUPLICATE",
+        status = ["HQ ACTIVE", "HQ APPROVED","DC REAPPROVED", "HQ REAPPROVED", "HQ COMPLETE", "HQ INCOMPLETE", "HQ DUPLICATE",
                   "HQ POTENTIAL DUPLICATE", "HQ CLOSED", "HQ POTENTIAL INCOMPLETE",
-                  "HQ DISPATCHED", "HQ PRINT", "HQ REPRINT", "HQ AMMEND", "DC AMMEND"].uniq
+                  "HQ DISPATCHED", "HQ CAN PRINT", "HQ REPRINT", "HQ AMMEND", "DC AMMEND"].uniq
         month = date.strftime("%b`%y")
         count = 0.0
         status.each do |state|
@@ -369,8 +369,8 @@ class HqController < ApplicationController
     results = {}
 
     sent  = [
-        ["dc_approved", ["DC APPROVED"]],
-        ["hq_print", ["HQ PRINT"]],
+        ["dc_approved", ["HQ ACTIVE"]],
+        ["hq_print", ["HQ CAN PRINT"]],
         ["hq_reprint", ["HQ REPRINT"]],
         ["hq_duplicate", ["HQ POTENTIAL DUPLICATE", "HQ DUPLICATE", "HQ CONFIRMED DUPLICATE"]],
         ["hq_incomplete", ["HQ POTENTIAL INCOMPLETE", "HQ INCOMPLETE"]],
@@ -675,18 +675,6 @@ class HqController < ApplicationController
   end
 
   def tasks
-=begin
-  var tasks = [
-    ['View','View open cases','/tasks'],
-    ['Printed','View printed cases','/tasks'],
-    ['Dispatched','View dispatched certificates','/tasks'],
-    ['Conflict cases','View cases with queries','/tasks'],
-    ['Rejected cases','View rejected cases','/tasks'],
-    ['Re-printing','View cases approved for re-reprinting','/tasks'],
-    ['Potential duplicates','Approve potential duplicates','/tasks']
-];
-
-=end
 
     @tasks = []
 
@@ -696,6 +684,11 @@ class HqController < ApplicationController
 
     if has_role("Manage incomplete records")
       @tasks << ['Incomplete records from   DV','View incomplete cases','/incomplete_cases','']
+
+    end
+    
+    if has_role("Reject a record")
+       @tasks << ['Conflict cases','View cases with queries','/conflict','conflict_case.png']
     end
 
     if has_role("View closed cases")

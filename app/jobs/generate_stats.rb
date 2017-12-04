@@ -16,7 +16,7 @@ class GenerateStats
   			start_date = beginning
   			end_date = beginning.end_of_month
   			registered << Person.by_created_at.startkey(start_date).endkey(end_date).each.count
-  			approved << PersonRecordStatus.by_status_and_created_at.startkey(["DC APPROVED",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey(["DC APPROVED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
+  			approved << PersonRecordStatus.by_status_and_created_at.startkey(["HQ ACTIVE",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey(["HQ ACTIVE",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
         
         closed  = PersonRecordStatus.by_status_and_created_at.startkey(["HQ CLOSED",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey(["HQ CLOSED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
   			dispatched = PersonRecordStatus.by_status_and_created_at.startkey(["HQ DISPATCHED",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey(["HQ DISPATCHED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
@@ -32,7 +32,7 @@ class GenerateStats
       stats[:year_printed] = printed
       cummulatives = {}
       cummulatives["Newly Registered"] = PersonRecordStatus.by_record_status.key("NEW").each.count rescue 0
-      cummulatives["Print Queue"] = PersonRecordStatus.by_record_status.key("HQ PRINT").each.count rescue 0
+      cummulatives["Print Queue"] = PersonRecordStatus.by_record_status.key("HQ CAN PRINT").each.count rescue 0
       cummulatives["Re pritnt- Queue"] = PersonRecordStatus.by_record_status.keys(["HQ REPRINT","HQ REPRINT REQUEST"]).each.count rescue 0
       cummulatives["Suspected duplicates"] = PersonRecordStatus.by_record_status.keys(["HQ POTENTIAL DUPLICATE","HQ DUPLICATE"]).each.count rescue 0
       cummulatives["Incomplete Records"]  = PersonRecordStatus.by_record_status.key("HQ INCOMPLETE").each.count rescue 0

@@ -10,6 +10,7 @@ class PersonRecordStatus < CouchRest::Model::Base
 	property :prev_status, String
 	property :district_code, String
 	property :facility_code, String
+	property :comment, String
 	property :voided, TrueClass, :default => false
 	property :reprint, TrueClass, :default => false
 	property :registration_type, String
@@ -96,7 +97,7 @@ class PersonRecordStatus < CouchRest::Model::Base
 	    return Person.find(self.person_record_id)    	
 	end
 
-	def self.change_status(person,currentstatus)
+	def self.change_status(person,currentstatus,comment=nil)
 		status = PersonRecordStatus.by_person_recent_status.key(person.id).last
 		if status.present?
 			if ["HQ PRINT AMEND","HQ REPRINT REQUEST"].include? (status.status)
@@ -110,6 +111,7 @@ class PersonRecordStatus < CouchRest::Model::Base
                                   :status => currentstatus,
                                   :prev_status => status.status,
                                   :reprint => reprint,
+                                  :comment => comment,
                                   :district_code => person.district_code,
                                   :creator => (User.current_user.id rescue (@current_user.id rescue nil))})
 		else
@@ -118,6 +120,7 @@ class PersonRecordStatus < CouchRest::Model::Base
                                   :status => currentstatus,
                                   :prev_status => nil,
                                   :district_code => person.district_code,
+                                  :comment => comment,
                                   :creator => (User.current_user.id rescue (@current_user.id rescue nil))})
 		end
 	end

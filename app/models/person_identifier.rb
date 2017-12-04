@@ -129,7 +129,7 @@ class PersonIdentifier < CouchRest::Model::Base
         
         PersonRecordStatus.create({
                                   :person_record_id => person.id.to_s,
-                                  :status => (PersonRecordStatus.nextstatus[person.id] rescue "HQ PRINT"),
+                                  :status => (PersonRecordStatus.nextstatus[person.id] rescue "HQ CAN PRINT"),
                                   :district_code => (person.district_code rescue CONFIG['district_code']),
                                   :creator => creator})
 

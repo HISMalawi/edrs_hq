@@ -1,7 +1,7 @@
 class CaseController < ApplicationController
   def open
     @title = "Open Cases"
-    @statuses = ["DC APPROVED"]
+    @statuses = ["HQ ACTIVE"]
     @page = 1
     session[:return_url] = request.path
     @drn_available = true
@@ -135,7 +135,7 @@ class CaseController < ApplicationController
 
   def incomplete_cases
     @title = "Incomplete Cases"
-    @statuses = ["HQ POTENTIAL INCOMPLETE"]
+    @statuses = ["HQ INCOMPLETE TBA"]
     @page = 1
     session[:return_url] = request.path
 
@@ -144,7 +144,7 @@ class CaseController < ApplicationController
 
   def rejected_cases
     @title = "Rejected Cases"
-    @statuses = ["HQ CONFIRMED INCOMPLETE", "HQ REOPENED"]
+    @statuses = ["HQ CONFIRMED INCOMPLETE", "HQ REOPENED","HQ CAN REJECT"]
     @page = 1
     session[:return_url] = request.path
 
@@ -153,7 +153,7 @@ class CaseController < ApplicationController
 
   def print
     @title = "Print Certificates"
-    @statuses = ["HQ PRINT","HQ PRINT AMEND","HQ REPRINT REQUEST"]
+    @statuses = ["HQ CAN PRINT","HQ PRINT AMEND","HQ REPRINT REQUEST"]
     @page = 1
     session[:return_url] = request.path
     @available_printers = CONFIG["printer_name"].split(',')
@@ -172,8 +172,8 @@ class CaseController < ApplicationController
   def approved_for_print_marked_incomplete
     @title = "Marked incomplete but approved for print"
     @prev_status = "HQ INCOMPLETE"
-    @status = "HQ PRINT"
-    @statuses = ["HQ PRINT"]
+    @status = "HQ CAN PRINT"
+    @statuses = ["HQ CAN PRINT"]
     @page = 1
     session[:return_url] = request.path
 
@@ -197,7 +197,7 @@ class CaseController < ApplicationController
     render :text => "Error!" and return if next_status.blank?
     person = Person.find(params[:person_id])
     
-    if ["HQ PRINT", "HQ REPRINT", "HQ APPROVED", "HQ REAPPROVED"].include?(next_status)
+    if ["HQ CAN PRINT", "HQ REPRINT", "HQ APPROVED", "HQ REAPPROVED"].include?(next_status)
       
       drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([params[:person_id], "DEATH REGISTRATION NUMBER"]).last
       if drn.blank?
@@ -222,7 +222,7 @@ class CaseController < ApplicationController
       end
     end
 
-    PersonRecordStatus.change_status(Person.find(params[:person_id]), next_status)
+    PersonRecordStatus.change_status(Person.find(params[:person_id]), next_status,params[:comment])
 
     if next_status == "HQ COMPLETE"
       @person = Person.find(params[:person_id])
@@ -462,6 +462,12 @@ class CaseController < ApplicationController
   def view_cases
 
     @person = Person.find(params[:person_id])
+    begin
+        @person.save
+        PersonRecordStatus.by_person_recent_status.key(params[:id]).last.save
+    rescue Exception => e
+      
+    end
 
     if SETTINGS["potential_duplicate"]
           record = {}
@@ -482,6 +488,7 @@ class CaseController < ApplicationController
           SimpleElasticSearch.add(record)
     end
 
+    #raise PersonRecordStatus.by_person_recent_status.key(@person.id).last.status.inspect
     @statuses = [PersonRecordStatus.by_person_recent_status.key(@person.id).last.status]
 
     @status = PersonRecordStatus.by_person_recent_status.key(params[:id]).last
@@ -490,17 +497,21 @@ class CaseController < ApplicationController
 
     if @person.status == "DC REAPPROVED"
             @next_state ={
-                "Data Checking Clerk" => ["HQ COMPLETE", "HQ POTENTIAL INCOMPLETE"],
+                "Data Checking Clerk" => ["HQ COMPLETE", "HQ INCOMPLETE TBA"],
                 "Data Supervisor" => ["HQ COMPLETE", "HQ INCOMPLETE"],
-                "Data Manager" => ["HQ PRINT", "HQ CONFIRMED INCOMPLETE"]
+                "Data Manager" => ["HQ CAN PRINT", "HQ CONFIRMED INCOMPLETE"]
             }
     else
           @next_state ={
-                "Data Checking Clerk" => ["HQ COMPLETE", "HQ POTENTIAL INCOMPLETE"],
+                "Data Checking Clerk" => ["HQ COMPLETE", "HQ INCOMPLETE TBA"],
                 "Data Supervisor" => ["HQ CONFLICT", "HQ INCOMPLETE"],
-                "Data Manager" => ["HQ PRINT", "HQ CONFIRMED INCOMPLETE"]
+                "Data Manager" => ["HQ CAN PRINT", "HQ CONFIRMED INCOMPLETE"]
             }
     end
+
+    @available_printers = YAML.load_file("#{Rails.root}/config/couchdb.yml")[Rails.env]['printer_name'].split(',') rescue []
+    
+    @tasks = ActionMatrix.read(@current_user.role, @statuses)
   end
 
 
