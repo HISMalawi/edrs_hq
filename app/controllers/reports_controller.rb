@@ -1,7 +1,7 @@
 class ReportsController < ApplicationController
   def index
   	@tasks = []
-  	if has_role( "Add cause of death")
+  	if has_role( "Add cause of death") || has_role( "Edit cause of death")
   		@tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
   	else

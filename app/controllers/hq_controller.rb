@@ -101,7 +101,7 @@ class HqController < ApplicationController
         results = SimpleSQL.query(map, params)
     end
 
-    if has_role( "Add cause of death") && results.length > 0
+    if (has_role( "Add cause of death") || has_role("Edit cause of death"))&& results.length > 0
       cause_available = ['cause_of_death1',     'cause_of_death2',
       'cause_of_death3',                        'cause_of_death4',
       'onset_death_interval1',            'onset_death_interval2',

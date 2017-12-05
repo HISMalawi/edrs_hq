@@ -177,7 +177,7 @@
              <tr>
                <td rowspan="2" style="background-color:#dbdada;">3</td>
                <td rowspan="2"><b>Manner of death</b></td>
-               <% ['Natural','Accident','Homicide','Suicide','Poisoning','Pending Investigation'].each do |manner| %>
+               <% ['Natural','Accident','Homicide','Suicide','Pending Investigation'].each do |manner| %>
                     <%if @person.manner_of_death.present? && manner == @person.manner_of_death %>
                           <td>
                                 <input type="radio" name="radio" id="<%= manner %>" class="css-checkbox"  checked ="true" disabled>

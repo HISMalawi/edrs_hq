@@ -69,7 +69,7 @@ class Report < ActiveRecord::Base
 		end
 
 		connection = ActiveRecord::Base.connection
-		manner_of_death = ['Natural','Accident','Homicide','Suicide','Poisoning','Pending Investigation','Could not be determined','Other']
+		manner_of_death = ['Natural','Accident','Homicide','Suicide','Pending Investigation','Could not be determined','Other']
 		data  = {}
 		manner_of_death.each do |manner|
 			data[manner] = {}

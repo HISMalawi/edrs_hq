@@ -128,6 +128,9 @@ roles = {
         "Coder" => [
             "Add cause of death"
         ],
+        "Coding Unit Supervisor" => [
+            "Edit cause of death"
+        ],
         "Data Checking Clerk" => [
             "View a record",
             "Check completeness",

@@ -166,7 +166,7 @@
           </label>
         </div>
       </td>
-      <% if @current_user.role.downcase != 'coder'%>
+      <% if @current_user.role.downcase != 'coder' && @current_user.role.downcase !="coding unit supervisor"%>
 
         <td>
             <div id="drn_radio"  class="radio radio-primary" onmousedown="showControls('drn')">

@@ -718,7 +718,7 @@
                          <input type="radio" name="manner_of_death" id="manner_suicide" load="<%= @person.manner_of_death%>" onclick="enableOtherField(this,'other_manner_of_death')" value = "Suicide">
                           <label for="manner_suicide">Suicide</label>
                       </div>
-                      <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4" onmousedown="">
+                      <div id="manner_of_death_radio" class="radio radio-primary col-xs-12 col-sm-6 col-md-4 col-lg-4 hidden" onmousedown="">
                          <input type="radio" name="manner_of_death" id="manner_poisoning" load="<%= @person.manner_of_death%>" onclick="enableOtherField(this,'other_manner_of_death')" value = "Poisoning">
                           <label for="manner_poisoning">Poisoning</label>
                       </div>
@@ -992,6 +992,15 @@
     }
 
     hit("person_details_radio");
+    var place_of_death = "<%= @person.hospital_of_death %>"
+    if(place_of_death.length == 0){
+        $("#shield").show();
+        $("#fieldvalidation").show();
+        $("#validationtitle").html("Death occured outside hospital");
+        $("#validationmessage").html("The person died out side the hospital");
+         $("#ok").attr("onclick", "window.location.href='/'");
+
+    }
 
     var selects = document.getElementsByTagName("select");
     for (var i = 0; i < selects.length; i++){
