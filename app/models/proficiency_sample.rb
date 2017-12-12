@@ -7,5 +7,10 @@ class ProficiencySample < CouchRest::Model::Base
 	property :final_result, String
 	property :comment, String
 	property :supervior,String
+	property :start_time, Time
+	property :end_time, Time
 	timestamps!
+	design do
+    	view :by_end_time
+    end
 end
