@@ -16,7 +16,7 @@ class Audit < CouchRest::Model::Base
   property :site_id, String #Site Code | District Code
   property :site_type, String  #FACILITY, DC, HQ
   property :ip_address,String
-  property :mac_address, Strin
+  property :mac_address, String
   property :change_log, {}, :default => {}
   property :creator, String
   property :voided, TrueClass, :default => false
