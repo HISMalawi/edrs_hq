@@ -720,7 +720,7 @@ class Person < CouchRest::Model::Base
                     emit([doc['first_name_code'], doc['last_name_code']], 1);
                   }
                 }"
-
+                
     view :by_first_name_code
 
     view :by_last_name_code

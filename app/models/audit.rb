@@ -5,13 +5,20 @@ class Audit < CouchRest::Model::Base
   before_save :set_site_id, :set_site_type, :set_user_id
 
   property :record_id, String # Person/Audit...
-  property :audit_type, String # Quality Control | Reprint | Audit | Amendment
+  property :audit_type, String # Quality Control | Reprint | Audit | Amendment | User Access
   property :level, String # Person | User
+  property :model, String
+  property :field, String
+  property :previous_value, String
+  property :current_value, String
   property :reason, String
   property :user_id, String # User id
-  property :site_id, String
+  property :site_id, String #Site Code | District Code
   property :site_type, String  #FACILITY, DC, HQ
+  property :ip_address,String
+  property :mac_address, Strin
   property :change_log, {}, :default => {}
+  property :creator, String
   property :voided, TrueClass, :default => false
   timestamps!
 
@@ -65,5 +72,7 @@ class Audit < CouchRest::Model::Base
         self.site_type = "DC"
     end
   end 
- 
+  def set_creator
+    self.creator = (User.current_user.id rescue User.by_created_at.each.first)
+  end
 end

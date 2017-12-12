@@ -504,7 +504,7 @@
               <p>Disease or condition directly leading to death <i style='color: red'>*</i></p>
                <div class="form-group" style=" padding-bottom:1%">
                <div class="col-md-12">
-                    <label for="onset_death_interval1">cause of Death 1 </label>
+                    <label for="onset_death_interval1">Condition (a) </label>
                     <input name="cause_of_death1" id="cause_of_death1" value="<%= @person.cause_of_death1 rescue (@person.other_cause_of_death1 rescue '')%>" class="form-control select2" style="width:100%" onkeyup="addCauseField(this);checkSpace(this)" />
                 </div>
 
@@ -539,7 +539,7 @@
 
               <div class="form-group" style=" padding-bottom:1%">
                 <div class="col-md-12">
-                    <label for="">Cause of Death 2 </label>
+                    <label for="">Condition (b) </label>
                      <input name="cause_of_death2" id="cause_of_death2" value="<%= @person.cause_of_death2 rescue (@person.other_cause_of_death2 rescue '')%>" class="form-control select2" style="width:100%" onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)" />
                 </div>
 
@@ -572,7 +572,7 @@
 
               <div class="form-group">
                 <div class="col-md-12">
-                    <label for="">Cause of Death 3</label>
+                    <label for="">Condition (c)</label>
                      <input name="cause_of_death3" id="cause_of_death3" value="<%= @person.cause_of_death3 rescue (@person.other_cause_of_death3 rescue '')%>" class="form-control select2" style="width:100%" onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)"/>
                 </div>
 
@@ -605,7 +605,7 @@
 
               <div class="form-group">
               <div class="col-md-12">
-                  <label for="">Cause of Death 4</label>
+                  <label for="">Condition (d)</label>
                   <input name="cause_of_death4" id="cause_of_death4" value="<%= @person.cause_of_death4%>" class="form-control select2" style="width:100%" onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)" min="1"/>
                 </div>
 
