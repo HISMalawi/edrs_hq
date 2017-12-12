@@ -129,7 +129,8 @@ roles = {
             "Add cause of death"
         ],
         "Coding Unit Supervisor" => [
-            "Edit cause of death"
+            "Edit cause of death",
+            "Test proficiency"
         ],
         "Data Checking Clerk" => [
             "View a record",

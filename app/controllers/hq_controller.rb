@@ -184,6 +184,7 @@ class HqController < ApplicationController
       params[:cause_of_death_conditions][key][:cause] = params[:other_significant_cause][key]
       params[:cause_of_death_conditions][key][:icd_code] = params[:other_significant_cause_icd_code][key]
     end
+    params["coder"] = User.current_user.id
     @person.update_attributes(params)
 
     flash[:success] = "Record updated successfully"
@@ -807,6 +808,9 @@ class HqController < ApplicationController
       @tasks << ['Potential duplicates','View potential duplicates','/approve_potential_duplicates','']
     end
     return @tasks
+  end
+
+  def sampled_cases
   end
 
   def to_readable(person)

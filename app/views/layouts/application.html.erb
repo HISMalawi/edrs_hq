@@ -458,6 +458,14 @@
                       </a>
                   </li>       
                   <%end%>
+                  <% if has_role("Edit cause of death") %>
+                    <li class="">
+                      <a href="/sampled_cases" class="">
+                          <i class="icon_document_alt"></i>
+                          <span>Sampled cases</span>
+                      </a>
+                    </li>   
+                  <%end%>
                   <% if has_role("Manage incomplete records") || has_role("Reject a record") %>
                     <li class="">
                       <a href="/rejected_cases_tasks" class="">

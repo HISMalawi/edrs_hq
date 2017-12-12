@@ -993,12 +993,15 @@
 
     hit("person_details_radio");
     var place_of_death = "<%= @person.hospital_of_death %>"
+    var registration_type = "<%= @person.registration_type%>"
     if(place_of_death.length == 0){
-        $("#shield").show();
-        $("#fieldvalidation").show();
-        $("#validationtitle").html("Death occured outside hospital");
-        $("#validationmessage").html("The person died out side the hospital");
-         $("#ok").attr("onclick", "window.location.href='/'");
+        if(registration_type !='Dead on Arrival') {
+            $("#shield").show();
+            $("#fieldvalidation").show();
+            $("#validationtitle").html("Death occured outside hospital");
+            $("#validationmessage").html("The person died out side the hospital");
+            $("#ok").attr("onclick", "window.location.href='/'");
+        }
 
     }
 
