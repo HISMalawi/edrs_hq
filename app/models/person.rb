@@ -728,6 +728,13 @@ class Person < CouchRest::Model::Base
 
     view :by_registration_type
 
+    view :by_coder_and_coded_at,
+         :map => "function(doc) {
+                  if (doc['type'] == 'Person' && doc['coder'] != null) {
+                    emit([doc['coder'], doc['coded_at']], 1);
+                  }
+                }"
+
     filter :facility_sync, "function(doc,req) {return req.query.facility_code == doc.facility_code}"
     filter :district_sync, "function(doc,req) {return req.query.district_code == doc.district_code}"
 

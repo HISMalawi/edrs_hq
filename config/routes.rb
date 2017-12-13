@@ -104,6 +104,8 @@ Rails.application.routes.draw do
   get "/cause_of_death_list" => "hq#cause_of_death_list"
   get "/nocause_available/:id" => "hq#nocause_available"
   get "/sampled_cases" => "hq#sampled_cases"
+  get "/review/:id" => "hq#review"
+  get "/save_mark" =>"hq#save_mark"
 
   #printing routes
   

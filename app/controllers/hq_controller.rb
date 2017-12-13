@@ -185,6 +185,7 @@ class HqController < ApplicationController
       params[:cause_of_death_conditions][key][:icd_code] = params[:other_significant_cause_icd_code][key]
     end
     params["coder"] = User.current_user.id
+    params["coded_at"] = Time.now
     @person.update_attributes(params)
 
     flash[:success] = "Record updated successfully"
@@ -811,6 +812,64 @@ class HqController < ApplicationController
   end
 
   def sampled_cases
+    @sample_details = []
+    sample = ProficiencySample.all
+    sample.each do |sp|
+        user = User.find(sp.coder_id)
+        @sample_details << {
+                              name: "#{user.first_name} #{user.last_name}",
+                              sample: sp.sample,
+                              sample_id: sp.id
+                            }
+    end
+    render :template => "hq/sampled_cases"
+  end
+
+  def review
+    @sample = ProficiencySample.find(params[:id])
+    @person = Person.find(@sample.sample[params[:index].to_i])
+  end
+
+  def save_mark
+    sample = ProficiencySample.find(params[:sample_id])
+    case params[:decision]
+    when "wrong"
+      if sample.results.blank?
+        results = {}
+        results[params[:person_id]] = false
+        sample.results = results
+      else
+        results = sample.results
+        results[params[:person_id]] = false
+        sample.results = results
+      end
+      person = Person.find(params[:person_id])
+      person.icd_10_code = params[:icd_10_code]
+      person.save
+      sample.comment = params[:comment]
+    when "correct"
+      if sample.results.blank?
+        results = {}
+        results[params[:person_id]] = true
+        sample.results = results
+      else
+        results = sample.results
+        results[params[:person_id]] = true
+        sample.results = results
+      end    
+    end
+    if params[:index].to_i == (sample.sample.count - 1)
+        i = 0
+        sample.sample.each do |id|
+          if sample.results[id].present? && sample.results[id]
+            i = i + 1
+          end
+        end
+        sample.final_result = (i /sample.sample.count) * 100
+    end
+    if sample.save
+        redirect_to "/review/#{params[:sample_id]}?index=#{params[:index]}"
+    end
   end
 
   def to_readable(person)

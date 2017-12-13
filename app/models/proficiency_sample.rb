@@ -4,7 +4,8 @@ class ProficiencySample < CouchRest::Model::Base
 	property :coder_id, String
 	property :sample, []
 	property :results, {}
-	property :final_result, String
+	property :final_result, Integer
+	property :reviewed, TrueClass, :default => false
 	property :comment, String
 	property :supervior,String
 	property :start_time, Time
@@ -12,5 +13,11 @@ class ProficiencySample < CouchRest::Model::Base
 	timestamps!
 	design do
     	view :by_end_time
+    	view :by_unreviewed,
+    		 :map =>"function(doc){
+    		 		if(doc['type'] =='Person' && doc['reviewed'] == false){
+    		 			 emit(doc._id, 1);
+    		 		}
+    		 }"
     end
 end

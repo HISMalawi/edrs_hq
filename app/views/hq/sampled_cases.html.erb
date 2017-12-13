@@ -10,12 +10,36 @@
 			<tr>
 				<th>#</th>
 				<th>Name</th>
-				<th>Recorde Sampled</th>
+				<th>No. of records</th>
 				<th></th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr></tr>
+			<% @i = 1 %>
+			<% @sample_details.each do |details| %>
+				<tr>
+						<td><%= @i%></td>
+						<td><%= details[:name] %></td>
+						<td><%= details[:sample].count %></td>
+						<td>
+							<button class="btn btn-success" onclick="window.location='/review/<%=details[:sample_id]%>?index=0'">Review</button>
+						</td>
+				</tr>
+				<% @i = @i + 1 %>
+			<%end%>
 		</tbody>
 	</table>
 </div>
+<script type="text/javascript">
+	  try {  
+	    dataTable = $('#cases').dataTable({
+	                  "pageLength": 7,
+	                  "autoWidth": true,
+	                  "lengthChange": true,
+	                  "order": [[ 1, "asc" ]]
+	                });
+	  }catch(e){
+	    alert(e);
+	  }
+
+</script>

@@ -1,0 +1,221 @@
+
+<style>
+    .table-cell{
+        width: 50%;
+        padding: 4px;
+        padding-left: 30px !important;
+        color: darkslategray;
+    }
+    .btn{
+        min-width: 100px;
+        margin-left: 10px;
+    }
+    .dynamic-button{
+        margin-left: 15px;
+        margin-right: 25px;
+    }
+    .summary{
+
+        margin-bottom: 1%;
+
+    }
+    .summary td {
+
+        background: #ffffff;
+        text-align: left !important;
+        padding: 5px;
+        padding-left: 10px;
+        border: 1px solid lightslategrey;
+        color: #344351
+
+
+    }
+
+    .summary th{
+
+         background: #344351;
+
+         color: #ffffff;
+
+         border : 1px solid #424244;
+
+         padding: 0.5em;
+
+         text-align: center
+    }
+    .clickable{
+
+        font-weight: bold;
+    }
+    th{
+        padding: 8px;
+    }
+
+     #shield{
+      position: absolute;
+      width: 100% !important;
+      height: 100% !important;
+      left: 0px;
+      top: 0px;
+      background: rgba(128,128,128,0.35);
+      z-index: 1050;
+      display: none;
+    }
+    .modal-body{
+      background: #ffffff;
+    }
+
+    #wrong_modal, #correct_modal{
+      position : absolute;
+      left: 30%;
+      top: 13.5%;
+      display: none;
+      z-index: 4000
+  }
+   
+</style>
+<div id="main" >
+  <div style="height: 535px; overflow: auto;padding: 0px; margin:0px;">
+    <%= render :partial => "section2" %>
+  </div>
+  <div class="table-container-footer" style="padding: 0px;margin-bottom: 0px;">
+    <table class="table table-striped table-hover table-condensed table-bordered">
+      <tfoot>
+      <tr>
+        <th colspan="2" style="padding-left: 10px !important;">
+       
+       		<% if (@sample.sample.count-1 ) == params[:index].to_i %>
+	       		<div onclick= ""
+	                 class="dynamic-button btn btn-small btn-default pull-right btn-primary"><span>Finish</span>
+	            </div>
+            <%end%>
+            <% if @sample.results[@person.id].present? || true %>
+            <div onclick= "correct()"
+                 class="dynamic-button btn btn-small btn-default pull-right btn-success"><span>Correct ICD Code</span>
+            </div>
+            <div onclick= "wrong()" class="dynamic-button btn btn-small btn-default pull-right btn-danger"><span>Wrong ICD Code</span>
+            </div>
+            <%end%>
+ 
+            <div onclick= "window.parent.location = '/search'"
+                 class="dynamic-button btn btn-small btn-default pull-left btn-danger"><span>Cancel</span></div>
+        </th>
+      </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+<div id="shield">
+	<div class="" id="wrong_modal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header btn-primary">
+	        <h4 class="modal-title" id="wrong_modal_title">Change ICD 10</h4>
+	      </div>
+	      <div class="modal-body">
+
+	        <div class="row">
+	          <div class="col-lg-12">
+
+	            <div class=" form-group">
+	              <div class="container">
+	                <div class="row" style="width: 550px;">
+	                    <div style="width: 100%;margin-top: 20px;border-top: 1px solid #d3d3d3">
+	                        <form id="comment-form" action="/save_mark">
+	                        	<div class="form-group">
+								  <label for="usr">Final ICD Code:</label>
+								  <input type="text" class="form-control" id="icd_10_code"
+								  style="width: 30%;margin-top: 4px;margin-bottom: 4px;" required>
+								</div>
+								<div class="form-group">
+									<label for="usr">Comment:</label>
+									<textarea class="form-control" name="comment" placeholder="Add Comment" id="comment" style="width: 98%;margin-top: 4px;margin-bottom: 4px;" required></textarea>
+								</div>
+								<input type="hidden" name="decision" id="decision">
+								<input type="hidden" name="sample_id" value="<%=params[:id]%>">
+								<input type="hidden" name="index" value="<%= (params[:index].to_i + 1) % @sample.sample .count %>">
+								<input type="hidden" name="person_id" value="<%=@person.id%>">
+	                        </form>
+	                    </div>
+	                  </div>
+	              </div>
+	            </div>
+	          </div>
+	          <div class="modal-footer">
+	            <button type="button" class="btn btn-sm btn-default pull-left" onclick="__$('wrong_modal').style.display = 'none';hideModal()" > Close </button>
+	            <button id="action_wrong_proceed" type="button" class="btn btn-sm btn-success" > Proceed to Next Record </button>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<div class="" id="correct_modal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header btn-primary">
+	        <h4 class="modal-title" id="correct_modal_title">ICD Code Correct</h4>
+	      </div>
+	      <div class="modal-body">
+
+	        <div class="row">
+	          <div class="col-lg-12">
+	          		Please click 'Next' to proceed to next record
+	          </div>
+	          <div class="modal-footer">
+	            <button type="button" class="btn btn-sm btn-default pull-left" onclick="__$('correct_modal').style.display = 'none';hideModal()" > Close </button>
+	            <button id="action_correct_proceed" type="button" class="btn btn-sm btn-success" >Next</button>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+</div>
+<script type="text/javascript">
+
+	  function __$(id){
+	  		return document.getElementById(id);
+	  }
+
+	  function hideModal(){
+        $("#shield").css('display','none')
+      }
+
+	  function wrong(){
+        $("#shield").show()
+        __$("wrong_modal").style.display = "block";
+        __$("wrong_modal_title").innerHTML = "ICD Code Correct";
+        __$("decision").value = "wrong"
+        var action_bt = __$("action_wrong_proceed")
+        action_bt.onmousedown = function(){
+        	submitForm();
+        }
+      }
+      function submitForm(){
+      		var code = __$("icd_10_code").value
+      		if(code.length == 0){
+      			__$("icd_10_code").focus();
+      			__$("icd_10_code").style.border = "1px solid red";
+      			return;
+      		}
+      		var comment = __$("comment").value
+      		if(comment.length == 0){
+      			__$("comment").focus();
+      			__$("comment").style.border = "1px solid red";
+      			return;
+      		}
+      		__$("comment-form").submit()
+
+      }
+
+	  function correct(){
+        $("#shield").show()
+        __$("correct_modal").style.display = "block";
+        __$("correct_modal_title").innerHTML = "ICD Code is correct";
+        var action_bt = __$("action_correct_proceed")
+        action_bt.onmousedown = function(){
+        	window.location = '/save_mark?sample_id=<%=params[:id]%>&decision=correct&index=<%= (params[:index].to_i + 1) % @sample.sample.count %>&person_id=<%=@person.id%>'
+        }
+      }
+</script>
