@@ -813,13 +813,14 @@ class HqController < ApplicationController
 
   def sampled_cases
     @sample_details = []
-    sample = ProficiencySample.all
+    sample = ProficiencySample.by_reviewed.key(false).each
     sample.each do |sp|
         user = User.find(sp.coder_id)
         @sample_details << {
                               name: "#{user.first_name} #{user.last_name}",
                               sample: sp.sample,
-                              sample_id: sp.id
+                              sample_id: sp.id,
+                              date_sampled: sp.date_sampled
                             }
     end
     render :template => "hq/sampled_cases"
@@ -827,7 +828,8 @@ class HqController < ApplicationController
 
   def review
     @sample = ProficiencySample.find(params[:id])
-    @person = Person.find(@sample.sample[params[:index].to_i])
+    @sample.results = {} if @sample.results.blank?
+    @person = Person.find(@sample.sample.sort[params[:index].to_i])
   end
 
   def save_mark
@@ -841,12 +843,13 @@ class HqController < ApplicationController
       else
         results = sample.results
         results[params[:person_id]] = false
+        sample.results = nil
         sample.results = results
       end
       person = Person.find(params[:person_id])
       person.icd_10_code = params[:icd_10_code]
       person.save
-      sample.comment = params[:comment]
+      #sample.comment = params[:comment]
     when "correct"
       if sample.results.blank?
         results = {}
@@ -855,21 +858,34 @@ class HqController < ApplicationController
       else
         results = sample.results
         results[params[:person_id]] = true
+        sample.results = nil
         sample.results = results
       end    
     end
+
     if params[:index].to_i == (sample.sample.count - 1)
         i = 0
         sample.sample.each do |id|
-          if sample.results[id].present? && sample.results[id]
+          if sample.results[id]
             i = i + 1
           end
         end
-        sample.final_result = (i /sample.sample.count) * 100
+
+        sample.final_result = (i.to_f  / sample.sample.count) * 100
+        sample.reviewed = true
+        sample.supervisor = User.current_user.id
     end
-    if sample.save
-        redirect_to "/review/#{params[:sample_id]}?index=#{params[:index]}"
-    end
+
+    sample.save
+    redirect_to "/review/#{params[:sample_id]}?index=#{(params[:index].to_i + 1) % sample.sample.count}"
+  end
+
+  def save_proficiency_comment
+      sample = ProficiencySample.find(params[:sample_id])
+      sample.comment = params[:comment]
+      if sample.save
+          render :text => "ok"
+      end
   end
 
   def to_readable(person)

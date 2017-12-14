@@ -89,7 +89,7 @@
 	                 class="dynamic-button btn btn-small btn-default pull-right btn-primary"><span>Finish</span>
 	            </div>
             <%end%>
-            <% if @sample.results[@person.id].present? || true %>
+            <% if @sample.final_result.blank? %>
             <div onclick= "correct()"
                  class="dynamic-button btn btn-small btn-default pull-right btn-success"><span>Correct ICD Code</span>
             </div>
@@ -123,17 +123,17 @@
 	                    <div style="width: 100%;margin-top: 20px;border-top: 1px solid #d3d3d3">
 	                        <form id="comment-form" action="/save_mark">
 	                        	<div class="form-group">
-								  <label for="usr">Final ICD Code:</label>
+								  <label for="usr">Change ICD Code:</label>
 								  <input type="text" class="form-control" id="icd_10_code"
-								  style="width: 30%;margin-top: 4px;margin-bottom: 4px;" required>
+								  style="width: 50%;margin-top: 4px;margin-bottom: 4px;" required>
 								</div>
-								<div class="form-group">
+								<div class="form-group hidden">
 									<label for="usr">Comment:</label>
 									<textarea class="form-control" name="comment" placeholder="Add Comment" id="comment" style="width: 98%;margin-top: 4px;margin-bottom: 4px;" required></textarea>
 								</div>
 								<input type="hidden" name="decision" id="decision">
 								<input type="hidden" name="sample_id" value="<%=params[:id]%>">
-								<input type="hidden" name="index" value="<%= (params[:index].to_i + 1) % @sample.sample .count %>">
+								<input type="hidden" name="index" value="<%= params[:index] %>">
 								<input type="hidden" name="person_id" value="<%=@person.id%>">
 	                        </form>
 	                    </div>
@@ -199,12 +199,6 @@
       			__$("icd_10_code").style.border = "1px solid red";
       			return;
       		}
-      		var comment = __$("comment").value
-      		if(comment.length == 0){
-      			__$("comment").focus();
-      			__$("comment").style.border = "1px solid red";
-      			return;
-      		}
       		__$("comment-form").submit()
 
       }
@@ -215,7 +209,7 @@
         __$("correct_modal_title").innerHTML = "ICD Code is correct";
         var action_bt = __$("action_correct_proceed")
         action_bt.onmousedown = function(){
-        	window.location = '/save_mark?sample_id=<%=params[:id]%>&decision=correct&index=<%= (params[:index].to_i + 1) % @sample.sample.count %>&person_id=<%=@person.id%>'
+        	window.location = '/save_mark?sample_id=<%=params[:id]%>&decision=correct&index=<%= params[:index] %>&person_id=<%=@person.id%>'
         }
       }
 </script>

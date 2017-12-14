@@ -19,7 +19,7 @@ User.by_role.key("Coder").each do |user|
 	end
 
 	coders_records = Person.by_coder_and_coded_at.startkey([user.id, start_time]).endkey([user.id, end_time]).each.collect {|p| p.id}
-	five_percent = ((5/100) * coders_records.count).to_i
+	five_percent = ((SETTINGS['sample_percentage']/100) * coders_records.count).to_i
 	sample = []
 	for i in 0..five_percent
 		population = coders_records - sample
@@ -29,9 +29,10 @@ User.by_role.key("Coder").each do |user|
 	unless sample.blank?
 		proficiency_sample = ProficiencySample.new
 		proficiency_sample.coder_id = user.id
-		proficiency_sample.sample = sample
+		proficiency_sample.sample = sample.sort
 		proficiency_sample.start_time = start_time
 		proficiency_sample.end_time = end_time
+		proficiency_sample.date_sampled = Date.today
 		proficiency_sample.save
 	end
 

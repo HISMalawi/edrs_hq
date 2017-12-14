@@ -86,4 +86,21 @@ class Report < ActiveRecord::Base
 	def self.general(district= nil,start_date = nil,end_date = nil, age_operator = nil, start_age= nil, end_age =nil, status =nil )
 
 	end
+
+	def self.proficiency(start_date, end_date)
+		    sample_details = []
+		    sample = ProficiencySample.by_reviewed_and_created_at.startkey([true,start_date]).endkey([true,end_date]).each
+		    sample.each do |sp|
+		        user = User.find(sp.coder_id)
+		        sample_details << {
+		                              name: "#{user.first_name} #{user.last_name}",
+		                              sample: sp.sample,
+		                              sample_id: sp.id,
+		                              date_sampled: sp.date_sampled,
+		                              final_result: sp.final_result.to_f.round(2),
+		                              comment: sp.comment
+		                            }
+		    end
+		    return sample_details
+	end
 end

@@ -10,6 +10,7 @@
 			<tr>
 				<th>#</th>
 				<th>Name</th>
+				<th>Date Sampled</th>
 				<th>No. of records</th>
 				<th></th>
 			</tr>
@@ -20,6 +21,7 @@
 				<tr>
 						<td><%= @i%></td>
 						<td><%= details[:name] %></td>
+						<td><%= details[:date_sampled] %></td>
 						<td><%= details[:sample].count %></td>
 						<td>
 							<button class="btn btn-success" onclick="window.location='/review/<%=details[:sample_id]%>?index=0'">Review</button>

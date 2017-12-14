@@ -104,6 +104,7 @@ Rails.application.routes.draw do
   get "/cause_of_death_list" => "hq#cause_of_death_list"
   get "/nocause_available/:id" => "hq#nocause_available"
   get "/sampled_cases" => "hq#sampled_cases"
+  get "/save_proficiency_comment" => "hq#save_proficiency_comment"
   get "/review/:id" => "hq#review"
   get "/save_mark" =>"hq#save_mark"
 
@@ -155,11 +156,13 @@ Rails.application.routes.draw do
   get '/amendment_requests' =>"case#amendment_requests"
   get '/reprint_requests' => "case#reprint_requests"
 
+
   get '/reports' => "reports#index"
 
   ########Report Tasks starts here #######
   get '/causes_of_death' => "reports#causes_of_death"
   get '/manner_of_death' => "reports#manner_of_death"
+  get "/proficiency" => "reports#proficiency"
 
 
 

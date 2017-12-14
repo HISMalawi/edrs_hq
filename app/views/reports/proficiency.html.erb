@@ -1,0 +1,249 @@
+<link href="/assets/jquery-ui/jquery-ui.min.css" rel="stylesheet">
+<style type="text/css">
+	table {
+	    font-family: arial, sans-serif;
+	    border-collapse: collapse;
+	    width: 100%;
+	}
+
+	th {
+	    border: 1px solid #dddddd;
+	    text-align: center;
+	    padding: 8px;
+	}
+
+	td {
+	    border: 1px solid #dddddd;
+	    text-align: left;
+	    padding: 8px;
+	}
+    #cases th, #cases td {
+        width: 7% !important;
+        text-align: center;
+    }
+    #cases th{
+    	color:#ffffff;
+    }
+    #shield{
+      position: absolute;
+      width: 100% !important;
+      height: 100% !important;
+      left: 0px;
+      top: 0px;
+      background: rgba(128,128,128,0.35);
+      z-index: 1050;
+      display: none;
+    }
+    .modal-body{
+      background: #ffffff;
+    }
+
+    #comment_modal, #view_modal{
+      position : absolute;
+      left: 30%;
+      top: 13.5%;
+      display: none;
+      z-index: 4000
+  	}
+  	.clickable:hover{
+  		cursor:pointer;
+  		color:#6b98d5;
+  	}
+
+</style>
+<div style="background-color: rgb(98, 129, 167); color: rgb(238, 238, 238); padding: 1px;"><h4 align="center">   Proficiency Report <br/>
+
+</h4></div>
+<table>
+	   <tr>
+             <td style="text-align: right;font-weight:bold">Date sampled</td>
+             <td style="text-align: right;">Start date</td>
+             <td><input type="" class="form-control" name="start_date" id="start_date"></td>
+             <td style="text-align: right;">End date</td>
+             <td><input type="" class="form-control" name="end_date" id="end_date"></td>
+             <td style="text-align:center"><button class="btn btn-success" onclick="fetchData()">Fetch Data</button></td>
+        </tr>
+</table>
+<table class="table table-striped table-advance table-hover" id="cases" >
+		<thead>
+			<tr style="background-color: rgb(98, 129, 167); color:#ffffff">
+				<th>#</th>
+				<th>Name</th>
+				<th>Date Sampled</th>
+				<th>No. of records</th>
+				<th>Score</th>
+				<th>Comment</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% @i = 1 %>
+			<% @sample_details.each do |details| %>
+				<tr>
+						<td><%= @i%></td>
+						<td><%= details[:name] %></td>
+						<td><%= details[:date_sampled] %></td>
+						<td><%= details[:sample].count %></td>
+						<td><%= "#{details[:final_result]} %" %></td>
+						<td>
+							<% if details[:comment].blank? %>
+								<i class="fa fa-plus clickable" onclick="addComment('<%=details[:sample_id]%>')">
+							<%else%>
+								<i class="fa fa-eye clickable" onclick="viewComment('<%=details[:sample_id]%>', '<%=details[:comment]%>')">
+							<%end%>
+						</td>
+				</tr>
+				<% @i = @i + 1 %>
+			<%end%>
+		</tbody>
+</table>
+<div id="shield">
+	<div class="" id="comment_modal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header btn-primary">
+	        <h4 class="modal-title" id="comment_modal_title">Change ICD 10</h4>
+	      </div>
+	      <div class="modal-body">
+
+	        <div class="row">
+	          <div class="col-lg-12">
+
+	            <div class=" form-group">
+	              <div class="container">
+	                <div class="row" style="width: 550px;">
+	                    <div style="width: 100%;margin-top: 20px;border-top: 1px solid #d3d3d3">
+	                        <form id="comment-form" action="/save_mark">
+	                        	<div class="form-group hidden">
+								  <label for="usr">Change ICD Code:</label>
+								  <input type="text" class="form-control" id="icd_10_code"
+								  style="width: 50%;margin-top: 4px;margin-bottom: 4px;" required>
+								</div>
+								<div class="form-group">
+									<label for="comment">Comment:</label>
+									<textarea class="form-control" name="comment" placeholder="Add Comment" id="comment" style="width: 98%;margin-top: 4px;margin-bottom: 4px;" required></textarea>
+									<input type="hidden" name="sample_id" id="sample_id">
+								</div>
+	                        </form>
+	                    </div>
+	                  </div>
+	              </div>
+	            </div>
+	          </div>
+	          <div class="modal-footer">
+	            <button type="button" class="btn btn-sm btn-default pull-left" onclick="__$('comment_modal').style.display = 'none';hideModal()" > Close </button>
+	            <button id="action_wrong_proceed" onclick="saveComment()" type="button" class="btn btn-sm btn-success" > Save comment</button>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<div class="" id="view_modal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header btn-primary">
+	        <h4 class="modal-title" id="view_modal_title">Change ICD 10</h4>
+	      </div>
+	      <div class="modal-body">
+
+	        <div class="row">
+	          <div class="col-lg-12">
+
+	            <div class=" form-group">
+	              <div class="container" id="modal_container">
+	                
+	              </div>
+	            </div>
+	          </div>
+	          <div class="modal-footer">
+	            <button type="button" class="btn btn-sm btn-default pull-left" onclick="__$('comment_modal').style.display = 'none';hideModal()" > Close </button>
+	            <button id="action_edit" onclick="" type="button" class="btn btn-sm btn-success" > Edit comment</button>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+</div>
+<script src="assets/jquery-ui/jquery-ui.min.js"></script>
+<script type="text/javascript">
+	  try {  
+	    dataTable = $('#cases').dataTable({
+	                  "pageLength": 7,
+	                  "autoWidth": true,
+	                  "lengthChange": true,
+	                  "order": [[ 1, "asc" ]]
+	                });
+	  }catch(e){
+	    alert(e);
+	  }
+
+	  function __$(id){
+	  		return document.getElementById(id);
+	  }
+
+	  function hideModal(){
+        $("#shield").css('display','none')
+      }
+
+
+	  function addComment(sample_id,comment){
+	  	    $("#shield").show()
+	        __$("comment_modal").style.display = "block";
+	        __$("comment_modal_title").innerHTML = "Add Comment";
+	        __$("sample_id").value = sample_id
+	        if (comment) {
+	        	__$("comment").value = comment;
+	        }
+	  }
+
+	  function viewComment(sample_id,comment){
+	  		$("#shield").show()
+	        __$("view_modal").style.display = "block";
+	        __$("view_modal_title").innerHTML = "Comment";
+	        __$("modal_container").innerHTML = comment
+	        __$("action_edit").onmousedown = function(){
+	        			$("#view_modal").css('display','none')
+	        			hideModal();
+	        			addComment(sample_id,comment);
+	        			__$("comment_modal_title").innerHTML = "Edit Comment";
+	        }
+
+	  }
+
+	  function saveComment(){
+	  		var comment = __$("comment").value;
+	  		var sample_id = __$("sample_id").value;
+	  		$.ajax({
+	  			url: "/save_proficiency_comment?comment="+comment+"&sample_id="+sample_id,
+	  			success: function(feedback){
+	  				if (feedback == "ok"){
+	  					window.location.reload()
+	  				}
+	  			},
+	  			error: function(error){
+	                alert("Something went wrong!");
+	            }
+	  		})
+	  }
+
+	  function fetchData(){
+	  		var start_date = __$("start_date").value;
+	  		if (start_date.length == 0) {
+	  			__$("start_date").style.border  = "1px solid red"
+	  			return;
+	  		}
+	  		var end_date = __$("end_date").value;
+	  		if (end_date.length == 0) {
+	  			__$("end_date").style.border  = "1px solid red"
+	  			return;
+	  		}
+
+	  		window.location = '/proficiency?start_date='+start_date+"&end_date="+end_date
+	  }
+
+	  $(document).ready(function(){
+	      $('#start_date').datepicker({ dateFormat: 'yy-mm-dd', maxDate: $.datepicker.formatDate('yy-mm-dd',new Date())});
+	      $('#end_date').datepicker({ dateFormat: 'yy-mm-dd', maxDate: $.datepicker.formatDate('yy-mm-dd',new Date())});
+	  })
+</script>

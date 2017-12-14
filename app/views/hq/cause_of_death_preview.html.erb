@@ -67,7 +67,7 @@
       <tfoot>
       <tr>
         <th colspan="2" style="padding-left: 10px !important;">
-        <% if has_role("Edit cause of death") || true%>
+        <% if has_role("Edit cause of death")%>
             <div onclick= "window.parent.location = '/cause_of_death?person_id=<%= @person.id%>'"
                  class="dynamic-button btn btn-small btn-default pull-right btn-primary"><span>Edit Cause of death</span></div>
         <%end%>
