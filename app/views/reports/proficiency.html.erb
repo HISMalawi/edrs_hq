@@ -165,8 +165,10 @@
 	  </div>
 	</div>
 </div>
+
 <script src="assets/jquery-ui/jquery-ui.min.js"></script>
 <script type="text/javascript">
+	  var dataTable = null
 	  try {  
 	    dataTable = $('#cases').dataTable({
 	                  "pageLength": 7,
@@ -175,7 +177,7 @@
 	                  "order": [[ 1, "asc" ]]
 	                });
 	  }catch(e){
-	    alert(e);
+	    console.log(e);
 	  }
 
 	  function __$(id){

@@ -230,11 +230,12 @@ class HqController < ApplicationController
     if @barcode.nil?
       process = Process.fork{`bin/generate_barcode #{@drn} #{@person.id} #{CONFIG['barcodes_path']}`}
       Process.detach(process)
+      sleep(0.5)
     end
 
-    sleep(0.5)
+    #sleep(0.5)
 
-    @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
+    @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
 
     render :layout => false, :template => 'hq/death_certificate'
 
@@ -250,10 +251,15 @@ class HqController < ApplicationController
       process = Process.fork{`bin/generate_barcode #{@drn} #{@person.id} #{CONFIG['barcodes_path']}`}
       Process.detach(process)
     end
-    
-    sleep(1)    
      
-    @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
+    if File.exists?("#{CONFIG['barcodes_path']}#{@person.id}.png")
+        @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
+    else
+        sleep(0.5)
+        redirect_to request.referrer
+    end  
+     
+    
     
     if CONFIG['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A4"
        render :layout => false, :template => 'hq/death_certificate_print'

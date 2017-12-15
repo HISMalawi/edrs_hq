@@ -57,3 +57,5 @@ gem 'rake', '< 11.0'
 gem 'couch_tap'
 
 gem 'mac-address'
+
+gem "wkhtmltopdf"

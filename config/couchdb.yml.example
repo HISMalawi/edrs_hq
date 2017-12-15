@@ -7,7 +7,6 @@ development: &development
   username: 
   password: 
   crtkey: 
-  facility_code:
   district_code:
   print_user:
   print_password:
