@@ -1,0 +1,178 @@
+<style type="text/css">
+	#table_container{
+		height: calc(88% - 20px);
+
+		overflow-y: hidden;
+
+		margin-bottom : 0.3em;
+
+		box-shadow: 3.5px 3.5px 1.5px #888888;
+
+		width: 96%;
+		margin: auto;
+		border: 1px solid #bcb5b5;
+		margin-top: 1%;
+
+
+	}
+	.record th {
+        padding: 8px;
+        background-color: #666;
+        color: #eee;
+        text-align: center !important;
+    }
+    
+    .record .existing {
+     
+       background-color: #316193;
+       
+    }
+
+    .record td {
+        padding: 8px;
+    }
+    #dup_table td{
+    	padding: 0.5em;
+    }
+</style>
+<div id="containt_table">
+	<div id="table_container">
+		<table style="width:48% !important;float:left" class="record">
+						<tr>
+							<th colspan="2">Potential Duplicate (<%= @person.status %>)</th>
+						</tr>
+						<tr>
+							<td><b>Surname</b></td>
+							<td><%= @person.last_name %></td>
+						</tr>
+						<tr>
+							<td><b>First Name</b></td>
+							<td><%= @person.first_name %></td>
+						</tr>
+						<tr>
+							<td><b>Nationality</b></td>
+							<td><%= @person.nationality%></td>
+						</tr>
+						<tr>
+							<td><b>Sex</b></td>
+							<td><%= @person.gender %></td>
+						</tr>
+						<tr>
+							<td><b>Date of Birth</b></td>
+							<td><%= Date.parse(@person.birthdate.to_s).strftime("%d/%b/%Y") %></td>
+						</tr>
+						<tr>
+							<td><b>Date of Death</b></td>
+							<td><%= Date.parse(@person.date_of_death.to_s).strftime("%d/%b/%Y") %></td>
+						</tr>
+
+						<tr>
+							<td><b>Place of Death</b></td>
+							<% if @person.place_of_death == 'Hospital/Institution'%>
+
+						 	<td><%= @person.hospital_of_death %></td>
+
+							<%elsif @person.place_of_death == 'Home'%>
+
+								 <td><%= @person.place_of_death_village %> Village, TA <%= @person.place_of_death_ta%> , <%= @person.place_of_death_village%> District</td>
+
+							<%elsif @person.place_of_death == 'Other' %>
+
+								 <td><%= @person.other_place_of_death rescue '' %></td>
+
+							<% end %>
+						</tr>
+						<tr>
+							<td><b>Mother surname</b></td>
+							<td><%= @person.mother_last_name %></td>
+						</tr>
+						<tr>
+							<td><b>Mother Firstname</b></td>
+							<td><%= @person.mother_first_name %></td>
+						</tr>
+						<tr>
+							<td><b>Father Surname</b></td>
+							<td><%= @person.father_last_name %></td>
+						</tr>
+						<tr>
+							<td><b>Father Firstname</b></td>
+							<td><%= @person.father_first_name %></td>
+						</tr>
+
+		</table>
+		<table style="width:48% !important;float:right" class="record existing">
+					<thead>
+						<tr>
+							<th colspan="2" id="existing_head" style="background:#6889b1"></th>
+						</tr>
+					</thead>
+					<tbody id="existing">
+						<tr>
+							<td><b>Surname</b></td>
+							<td><%= @person.last_name %></td>
+						</tr>
+						<tr>
+							<td><b>Middle Name</b></td>
+							<td><%= @person.middle_name %></td>
+						</tr>
+						<tr>
+							<td><b>First Name</b></td>
+							<td><%= @person.first_name %></td>
+						</tr>
+						<tr>
+							<td><b>Date of Birth</b></td>
+							<td><%= Date.parse(@person.birthdate.to_s).strftime("%d/%b/%Y") %></td>
+						</tr>
+						<tr>
+							<td><b>Date of Death</b></td>
+							<td><%= Date.parse(@person.date_of_death.to_s).strftime("%d/%b/%Y") %></td>
+						</tr>
+
+						<tr>
+							<td><b>Place of Death</b></td>
+							<% if @person.place_of_death == 'Hospital/Institution'%>
+
+						 	<td><%= @person.hospital_of_death %></td>
+
+							<%elsif @person.place_of_death == 'Home'%>
+
+								 <td><%= @person.place_of_death_village %> Village, TA <%= @person.place_of_death_ta%> , <%= @person.place_of_death_village%> District</td>
+
+							<%elsif @person.place_of_death == 'Other' %>
+
+								 <td><%= @person.other_place_of_death rescue '' %></td>
+
+							<% end %>
+						</tr>
+						<tr>
+							<td><b>Home address</b></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td><b>Mother surname</b></td>
+							<td><%= @person.mother_last_name %></td>
+						</tr>
+						<tr>
+							<td><b>Mother Middle Name</b></td>
+							<td><%= @person.mother_middle_name %></td>
+						</tr>
+						<tr>
+							<td><b>Mother Firstname</b></td>
+							<td><%= @person.mother_first_name %></td>
+						</tr>
+						<tr>
+							<td><b>Father Surname</b></td>
+							<td><%= @person.father_last_name %></td>
+						</tr>
+						<tr>
+							<td><b>Father Middle Name</b></td>
+							<td><%= @person.father_middle_name %></td>
+						</tr>
+						<tr>
+							<td><b>Father Firstname</b></td>
+							<td><%= @person.father_first_name %></td>
+						</tr>
+					</tbody>
+		</table>
+	</div>	
+</div>

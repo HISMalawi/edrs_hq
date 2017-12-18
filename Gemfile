@@ -59,3 +59,5 @@ gem 'couch_tap'
 gem 'mac-address'
 
 gem "wkhtmltopdf"
+
+gem "whitesimilarity"

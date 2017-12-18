@@ -499,6 +499,37 @@ class CaseController < ApplicationController
           record["father_first_name"] = (@person.father_first_name rescue nil)
           record["id"] = @person.id
           SimpleElasticSearch.add(record)
+
+          if @person.status =="HQ POTENTIAL DUPLICATE TBA"
+            
+          end
+
+          if @person.status == "HQ ACTIVE"
+            @results = []
+            
+            duplicates = SimpleElasticSearch.query_duplicate_coded(record,SETTINGS['duplicate_precision'])
+            
+            @results = duplicates
+
+            duplicate_ids = duplicates.collect{|d| d["_id"]}
+
+            change_log = [{:duplicates => duplicate_ids.join("|")}]
+
+            Audit.create({
+                            :record_id  => @person.id.to_s,
+                            :audit_type => "POTENTIAL DUPLICATE",
+                            :reason     => "Record is a potential",
+                            :change_log => change_log
+            })
+
+             PersonRecordStatus.create({
+                                      :person_record_id => @person.id.to_s,
+                                      :status => "HQ POTENTIAL DUPLICATE TBA",
+                                      :district_code => @person.district_code,
+                                      :created_by => User.current_user.id})
+
+          end
+
     end
 
     #raise PersonRecordStatus.by_person_recent_status.key(@person.id).last.status.inspect
@@ -506,6 +537,7 @@ class CaseController < ApplicationController
 
     @status = PersonRecordStatus.by_person_recent_status.key(params[:id]).last
     
+
     @person_place_details = place_details(@person)
 
     if @person.status == "DC REAPPROVED"
@@ -527,5 +559,32 @@ class CaseController < ApplicationController
     @tasks = ActionMatrix.read(@current_user.role, @statuses)
   end
 
+  def show_duplicate
+      @person = Person.find(params[:id])
+
+      @status = PersonRecordStatus.by_person_recent_status.key(params[:id]).last
+
+      @person_place_details = place_details(@person)
+
+      @existing_record = []
+
+      @existing_ids = ""
+      @duplicates_audit = Audit.by_record_id_and_audit_type.key([@person.id.to_s, "POTENTIAL DUPLICATE"]).first
+      @statuses = []
+      @duplicates_audit.change_log.each do |log|
+        unless  log['duplicates'].blank?
+          @existing_ids = log['duplicates']
+          ids = log['duplicates'].split("|")
+          ids.each do |id|
+             @existing_record << id
+             @statuses << PersonRecordStatus.by_person_recent_status.key(id).last.status
+          end
+        end
+      end
+
+      @statuses = @statuses.join("|")
+     
+      @section = "Resolve Duplicate"
+  end
 
 end

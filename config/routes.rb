@@ -96,6 +96,9 @@ Rails.application.routes.draw do
   get '/incomplete_cases' => 'case#incomplete_cases'
   get '/rejected_cases' => 'case#rejected_cases'
 
+  #################################Duplicate capturing and resolving routes ##################
+  get "/duplicate/:id" =>"case#show_duplicate"
+  
   ############################################################
   get "/search" => "hq#search"
   get "/do_search" => "hq#do_search"
