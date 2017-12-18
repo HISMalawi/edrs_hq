@@ -153,7 +153,7 @@ class CaseController < ApplicationController
 
   def print
     @title = "Print Certificates"
-    @statuses = ["HQ CAN PRINT","HQ PRINT AMEND","HQ REPRINT REQUEST"]
+    @statuses = ["HQ CAN PRINT","HQ CAN PRINT AMENDED","HQ CAN PRINT LOST","HQ CAN PRINT DAMAGED"]
     @page = 1
     session[:return_url] = request.path
     @available_printers = CONFIG["printer_name"].split(',')
@@ -329,7 +329,7 @@ class CaseController < ApplicationController
 
   def rejected_requests
     @title = "Rejected "
-    @statuses = ["HQ REJECTED AMEND","HQ REJECTED REPRINT"]
+    @statuses = ["HQ AMEND REJECTED","HQ LOST REJECTED","HQ DAMAGED REJECTED"]
     @page = 1
     session[:return_url] = request.path
 
@@ -338,7 +338,14 @@ class CaseController < ApplicationController
 
   def amendment_requests
     @title = "Amendment request"
-    @statuses = ["DC AMEND"]
+    if User.current_user.role =="Data Manager"
+      @statuses = ["HQ AMEND GRANTED","HQ AMEND REJECTED TBA"]
+    elsif  User.current_user.role =="Data Supervisor"
+      @statuses = ["HQ AMEND"]
+    else
+      @statuses = ["HQ AMEND","HQ AMEND GRANTED"]
+    end
+    
     @page = 1
     session[:return_url] = request.path
 
@@ -347,7 +354,13 @@ class CaseController < ApplicationController
 
   def reprint_requests
     @title = "Reprint request"
-    @statuses = ["DC REPRINT"]
+    if User.current_user.role =="Data Manager"
+        @statuses = ["HQ LOST GRANTED","HQ DAMAGED REJECTED TBA"]
+    elsif User.current_user.role =="Data Supervisor"
+        @statuses = ["HQ LOST","HQ DAMAGED"]
+    else
+        @statuses = ["HQ LOST","HQ DAMAGED","HQ LOST GRANTED","HQ DAMAGED REJECTED TBA"]
+    end
     @page = 1
     session[:return_url] = request.path
 
@@ -459,7 +472,7 @@ class CaseController < ApplicationController
     render text: cases.to_json and return
   end
 
-  def view_cases
+  def show
 
     @person = Person.find(params[:person_id])
     begin
