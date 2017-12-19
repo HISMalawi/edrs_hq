@@ -61,6 +61,7 @@ Rails.application.routes.draw do
   get '/re_approved_cases' => 'case#re_approved_cases'
   get 'rejected_and_approved_cases' => 'case#rejected_and_approved_cases'
   get '/corrected_from_dc' => "case#corrected_from_dc"
+  get "/case/find/:id" => "case#find"
 
   get '/get_comments' => 'hq#get_comments'
   get '/ajax_save_comment' => 'hq#ajax_save_comment'
@@ -78,6 +79,7 @@ Rails.application.routes.draw do
   get '/void_cases' => 'case#void_cases'
   get '/voided_cases' => 'case#voided_cases'
   get '/potential' => 'case#potential'
+  get "/resolve_duplicates" => "case#resolve_duplicates"
   get '/can_confirm' => 'case#can_confirm'
   get '/confirmed' => 'case#confirmed'
   get '/rejected_requests' => 'case#rejected_requests'

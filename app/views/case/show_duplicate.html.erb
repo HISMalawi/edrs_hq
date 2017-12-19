@@ -6,8 +6,6 @@
 
 		margin-bottom : 0.3em;
 
-		box-shadow: 3.5px 3.5px 1.5px #888888;
-
 		width: 96%;
 		margin: auto;
 		border: 1px solid #bcb5b5;
@@ -25,18 +23,81 @@
     .record .existing {
      
        background-color: #316193;
+       border-collapse: collapse;
+       margin-bottom: 20%;
        
     }
 
     .record td {
         padding: 8px;
+        border: 1px solid gray;
+
     }
     #dup_table td{
     	padding: 0.5em;
     }
+    .btn{
+      min-width: 100px;
+      margin-left: 10px;
+    }
+
+    #shield{
+      position: absolute;
+      width: 100% !important;
+      height: 100% !important;
+      left: 0px;
+      top: 0px;
+      background: rgba(128,128,128,0.35);
+      z-index: 1050;
+      display: none;
+    }
+    #containt_table{
+      width: 100%;
+      padding: 1%;
+      background: #ffffff;
+      box-shadow: 1.0px 1.0px 0.5px #adaba8;
+      border-top: 2px solid darkgoldenrod;
+    }
+    table th{
+      color :#394a59 !important;
+    }
+    table td {
+        color :#394a59;
+    }
+    h3{
+        margin-left: 1%;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 1.5em;
+        color: #4c79a3;
+    }
+    #cases th, #cases td {
+        width: 7% !important;
+        text-align: center;
+    }
+  #completeness, #printers, #comments,#action_modal,#duplicate_modal{
+      position : absolute;
+      left: 30%;
+      top: 13.5%;
+      display: none;
+      z-index: 4000
+  }
+
+  .user_name{
+      font-size:14px;
+      font-weight: bold;
+  }
+  .comments-list .media{
+      border-bottom: 1px dotted #ccc;
+  }
+  #comments-list{
+      max-height: 300px;
+      overflow: auto;
+      width: 100%;
+  }
 </style>
 <div id="containt_table">
-	<div id="table_container">
+	<h3 style="margin-left:2%"><%= @title.humanize rescue ''%></h3>
+	<div id="table_container" style="100%">
 		<table style="width:48% !important;float:left" class="record">
 						<tr>
 							<th colspan="2">Potential Duplicate (<%= @person.status %>)</th>
@@ -174,5 +235,371 @@
 						</tr>
 					</tbody>
 		</table>
-	</div>	
+	</div>
+
+	  <div class="table-container-footer" style="padding: 0px;margin-top: 1%;margin-bottom: 0px;">
+	    <table class="table table-striped table-hover table-condensed table-bordered">
+	      <tfoot>
+	      <tr>
+	        <th colspan="2" style="padding-left: 10px !important;">
+	          <%
+	             comment = false
+	            cancel_url = request.referrer
+	            cancel_url = "/" if (!cancel_url.match('case/') rescue true)
+	          %>
+
+	          <div onclick= "window.parent.location = '<%= cancel_url%>' " class="dynamic-button btn btn-small btn-default pull-left btn-danger"><span>Cancel</span></div>
+	          <% @tasks.each do |task|
+	            onclick = ''
+
+
+	            if task['route'].present?
+	                onclick = "window.parent.location = '" + task['route'] + "&person_id=" + @person.id + "'"
+	            elsif task['ajax_route'].present?
+	                onclick = "ajaxify('#{task['ajax_route']}')"
+	            elsif task['popup'].present?
+	                onclick = "loadPopup('#{task['popup']}')"
+	            elsif task['function'].present?
+	              onclick = "#{task['function']}"
+	            end
+	            next if task['button_name'].blank?
+
+	            if ((task['ajax_route'].match(/comment/) || task['route'].match(/comment/)) rescue false)
+	                comment = true
+	            end
+	          %>
+
+	              <div onclick= "<%= onclick %>" class="dynamic-button btn btn-small btn-primary pull-right <%= task['class'].downcase rescue ''%>"><span><%= task['button_name']%></span></div>
+	          <% end %>
+
+	          <% if comment == true && false%>
+	            <div onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary"><span>View Comments</span></div>
+	          <% end %>
+	          <div id="comment_div" onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary" style="visibility: hidden;"><span>View Comments</span></div>
+	          <button id="next_similar" class="dynamic-button btn btn-small btn-primary pull-right primary" onmousedown="showNext()"><span>Next Similar Record</span>
+	          </button>
+	        </th>
+	      </tr>
+	      </tfoot>
+	    </table>
+	  </div>
+
 </div>
+<div id="shield">
+	<div class="" id="action_modal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header btn-primary">
+	        <h4 class="modal-title" id="action_modal_title">Add Comments</h4>
+	      </div>
+	      <div class="modal-body">
+
+	        <div class="row">
+	          <div class="col-lg-12">
+
+	            <div class=" form-group">
+	              <div class="container">
+	                <div class="row" style="width: 550px;">
+
+	                    <div id="action_comments_list">
+
+	                    </div>
+
+	                    <div style="width: 100%;margin-top: 20px;border-top: 1px solid #d3d3d3">
+	                        <form id="comment-form" action="/ajax_save_comment">
+	                          <textarea class="form-control" name="comment" placeholder="Add Comment" id="action_textarea" style="width: 98%;margin-top: 4px;margin-bottom: 4px;"></textarea>
+	                        </form>
+	                    </div>
+	                  </div>
+	              </div>
+	            </div>
+	          </div>
+	          <div class="modal-footer">
+	            <button type="button" id="close" class="btn btn-sm btn-default pull-left" onclick="__$('action_modal').style.display = 'none';hideModal()" > Close </button>
+	            <button id="action_comment_proceed" type="button" class="btn btn-sm btn-success" > Proceed </button>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+</div>
+<script type="text/javascript">
+    function __$(id){
+        return document.getElementById(id);
+    }
+
+    function ___$(clas){
+        return document.getElementsByClassName(clas)[0];
+    }
+
+
+	var ids = "<%= @existing_ids %>".split("|");
+
+	var id_to_void = "";
+
+	var void_url =""
+	var number = 0;
+
+	function showNext(){
+
+		var url = "/case/find/"+ids[number];
+		$.get(url, function(data){
+
+					console.log(url);
+					var data  = JSON.parse(data);
+					var table = __$("existing");
+					table.innerHTML ="";
+
+					var tr = document.createElement("tr");
+
+					table.appendChild(tr);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = "Surname";
+					td.style.fontWeight ="bold";
+					tr.appendChild(td);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = data.last_name;
+
+					tr.appendChild(td);
+
+					var tr = document.createElement("tr");
+
+					table.appendChild(tr);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = "First Name";
+
+					td.style.fontWeight ="bold";
+
+					tr.appendChild(td);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = data.first_name;
+
+					tr.appendChild(td);
+
+					var tr = document.createElement("tr");
+
+					table.appendChild(tr);
+
+					var td = document.createElement("td");
+
+					td.style.fontWeight ="bold";
+
+					td.innerHTML = "Nationality";
+
+					tr.appendChild(td);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = data.nationality
+
+					tr.appendChild(td);
+
+					var tr = document.createElement("tr");
+
+					table.appendChild(tr);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = "Sex";
+
+					td.style.fontWeight ="bold";
+
+					tr.appendChild(td);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = data.gender
+
+					tr.appendChild(td);
+
+					var tr = document.createElement("tr");
+
+					table.appendChild(tr);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = "Date of Birth";
+
+					td.style.fontWeight ="bold";
+
+					tr.appendChild(td);
+
+					var td = document.createElement("td");
+
+					td.innerHTML =(new Date(data.birthdate)).format();
+
+					tr.appendChild(td);
+
+
+					var tr = document.createElement("tr");
+
+					table.appendChild(tr);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = "Date of Death";
+
+					td.style.fontWeight ="bold";
+
+					tr.appendChild(td);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = (new Date(data.date_of_death)).format();
+
+					tr.appendChild(td);
+
+					var tr = document.createElement("tr");
+
+					table.appendChild(tr);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = "Place of Death";
+
+					td.style.fontWeight ="bold";
+
+					tr.appendChild(td);
+
+					var td = document.createElement("td");
+
+					if (data.place_of_death == 'Hospital/Institution'){
+
+					 	td.innerHTML = data.hospital_of_death;
+
+					}else if(data.place_of_death == 'Home'){
+						 td.innerHTML = data.place_of_death_village +"Village, TA "+data.place_of_death_ta+
+						 				data.place_of_death_village+" District";
+
+					}else if(data.place_of_death == 'Other'){
+
+						 td.innerHTML = data.other_place_of_death
+					}
+
+					tr.appendChild(td);
+
+					var tr = document.createElement("tr");
+
+					table.appendChild(tr);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = "Mother First Name";
+
+					td.style.fontWeight ="bold";
+
+					tr.appendChild(td);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = data.mother_first_name
+
+					tr.appendChild(td);
+
+					var tr = document.createElement("tr");
+
+					table.appendChild(tr);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = "Mother Last Name";
+
+					td.style.fontWeight ="bold";
+
+					tr.appendChild(td);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = data.mother_last_name
+
+					tr.appendChild(td);
+
+					var tr = document.createElement("tr");
+
+					table.appendChild(tr);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = "Father First Name";
+
+					td.style.fontWeight ="bold";
+
+					tr.appendChild(td);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = data.father_first_name
+
+					tr.appendChild(td);
+
+					var tr = document.createElement("tr");
+
+					table.appendChild(tr);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = "Fathe Last Name";
+
+					td.style.fontWeight ="bold";
+
+					tr.appendChild(td);
+
+					var td = document.createElement("td");
+
+					td.innerHTML = data.father_last_name
+
+					tr.appendChild(td);
+ 
+					__$("existing_head").innerHTML = "Existing Record ("+data.status+") "+( number + 1 )+"/"+ids.length; 
+					if (data.status.toLowerCase().indexOf("voided") >= 0) {
+						 __$("existing_head").style.backgroundColor = "#b4b1b1"
+					}
+					if(ids.length <= 1){
+						__$("next_similar").style.display="none"
+					}
+
+					number = (number + 1) % ids.length;
+
+				});
+
+				
+			}
+			showNext();
+		    function changeStatusComment(status,title){
+		        $("#shield").show()
+		        __$("action_modal").style.display = "block";
+		        __$("action_modal_title").innerHTML = title;
+		        var url = "/ajax_change_status?next_status="+status+"&person_id=<%=params[:id]%>"
+		        __$("action_comment_proceed").setAttribute("onclick","changeStatus('"+url+"')")
+		    }
+	function changeStatus(url){
+		      var comment = __$("action_textarea").value
+		      if (comment.length == 0){
+		          __$("action_textarea").style.border ="1px solid red";
+		          __$("action_textarea").focus();
+		          return;
+		      }
+		      url = url +"&comment="+comment;
+		      $.ajax({
+		            url: url,
+		            success: function(feedback){
+		                window.parent.location = "<%= session[:return_url] || request.referrer%>";
+		            },
+		            error: function(error){
+		                alert("Something went wrong!");
+		            }
+		        })
+	}
+	function hideModal(){
+        $("#shield").css('display','none')
+    }
+</script>

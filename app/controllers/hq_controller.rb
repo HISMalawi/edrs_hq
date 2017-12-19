@@ -745,13 +745,13 @@ class HqController < ApplicationController
   def duplicate_cases_tasks
      @tasks = []
      if has_role("Manage incomplete records") 
-      @tasks << ['Potential Duplicates','Records marked as potential duplicates','','']
-      @tasks << ['Can Confirm Duplicates','Can be sent to DC or Voided upon DM approval','','']
+      @tasks << ['Potential Duplicates','Records marked as potential duplicates','/potential','']
+      @tasks << ['Can Confirm Duplicates','Can be sent to DC or Voided upon DM approval','/can_confirm','']
       @tasks << ['Confirmed Duplicates','Confirmed duplicates','','']
       @tasks << ['Approved for Printing','All potential duplicates that were approved and printed by DS, Option to view comments','','']
     end
     if has_role("Reject a record")
-       @tasks << ['Resolve Duplicates','Records marked as potential duplicates','','']
+       @tasks << ['Resolve Duplicates','Records marked as potential duplicates','/resolve_duplicates','']
        @tasks << ['Approved for Printing','All potential duplicates that were approved and printed by DS, Option to view comments','','']
     end
     @section ="Duplicate Cases"
@@ -916,5 +916,7 @@ class HqController < ApplicationController
     end
     return person
   end
-
+  def find
+    
+  end
 end

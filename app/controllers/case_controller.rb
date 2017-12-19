@@ -70,6 +70,15 @@ class CaseController < ApplicationController
     render :template => "case/default"
   end
 
+  def resolve_duplicates
+    @title = "Resolve duplicate cases"
+    @statuses = ["HQ POTENTIAL DUPLICATE","HQ NOT DUPLICATE TBA"]
+    @page = 1
+    session[:return_url] = request.path
+
+    render :template => "case/default"
+  end
+
   def local_cases
     @title = "Local Cases"
     @statuses = ["-"]
@@ -300,8 +309,8 @@ class CaseController < ApplicationController
 
   def potential
     @title = "Potential Duplicates"
-    @statuses = ["HQ POTENTIAL DUPLICATE"]
-    @page = 1
+    @statuses = ["HQ POTENTIAL DUPLICATE TBA"]
+    @page = 1 
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -482,6 +491,12 @@ class CaseController < ApplicationController
       
     end
 
+    if  ["HQ POTENTIAL DUPLICATE TBA","HQ NOT DUPLICATE TBA","HQ POTENTIAL DUPLICATE","HQ DUPLICATE"].include? @person.status 
+        redirect_to "/duplicate/#{@person.id}?index=0"
+    elsif ['HQ-AMEND','HQ-AMEND-GRANTED','HQ-AMEND-REJECTED'].include? @status 
+        redirect_to "/person/ammend_case?id=#{@person.id}"
+    end
+
     if SETTINGS["potential_duplicate"]
           record = {}
           record["first_name"] = @person.first_name
@@ -503,9 +518,9 @@ class CaseController < ApplicationController
           if @person.status =="HQ POTENTIAL DUPLICATE TBA"
             
           end
-
+          @results = []
           if @person.status == "HQ ACTIVE"
-            @results = []
+            
             
             duplicates = SimpleElasticSearch.query_duplicate_coded(record,SETTINGS['duplicate_precision'])
             
@@ -522,11 +537,7 @@ class CaseController < ApplicationController
                             :change_log => change_log
             })
 
-             PersonRecordStatus.create({
-                                      :person_record_id => @person.id.to_s,
-                                      :status => "HQ POTENTIAL DUPLICATE TBA",
-                                      :district_code => @person.district_code,
-                                      :created_by => User.current_user.id})
+            PersonRecordStatus.change_status(@person,"HQ POTENTIAL DUPLICATE TBA")
 
           end
 
@@ -584,7 +595,55 @@ class CaseController < ApplicationController
 
       @statuses = @statuses.join("|")
      
-      @section = "Resolve Duplicate"
+      @tasks = ActionMatrix.read(@current_user.role, [@person.status])
+
+      @title = "Resolve Duplicate"
   end
 
+  def find
+      person = Person.find(params[:id])
+      person["status"] = PersonRecordStatus.by_person_recent_status.key(params[:id]).last.status
+      render :text => person_selective_fields(person).to_json
+  end
+
+  def person_selective_fields(person)
+
+      den = PersonIdentifier.by_person_record_id_and_identifier_type.key([person.id,"DEATH ENTRY NUMBER"]).first
+
+      return {
+                      id: person.id,
+                      first_name: person.first_name, 
+                      last_name: person.last_name ,
+                      middle_name:  (person.middle_name rescue ""),
+                      gender: person.gender,
+                      birthdate: person.birthdate,
+                      date_of_death: person.date_of_death,
+                      place_of_death: person.place_of_death,
+                      hospital_of_death:(person.hospital_of_death rescue ""),
+                      other_place_of_death: person.other_place_of_death,
+                      place_of_death_village: (person.place_of_death_village rescue ""),
+                      place_of_death_ta: (person.place_of_death_ta rescue ""),
+                      place_of_death_district: (person.place_of_death_district rescue ""),
+                      mother_first_name: person.mother_first_name,
+                      mother_last_name: person.mother_last_name,
+                      mother_middle_name: person.mother_middle_name,
+                      father_first_name: person.father_first_name,
+                      father_last_name: person.father_last_name,
+                      father_middle_name: person.father_middle_name,
+                      informant_first_name: person.informant_first_name,
+                      informant_last_name: person.informant_last_name,
+                      informant_middle_name: person.informant_middle_name,
+                      home_village: (person.home_village  rescue ""),
+                      home_ta:  (person.home_ta rescue ""),
+                      home_district: (person.home_district rescue ""),
+                      home_country:  ( person.home_country rescue ""),
+                      current_village: (person.current_village  rescue ""),
+                      current_ta:  (person.current_ta rescue ""),
+                      current_district: (person.current_district rescue ""),
+                      current_country:  ( person.current_country rescue ""),
+                      den: (den.identifier rescue ""),
+                      status: (person.status),
+                      nationality: person.nationality
+                     }
+  end
 end
