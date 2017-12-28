@@ -53,7 +53,7 @@ class CaseController < ApplicationController
     render :template => "case/default"
   end
 
-  def corrected_from_dc
+  def edited_from_dc
     @title = "Corrected from DC"
     @statuses = ["DC REAPPROVED"]
     @page = 1
@@ -520,25 +520,25 @@ class CaseController < ApplicationController
           end
           @results = []
           if @person.status == "HQ ACTIVE"
-            
-            
+                        
             duplicates = SimpleElasticSearch.query_duplicate_coded(record,SETTINGS['duplicate_precision'])
             
             @results = duplicates
 
-            duplicate_ids = duplicates.collect{|d| d["_id"]}
+            duplicate_ids = duplicates.collect{|d| d["_id"] if Person.find(d["_id"]).present? }
 
-            change_log = [{:duplicates => duplicate_ids.join("|")}]
+            if duplicate_ids.present?
+              change_log = [{:duplicates => duplicate_ids.join("|")}]
+              Audit.create({
+                              :record_id  => @person.id.to_s,
+                              :audit_type => "POTENTIAL DUPLICATE",
+                              :reason     => "Record is a potential",
+                              :change_log => change_log
+              })
 
-            Audit.create({
-                            :record_id  => @person.id.to_s,
-                            :audit_type => "POTENTIAL DUPLICATE",
-                            :reason     => "Record is a potential",
-                            :change_log => change_log
-            })
-
-            PersonRecordStatus.change_status(@person,"HQ POTENTIAL DUPLICATE TBA")
-
+              PersonRecordStatus.change_status(@person,"HQ POTENTIAL DUPLICATE TBA")
+            else
+            end
           end
 
     end
@@ -592,7 +592,7 @@ class CaseController < ApplicationController
           end
         end
       end
-
+      @existing_record = @existing_record.sort
       @statuses = @statuses.join("|")
      
       @tasks = ActionMatrix.read(@current_user.role, [@person.status])

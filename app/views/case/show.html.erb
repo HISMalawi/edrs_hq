@@ -496,7 +496,7 @@
             </div>
           </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger"onclick="ajaxChange('<%= @next_state[@current_user.role][1] rescue nil%>')" > Incomplete </button>
+        <button type="button" class="btn btn-danger"onclick="changeStatusComment('<%= @next_state[@current_user.role][1] rescue nil%>','Reason for marking record incomplete')" > Incomplete </button>
         <button type="button" class="btn btn-success" onclick="ajaxChange('<%= @next_state[@current_user.role][0] rescue nil%>')" > Complete </button>
         <button type="button" class="btn btn-default" onclick="__$('completeness').style.display = 'none';hideModal()" > Close</button>
       </div>

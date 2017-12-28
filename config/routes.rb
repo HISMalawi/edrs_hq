@@ -60,7 +60,7 @@ Rails.application.routes.draw do
   get '/re_open_cases' => 'case#re_open_cases'
   get '/re_approved_cases' => 'case#re_approved_cases'
   get 'rejected_and_approved_cases' => 'case#rejected_and_approved_cases'
-  get '/corrected_from_dc' => "case#corrected_from_dc"
+  get '/edited_from_dc' => "case#edited_from_dc"
   get "/case/find/:id" => "case#find"
 
   get '/get_comments' => 'hq#get_comments'

@@ -99,9 +99,12 @@
 	<h3 style="margin-left:2%"><%= @title.humanize rescue ''%></h3>
 	<div id="table_container" style="100%">
 		<table style="width:48% !important;float:left" class="record">
+					<thead>
 						<tr>
 							<th colspan="2">Potential Duplicate (<%= @person.status %>)</th>
 						</tr>
+					</thead>
+					<tbody>
 						<tr>
 							<td><b>Surname</b></td>
 							<td><%= @person.last_name %></td>
@@ -112,11 +115,11 @@
 						</tr>
 						<tr>
 							<td><b>Nationality</b></td>
-							<td><%= @person.nationality%></td>
+							<td><%= @person.nationality %></td>
 						</tr>
 						<tr>
-							<td><b>Sex</b></td>
-							<td><%= @person.gender %></td>
+							<td><b>Gender</b></td>
+							<td><%= @person.gender%></td>
 						</tr>
 						<tr>
 							<td><b>Date of Birth</b></td>
@@ -129,7 +132,7 @@
 
 						<tr>
 							<td><b>Place of Death</b></td>
-							<% if @person.place_of_death == 'Hospital/Institution'%>
+							<% if @person.place_of_death == 'Health Facility'%>
 
 						 	<td><%= @person.hospital_of_death %></td>
 
@@ -159,6 +162,7 @@
 							<td><b>Father Firstname</b></td>
 							<td><%= @person.father_first_name %></td>
 						</tr>
+					</tbody>
 
 		</table>
 		<table style="width:48% !important;float:right" class="record existing">
@@ -206,16 +210,8 @@
 							<% end %>
 						</tr>
 						<tr>
-							<td><b>Home address</b></td>
-							<td></td>
-						</tr>
-						<tr>
 							<td><b>Mother surname</b></td>
 							<td><%= @person.mother_last_name %></td>
-						</tr>
-						<tr>
-							<td><b>Mother Middle Name</b></td>
-							<td><%= @person.mother_middle_name %></td>
 						</tr>
 						<tr>
 							<td><b>Mother Firstname</b></td>
@@ -224,10 +220,6 @@
 						<tr>
 							<td><b>Father Surname</b></td>
 							<td><%= @person.father_last_name %></td>
-						</tr>
-						<tr>
-							<td><b>Father Middle Name</b></td>
-							<td><%= @person.father_middle_name %></td>
 						</tr>
 						<tr>
 							<td><b>Father Firstname</b></td>
@@ -334,7 +326,7 @@
     }
 
 
-	var ids = "<%= @existing_ids %>".split("|");
+	var ids = "<%= @existing_record.join('|')%>".split("|");
 
 	var id_to_void = "";
 
@@ -350,7 +342,6 @@
 					var data  = JSON.parse(data);
 					var table = __$("existing");
 					table.innerHTML ="";
-
 					var tr = document.createElement("tr");
 
 					table.appendChild(tr);
