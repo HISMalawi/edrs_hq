@@ -155,6 +155,8 @@ class HqController < ApplicationController
   def save_cause_of_death
     @person = Person.find(params[:person_id])
     
+
+
     i = 1
     while i < 4  do
        interval_unit = params["interval_unit#{i}"]
