@@ -1,3 +1,4 @@
+<script src="/assets/d3.js" charset="utf-8"></script>
 <script type="text/javascript">
 	var dashboard_data = {};
 </script>
@@ -5,7 +6,8 @@
       
 <div class="col-lg-4">
   <div id="c_map" style="background: #f8f8ff;width: 100%; height: 600px; text-align: center; float: left;  border: 1px solid #ccc;">
-    <object id="map" type="image/svg+xml" data="/assets/Malawi.svg" style="height: 100%; width: 100%;"></object>
+    <button class="btn btn-success pull-right" style="border-radius:0px" onmousedown="reset()">Reset</button>
+    <div id="map" style="height: 95%; width: 95%;"></div>
   </div>
 </div>
 
@@ -24,8 +26,32 @@
 
 </div>
 <script type="text/javascript">
-    var refPoints = [-9.331537, -17.158189, 32.674051, 35.969950];
-    var offsets = [10, 295, 10, 710];
-    var limits = [305, 720];
-    var previous;
+    var zoomlevel = 1;
+    var currentSite = "";
+    var alerts = {};
+    var sitesErrors = {};
+    var loader = d3.xml("/assets/Malawi.svg", function(xml) {
+          document.getElementById("map").appendChild(xml.documentElement);
+          <% @districts.keys.each do |district|%>
+                var color = "green";
+                d3.select("#<%=district%>")
+                  .style("stroke", 'white')
+                  .style("fill", color)
+                  .attr("code", "<%= @districts[district]%>")
+                  .on('mouseover', function(){
+
+                  })
+                  .on("mousedown", function(){
+                      district = this.getAttribute("code")
+                      title = "Statistics for <%=district.humanize%>"
+                      loadChart()
+                  });
+          <%end%>
+    });
+
+    function reset(){
+        district = "";
+        title = ""
+        loadChart();
+    }
 </script>

@@ -8,13 +8,7 @@ class ReportsController < ApplicationController
   		@tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
   	else
-	    @tasks << ['Print Dispatch Note','Printing Dispatch note','','']
-	    @tasks << ['Registered deaths','Reports on all records with DEN','','']
-	    @tasks << ['Approved Records','Reports on records approved at HQ by DM ','','']
-	    @tasks << ['Voided record report','All voided records with status where it was voided','','']
-	    @tasks << ['Death reported','All records entered in the system','','']
-	    @tasks << ['Amendments report','All records amended','','']
-	    @tasks << ['Lost/Damaged','Reports on all lost/damaged records ','','']
+	    @tasks << ['Death reports','Death reports','/death_reports']
 	    @tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
 	end
@@ -46,5 +40,10 @@ class ReportsController < ApplicationController
       end
       @sample_details = Report.proficiency(start_date,end_date)
       @section ="Proficiency report"
+  end
+
+  def death_reports
+    @section = "Death report"
+    @data = Report.general(params)
   end
 end

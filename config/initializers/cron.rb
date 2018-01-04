@@ -11,3 +11,8 @@ if Rails.env == 'development'
 else
   	UpdateSyncStatus.perform_in(1000)
 end
+
+midnight = (Date.today).to_date.strftime("%Y-%m-%d 23:59:59").to_time
+now = Time.now
+diff = (midnight  - now).to_i
+GenerateSample.perform_in(diff)

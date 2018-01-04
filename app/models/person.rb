@@ -734,6 +734,7 @@ class Person < CouchRest::Model::Base
                     emit([doc['coder'], doc['coded_at']], 1);
                   }
                 }"
+    view :by_district_code_and_created_at
 
     filter :facility_sync, "function(doc,req) {return req.query.facility_code == doc.facility_code}"
     filter :district_sync, "function(doc,req) {return req.query.district_code == doc.district_code}"

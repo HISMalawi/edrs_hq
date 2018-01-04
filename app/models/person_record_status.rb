@@ -28,6 +28,7 @@ class PersonRecordStatus < CouchRest::Model::Base
 		view :by_person_record_id
 		view :by_prev_status
 		view :by_prev_status_and_status
+		view :by_district_code_and_status_and_created_at
 	    view :by_person_recent_status,
 				 :map => "function(doc) {
 	                  if (doc['type'] == 'PersonRecordStatus' && doc['voided'] == false) {

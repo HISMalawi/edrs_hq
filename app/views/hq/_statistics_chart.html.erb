@@ -13,13 +13,19 @@
 
 <div id="chart-container" style="width: 98%; height: 300px; margin: 0 auto"></div>
 <script type="text/javascript">
-    function loadChart(title){
+
+    var district = ""
+    var title = ""
+    function loadChart(){
           $.getJSON('/dashbord_data',function(data){
                   loadTable(data);
+                  if (district.length > 0) {
+                    data = data["districts"][district]
+                  }
                   $(function () {
                     $('#chart-container').highcharts({
                         title: {
-                            text: (title? title : 'National statistics'),
+                            text: (title.length > 0 ? title : 'National statistics'),
                             x: -20 //center
                         },
                         subtitle: {

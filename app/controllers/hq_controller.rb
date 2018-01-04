@@ -12,16 +12,15 @@ class HqController < ApplicationController
     @user = User.find_by_username(session[:current_user_id])
 
     @districts = {}
-
-    District.all.each do |district|
-
-      @districts[district.id] = district.name
-
+    District.all.each do |d| 
+      next if d.name.blank?
+      @districts[d.name.downcase.gsub(/\-|\_|\s+/, '_').strip] = d.id   unless d.name.include?("City")
     end
   end
 
   def dashbord_data
     file_name = Rails.root.join('db', 'dashboard.json')
+    #file_name = Rails.root.join('db', 'dashboardtest.json')
     fileinput = JSON.parse(File.read(file_name))
     render :text => fileinput.to_json
     

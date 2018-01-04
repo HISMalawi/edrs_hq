@@ -23,4 +23,14 @@ namespace :edrs do
   task cummulative_mysql: :environment do
     require Rails.root.join('bin','./scripts/build_mysql_cummulative.rb')
   end
+
+  desc "Generate sample"
+  task sample: :environment do
+    require Rails.root.join('bin','./scripts/sample.rb')
+  end
+
+  desc "Generate stats"
+  task stats: :environment do
+    require Rails.root.join('bin','./scripts/stats.rb')
+  end
 end

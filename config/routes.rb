@@ -169,6 +169,7 @@ Rails.application.routes.draw do
   get '/causes_of_death' => "reports#causes_of_death"
   get '/manner_of_death' => "reports#manner_of_death"
   get "/proficiency" => "reports#proficiency"
+  get "/death_reports" => "reports#death_reports"
 
 
 
