@@ -11,6 +11,7 @@ development: &development
   print_user:
   print_password:
   printer_name: Printer1, Printer2
+  pre_printed_paper: true
   duplicate_score: 6
   ben_assignment_interval: 3
   barcodes_path: /home/usr/barcodes/ 

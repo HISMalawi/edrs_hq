@@ -19,7 +19,8 @@
 </head>
 <body style="color: #000;">
 
-<table style="width: 19cm;" cellpadding="5">
+<table style="width: 19cm;" cellpadding="5" >
+<!--
 <tr>
   <th style="font-size: 18px; font-weight: normal;">
     &nbsp;
@@ -30,18 +31,17 @@
     &nbsp;
   </th>
 </tr>
+-->
 <tr>
-  <td style="width: 200px; vertical-align: top;">
-    <div style="padding: 10px; border: 1px solid #000; width: 120px; text-align: center; margin: 15px; margin-left: 80px;">
+  <td style="width: 150px; vertical-align: top;">
+    <div style="padding: 10px; border: 1px solid #000; width: 120px; text-align: center; margin: 15px; margin-left: 10px;">
       Form NR13
     </div>
   </td>
-  <td align="center" style="padding-right: 10px;">
+  <td align="center" style="padding-right: 10px; width: 50px;">
     <img src="<%= emblem %>" height="80"/>
   </td>
-
-  
-  <td align="right" style="width: 250px; vertical-align: top;">
+  <td align="right" style="width: 150px; vertical-align: top;">
     <% raw = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
 
        @data = Base64.encode64(raw)
@@ -73,17 +73,13 @@
     (Regulation 26)
   </th>
 </tr>
-<tr>
-  <th colspan="3" style="font-size: 18px; font-weight: normal;">
-    &nbsp;
-  </th>
-</tr>
+
 <tr>
   <th colspan="3" style="font-size: 18px; font-weight: normal;">
 
     <table class="data" width="100%" cellpadding="7" style="font-size: 21px !important;">
         <tr>
-          <td style="width: 130px;" align="right">
+          <td style="width: 20px;" align="right">
             1.
           </td>
           <td align="left" style="width: 250px;">
@@ -94,7 +90,7 @@
           </td>
         </tr>
         <tr>
-          <td style="width: 130px;" align="right">
+          <td style="width: 20px;" align="right">
             2.
           </td>
           <td align="left" style="width: 250px;">
@@ -105,7 +101,7 @@
           </td>
         </tr>
         <tr>
-          <td style="width: 130px;" align="right">
+          <td style="width: 20px;" align="right">
             3.
           </td>
           <td align="left" style="width: 250px;">
@@ -116,7 +112,7 @@
           </td>
         </tr>
         <tr>
-          <td style="width: 130px;" align="right">
+          <td style="width: 20px;" align="right">
             4.
           </td>
           <td align="left" style="width: 250px;">
@@ -130,7 +126,7 @@
           </td>
         </tr>
         <tr>
-          <td style="width: 130px;" align="right">
+          <td style="width: 20px;" align="right">
             5.
           </td>
           <td align="left" style="width: 250px;">
@@ -141,7 +137,7 @@
           </td>
         </tr>
         <tr>
-          <td style="width: 130px;" align="right">
+          <td style="width: 20px;" align="right">
             6.
           </td>
           <td align="left" style="width: 250px;">
@@ -155,7 +151,7 @@
           </td>
         </tr>
         <tr>
-          <td style="width: 130px;" align="right">
+          <td style="width: 20px;" align="right">
             7.
           </td>
           <td align="left" style="width: 250px;">
@@ -184,7 +180,7 @@
           </td>
         </tr>
         <tr>
-          <td style="width: 130px;" align="right">
+          <td style="width: 20px;" align="right">
             8.
           </td>
           <td align="left" style="width: 250px;">
@@ -195,7 +191,7 @@
           </td>
         </tr>
         <tr>
-          <td style="width: 130px;" align="right">
+          <td style="width: 20px;" align="right">
             9.
           </td>
           <td align="left" style="width: 250px;">
@@ -206,7 +202,7 @@
           </td>
         </tr>
         <tr>
-          <td style="width: 130px;" align="right">
+          <td style="width: 20px;" align="right">
             10.
           </td>
           <td align="left" style="width: 250px;">
@@ -236,12 +232,10 @@
       </tr>
       <tr>
         <td colspan="2" style="font-size: 18px; font-weight: normal;">
-          <div style="border: 1px dotted #ccc; width: 180px; height: 100px; margin-left: 80px;">&nbsp;</div>
+          <div style="border: 1px dotted #ccc; width: 180px; height: 100px; margin-left: 10px;">&nbsp;</div>
         </td>
-        <td align="right">
-        
-        
-          <table style="border: 1px solid #000; margin-right: 0px;" cellpadding="5" cellspacing="10">
+        <td align="left">
+          <table style="border: 1px solid #000; margin-right: 50px;" cellpadding="5" cellspacing="10">
             <tr>
               <td style="border-bottom: 1px dotted #000; font-size: 32px; height: 50px;">
                <% raw = File.read(Rails.root.join("public","uploads",User.by_username.key(GlobalProperty.find("signatory").value).first.signature)) rescue nil %>
@@ -251,7 +245,7 @@
                     end %>
                     
                  <% if @sig.present? %>
-                 		<img src ="data:image/png;base64,<%= @sig %>" width="120" height="50" style="margin-left:32px" />
+                 		<img src ="data:image/png;base64,<%= @sig %>" width="100" height="40" style="margin-left:10px" />
                  <% end %>
               </td>
             </tr>

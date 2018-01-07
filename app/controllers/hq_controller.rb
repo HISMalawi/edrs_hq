@@ -265,7 +265,7 @@ class HqController < ApplicationController
     if CONFIG['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A4"
        render :layout => false, :template => 'hq/death_certificate_print'
     elsif CONFIG['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A5"
-       render :layout => false, :template => 'hq/death_certificate_print_a5'
+       render :layout => false, :template => 'hq/death_certificate_print'
     else
        render :layout => false
     end
