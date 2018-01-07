@@ -1,12 +1,20 @@
-<style>
+<div id="main" >
+  <h3 style="padding-left: 15px;"><%= @section rescue 'Case management' %></h3>
+  <div id="button-container">
+        <%(@tasks || []).each do |title, desc, link, icon|%>
 
-</style>
-<div id="main">
-<h3>Settings</h3>
-
-
-<div id="button-container"></div>
-</div>
+              <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" onclick="window.location='<%= link%>'">
+                <div class="divbtn">
+                    <span class="icons">
+                        <img class="icon-attr" src="/assets/manage-cases-icons/<%=icon%>">
+                        <p><%=title%></p>
+                    </span>
+                </div>
+                
+              </div>
+         <%end%>
+  </div>
+</div>   
 <script>
 var button_container = document.getElementById("button-container");
 
@@ -67,6 +75,6 @@ function buildUI() {
 }
 
 
-buildUI();
+//buildUI();
 
 </script>

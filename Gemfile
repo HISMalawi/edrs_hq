@@ -24,6 +24,8 @@ gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
+gem 'spring',        group: :development
+
 gem 'bootstrap-sass', '~> 3.3', '>= 3.3.6'
 
 gem 'couchrest_model'
@@ -58,6 +60,10 @@ gem 'couch_tap'
 
 gem 'mac-address'
 
-gem "wkhtmltopdf"
+gem 'pdfkit'
+
+gem 'render_anywhere'
+
+gem "wkhtmltopdf-binary"
 
 gem "whitesimilarity"

@@ -292,6 +292,25 @@ class HqController < ApplicationController
       PersonRecordStatus.change_status(person,"HQ CLOSED")
       id = person.id
       
+      output_file = "#{CONFIG['certificates_path']}#{id}.pdf"
+
+      input_url = "#{CONFIG["protocol"]}://#{request.env["SERVER_NAME"]}:#{request.env["SERVER_PORT"]}/death_certificate/#{id}"
+
+      t4 = Thread.new {
+
+        PDFKit.new(input_url, :page_size => paper_size).to_file(output_file)
+
+        sleep(4)
+
+        Kernel.system "lp -d #{params[:printer_name]} #{CONFIG['certificates_path']}#{id}.pdf\n"
+
+        sleep(5)
+        
+      }
+
+      sleep(1)
+
+=begin
       print_url = "wkhtmltopdf --zoom #{zoom} --page-size #{paper_size} --username #{CONFIG["print_user"]} --password #{CONFIG["print_password"]} #{CONFIG["protocol"]}://#{request.env["SERVER_NAME"]}:#{request.env["SERVER_PORT"]}/death_certificate/#{id} #{CONFIG['certificates_path']}#{id}.pdf\n"    
       
       t4 = Thread.new {
@@ -307,8 +326,9 @@ class HqController < ApplicationController
       }
 
       sleep(1)
-
-    end
+=end
+  
+   end
     
    redirect_to "/print" and return
   
@@ -627,22 +647,24 @@ class HqController < ApplicationController
     @person = Person.find(params[:person_id])
     @comments = []
 
-    Audit.by_record_id.key(@person.id).each do |audit|
-      user = User.find(audit.user_id)
+    PersonRecordStatus.by_person_record_id.key(params[:person_id]).each.sort_by {|k| k["created_at"]}.each do |status|
+      user = User.find(status.creator)
+      next if user.blank?
+      next if status.comment.blank?
       user_name = (user.first_name + " " + user.last_name)
       ago = ""
-      if (audit.created_at.to_date == Date.today)
+      if (status.created_at.to_date == Date.today)
         ago = "today"
       else
-        ago = (Date.today - audit.created_at.to_date).to_i
+        ago = (Date.today - status.created_at.to_date).to_i
         ago = ago.to_s + (ago.to_i == 1 ? " day ago" : " days ago")
       end
       @comments << {
-          "created_at" => audit.created_at.to_time,
+          "created_at" => status.created_at.to_time,
           'user' => user_name,
           'user_role' => user.role,
-          'level' => audit.level,
-          'comment' => audit.reason,
+          'level' => nil,
+          'comment' => status.comment,
           'date_added' => ago
       }
       @comments = @comments.sort_by{|c| c['created_at']}

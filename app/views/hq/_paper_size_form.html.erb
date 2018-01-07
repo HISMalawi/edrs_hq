@@ -78,10 +78,10 @@
 <script>
     // var good = <%= request.path.match(/new/) ? false : true %>
 
-        function submitForm() {
-        // if (validateForm() && good) {
+    function submitForm() {
         if (validateForm()) {
-            document.getElementsByTagName('form')[0].submit();
+
+            document.getElementById('new_global_property').submit();
         }
 
     }

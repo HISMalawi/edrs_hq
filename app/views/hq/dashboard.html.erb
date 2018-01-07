@@ -33,7 +33,7 @@
     var loader = d3.xml("/assets/Malawi.svg", function(xml) {
           document.getElementById("map").appendChild(xml.documentElement);
           <% @districts.keys.each do |district|%>
-                var color = "green";
+                var color = "#4cd964";
                 d3.select("#<%=district%>")
                   .style("stroke", 'white')
                   .style("fill", color)

@@ -546,7 +546,7 @@
 
                     </div>
 
-                    <div style="width: 100%;margin-top: 20px;border-top: 1px solid #d3d3d3">
+                    <div style="width: 100%;margin-top: 20px;border-top: 1px solid #d3d3d3" class="hidden">
                         <form id="comment-form" action="/ajax_save_comment">
                           <textarea class="form-control" name="comment" placeholder="New Comment" id="textarea" style="width: 98%;margin-top: 4px;margin-bottom: 4px;"></textarea>
 
@@ -844,6 +844,34 @@
     function rejectRecord(){
         $("#shield").show()
         __$("action_modal").style.display = "block";
+        __$("action_comments_list").innerHTML = ""
+        jQuery.ajax(
+                {
+                    url: "/get_comments?person_id=<%= params[:person_id]%>",
+                    success: function(results){
+                        results = JSON.parse(results);
+                        var parent = document.getElementById("action_comments_list");
+                        parent.innerHTML = "";
+                        var clone = document.getElementById("clone_me");
+                        for(var i = 0; i < results.length; i++){
+                            var dup = clone.cloneNode(true);
+                            dup.id = i;
+                            dup.style.display = "block";
+                            //set values
+                            dup.getElementsByClassName("name")[0].innerHTML = results[i]['user']
+                                    + " <small class='user_role'>" + results[i]['user_role'] + " - " + results[i]['date_added'] + " </small>";
+                            dup.getElementsByClassName("comment")[0].innerHTML = results[i]['comment'];
+
+                            parent.appendChild(dup);
+                        }
+                        parent.scrollTop = parent.scrollHeight;
+                    },
+                    error: function(e){
+                        //alert("Something went wrong!")
+                    }
+                }
+        )
+
         __$("action_modal_title").innerHTML = "Rejection reason";
         var url = "/ajax_change_status?next_status=HQ CAN REJECT&person_id=<%=params[:person_id]%>"
         __$("action_comment_proceed").setAttribute("onclick","changeStatus('"+url+"')")
@@ -853,6 +881,32 @@
         $("#shield").show()
         __$("action_modal").style.display = "block";
         __$("action_modal_title").innerHTML = "Rejecting to DC reason";
+        jQuery.ajax(
+                {
+                    url: "/get_comments?person_id=<%= params[:person_id]%>",
+                    success: function(results){
+                        results = JSON.parse(results);
+                        var parent = document.getElementById("action_comments_list");
+                        parent.innerHTML = "";
+                        var clone = document.getElementById("clone_me");
+                        for(var i = 0; i < results.length; i++){
+                            var dup = clone.cloneNode(true);
+                            dup.id = i;
+                            dup.style.display = "block";
+                            //set values
+                            dup.getElementsByClassName("name")[0].innerHTML = results[i]['user']
+                                    + " <small class='user_role'>" + results[i]['user_role'] + " - " + results[i]['date_added'] + " </small>";
+                            dup.getElementsByClassName("comment")[0].innerHTML = results[i]['comment'];
+
+                            parent.appendChild(dup);
+                        }
+                        parent.scrollTop = parent.scrollHeight;
+                    },
+                    error: function(e){
+                        //alert("Something went wrong!")
+                    }
+                }
+        )
         var url = "/ajax_change_status?next_status=HQ REJECTED&person_id=<%=params[:person_id]%>"
         __$("action_comment_proceed").setAttribute("onclick","changeStatus('"+url+"')")
     }
@@ -861,6 +915,33 @@
         $("#shield").show()
         __$("action_modal").style.display = "block";
         __$("action_modal_title").innerHTML = title;
+        __$("action_comments_list").innerHTML = ""
+        jQuery.ajax(
+                {
+                    url: "/get_comments?person_id=<%= params[:person_id]%>",
+                    success: function(results){
+                        results = JSON.parse(results);
+                        var parent = document.getElementById("action_comments_list");
+                        parent.innerHTML = "";
+                        var clone = document.getElementById("clone_me");
+                        for(var i = 0; i < results.length; i++){
+                            var dup = clone.cloneNode(true);
+                            dup.id = i;
+                            dup.style.display = "block";
+                            //set values
+                            dup.getElementsByClassName("name")[0].innerHTML = results[i]['user']
+                                    + " <small class='user_role'>" + results[i]['user_role'] + " - " + results[i]['date_added'] + " </small>";
+                            dup.getElementsByClassName("comment")[0].innerHTML = results[i]['comment'];
+
+                            parent.appendChild(dup);
+                        }
+                        parent.scrollTop = parent.scrollHeight;
+                    },
+                    error: function(e){
+                        //alert("Something went wrong!")
+                    }
+                }
+        )
         var url = "/ajax_change_status?next_status="+status+"&person_id=<%=params[:person_id]%>"
         __$("action_comment_proceed").setAttribute("onclick","changeStatus('"+url+"')")
     }
