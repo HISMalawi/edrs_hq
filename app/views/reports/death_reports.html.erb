@@ -3,7 +3,12 @@
 	var end_date = "<%= params[:end_date] rescue ''%>";
 	var time_line = "<%= params[:time_line] %>";
 </script>
+<link href="/assets/jquery-ui/jquery-ui.min.css" rel="stylesheet">
+<script src="assets/jquery-ui/jquery-ui.min.js"></script>
 <style type="text/css">
+    table{
+        color: darkslategray;
+    }
 	#report{
 		width :100%;
 		font-size: 1.4em;
@@ -49,10 +54,28 @@
 		min-width: 100px;
 		background: #dcdbdb;
 		padding: 1%;
-		border-radius: 10px;
+		border-radius: 1px;
 		border: 1px solid lightgray;
 	}
 
+    #status{
+        font-size: 1.2em;
+        min-width: 100px;
+        background: #dcdbdb;
+        padding: 1%;
+        border-radius: 1px;
+        border: 1px solid lightgray;
+    }
+
+
+    #district{
+        font-size: 1.2em;
+        min-width: 100px;
+        background: #dcdbdb;
+        padding: 1%;
+        border-radius: 1px;
+        border: 1px solid lightgray;
+    }
     #table{
         font-size: 1em;
         color: darkslategray;
@@ -99,15 +122,50 @@
 </style>
 <div style="background-color: #ffffff; color: rgb(238, 238, 238); padding: 1px;">
 <table style="width:100%; margin-top: 1.5%;">
+    <tr>
+        <td style="width:30% ; font-size :1.6em;font-weight:bold;padding-left:1%" colspan="6">General Death Report</td>
+    </tr>
 	<tr>
-		<td style="width:30% ; font-size :1.6em;font-weight:bold;padding-left:4%">General Death Report</td>
-		<td style="text-align:right;width:10%">
-			<button onclick="loadStates()">Select status</button>
+        <td style="text-align:right;width:100px">Select District:</td>
+        <td style="text-align:left">
+            <select id="district" class="form-control" onchange="loadDistrictData(this)" style="width:250px">
+                    <option>All</option>
+                <% @districts.each do |district| %>
+                        <% next if district.name.include?("City") %>
+                        <option value="<%= district.id%>"><%= district.name %></option>
+                <%end%>
+            </select>
+        </td>
+		<td style="text-align:right;width:100px">
+			Select status :
 		</td>
-		<td style="text-align:right;width:10%"><button onclick="window.location.href ='/pick_dates?url=/death_reports&next_url=<%=params[:next_url]%>'"><span>Pick Dates</span></button></td>
+        <td style="text-align:left">
+            <select id="status" class="form-control" onchange="loadStatusData(this)" style="width:250px">
+                    <option value="DC ACTIVE">Reported birth </option>
+                    <option value="HQ ACTIVE">Registered birth </option>
+                    <option value="HQ CAN PRINT">Approved Records</option>
+                    <option value="HQ VOIDED">Voided records</option>
+                    <option value="HQ AMEND">Amended</option>
+                    <option value="HQ LOST">Lost</option>
+                    <option value="HQ DAMAGED">Damaged</option>
+            </select>
+        </td>
+        <td  style="text-align:right;width:100px">
+            Pick Dates :
+        </td>
+		<td style="text-align:left;width:250px">
+            <select id="time_line" class="form-control" onchange="loadTimeLineData(this)">
+                <option></option>
+                <option>Today</option>
+                <option>Current week</option>
+                <option>Current month</option>
+                <option>Current year</option>
+                <option>Date range</option>
+            </select>       
+        </td>
 	</tr>
 	<tr>
-		<td colspan="3">
+		<td colspan="6">
 				<div style="width: 100%;height: 500px; overflow-y:scroll;border:1px solid gray;" >
 					
 					<table id='table' style="width: 100%;" cellpadding="5" cellspacing="0">
@@ -168,108 +226,185 @@
         return document.getElementById(id);
     }
 
-    function resizeDiv(){
-      var wH = window.innerHeight;
-
-      __$("containt").style.height = (wH * 0.81)+"px";
-    }
-
-    resizeDiv();
-
-    function loadReport(element){
-    	var list = __$("statuses").getElementsByTagName('li');
-    	for(var i = 0 ; i < list.length ; i++){
-    		list[i].style.background ="#ffffff";
-    	}
-    	element.style.background ="#9ec6e2";
-    	var url ="/report_data/"+element.id;
-    	if(start_date.length > 2){
-    		__$("time_line").innerHTML = (new Date(start_date).format())+" to "+(new Date(end_date).format());
-    		url = url + "?start_date="+start_date+"&end_date="+end_date;
-    	}else{
-    		url = url +"?timeline="+time_line;
-    		__$("time_line").innerHTML = time_line;
-    	}
-    	status_map ={
-				"Reported" :"DC ACTIVE",
-				"Registered" : "HQ ACTIVE",
-				"Duplicates" :"DC DUPLICATE",
-				"Printed" :"HQ CLOSED",
-				"Dispatched" :"HQ DISPATCHED"
-		}
-
-    	ajaxGETRequest(url,function(data){
-    		var data = JSON.parse(data);
-    		__$('female').innerHTML = data.female;
-    		__$('male').innerHTML = data.male;
-    		__$('total').innerHTML = parseInt(data.male) + parseInt(data.female);
-    	});
-    }
-
-    var reported = __$("Reported");
 
     //loadReport(reported);
     var statuses = {
-    					"Reported" 			: "DC ACTIVE",
-    					"Completed by LO" 	: "DC COMPLETE",
-    					"Approved by ADR" 	: "HQ ACTIVE",
-    					"Voided" 			: "DC VOIDED",
-    					"Amended" 			: "DC AMEND",
-    					"Lost" 				: 	"DC LOST",
-    					"Damaged"  			: "DC DAMAGED"
+    					"Reported birth" 	: "DC ACTIVE",
+    					"Registered birth" 	: "HQ ACTIVE",
+                        "Approved Records"  : "HQ CAN PRINT",
+    					"Voided records" 	: "HQ VOIDED",
+    					"Amended" 			: "HQ AMEND",
+    					"Lost" 				: "HQ LOST",
+    					"Damaged"  			: "HQ DAMAGED"
     }
 
-    function loadStates(){
-    	loadTab();
-    	var popup = __$("msg.popup");
-    	popup.style.textAlign = "center";
-    	var title = document.createElement("h2");
-    	title.innerHTML = "Select Status";
-    	popup.appendChild(title);
-    	
-    	var ul = document.createElement("ul");
-    	ul.className = "clickable"
-    	popup.appendChild(ul);
-
-    	var states = Object.keys(statuses);
-    	for(var i = 0 ; i < states.length ; i++){
-    		var li = document.createElement("li");
-    		li.id = states[i];
-    		li.setAttribute("onclick","activate(statuses,this)")
-    		li.innerHTML = states[i];
-    		ul.appendChild(li);
-    	}
-
-    	var buttonCancel = document.createElement("button");
-    	buttonCancel.innerHTML = "Cancel";
-    	buttonCancel.className ="red";
-    	buttonCancel.style.marginRight = "15%";
-    	buttonCancel.onmousedown = function(){
-    		document.body.removeChild(__$("msg.shield"));
-    	}
-    	popup.appendChild(buttonCancel);
-
-    	var button = document.createElement("button");
-    	button.innerHTML = "Fetch data";
-    	button.onmousedown = function(){
-    		__$("form").submit();
-    	}
-    	popup.appendChild(button);
+    function loadStatusData(element){
+        window.location.href = "/death_reports?time_line=<%=params[:time_line]%>&status="+element.value+"&district=<%=params[:district]%>"
+    
     }
 
-    function activate(elements,element){
-    	var ids = Object.keys(elements);
-    	for(var i = 0 ; i < ids.length ; i++){
-    		__$(ids[i]).style.background = "#ffffff";
-    	}
+    function loadTimeLineData(element){
+        if(element.value == "Date range"){
+            loadDates();
+        }else{
+            window.location.href = "/death_reports?time_line="+element.value+"&status=<%=params[:status]%>&district=<%=params[:district]%>"
+        }
+    }
 
-    	__$("status").value = statuses[element.id]
-    	__$(element.id).style.background = "#9ec6e2";
-    	
+    function loadDistrictData(element){
+        window.location.href = "/death_reports?time_line=<%=params[:time_line]%>&status=<%=params[:status]%>&district="+element.value
+    }
+
+    function loadDates(){
+        loadTab();
+        var div = __$("msg.popup");
+        var table = document.createElement("table");
+        table.style.width ="98%"
+        table.style.margin = "auto";
+        table.style.marginTop = "1em";
+        div.appendChild(table);
+
+        var tr = document.createElement("tr");
+        table.appendChild(tr);
+
+        var td = document.createElement("td");
+        td.style.textAlign = "right";
+        var b = document.createElement("b");
+        b.innerHTML = "X";
+        b.onclick = function(){
+            document.body.removeChild(__$("msg.shield"));
+            $("#time_line").val("<%= params[:time_line]%>");
+        }
+        td.appendChild(b)
+        td.colSpan ="4";
+        td.style.paddingRight = "1em"
+        tr.appendChild(td);
+
+        var tr = document.createElement("tr");
+        tr.style.borderTop = "1px solid gray";
+        tr.style.borderRadius = "0px";
+        table.appendChild(tr);
+
+        var td = document.createElement("td");
+        td.style.textAlign = "right";
+        td.colSpan ="4";
+        td.innerHTML ="&nbsp;"
+        tr.appendChild(td);
+
+        var tr = document.createElement("tr");
+        table.appendChild(tr);
+
+        var td = document.createElement("td");
+        td.innerHTML = "<b>Start date :</b>";
+        td.style.textAlign = "right"
+        tr.appendChild(td);
+
+        var td = document.createElement("td");
+        var input = document.createElement("input");
+        input.id = "start_date"
+        input.className = "form-control"
+        td.appendChild(input);
+        tr.appendChild(td);
+
+        var td = document.createElement("td");
+        td.innerHTML = "<b>End date :</b>";
+        td.style.textAlign = "right"
+        tr.appendChild(td);
+
+        var td = document.createElement("td");
+        var input = document.createElement("input");
+        input.className = "form-control"
+        input.id = "end_date"
+        td.appendChild(input);
+        tr.appendChild(td);
+
+         var maxdate =  $.datepicker.formatDate('dd/mm/yy',new Date());
+         $('#start_date').datepicker({ dateFormat: 'dd/mm/yy', maxDate: maxdate});
+
+         var maxdate =  $.datepicker.formatDate('dd/mm/yy',new Date());
+         $('#end_date').datepicker({ dateFormat: 'dd/mm/yy', maxDate: maxdate})
+
+        var tr = document.createElement("tr");
+        table.appendChild(tr);
+
+        var td = document.createElement("td");
+        td.style.textAlign = "right";
+        td.colSpan ="4";
+        td.innerHTML ="&nbsp;"
+        tr.appendChild(td);
+
+        var tr = document.createElement("tr");
+        table.appendChild(tr);
+
+        var td = document.createElement("td");
+        td.style.textAlign = "right";
+        td.colSpan ="4";
+        td.innerHTML ="&nbsp;"
+        tr.appendChild(td);
+
+        var tr = document.createElement("tr");
+        table.appendChild(tr);
+
+        var td = document.createElement("td");
+        td.style.textAlign = "right";
+        td.colSpan ="4";
+        td.innerHTML ="&nbsp;"
+        tr.style.borderBottom = "1px dotted gray";
+        tr.appendChild(td);
+
+        var tr = document.createElement("tr");
+        table.appendChild(tr);
+
+
+        var td = document.createElement("td");
+        td.style.textAlign = "left";
+        td.colSpan ="2";
+        td.style.paddingLeft = "0.5em"
+        tr.appendChild(td);
+
+        var button = document.createElement("button");
+        button.innerHTML ="Cancel";
+        button.className = "btn btn-danger"
+        button.onclick = function(){
+            document.body.removeChild(__$("msg.shield"));
+            $("#time_line").val("<%= params[:time_line]%>");
+        }
+        td.appendChild(button);
+
+        var td = document.createElement("td");
+        td.style.textAlign = "right";
+        td.colSpan ="2";
+        td.style.paddingRight = "0.5em"
+        tr.appendChild(td);
+
+        var button = document.createElement("button");
+        button.innerHTML ="Fetch Data";
+        button.className = "btn btn-success"
+        button.onclick = function(){
+            start_date = $.datepicker.formatDate('yy-mm-dd',new Date(__$("start_date").value));
+            end_date = $.datepicker.formatDate('yy-mm-dd',new Date(__$("end_date").value));
+             url = "/death_reports?time_line="+__$("time_line").value+
+                   "&status=<%=params[:status]%>&district=<%=params[:district]%>&start_date="+start_date
+                   +"&end_date="+end_date
+            window.location = url
+        }
+        td.appendChild(button);
+
+        var tr = document.createElement("tr");
+        table.appendChild(tr);
+
+        var td = document.createElement("td");
+        td.style.textAlign = "right";
+        td.colSpan ="4";
+        td.innerHTML ="&nbsp;"
+        tr.style.borderBottom = "1px solid gray";
+        tr.appendChild(td);
+
+
     }
 
     function loadTab(){
-    	var shield = document.createElement("div");
+        var shield = document.createElement("div");
         shield.style.position = "absolute";
         shield.style.top = "0px";
         shield.style.left = "0px";
@@ -281,8 +416,8 @@
 
         document.body.appendChild(shield);
 
-        var width = 500;
-        var height = 500;
+        var width = 700;
+        var height = 300 ;
 
         var div = document.createElement("div");
         div.id = "msg.popup";
@@ -301,4 +436,17 @@
 
         shield.appendChild(div);
     }
+
+    $(document).ready(function(){
+        <% if params[:district].present? %>
+            $("#district").val("<%=params[:district]%>")
+        <%end%>
+        <% if params[:time_line] %>
+            $("#time_line").val("<%=params[:time_line]%>")
+        <%end%>
+        <% if params[:status] %>
+            $("#status").val("<%=params[:status]%>")
+        <%end%>
+
+    })
 </script>

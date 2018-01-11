@@ -33,7 +33,11 @@ function addRows(data, skip_parse) {
       /*age = patients[i]["age"];
       patient_id = patients[i]["patient_id"];
       account_number = patients[i]["account_number"];*/
-    dataTable.api().row.add([drn, den, name, gender,dob,dob, place_of_death, spam.innerHTML]).draw();
+    <% if @drn.present? && @drn %>
+      dataTable.api().row.add([drn, den, name, gender,dob,dob, place_of_death, spam.innerHTML]).draw();
+    <%else%>
+      dataTable.api().row.add([den, name, gender,dob,dob, place_of_death, spam.innerHTML]).draw();
+    <%end%>
 
   }
 
@@ -152,7 +156,9 @@ function getCases() {
     <table class="table table-striped table-advance table-hover" id="cases">
     <thead>
       <tr>
+        <% if @drn.present? && @drn %>
         <th><i class=""></i> DRN</th>
+        <%end%>
         <th><i class=""></i> DEN</th>
         <th><i class=""></i> Name</th>
         <th><i class=""></i> Gender</th>

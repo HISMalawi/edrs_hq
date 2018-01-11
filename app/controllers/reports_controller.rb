@@ -8,7 +8,7 @@ class ReportsController < ApplicationController
   		@tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
   	else
-	    @tasks << ['Death reports','Death reports','/death_reports']
+	    @tasks << ['Death reports','Death reports','/death_reports?time_line=Today&status=DC ACTIVE']
 	    @tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
 	end
@@ -44,6 +44,7 @@ class ReportsController < ApplicationController
 
   def death_reports
     @section = "Death report"
+    @districts = District.all.each
     @data = Report.general(params)
   end
 end

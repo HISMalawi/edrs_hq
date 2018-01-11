@@ -162,6 +162,7 @@ class CaseController < ApplicationController
 
   def print
     @title = "Print Certificates"
+    @drn = true
     @statuses = ["HQ CAN PRINT","HQ CAN PRINT AMENDED","HQ CAN PRINT LOST","HQ CAN PRINT DAMAGED"]
     @page = 1
     session[:return_url] = request.path
@@ -173,6 +174,7 @@ class CaseController < ApplicationController
     @title = "Re-print Certificates"
     @statuses = ["HQ REPRINT"]
     @page = 1
+    @drn = true
     session[:return_url] = request.path
     @available_printers = CONFIG["printer_name"].split(',')
     render :template => "case/default_batch"
@@ -256,6 +258,7 @@ class CaseController < ApplicationController
 
   def dispatch_printouts
     @title = "View Dispatch Printouts"
+    @drn = true
     @statuses = ["HQ DISPATCHED"]
     session[:return_url] = request.path
 
@@ -403,6 +406,23 @@ class CaseController < ApplicationController
     render text: cases.to_json and return
   end
 
+  def more_open_cases_with_prev_status
+
+      sql = "SELECT c.person_record_id FROM person_record_status c INNER JOIN person_record_status p ON p.person_record_id = c.person_record_id
+             WHERE c.status = '#{params[:status]}' AND p.status='#{params[:prev_status]}' LIMIT 10 OFFSET #{(params[:page_number].to_i - 1) * 10}"
+      connection = ActiveRecord::Base.connection
+      data = connection.select_all(sql).as_json
+
+      cases = []
+
+      data.each do |row|
+          person = Person.find(row["person_record_id"])
+          cases << fields_for_data_table(person)
+      end
+
+      render text: cases.to_json and return
+  end
+
   def fields_for_data_table(person)
       place_of_death = ""
 
@@ -442,16 +462,6 @@ class CaseController < ApplicationController
           place_of_death: place_of_death,
           person_id:  person.id
         }
-  end
-  def more_open_cases_with_prev_status  
-    cases = []
-    
-    (PersonRecordStatus.by_prev_status_and_status.key([params[:prev_status],params[:status]]).page(params[:page_number]).per(10) || []).each do |status|     
-      person = status.person
-      cases << fields_for_data_table(person)
-    end 
-
-    render text: cases.to_json and return
   end
 
   def more_amended_or_reprinted_cases   

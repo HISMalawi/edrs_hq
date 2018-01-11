@@ -1,8 +1,7 @@
-<% if File.exists?("#{CONFIG['barcodes_path']}#{@person.id}.png")%>
 <!DOCTYPE HTML>
 <html>
 <head>
-  <title>eDRS Death Certificate</title>
+  <title>eBRS Birth Certificate</title>
   <style>
 
       body {
@@ -10,17 +9,24 @@
           -moz-user-select: none;
           font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
           margin: auto;
-          background-color: white;	
           color: #3465a4;
           font-size: 18px;
       }
 
   </style>
+
+ 
+    <style>
+      .tbl{
+          border-bottom: 2px solid gray;
+      }
+    </style>
+
 </head>
 <body style="color: #000;">
 
-<table style="width: 19cm;" cellpadding="5" >
-<!--
+
+<table class="tbl" style="width: 19cm;" cellpadding="5">
 <tr>
   <th style="font-size: 18px; font-weight: normal;">
     &nbsp;
@@ -31,27 +37,31 @@
     &nbsp;
   </th>
 </tr>
--->
 <tr>
-  <td style="width: 150px; vertical-align: top;">
+  <td style="width: 100px; vertical-align: top;">
     <div style="padding: 10px; border: 1px solid #000; width: 120px; text-align: center; margin: 15px; margin-left: 10px;">
-      Form NR13
+      Form NR9
     </div>
   </td>
-  <td align="center" style="padding-right: 10px; width: 50px;">
+  <td align="center" style="padding-right: 10px;">
     <img src="<%= emblem %>" height="80"/>
   </td>
-  <td align="right" style="width: 150px; vertical-align: top;">
+
+  
+  <td align="right" style="width:200px; vertical-align: top;">
+    <% @long_cert = false %>
     <% raw = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
 
        @data = Base64.encode64(raw)
+
     %>
     <img src ="data:image/png;base64,<%= @data%>" />
     <br/>
-    <div style="text-align: center !important;margin-top: -15px;font-size: 12px;"><%= @person.npid %></div>
+    <div style="text-align: center !important;margin-top: -15px;font-size: 12px;"><%= @person.npid rescue nil %></div>
 
   </td>
   
+ 
 </tr>
 <tr>
   <th colspan="3" style="font-size: 20px;">
@@ -73,71 +83,75 @@
     (Regulation 26)
   </th>
 </tr>
-
+<tr>
+  <th colspan="3" style="font-size: 18px; font-weight: normal;">
+    &nbsp;
+  </th>
+</tr>
 <tr>
   <th colspan="3" style="font-size: 18px; font-weight: normal;">
 
-    <table class="data" width="100%" cellpadding="7" style="font-size: 21px !important;">
-        <tr>
-          <td style="width: 20px;" align="right">
-            1.
-          </td>
-          <td align="left" style="width: 250px;">
-            Death Entry Number
-          </td>
-          <td align="left">
-            <%= @den %>
-          </td>
-        </tr>
-        <tr>
-          <td style="width: 20px;" align="right">
-            2.
-          </td>
-          <td align="left" style="width: 250px;">
-            Registration Number
-          </td>
-          <td align="left">
-            <%= @drn  %>
-          </td>
-        </tr>
-        <tr>
-          <td style="width: 20px;" align="right">
-            3.
-          </td>
-          <td align="left" style="width: 250px;">
-            Name of Deceased
-          </td>
-          <td align="left">
-            <%= @person[:first_name] %> <%= @person[:middle_name] %> <%= @person[:last_name] %>
-          </td>
-        </tr>
-        <tr>
-          <td style="width: 20px;" align="right">
-            4.
-          </td>
-          <td align="left" style="width: 250px;">
-            Date of Birth
-          </td>
-          <td align="left">
-            <%= (!@person[:birthdate].blank? ? @person[:birthdate].to_date.day : "") %><sup
+    <table width="100%" cellpadding="10">
+      <tr>
+        <td style="width: 50px;" align="right">
+          1.
+        </td>
+        <td align="left" style="width: 300px;">
+          Death Entry Number
+        </td>
+        <td align="left">
+         <%= @den %>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 50px;" align="right">
+          2.
+        </td>
+        <td align="left" style="width: 300px;">
+          Registration Number
+        </td>
+        <td align="left">
+          <%= @drn %>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 50px;" align="right">
+          3.
+        </td>
+        <td align="left" style="width: 300px;">
+          Name
+        </td>
+        <td align="left">
+         <%= @person[:first_name] %> <%= @person[:middle_name] %> <%= @person[:last_name] %>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 50px;" align="right">
+          4.
+        </td>
+        <td align="left" style="width: 300px;">
+          Date of Birth
+        </td>
+        <td align="left">
+          <%= (!@person[:birthdate].blank? ? @person[:birthdate].to_date.day : "") %><sup
             style="font-size: 18px;"><%= (!@person[:birthdate].blank? ?
                   @person[:birthdate].to_date.day.ordinalize.match(/([a-z]+)/).captures.first : "") %></sup>
             <%= (!@person[:birthdate].blank? ? @person[:birthdate].to_date.strftime("%B, %Y") : "") %>
-          </td>
-        </tr>
-        <tr>
-          <td style="width: 20px;" align="right">
-            5.
-          </td>
-          <td align="left" style="width: 250px;">
-            Sex
-          </td>
-          <td align="left">
-            <%= @person[:gender] %>
-          </td>
-        </tr>
-        <tr>
-          <td style="width: 20px;" align="right">
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 50px;" align="right">
+          5.
+        </td>
+        <td align="left" style="width: 300px;">
+          Sex
+        </td>
+        <td align="left">
+          <%= @person.gender %>
+        </td>
+      </tr>
+      <tr>
+          <td style="width: 50px;" align="right">
             6.
           </td>
           <td align="left" style="width: 250px;">
@@ -151,7 +165,7 @@
           </td>
         </tr>
         <tr>
-          <td style="width: 20px;" align="right">
+          <td style="width: 50px;" align="right">
             7.
           </td>
           <td align="left" style="width: 250px;">
@@ -179,8 +193,9 @@
             <%= place_of_death %>
           </td>
         </tr>
+        <% if @person[:mother_last_name].present? && @person[:mother_first_name].present? %>
         <tr>
-          <td style="width: 20px;" align="right">
+          <td style="width: 50px;" align="right">
             8.
           </td>
           <td align="left" style="width: 250px;">
@@ -190,9 +205,15 @@
             <%= @person[:mother_first_name] %> <%= @person[:mother_middle_name] %> <%= @person[:mother_last_name] %>
           </td>
         </tr>
+        <%end%>
+        <% if @person[:father_last_name].present? && @person[:father_first_name].present?%>
         <tr>
-          <td style="width: 20px;" align="right">
-            9.
+          <td style="width: 50px;" align="right">
+            <% if @person[:mother_last_name].blank?%>
+               8.
+            <%else%>
+               9.
+            <%end%>
           </td>
           <td align="left" style="width: 250px;">
             Name of Father
@@ -201,9 +222,16 @@
             <%= @person[:father_first_name] %> <%= @person[:father_middle_name] %> <%= @person[:father_last_name] %>
           </td>
         </tr>
+        <%end%>
         <tr>
-          <td style="width: 20px;" align="right">
-            10.
+          <td style="width: 50px;" align="right">
+            <% if @person[:mother_last_name].blank? && @person[:father_last_name].blank?%>
+               8.
+            <%elsif @person[:mother_last_name].blank? || @person[:father_last_name].blank?%>
+               9.
+            <%else%>
+              10.
+            <%end%>
           </td>
           <td align="left" style="width: 250px;">
             Date of Registration
@@ -215,19 +243,18 @@
             <%= (!@person[:created_at].blank? ? @person[:created_at].to_date.strftime("%B, %Y") : "") %>
           </td>
         </tr>
-      </table>
-    </th>
-  </tr>
+      
       <tr>
-        <th colspan="3" style="font-size: 16px; font-weight: normal;">
+        <th colspan="3" style="font-size: 18px; font-weight: normal;">
           I hereby certify the above to be a true and correct extract from the<br/>
-          Death Register kept at NRB.
+          Birth Register kept at NRB.
         </th>
       </tr>
       <tr>
-        <td colspan="3" style="font-size: 16px; font-weight: normal;text-align: center">
-          Dated this <%= Date.today.strftime("%d").to_i rescue nil %><sup><%= Date.today.strftime("%d").to_i.ordinalize.gsub(/\d+/, "") rescue nil
-        %></sup> <%= Date.today.strftime("%B") rescue nil %>, <%= Date.today.strftime("%Y") rescue nil %>
+        <td colspan="3" style="font-size: 18px; font-weight: normal;">
+          
+          Dated this <%= Date.today.strftime("%d").to_i rescue nil %><sup><%= Date.today.strftime("%d").to_i.ordinalize.gsub(/\d+/, "") rescue nil %></sup> 
+          <%= Date.today.strftime("%B") rescue nil %>, <%= Date.today.strftime("%Y") rescue nil %>
         </td>
       </tr>
       <tr>
@@ -235,17 +262,17 @@
           <div style="border: 1px dotted #ccc; width: 180px; height: 100px; margin-left: 10px;">&nbsp;</div>
         </td>
         <td align="left">
-          <table style="border: 1px solid #000; margin-right: 50px;" cellpadding="5" cellspacing="10">
+          <table style="border: 1px solid #000; margin-right: 0px;" cellpadding="5" cellspacing="10">
             <tr>
               <td style="border-bottom: 1px dotted #000; font-size: 32px; height: 50px;">
-               <% raw = File.read(Rails.root.join("public","uploads",User.by_username.key(GlobalProperty.find("signatory").value).first.signature)) rescue nil %>
+               <% raw = File.read(Rails.root.join("public","uploads",@signature)) rescue nil %>
                  
                  <% if raw
                       @sig = Base64.encode64(raw)
                     end %>
                     
                  <% if @sig.present? %>
-                 		<img src ="data:image/png;base64,<%= @sig %>" width="100" height="40" style="margin-left:10px" />
+                    <img src ="data:image/png;base64,<%= @sig %>" width="120" height="50" />
                  <% end %>
               </td>
             </tr>
@@ -262,54 +289,22 @@
   </th>
 </tr>
 </table>
-
 </body>
-</html>
-<%else%>
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>Barcode file not exit</title>
-    </head>
-    <style type="text/css">
-      #message{
-              width: 60%;
-              margin: auto;
-              margin-top:10%;
-              text-align: center;
-      }
-      #message img{
-            width: 65px;
-            height: 65px;
-      }
-      #progress{
-         color: blue;
-         font-size: 3.5em;
-      }
+
+
+    <style>
+        .tbl{
+            margin: auto;
+            background: white;
+        }
+        .tbl td{
+            padding: 5px;
+            font-size: 18px !important;
+        }
+        body {
+            background: white;
+        }
     </style>
-    <body>
-        <div id="message">
-              <img src="/assets/coa.png">
-              <h2>Generating Barcode</h2>
-              <h2>Please wait </h2>
-              <font id="progress">.</font>
-        </div>
-    </body>
-    </html>
-    <script type="text/javascript">
-        setTimeout(function(){
-              window.location.reload();
-        },4000);
 
-        var dots = 1;
 
-        setInterval(function(){
-              var dotted = "";
-              for(var i = 0; i < dots; i++){
-                dotted = dotted +".";
-              }
-              document.getElementById("progress").innerHTML = dotted;
-              dots++;
-        },500);
-    </script>
-<%end%>
+</html>

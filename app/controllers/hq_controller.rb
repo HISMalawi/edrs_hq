@@ -265,7 +265,7 @@ class HqController < ApplicationController
     if CONFIG['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A4"
        render :layout => false, :template => 'hq/death_certificate_print'
     elsif CONFIG['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A5"
-       render :layout => false, :template => 'hq/death_certificate_print'
+       render :layout => false, :template => 'hq/death_certificate_print_a5'
     else
        render :layout => false
     end
@@ -309,24 +309,6 @@ class HqController < ApplicationController
       }
 
       sleep(1)
-
-=begin
-      print_url = "wkhtmltopdf --zoom #{zoom} --page-size #{paper_size} --username #{CONFIG["print_user"]} --password #{CONFIG["print_password"]} #{CONFIG["protocol"]}://#{request.env["SERVER_NAME"]}:#{request.env["SERVER_PORT"]}/death_certificate/#{id} #{CONFIG['certificates_path']}#{id}.pdf\n"    
-      
-      t4 = Thread.new {
-
-        Kernel.system print_url
-
-        sleep(4)
-
-        Kernel.system "lp -d #{params[:printer_name]} #{CONFIG['certificates_path']}#{id}.pdf\n"
-
-        sleep(5)
-        
-      }
-
-      sleep(1)
-=end
   
    end
     

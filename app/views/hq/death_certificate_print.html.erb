@@ -1,127 +1,157 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <title>eDRS Death Certificate</title>
+  <title>eBRS Birth Certificate</title>
   <style>
- @media all {  
- body {
-          margin: 0;
+
+      body {
+          margin: 10px;
           -moz-user-select: none;
           font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
-          margin-left: 10px;
-          margin-right: 10px;
-          color: #000;
-          font-size: 20px;
+          margin: auto;
+          color: #3465a4;
+          font-size: 18px;
       }
-      
-      #barcode {
-        margin-right: 30px;
-        padding-top: 0px;
-        margin-top: 30px;
-        float: right;
-      }
-      
-      #childdata {
-       clear: both;
-       width: 21cm;
-       margin-top: 40cm;
-       padding-top: 8cm;
-       margin-left: auto;
-       margin-right: auto;
-      
-      }
-      
-      #childdata #birthoath 
-      {
-        text-align: center;
-        
-      }
-      
-      #childdata #signature 
-      {
-        text-align: left;
-        float: right;
-        
-      }}
-   
+
   </style>
+
+ 
+    <style>
+      .tbl{
+          border-bottom: 2px solid gray;
+      }
+    </style>
+
 </head>
 <body style="color: #000;">
- 
-  <div id="barcode">
-   <% raw = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
+
+
+<table class="tbl" style="width: 21cm;" cellpadding="5">
+<tr>
+  <th style="font-size: 18px; font-weight: normal;">
+    &nbsp;
+  </th>
+</tr>
+<tr>
+  <th style="font-size: 18px; font-weight: normal;">
+    &nbsp;
+  </th>
+</tr>
+<tr>
+  <td style="width: 100px; vertical-align: top;">
+    <div style="padding: 10px; width: 120px; text-align: center; margin: 15px; margin-left: 10px;">
+     
+    </div>
+  </td>
+  <td align="center" style="padding-right: 10px;">
+    
+  </td>
+
+  
+  <td align="right" style="width:200px; vertical-align: top;">
+    <% @long_cert = false %>
+    <% raw = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
 
        @data = Base64.encode64(raw)
 
     %>
     <img src ="data:image/png;base64,<%= @data%>" />
     <br/>
-    <div style="text-align: center !important;margin-top: -15px;font-size: 12px;"><%= @person.npid %></div>
-  </div>
+    <div style="text-align: center !important;margin-top: -15px;font-size: 12px;"><%= @person.npid rescue nil %></div>
 
-<div id="childdata">
+  </td>
+  
+ 
+</tr>
+<tr>
+  <th colspan="3" style="font-size: 20px;">
+  
+  </th>
+</tr>
+<tr>
+  <th colspan="3" style="font-size: 22px; font-weight: normal;">
+  
+  </th>
+</tr>
+<tr>
+  <th colspan="3" style="font-size: 20px;">
+ 
+  </th>
+</tr>
+<tr>
+  <th colspan="3" style="font-size: 18px; font-weight: normal;">
+  
+  </th>
+</tr>
+<tr>
+  <th colspan="3" style="font-size: 18px; font-weight: normal;">
+    &nbsp;
+  </th>
+</tr>
+<tr>
+  <th colspan="3" style="font-size: 18px; font-weight: normal;">
 
-<table style="width: 21cm; font-weight: normal;" cellpadding="8" width="100%">
+    <table width="100%" cellpadding="10">
       <tr>
-          <td style="width: 130px;" align="right">
-            1.
-          </td>
-          <td align="left" style="width: 250px;">
-            Death Entry Number
-          </td>
-          <td align="left">
-            <%= @den %>
-          </td>
-        </tr>
-        <tr>
-          <td style="width: 130px;" align="right">
-            2.
-          </td>
-          <td align="left" style="width: 250px;">
-            Registration Number
-          </td>
-          <td align="left">
-            <%= @drn  %>
-          </td>
-        </tr
-        <tr>
-          <td style="width: 130px;" align="right">
-            3.
-          </td>
-          <td align="left" style="width: 250px;">
-            Name of Deceased
-          </td>
-          <td align="left">
-            <%= @person[:first_name] %> <%= @person[:middle_name] %> <%= @person[:last_name] %>
-          </td>
-        </tr>
-        <tr>
-          <td style="width: 130px;" align="right">
-            4.
-          </td>
-          <td align="left" style="width: 250px;">
-            Date of Birth
-          </td>
-          <td align="left">
-            <%= (!@person[:birthdate].blank? ? @person[:birthdate].to_date.day : "") %><sup
+        <td style="width: 50px;" align="right">
+          1.
+        </td>
+        <td align="left" style="width: 300px;">
+          Death Entry Number
+        </td>
+        <td align="left">
+         <%= @den %>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 50px;" align="right">
+          2.
+        </td>
+        <td align="left" style="width: 300px;">
+          Registration Number
+        </td>
+        <td align="left">
+          <%= @drn %>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 50px;" align="right">
+          3.
+        </td>
+        <td align="left" style="width: 300px;">
+          Name
+        </td>
+        <td align="left">
+         <%= @person[:first_name] %> <%= @person[:middle_name] %> <%= @person[:last_name] %>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 50px;" align="right">
+          4.
+        </td>
+        <td align="left" style="width: 300px;">
+          Date of Birth
+        </td>
+        <td align="left">
+          <%= (!@person[:birthdate].blank? ? @person[:birthdate].to_date.day : "") %><sup
             style="font-size: 18px;"><%= (!@person[:birthdate].blank? ?
                   @person[:birthdate].to_date.day.ordinalize.match(/([a-z]+)/).captures.first : "") %></sup>
             <%= (!@person[:birthdate].blank? ? @person[:birthdate].to_date.strftime("%B, %Y") : "") %>
-          </td>
-        </tr>
-        <tr>
-          <td style="width: 130px;" align="right">
-            5.
-          </td>
-          <td align="left" style="width: 250px;">
-            Sex
-          </td>
-          <td align="left">
-            <%= @person[:gender] %>
-          </td>
-        </tr>
-        <tr>
-          <td style="width: 130px;" align="right">
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 50px;" align="right">
+          5.
+        </td>
+        <td align="left" style="width: 300px;">
+          Sex
+        </td>
+        <td align="left">
+          <%= @person.gender %>
+        </td>
+      </tr>
+      <tr>
+          <td style="width: 50px;" align="right">
             6.
           </td>
           <td align="left" style="width: 250px;">
@@ -135,14 +165,14 @@
           </td>
         </tr>
         <tr>
-          <td style="width: 130px;" align="right">
+          <td style="width: 50px;" align="right">
             7.
           </td>
           <td align="left" style="width: 250px;">
             Place of Death
           </td>
           <td align="left">
-           <%
+            <%
                 place_of_death = ""
 
                case @person["place_of_death"]
@@ -163,8 +193,9 @@
             <%= place_of_death %>
           </td>
         </tr>
+        <% if @person[:mother_last_name].present? && @person[:mother_first_name].present? %>
         <tr>
-          <td style="width: 130px;" align="right">
+          <td style="width: 50px;" align="right">
             8.
           </td>
           <td align="left" style="width: 250px;">
@@ -174,9 +205,15 @@
             <%= @person[:mother_first_name] %> <%= @person[:mother_middle_name] %> <%= @person[:mother_last_name] %>
           </td>
         </tr>
+        <%end%>
+        <% if @person[:father_last_name].present? && @person[:father_first_name].present?%>
         <tr>
-          <td style="width: 130px;" align="right">
-            9.
+          <td style="width: 50px;" align="right">
+            <% if @person[:mother_last_name].blank?%>
+               8.
+            <%else%>
+               9.
+            <%end%>
           </td>
           <td align="left" style="width: 250px;">
             Name of Father
@@ -185,9 +222,16 @@
             <%= @person[:father_first_name] %> <%= @person[:father_middle_name] %> <%= @person[:father_last_name] %>
           </td>
         </tr>
+        <%end%>
         <tr>
-          <td style="width: 130px;" align="right">
-            10.
+          <td style="width: 50px;" align="right">
+            <% if @person[:mother_last_name].blank? && @person[:father_last_name].blank?%>
+               8.
+            <%elsif @person[:mother_last_name].blank? || @person[:father_last_name].blank?%>
+               9.
+            <%else%>
+              10.
+            <%end%>
           </td>
           <td align="left" style="width: 250px;">
             Date of Registration
@@ -199,28 +243,64 @@
             <%= (!@person[:created_at].blank? ? @person[:created_at].to_date.strftime("%B, %Y") : "") %>
           </td>
         </tr>
-          
-          <tr><td colspan="3" align="center" valign="middle">
-              <p style="font-size: 18px; font-weight: normal;"><br>I hereby certify the above to be a true and correct extract from the<br/>
-          Death Register kept at NRB.<br/><br/>
-          
-          Dated this <%= Date.today.strftime("%d").to_i rescue nil %><sup><%= Date.today.strftime("%d").to_i.ordinalize.gsub(/\d+/, "") rescue nil %></sup> 
-          <%= Date.today.strftime("%B") rescue nil %>, <%= Date.today.strftime("%Y") rescue nil %>
-          
-          </p></td></tr>    
-          
-         <% raw = File.read(Rails.root.join("public","uploads",User.by_username.key(GlobalProperty.find("signatory").value).first.signature)) rescue nil %>        
-          <% if raw
-              @sig = Base64.encode64(raw)
-             end %>
-           <% if @sig.present? %>    
-             
-      	    <tr><td colspan="3" align="right" style="height: 50px;"><br/><br/>
-      	        <img src ="data:image/png;base64,<%= @sig %>" width="120" height="50" style="padding-right: 20px; margin-right: 20px;" />
-      	    </td></tr>      
-            <% end %>
-      </table>
-     
-    </div>  
+      
+      <tr>
+        <th colspan="3" style="font-size: 18px; font-weight: normal;">
+
+        </th>
+      </tr>
+      <tr>
+        <td colspan="3" style="font-size: 18px; font-weight: normal;">
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" style="font-size: 18px; font-weight: normal;">
+          <div style="width: 180px; height: 100px; margin-left: 10px;">&nbsp;</div>
+        </td>
+        <td align="left">
+          <table style="border: 1px solid #000; margin-right: 0px;" cellpadding="5" cellspacing="10">
+            <tr>
+              <td style="border-bottom: 1px dotted #000; font-size: 32px; height: 50px;">
+               <% raw = File.read(Rails.root.join("public","uploads",@signature)) rescue nil %>
+                 
+                 <% if raw
+                      @sig = Base64.encode64(raw)
+                    end %>
+                    
+                 <% if @sig.present? %>
+                    <img src ="data:image/png;base64,<%= @sig %>" width="120" height="50" />
+                 <% end %>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <i>Signatures Officer(NRB)</i>
+              </th>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+  </th>
+</tr>
+</table>
 </body>
+
+
+    <style>
+        .tbl{
+            margin: auto;
+            background: white;
+        }
+        .tbl td{
+            padding: 5px;
+            font-size: 18px !important;
+        }
+        body {
+            background: white;
+        }
+    </style>
+
+
 </html>
