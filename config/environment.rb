@@ -7,3 +7,4 @@ Rails.application.initialize!
 require "encryption"
 require "simple_sql"
 require "simple_elastic_search"
+require "couchdb_to_mysql"

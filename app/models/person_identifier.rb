@@ -126,10 +126,15 @@ class PersonIdentifier < CouchRest::Model::Base
          status = PersonRecordStatus.by_person_recent_status.key(person.id.to_s).last
 
         status.update_attributes({:voided => true})
+
+        record_status = "HQ CAN PRINT"
+        if PersonRecordStatus.nextstatus[person.id].present?
+          record_status = PersonRecordStatus.nextstatus[person.id]
+        end
         
         PersonRecordStatus.create({
                                   :person_record_id => person.id.to_s,
-                                  :status => (PersonRecordStatus.nextstatus[person.id] rescue "HQ CAN PRINT"),
+                                  :status => record_status,
                                   :district_code => (person.district_code rescue CONFIG['district_code']),
                                   :creator => creator})
 
