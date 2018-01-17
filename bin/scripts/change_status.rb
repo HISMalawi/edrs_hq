@@ -1,13 +1,13 @@
-Person.all.each do |person| 
-	record_status = nil
-	PersonRecordStatus.by_person_record_id.key(person.id).each do |status|
+PersonRecordStatus.all.each do |status|
 		record_status = status
 		status.voided = 1 
 		status.save
-	end
+end
+
+Person.all.each do |person| 
 	PersonRecordStatus.create({
-	                                  :person_record_id => record_status.person_record_id.to_s,
+	                                  :person_record_id => person.id,
 	                                  :status => "HQ COMPLETE",
-	                                  :district_code => record_status.district_code,
-	                                  :creator =>record_status.creator})
+	                                  :district_code =>person.district_code,
+	                                  :creator =>person.created_by})
 end
