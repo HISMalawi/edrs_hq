@@ -1,92 +1,4 @@
-require 'sql_search'
 User.current_user = User.first
-#CONFIG = YAML.load_file(Rails.root.join('config', 'couchdb.yml'))[Rails.env]
-def format_content(person)
-     
-     search_content = ""
-      if person.middle_name.present?
-         search_content = person.middle_name + ", "
-      end 
-
-      birthdate_formatted = person.birthdate.to_date.strftime("%Y-%m-%d")
-      search_content = search_content + birthdate_formatted + " "
-      death_date_formatted = person.date_of_death.to_date.strftime("%Y-%m-%d")
-      search_content = search_content + death_date_formatted + " "
-      search_content = search_content + person.gender.upcase + " "
-
-      if person.place_of_death_district.present?
-        search_content = search_content + person.place_of_death_district + " " 
-      else
-        registration_district = District.find(person.district_code).name
-        search_content = search_content + registration_district + " " 
-      end    
-
-      if person.mother_first_name.present?
-        search_content = search_content + person.mother_first_name + " " 
-      end
-
-      if person.mother_middle_name.present?
-         search_content = search_content + person.mother_middle_name + " "
-      end   
-
-      if person.mother_last_name.present?
-        search_content = search_content + person.mother_last_name + " "
-      end
-
-      if person.father_first_name.present?
-         search_content = search_content + person.father_first_name + " "
-      end 
-
-      if person.father_middle_name.present?
-         search_content = search_content + person.father_middle_name + " "
-      end 
-
-      if person.father_last_name.present?
-         search_content = search_content + person.father_last_name
-      end 
-
-      return search_content.squish
-
-end
-
-def send_person_to_mysql(person)
-    person_keys = person.keys.sort
-
-    query = "INSERT INTO people ("
-
-    person_keys.each do |key|
-        field = key
-        next if key == "type"
-        if key =="_id"
-          field = "person_id"
-        end
-        if person_keys[0] == key
-            query = "#{query}#{field}"
-        else
-            query = "#{query},#{field}"
-        end
-    end
-
-    query = "#{query}) VALUES("
-
-    person_keys.each do |key|
-        next if key == "type"
-        value = person[key]
-        if value.blank?
-          value ="NULL"
-        end
-
-        if person_keys[0] == key
-            query = "#{query} '#{value.to_s.gsub("'","''")}'"
-        else
-            query = "#{query},'#{value.to_s.gsub("'","''")}'"
-        end
-    end
-
-    query = "#{query})"
-
-    SimpleSQL.query_exec(query)
-  end
 
 def create
   
@@ -113,57 +25,22 @@ def create
     district = District.by_name.key(person.current_district.strip).first
     ta =TraditionalAuthority.by_district_id_and_name.key([district.id, person.current_ta]).first
     person.current_village = Village.by_ta_id.key(ta.id.strip).collect{|f| f.name }.sample
-    person.district_code = CONFIG['district_code']
+    person.district_code = District.all.each.collect{|d| d.id unless d.name.include?("City")}.sample
 
-
-=begin
-    person.hospital_of_death_name = 
-    person.other_place_of_death = 
-    person.place_of_death_village = 
-    person.place_of_death_ta = 
-    person.place_of_death_district = 
-    person.cause_of_death1 = 
-    person.cause_of_death2 = 
-    person.cause_of_death3 = 
-    person.cause_of_death4 = 
-    person.onset_death_interval1 = 
-    person.onset_death_death_interval2 = 
-    person.onset_death_death_interval3 = 
-    person.onset_death_death_interval4 = 
-    person.cause_of_death_conditions = 
-    person.manner_of_death = 
-    person.other_manner_of_death = 
-    person.death_by_accident = 
-    person.other_death_by_accident = 
-    person.home_village = 
-    person.home_ta = 
-    person.home_district = 
-    person.home_country = 
-    person.death_by_pregnancy = 
-    person.updated_by = 
-    person.voided_by = 
-    person.voided_date = 
-    person.voided = false
-    person.form_signed = 
-=end
 
     person.save
 
     person.reload
 
-    send_person_to_mysql(person)
-
-    #status = ["NEW","MARKED APPROVAL"].sample
     status = "MARKED HQ APPROVAL"
 
-    PersonRecordStatus.create({
-                                      :person_record_id => person.id.to_s,
-                                      :status => status,
-                                      :district_code =>  person.district_code,
-                                      :created_by => User.current_user.id})
-
-
-    PersonIdentifier.create({
+    record_status = PersonRecordStatus.new 
+    record_status.person_record_id = person.id.to_s
+    record_status.status = status
+    record_status.district_code = person.district_code
+    record_status.creator = User.current_user.id
+    if record_status.save
+          PersonIdentifier.create({
                                       :person_record_id => person.id.to_s,
                                       :identifier_type => "Form Barcode", 
                                       :identifier => rand(10 ** 10),
@@ -171,18 +48,14 @@ def create
                                       :district_code => CONFIG['district_code'],
                                       :creator => User.current_user.id})
 
+        title = "#{person.first_name} #{person.last_name}"
 
-    title = "#{person.first_name} #{person.last_name}"
-    content =  format_content(person)
+        puts "........... #{title}"
 
-    query = "INSERT INTO documents(couchdb_id,title,content,date_added,created_at,updated_at) 
-              VALUES('#{person.id}','#{title.gsub("'","''")}','#{title.gsub("'","''")} #{content.gsub("'","''")}','#{person.created_at}',NOW(),NOW())"
-
-    SimpleSQL.query_exec(query)
-
-    puts "........... #{title}"
-
-    #raise person.inspect
+    else
+      person.destroy!
+      put "Error Reverting changes"
+    end
   end
 
 end

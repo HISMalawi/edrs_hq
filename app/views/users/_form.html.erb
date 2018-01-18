@@ -94,11 +94,14 @@
 			    </div>
 			  </div>
 			  <div class="form-group">
-			    <div class="col-sm-offset-2 col-sm-10">
-			      <button class="btn btn-success pull-right">Save</button>
-			    </div>
+
 			  </div>
 	</fieldset>
+
+	<div class="row col-md-12">
+			      <button class="btn btn-danger pull-left" style="margin:1%" onclick="window.location='/manage_users'">Back</button>
+			      <button class="btn btn-success pull-right" style="margin:1%" onclick="$('#new_user').submit()">Save</button>
+	</div>
 	
 <%end%>
 <div id="myModal" class="modal fade" role="dialog">
@@ -187,4 +190,11 @@
 		    }
 		  });
 		});
+
+		function redirect_to(url){
+			 $('#new_user').on('submit', function(e){
+				e.preventDefault();
+				window.location.href = url
+		  	});
+		}
 </script>

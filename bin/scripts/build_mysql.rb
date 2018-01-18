@@ -250,13 +250,6 @@ def load_sql_files
     puts "MSQL Database Dump Loaded"
 end
 
-couch_sequence = "CREATE TABLE `couchdb_sequence` (
-                  `couchdb_sequence_id` int(11) NOT NULL AUTO_INCREMENT,
-                  `seq` bigint(20) NOT NULL,
-                  PRIMARY KEY (`couchdb_sequence_id`)
-                  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;"
-SimpleSQL.query_exec(couch_sequence)
-
 build_mysql_database
 generate_files
 load_sql_files

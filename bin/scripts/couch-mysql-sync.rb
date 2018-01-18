@@ -24,14 +24,17 @@ data = JSON.parse(RestClient.get(changes_link))
 
 (data['results'] || []).each do |result|
   seq = result['seq']
-  next unless ['Person','PersonRecordStatus','PersonIdentifier'].include?(result['doc']['type'])
-  begin
-  	 CouchDBToMysql.insert_or_update(result['doc'], seq)
-  rescue Exception => e
-  	 cseq = CouchdbSequence.last
-     cseq.seq =  seq.to_i
-     cseq.save
-  end
+  next unless ['Village','District','Person','PersonRecordStatus','PersonIdentifier'].include?(result['doc']['type'])
+
+  doc = result['doc']
+  couch_record = eval(doc['type']).find(doc['_id'])
+  
+  raise couch_record.inspect
+ 
+  cseq = CouchdbSequence.last
+  cseq.seq =  seq.to_i
+  cseq.save
+ 
   
 end
 

@@ -411,8 +411,21 @@ class Person < CouchRest::Model::Base
   def barcode
       PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id,"Form Barcode"]).first.identifier rescue nil
   end
+
   def drn
-      return PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id, "DEATH REGISTRATION NUMBER"]).first.identifier rescue nil
+    drn_sort_value = PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id, "DEATH REGISTRATION NUMBER"]).first.drn_sort_value
+    
+    drn = "%010d" % drn_sort_value
+
+    infix = ""
+    if self.gender.match(/^F/i)
+      infix = "1"
+    elsif self.gender.match(/^M/i)
+      infix = "2"
+    end
+
+    drn = "#{drn[0, 5]}#{infix}#{drn[5, 9]}"
+    
   end
 
   def insert_update_into_mysql

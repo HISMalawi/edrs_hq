@@ -5,6 +5,7 @@ def sample_random(population)
 end
 
 User.by_role.key("Coder").each do |user|
+
 	sampling_frequency = SETTINGS['sampling_frequency']
 	case sampling_frequency
 	when "Daily"
@@ -19,9 +20,14 @@ User.by_role.key("Coder").each do |user|
 	end
 
 	coders_records = Person.by_coder_and_coded_at.startkey([user.id, start_time]).endkey([user.id, end_time]).each.collect {|p| p.id}
-	five_percent = ((SETTINGS['sample_percentage']/100) * coders_records.count).to_i
+	
+	percent = ((SETTINGS['sample_percentage'].to_f/100) * coders_records.count).ceil
+
+	puts percent
+	
 	sample = []
-	for i in 0..five_percent
+
+	for i in 0..(percent - 1)
 		population = coders_records - sample
 		id = sample_random(population)
 		sample << id unless id.blank?

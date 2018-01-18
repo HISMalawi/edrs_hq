@@ -72,8 +72,24 @@
       display: none;
       z-index: 4000
   }
+
+  #final_result_modal{
+      position : absolute;
+      left: 30%;
+      top: 13.5%;
+      display: block;
+      z-index: 4000
+  }
    
 </style>
+<% if params[:index].present? &&  @sample.final_result.blank? %>
+    <div class="row">
+        <span class="pull-right" style="width: 20%; height : 30px ; background:#6281a7; color:#ffffff; text-align:center;padding:0.5%;margin-right:2%; font-weight:bold">
+          Reviewing <%= params[:index].to_i + 1 %> / <%= @sample.sample.count %>
+        </span>
+    </div>
+<%else%>
+<%end%>
 <div id="main" >
   <div style="height: 535px; overflow: auto;padding: 0px; margin:0px;">
     <%= render :partial => "section2" %>
@@ -86,7 +102,7 @@
        
        		<% if (@sample.sample.count-1 ) == params[:index].to_i %>
 	       		<div onclick= ""
-	                 class="dynamic-button btn btn-small btn-default pull-right btn-primary"><span>Finish</span>
+	                 class="dynamic-button btn btn-small btn-default pull-right btn-primary hidden "><span>Finish</span>
 	            </div>
             <%end%>
             <% if @sample.final_result.blank? %>
@@ -171,7 +187,41 @@
 	    </div>
 	  </div>
 	</div>
+<% if @sample.final_result.present? %>
+  <script type="text/javascript">
+     $(document).ready(function(){
+          $("#shield").show()
+     })
+  </script>
+  <div class="" id="final_result_modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header btn-primary">
+            <h4 class="modal-title" id="final_result_modal_title">Final Score</h4>
+          </div>
+
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col-lg-12" style="text-align:center; font-size:1.2em">
+                      The final percent score for<br/>
+                      <b> <%= User.find(@sample.coder_id).first_name %> <%= User.find(@sample.coder_id).last_name %></b>
+                      <br/><%= @sample.final_result.to_f.round(2)%> %
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button id="final_result_modal_finish" onclick="window.location='/sampled_cases'" class="btn btn-sm btn-success" >Finish</button>
+              </div>
+          </div>
+
+      </div>
+    </div>
+  </div>
+  <%end%>
 </div>
+
+
+        
+
 <script type="text/javascript">
 
 	  function __$(id){
