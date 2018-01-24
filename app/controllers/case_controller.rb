@@ -398,7 +398,7 @@ class CaseController < ApplicationController
     
     cases = []
     
-    (PersonRecordStatus.by_record_status.keys(keys).page(params[:page_number]).per(10) || []).each do |status|      
+    (PersonRecordStatus.by_record_status.keys(keys).page(params[:page_number]).per(40) || []).each do |status|      
       person = status.person
       cases << fields_for_data_table(person)
     end 
@@ -409,7 +409,7 @@ class CaseController < ApplicationController
   def more_open_cases_with_prev_status
 
       sql = "SELECT c.person_record_id FROM person_record_status c INNER JOIN person_record_status p ON p.person_record_id = c.person_record_id
-             WHERE c.status = '#{params[:status]}' AND p.status='#{params[:prev_status]}' LIMIT 10 OFFSET #{(params[:page_number].to_i - 1) * 10}"
+             WHERE c.status = '#{params[:status]}' AND p.status='#{params[:prev_status]}' LIMIT 40 OFFSET #{(params[:page_number].to_i - 1) * 40}"
       connection = ActiveRecord::Base.connection
       data = connection.select_all(sql).as_json
 
