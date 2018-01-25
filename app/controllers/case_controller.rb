@@ -12,9 +12,19 @@ class CaseController < ApplicationController
     @title = "Closed Cases"
     @statuses = ["HQ CLOSED"]
     @page = 1
-    session[:return_url] = request.path
+    @drn = true
+    @dispatch = true
 
-    render :template => "case/default"
+    @districts = []
+    District.all.each do |d| 
+      next if d.name.blank?
+      next if d.name.include?("City")
+      @districts << d.name 
+    end
+   
+    session[:return_url] = request.path
+    @available_printers = CONFIG["printer_name"].split(',')
+    render :template => "case/default_batch"
   end
 
   def dispatched
@@ -164,6 +174,12 @@ class CaseController < ApplicationController
     @title = "Print Certificates"
     @drn = true
     @statuses = ["HQ CAN PRINT","HQ CAN PRINT AMENDED","HQ CAN PRINT LOST","HQ CAN PRINT DAMAGED"]
+    @districts = []
+    District.all.each do |d| 
+      next if d.name.blank?
+      next if d.name.include?("City")
+      @districts << d.name 
+    end
     @page = 1
     session[:return_url] = request.path
     @available_printers = CONFIG["printer_name"].split(',')
@@ -390,18 +406,35 @@ class CaseController < ApplicationController
   end
 
   def more_open_cases
-    keys = []
-    ((params[:statuses].split("|") rescue []) || []).each{|status|
-      next if status.blank?
-      keys << status.gsub(/\_/, " ").upcase
-    }
-    
+
     cases = []
     
-    (PersonRecordStatus.by_record_status.keys(keys).page(params[:page_number]).per(40) || []).each do |status|      
-      person = status.person
-      cases << fields_for_data_table(person)
-    end 
+    if params[:district].present?
+        district_code = District.by_name.key(params[:district]).first.id
+        keys = []
+        ((params[:statuses].split("|") rescue []) || []).each{|status|
+          next if status.blank?
+          keys << [ district_code,status.gsub(/\_/, " ").upcase]
+        }
+    
+        (PersonRecordStatus.by_district_code_and_record_status.keys(keys).page(params[:page_number]).per(40) || []).each do |status|      
+            person = status.person
+            cases << fields_for_data_table(person)
+        end 
+    else
+        keys = []
+        ((params[:statuses].split("|") rescue []) || []).each{|status|
+          next if status.blank?
+          keys << status.gsub(/\_/, " ").upcase
+        }
+    
+        (PersonRecordStatus.by_record_status.keys(keys).page(params[:page_number]).per(40) || []).each do |status|      
+            person = status.person
+            cases << fields_for_data_table(person)
+        end 
+    end
+   
+
 
     render text: cases.to_json and return
   end

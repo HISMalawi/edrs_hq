@@ -248,19 +248,7 @@ class HqController < ApplicationController
     @den = PersonIdentifier.by_person_record_id_and_identifier_type.key([@person.id, "DEATH ENTRY NUMBER"]).last.identifier
     @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
     
-    if @barcode.nil?
-      process = Process.fork{`bin/generate_barcode #{@drn} #{@person.id} #{CONFIG['barcodes_path']}`}
-      Process.detach(process)
-    end
-     
-    if File.exists?("#{CONFIG['barcodes_path']}#{@person.id}.png")
-        @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
-    else
-        sleep(0.5)
-        redirect_to request.referrer
-    end  
-     
-    
+    create_barcode   
     
     if CONFIG['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A4"
        render :layout => false, :template => 'hq/death_certificate_print'
@@ -314,6 +302,14 @@ class HqController < ApplicationController
     
    redirect_to "/print" and return
   
+  end
+
+  def do_dispatch_these
+    raise params.inspect
+  end
+
+  def dispatch_preview
+     render :layout =>"false"
   end
   
   def print_certificates
@@ -923,5 +919,21 @@ class HqController < ApplicationController
   end
   def find
     
+  end
+
+  private
+  def create_barcode
+    if @barcode.nil?
+      process = Process.fork{`bin/generate_barcode #{@drn} #{@person.id} #{CONFIG['barcodes_path']}`}
+      Process.detach(process)
+    end
+     
+    if File.exists?("#{CONFIG['barcodes_path']}#{@person.id}.png")
+        @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
+        return
+    else
+        sleep(0.5)
+        create_barcode
+    end
   end
 end

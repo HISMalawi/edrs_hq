@@ -37,6 +37,7 @@ function checkRecord(element){
 function setPrinter(printer_name){
       printer = printer_name;
 }
+
 function printSelected(){
     if(printer.length > 0){
       var ids = Object.keys(selected);
@@ -57,6 +58,23 @@ function printSelected(){
     }
     
 }
+
+function dispatchSelected(){
+      if(printer.length > 0){
+        var dispatch_url =  "hq/do_dispatch_these?printer_name="+printer
+        var ids = Object.keys(selected);
+        for(var i = 0 ; i <ids.length ; i++){
+           dispatch_url = dispatch_url + "&selected[]="+ids[i]
+        }
+
+        window.location.href = dispatch_url
+      }else{
+
+          loadPopup('printers');
+
+      }
+}
+
 
 function loadPopup(id){
         $("#shield").show()
@@ -134,11 +152,11 @@ function getCases() {
       <% @statuses.each {|s|%>
         status = "<%= s%>";
       <% } %>
-      url = ("/add_more_open_cases_with_prev_status/"+current_page + "?status="+status+"&prev_status=<%=@prev_status%>")
+      url = ("/add_more_open_cases_with_prev_status/"+current_page + "?status="+status+"&prev_status=<%=@prev_status%>&district=<%=params[:district]%>")
   }else if(registration_type && registration_type.length > 0){
       url = ("/add_more_special_cases/"+current_page + "?registration_type="+registration_type)
   }else if(amendment && amendment.length > 0){
-      url = ("/add_more_reprint_or_amended/"+current_page)
+      url = ("/add_more_reprint_or_amended/"+current_page+"&district=<%=params[:district]%>")
   }else{
        var status = ""
       <% @statuses.each {|s|%>
@@ -148,7 +166,7 @@ function getCases() {
             status += ("|" + "<%= s.split(/\s+/).join('_')%>");
         }
       <% } %>
-      url = ("/add_more_open_cases/"+current_page + "?statuses=" + status)
+      url = ("/add_more_open_cases/"+current_page + "?statuses=" + status+"&district=<%=params[:district]%>")
   }
  
 
@@ -217,7 +235,39 @@ function getCases() {
 </style>
 <div id="containt_table">
     <h3><%= @title.humanize rescue ''%></h3>
-    <table class="table table-striped table-advance table-hover" id="cases">
+    <table style="width:100%; ">
+        <tr>
+            <th style="text-align:right;width:12%">Number of entries :</th>
+            <td style="text-align:left">
+                <select id="entries" class="form-control" onchange="changeEntryLength(this)">
+                        <option>5</option>
+                        <option>10</option>
+                        <option>20</option>
+                        <option>30</option>
+                        <option>40</option>
+                        <option>50</option>
+                </select>
+            </td>
+            <th style="text-align:right">
+                District : 
+            </th>
+            <td style="text-align:left">
+                <select id="district" class="form-control" onchange="changeDistrict(this)">
+                      <option></option>
+                      <% @districts.each do |dis| %>
+                        <option><%= dis %></option>
+                      <%end%>
+                </select>
+            </td>
+            <th style="text-align:right" >
+                Search : 
+            </th>
+            <td style="text-align:left">
+                <input type="" name="search" id="search" class="form-control" onkeyup="filter(this)" >
+            </td>
+        </tr>
+    </table>
+    <table style="border-top: 1px solid grey;margin-top:1em" class="table table-striped table-advance table-hover" id="cases">
     <thead>
       <tr>
         <th><i class=""></i> DRN</th>
@@ -240,7 +290,11 @@ function getCases() {
 <div style=" height:30px;width: 100%;padding: 1%;background: #ffffff;box-shadow: 1.0px 1.0px 0.5px #adaba8;border-bottom: 2px solid darkgoldenrod;margin-bottom:1%">
     
 </div>
-<button id="print_btn" class="btn btn-success pull-right hidden " onclick="loadPopup('printers')">Print Selected</button>
+<% if @dispatch.present? && @dispatch %>
+    <button id="print_btn" class="btn btn-success pull-right hidden " onclick="loadPopup('printers')">Dispatch Selected</button>
+<%else%>
+  <button id="print_btn" class="btn btn-success pull-right hidden " onclick="loadPopup('printers')">Print Selected</button>
+<%end%>
 
 <div id="shield">
   <div class="" id="printers">
@@ -269,7 +323,11 @@ function getCases() {
               </table>
             </div>
             <div class="modal-footer">
+            <% if @dispatch.present? && @dispatch %>
+              <button type="button" class="btn btn-primary" onclick="dispatchSelected()" >Dispatch</button>
+            <%else%>
               <button type="button" class="btn btn-primary" onclick="printSelected()" > Print </button>
+            <%end%>
               <button type="button" class="btn btn-default" onclick="__$('printers').style.display = 'none';hideModal()" > Close</button>
             </div>
           </div>
@@ -308,11 +366,15 @@ function getCases() {
 function initDataTable(){        
   try {  
      dataTable = $('#cases').dataTable({
-                  "pageLength": 6,
+                  "pageLength": 5,
                   "autoWidth": true,
                   "lengthChange": true,
                   "order": [[ 1, "asc" ]]
                 });
+     if (dataTable) {
+        __$("cases_length").style.display ="none"
+        __$("cases_filter").style.display ="none"
+     }
   }catch(e){
     alert(e);
   }
@@ -338,4 +400,19 @@ function initDataTable(){
 }
 
 setTimeout(initDataTable(), 2000);
+
+function filter(element){
+    console.log(element.value)
+    dataTable.fnFilter(element.value);
+}
+
+
+function changeEntryLength(element){
+  dataTable.api().page.len(element.value).draw();
+}
+
+function changeDistrict(element){
+    var  pathname = window.location.pathname
+    window.location.href = pathname+"?district="+element.value
+}
 </script>

@@ -51,6 +51,15 @@ class PersonRecordStatus < CouchRest::Model::Base
 	                    	emit(doc['status'], 1);
 	                  }
 	                }"
+
+	    view :by_district_code_and_record_status,
+	    			 :map => "function(doc) {
+	                  if (doc['type'] == 'PersonRecordStatus' && doc['voided'] == false) {
+
+	                    	emit([doc['district_code'],doc['status']], 1);
+	                  }
+	                }"
+	                
 	    view :by_marked_for_approval,
 	    		:map =>"function(doc){
 		    			   if (doc['type'] == 'PersonRecordStatus' && doc['voided'] == false && doc['status']=='MARKED APPROVAL'){

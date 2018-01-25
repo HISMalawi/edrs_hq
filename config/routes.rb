@@ -128,6 +128,12 @@ Rails.application.routes.draw do
 
   get 'hq/do_print_these'
 
+  post 'hq/do_dispatch_these'
+
+  get 'hq/do_dispatch_these'
+
+  get 'hq/dispatch_preview'
+
   get 'hq/death_certificate_preview'
 
   get '/facilities' => "hq#facilities"
