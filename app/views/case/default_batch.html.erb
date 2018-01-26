@@ -1,7 +1,8 @@
 <script>
 var dataTable = null;
-var prev_status = "<%=@prev_status%>"
+var prev_statuses = "<%=@prev_statuses.join('|') rescue ''%>"
 var registration_type ="<%= params[:registration_type] rescue '' %>"
+var district = "<%= params[:district].present? ? params[:district] : '' %>"
 var amendment = "<%=@amendment rescue ''%>";
 function __$(id){
         return document.getElementById(id);
@@ -24,8 +25,20 @@ var selected = {}
 var printer = ""
 function checkRecord(element){
       if(eval(element.checked)){
+        <%if @dispatch.present? && @dispatch %>
+            if(district.length > 0){
+                selected[element.id] = true
+                $("#print_btn").removeClass("hidden")
+            }else{
+              element.checked = false;
+              loadPopup('messagebox');
+              __$("title").innerHTML = "District not selected"
+              __$("message").innerHTML = "Please select district to proceed!"
+            }
+        <%else%>
             selected[element.id] = true
             $("#print_btn").removeClass("hidden")
+        <%end%>
       }else{
           delete selected[element.id];
           if(Object.keys(selected).length == 0){
@@ -63,11 +76,16 @@ function dispatchSelected(){
       if(printer.length > 0){
         var dispatch_url =  "hq/do_dispatch_these?printer_name="+printer
         var ids = Object.keys(selected);
-        for(var i = 0 ; i <ids.length ; i++){
-           dispatch_url = dispatch_url + "&selected[]="+ids[i]
-        }
-
-        window.location.href = dispatch_url
+        $.ajax({
+              url: dispatch_url,
+              data: {
+                    ids: ids,
+                    district: district
+              },
+              success: function(result){
+                  console.log(results);
+              }
+        })
       }else{
 
           loadPopup('printers');
@@ -147,12 +165,9 @@ function getCases() {
   } 
 
   var url ="";                                                                  
-  if(prev_status && prev_status.length > 0){
-      var status = "";
-      <% @statuses.each {|s|%>
-        status = "<%= s%>";
-      <% } %>
-      url = ("/add_more_open_cases_with_prev_status/"+current_page + "?status="+status+"&prev_status=<%=@prev_status%>&district=<%=params[:district]%>")
+  if(prev_statuses && prev_statuses.length > 0){
+      console.log(prev_statuses);
+      url = ("/add_more_open_cases_with_prev_status/"+current_page + "?statuses=<%=@statuses.join('|') rescue ''%>&prev_statuses=<%=@prev_statuses.join('|') rescue ''%>&district=<%=params[:district]%>")
   }else if(registration_type && registration_type.length > 0){
       url = ("/add_more_special_cases/"+current_page + "?registration_type="+registration_type)
   }else if(amendment && amendment.length > 0){
@@ -232,6 +247,14 @@ function getCases() {
     .modal-dialog{
       margin-top:10%; 
     }
+
+    #messagebox, #printers{
+      position : absolute;
+      left: 30%;
+      top: 13.5%;
+      display: none;
+      z-index: 4000
+  }
 </style>
 <div id="containt_table">
     <h3><%= @title.humanize rescue ''%></h3>
@@ -249,7 +272,7 @@ function getCases() {
                 </select>
             </td>
             <th style="text-align:right">
-                District : 
+                District Registered : 
             </th>
             <td style="text-align:left">
                 <select id="district" class="form-control" onchange="changeDistrict(this)">
@@ -335,7 +358,7 @@ function getCases() {
       </div>
     </div>
   </div>
-  <div id="messagebox" class="messagebox hidden" >
+  <div id="messagebox" class="messagebox" >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header btn-primary" >
@@ -352,8 +375,8 @@ function getCases() {
                   Message...
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-default pull-left" onclick="$('#shield').css('display','none');$('#messagebox').css('display', 'none')" > Close</button>
-                <button id="finish" class="btn btn-success pull-right" onclick="hideMessage()">Finish</button>
+                <button type="button" class="btn btn-default pull-left hidden" onclick="$('#shield').css('display','none');$('#messagebox').css('display', 'none')" > Close</button>
+                <button id="finish" class="btn btn-success pull-right" onclick="$('#shield').css('display','none');$('#messagebox').css('display', 'none')">Ok</button>
               </div>
             </div>
           </div>
@@ -374,6 +397,7 @@ function initDataTable(){
      if (dataTable) {
         __$("cases_length").style.display ="none"
         __$("cases_filter").style.display ="none"
+        __$("district").value = "<%= params[:district].present? ? params[:district] : '' %>"
      }
   }catch(e){
     alert(e);

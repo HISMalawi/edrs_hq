@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   #protect_from_forgery	
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
 
-  before_filter :check_user,:check_database, :except => ['login', 'logout', 'death_certificate']
+  before_filter :check_user,:check_database, :except => ['login', 'logout', 'death_certificate','dispatch_preview']
   
   def has_role(role)
     current_user.activities_by_level("HQ").include?(role.strip)

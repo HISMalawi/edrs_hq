@@ -1,4 +1,5 @@
 class CaseController < ApplicationController
+  before_filter :get_districts
   def open
     @title = "Open Cases"
     @statuses = ["HQ ACTIVE"]
@@ -137,6 +138,12 @@ class CaseController < ApplicationController
   def approve_for_printing
     @title = "Approve for Printing"
     @statuses = ["HQ COMPLETE"]
+    @districts = []
+    District.all.each do |d| 
+      next if d.name.blank?
+      next if d.name.include?("City")
+      @districts << d.name 
+    end
     @page = 1
     session[:return_url] = request.path
 
@@ -198,9 +205,17 @@ class CaseController < ApplicationController
 
   def approved_for_print_marked_incomplete
     @title = "Marked incomplete but approved for print"
-    @prev_status = "HQ INCOMPLETE"
-    @status = "HQ CAN PRINT"
+
+    @prev_statuses = ["HQ INCOMPLETE"]
     @statuses = ["HQ CAN PRINT"]
+
+    @districts = []
+    District.all.each do |d| 
+      next if d.name.blank?
+      next if d.name.include?("City")
+      @districts << d.name 
+    end
+
     @page = 1
     session[:return_url] = request.path
 
@@ -397,8 +412,8 @@ class CaseController < ApplicationController
 
   def printed_amended_or_reprint
     @title = "Reprinted and amended Certificates"
-    @statuses = ["DC REPRINT"]
-    @amendment = "AMENDED"
+    @prev_statuses = ["HQ AMEND","HQ DAMAGED","HQ LOST"]
+    @statuses = ["HQ CAN PRINT","HQ DISPATCHED"]
     @page = 1
     session[:return_url] = request.path
 
@@ -441,8 +456,11 @@ class CaseController < ApplicationController
 
   def more_open_cases_with_prev_status
 
+
       sql = "SELECT c.person_record_id FROM person_record_status c INNER JOIN person_record_status p ON p.person_record_id = c.person_record_id
-             WHERE c.status = '#{params[:status]}' AND p.status='#{params[:prev_status]}' LIMIT 40 OFFSET #{(params[:page_number].to_i - 1) * 40}"
+             WHERE c.status IN ('#{params[:statuses].split('|').join("','")}') AND p.status IN ('#{params[:prev_statuses].split('|').join("','")}') AND p.voided = 1 
+             LIMIT 40 OFFSET #{(params[:page_number].to_i - 1) * 40}"
+
       connection = ActiveRecord::Base.connection
       data = connection.select_all(sql).as_json
 
@@ -481,7 +499,7 @@ class CaseController < ApplicationController
                  place_of_death  = person.other_place_of_death;
 
       elsif person.place_of_death  && person.place_of_death =="Home"
-                # place_of_death  = person.place_of_death_district +" " + person.place_of_death_ta + " "+  person.place_of_death_village;
+                place_of_death  =  "#{person.place_of_death_district} #{ person.place_of_death_ta} #{ person.place_of_death_village}"
 
       end
 
@@ -688,5 +706,14 @@ class CaseController < ApplicationController
                       status: (person.status),
                       nationality: person.nationality
                      }
+  end
+
+  def get_districts
+    @districts = []
+    District.all.each do |d| 
+      next if d.name.blank?
+      next if d.name.include?("City")
+      @districts << d.name 
+    end
   end
 end

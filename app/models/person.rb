@@ -40,6 +40,8 @@ class Person < CouchRest::Model::Base
 
   cattr_accessor :duplicate
   
+  cattr_accessor :dispatch
+
   def decrypt_data
     encryptable = ["first_name","last_name",
                    "middle_name","last_name",

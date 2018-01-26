@@ -132,7 +132,7 @@ Rails.application.routes.draw do
 
   get 'hq/do_dispatch_these'
 
-  get 'hq/dispatch_preview'
+  get '/dispatch_preview' => "hq#dispatch_preview"
 
   get 'hq/death_certificate_preview'
 

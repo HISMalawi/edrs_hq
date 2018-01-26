@@ -1,8 +1,16 @@
 <script>
 var dataTable = null;
-var prev_status = "<%=@prev_status%>"
+var prev_statuses = "<%=@prev_statuses.join('|') rescue ''%>";
 var registration_type ="<%= params[:registration_type] rescue '' %>"
 var amendment = "<%=@amendment rescue ''%>";
+
+function __$(id){
+        return document.getElementById(id);
+}
+
+function ___$(clas){
+        return document.getElementsByClassName(clas)[0];
+}
 
 function addRows(data, skip_parse) {
   if (skip_parse == true){
@@ -76,12 +84,8 @@ function getCases() {
   } 
 
   var url ="";                                                                  
-  if(prev_status && prev_status.length > 0){
-      var status = "";
-      <% @statuses.each {|s|%>
-        status = "<%= s%>";
-      <% } %>
-      url = ("/add_more_open_cases_with_prev_status/"+current_page + "?status="+status+"&prev_status=<%=@prev_status%>")
+  if(prev_statuses && prev_statuses.length > 0){
+      url = ("/add_more_open_cases_with_prev_status/"+current_page + "?statuses=<%=@statuses.join('|') rescue ''%>&prev_statuses=<%=@prev_statuses.join('|') rescue ''%>&district=<%=params[:district]%>")
   }else if(registration_type && registration_type.length > 0){
       url = ("/add_more_special_cases/"+current_page + "?registration_type="+registration_type)
   }else if(amendment && amendment.length > 0){
@@ -153,6 +157,38 @@ function getCases() {
 </style>
 <div id="containt_table">
     <h3><%= @title.humanize rescue ''%></h3>
+    <table style="width:100%; ">
+        <tr>
+            <th style="text-align:right;width:12%">Number of entries :</th>
+            <td style="text-align:left">
+                <select id="entries" class="form-control" onchange="changeEntryLength(this)">
+                        <option>5</option>
+                        <option>10</option>
+                        <option>20</option>
+                        <option>30</option>
+                        <option>40</option>
+                        <option>50</option>
+                </select>
+            </td>
+            <th style="text-align:right">
+                District : 
+            </th>
+            <td style="text-align:left">
+                <select id="district" class="form-control" onchange="changeDistrict(this)">
+                      <option></option>
+                      <% @districts.each do |dis| %>
+                        <option><%= dis %></option>
+                      <%end%>
+                </select>
+            </td>
+            <th style="text-align:right" >
+                Search : 
+            </th>
+            <td style="text-align:left">
+                <input type="" name="search" id="search" class="form-control" onkeyup="filter(this)" >
+            </td>
+        </tr>
+    </table>
     <table class="table table-striped table-advance table-hover" id="cases">
     <thead>
       <tr>
@@ -178,12 +214,17 @@ function getCases() {
 
 function initDataTable(){        
   try {  
-    dataTable = $('#cases').dataTable({
+      dataTable = $('#cases').dataTable({
                   "pageLength": 7,
                   "autoWidth": true,
                   "lengthChange": true,
                   "order": [[ 0, "asc" ]]
                 });
+      if (dataTable) {
+        __$("cases_length").style.display ="none"
+        __$("cases_filter").style.display ="none"
+        __$("district").value = "<%= params[:district].present? ? params[:district] : '' %>"
+      }
   }catch(e){
     alert(e);
   }
@@ -209,4 +250,20 @@ function initDataTable(){
 }
 
 setTimeout(initDataTable(), 2000);
+
+function filter(element){
+    console.log(element.value)
+    dataTable.fnFilter(element.value);
+}
+
+
+function changeEntryLength(element){
+  dataTable.api().page.len(element.value).draw();
+}
+
+function changeDistrict(element){
+    var  pathname = window.location.pathname
+    window.location.href = pathname+"?district="+element.value
+}
+
 </script>

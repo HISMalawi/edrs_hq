@@ -305,11 +305,79 @@ class HqController < ApplicationController
   end
 
   def do_dispatch_these
-    raise params.inspect
+    Person.dispatch = params[:ids]
+
+    print_url ="/dispatch_preview"
+
+    output_file = "#{CONFIG['certificates_path']}Dispatched_#{Time.now.to_s.gsub(' ','_')}.pdf"
+
+   
+
+    input_url = "#{CONFIG["protocol"]}://#{request.env["SERVER_NAME"]}:#{request.env["SERVER_PORT"]}/dispatch_preview"
+
+    t4 = Thread.new {
+
+        PDFKit.new(input_url, :page_size => 'A4').to_file(output_file)
+
+        sleep(4)
+
+        Kernel.system "lp -d #{params[:printer_name]} #{output_file}\n"
+
+        sleep(5)
+        
+    }
+
+    sleep(1)
+    
+    render :text =>"print"
   end
 
   def dispatch_preview
-     render :layout =>"false"
+
+      @data = []
+      @district = params[:district]
+      Person.dispatch.each do |id|
+        person = Person.find(id)
+        place_of_death = ""
+
+        case person.place_of_death
+        when "Home"
+            place_of_death = "#{person.place_of_death_district} #{person.place_of_death_ta} #{person.place_of_death_village}"
+        when "Health Facility"
+            place_of_death = "#{person.hospital_of_death rescue ''}"
+        else  
+            place_of_death = "#{person.other_place_of_death}"
+        end
+
+        if person.place_of_death && person.place_of_death.strip.downcase.include?("facility")
+                 place_of_death  = person.hospital_of_death;
+        elsif person.place_of_death_foreign && person.place_of_death_foreign.strip.downcase.include?("facility")
+                   place_of_death  = person.place_of_death_foreign_hospital
+        elsif person.place_of_death_foreign && person.place_of_death_foreign.strip !="facility"
+                   place_of_death  = (person.place_of_death_foreign_state rescue "") +" " 
+                    + (person.place_of_death_foreign_district rescue  "" ) + " "+ 
+                     ( person.place_of_death_foreign_village  rescue "");
+
+        elsif person.place_of_death  && person.place_of_death =="Other"
+                   place_of_death  = person.other_place_of_death;
+
+        elsif person.place_of_death  && person.place_of_death =="Home"
+                  #place_of_death  =  "#{person.place_of_death_district} #{ person.place_of_death_ta} #{ person.place_of_death_village}"
+
+        end
+        @data << {
+            'name'                => "#{person.first_name} #{person.middle_name rescue ''} #{person.last_name}".squish,
+            'drn'                 => person.drn,
+            'den'                 => person.den,
+            'dob'                 => person.birthdate.to_date.strftime('%d/%b/%Y'),
+            'dod'                 => person.date_of_death.to_date.strftime('%d/%b/%Y'),
+            'sex'                 => person.gender,
+            'place_of_death'      => place_of_death,
+            'date_registered'     => (person.created_at.to_date.strftime('%d/%b/%Y') rescue nil)
+        }
+      end
+
+      render :layout => false
   end
   
   def print_certificates
