@@ -143,6 +143,21 @@ class Report < ActiveRecord::Base
 	    	end
 		end
 
+		age_estimate = {}
+		["Yes","No"].each do |response|
+			mapped = {"Yes" => 1, "No" => 0}
+			age_estimate[response]  = {} 
+
+			gender.each do |g|
+	    		query = "SELECT count(*) as total, gender , status, person_record_status.created_at , person_record_status.updated_at 
+	    				 FROM people INNER JOIN person_record_status ON people.person_id  = person_record_status.person_record_id
+					 	 WHERE status = '#{status}' AND gender='#{g}' #{district_query}
+					 	 AND person_record_status.created_at >= '#{start_date}' AND person_record_status.created_at <='#{end_date}' 
+	    				 AND people.birthdate_estimated = '#{mapped[response]}'"
+				age_estimate[response][g] = connection.select_all(query).as_json.last['total'] rescue 0
+			end
+		end
+
 		places = {}
 		["Home","Health Facility", "Other"].each do |place|
 			places[place] = {}
@@ -166,6 +181,7 @@ class Report < ActiveRecord::Base
 		data = {
 				"Registration Type" => reg_type,
 				"Delayed Registration"=> delayed,
+				"Age Estimated"=> age_estimate,
 				"Place of Death" => places,
 				"#{status}" => total }
 
