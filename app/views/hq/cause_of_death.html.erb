@@ -481,7 +481,7 @@
           <div id="cause_of_death_check" class="container custom">
             <div class="form-group">
               <div class="col-lg-12 col-md-12">
-                      <label for="cause_of_death_available">Has the form been completed? </label>
+                      <label for="cause_of_death_available">Has section 2 of the form been completed? </label>
                       <div id="form_completed_yes_radio" class="radio radio-primary" onmousedown="">
                           <input type="radio" name="cause_of_death_available" id="radioY">
                           <label for="radioY">Yes</label>
@@ -880,7 +880,7 @@
                              </thead>
                       </table>
                 <div class="form-group">
-                  <label for="icd_10_code">Final ICD-10 Code</label>
+                  <label for="icd_10_code">Tentantive ICD-10 Code</label>
                   <input name="icd_10_code" id="icd_10_code" value="<%= @person.icd_10_code%>" class="form-control" type="text" />
               </div>
 
@@ -1567,7 +1567,7 @@
         }
 
         function activateICDValidate(element){
-              element.setAttribute("onblur","validateIDC10(this)");
+              element.setAttribute("onblur","validateIDC10(this);setUnderlyingCause(this)");
         }
 
         function validateMCMNumber(element){
@@ -1593,6 +1593,12 @@
         function acivateMCMValidation(element){
              presetValue(element,'MCM/')
              element.setAttribute("onblur","validateMCMNumber(this)");
+        }
+
+        function setUnderlyingCause(element){
+            if (element.value.length > 0 ) {
+                __$("icd_10_code").value  = element.value
+            }
         }
 
         $(document).ready(function(){

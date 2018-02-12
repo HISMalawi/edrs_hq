@@ -347,6 +347,22 @@ Person.count rescue nil
 
 `rake edrs:build_mysql`
 
+ActiveRecord::Schema.define(version: 0) do
+      create_table "name_directory", primary_key: "name_directory_id", force: :cascade do |t|
+        t.string   "name",        limit: 45,                  null: false
+        t.string   "soundex",        limit: 10,                  null: false
+        t.datetime "created_at", :default => Time.now
+        t.datetime "updated_at", :default => Time.now
+      end
+
+      add_index "name_directory", ["soundex"], name: "name_directory_sondex", using: :btree
+      add_index "name_directory", ["name"], name: "name_directory_UNIQUE", unique: true, using: :btree
+end
+
+puts "Loading directory names"
+
+SimpleSQL.load_dump("#{Rails.root}/db/directory.sql");
+
 LoadMysql.load_mysql = true
 
 couch_sequence = "CREATE TABLE couchdb_sequence (couchdb_sequence_id int(11) NOT NULL AUTO_INCREMENT,seq bigint(20) NOT NULL, PRIMARY KEY (couchdb_sequence_id));"

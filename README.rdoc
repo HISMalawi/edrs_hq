@@ -10,13 +10,14 @@ Things you may want to cover:
 
 * System dependencies
 	* install couchDB >= 1.6.1
-	* install MySQL  >= 5.4
+	* install MySQL  >= 5.5.0
 	* install Elasticsearch
 
+
 * Configuration
-	* copy couchdb.yml.example to couchdb.yml
-	* copy mysql_connection.yml.example to mysql_connection.yml
-	* copy secrets.yml.example to secrets.yml
+	* copy couchdb.yml.example to couchdb.yml and edit accordingly
+	* copy database.yml.example to database.yml and edit accordingly
+	* copy secrets.yml.example to secrets.yml and edit accordingly
 
 * Setting up application 
 	* bundle install --local
