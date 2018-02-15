@@ -217,6 +217,9 @@ class HqController < ApplicationController
    
     @person = Person.find(params[:id])
 
+
+    @place_of_death = place_of_death(@person)
+
     @drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([@person.id, "DEATH REGISTRATION NUMBER"]).last.identifier
     @den = PersonIdentifier.by_person_record_id_and_identifier_type.key([@person.id, "DEATH ENTRY NUMBER"]).last.identifier
 
@@ -232,18 +235,23 @@ class HqController < ApplicationController
       process = Process.fork{`bin/generate_barcode #{@drn} #{@person.id} #{CONFIG['barcodes_path']}`}
       Process.detach(process)
       sleep(0.5)
+
     end
 
     #sleep(0.5)
 
-    @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
-
-    render :layout => false, :template => 'hq/death_certificate'
-
+    if File.exists?("#{CONFIG['barcodes_path']}#{@person.id}.png")
+      @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
+      render :layout => false, :template => 'hq/death_certificate'
+    else
+      @barcode = nil
+      redirect_to request.fullpath
+    end
   end
   
   def death_certificate
     @person = Person.find(params[:id])
+    @place_of_death = place_of_death(@person)
     @drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([@person.id, "DEATH REGISTRATION NUMBER"]).last.identifier
     @den = PersonIdentifier.by_person_record_id_and_identifier_type.key([@person.id, "DEATH ENTRY NUMBER"]).last.identifier
     @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil

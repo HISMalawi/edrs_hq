@@ -172,25 +172,7 @@
             Place of Death
           </td>
           <td align="left">
-            <%
-                place_of_death = ""
-
-               case @person["place_of_death"]
-                 when "Home"
-                    place_of_death = "#{@person.place_of_death_village}#{(!@person.place_of_death_village.blank? ?
-                            ", " : "")}#{@person.place_of_death_ta}#{(!@person.place_of_death_ta.blank? ?
-                            ", " : "")}#{@person.place_of_death_district}"
-
-                 when "Health Facility"
-
-                    place_of_death = "#{@person.hospital_of_death}"
-
-                 when "Other"
-                    place_of_death = "#{@person.other_place_of_death} " + @person.place_of_death_district
-
-                 end
-            %>
-            <%= place_of_death %>
+            <%= @place_of_death %>
           </td>
         </tr>
         <% if @person[:mother_last_name].present? && @person[:mother_first_name].present? %>

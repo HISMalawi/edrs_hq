@@ -641,6 +641,7 @@ class CaseController < ApplicationController
           record["father_middle_name"] = (@person.father_middle_name rescue nil)
           record["father_first_name"] = (@person.father_first_name rescue nil)
           record["id"] = @person.id
+          record["district_code"] = @person.district_code
           SimpleElasticSearch.add(record)
 
           if @person.status =="HQ POTENTIAL DUPLICATE TBA"
@@ -693,6 +694,7 @@ class CaseController < ApplicationController
             }
     end
 
+    @place_of_death = place_of_death(@person)
     @available_printers = YAML.load_file("#{Rails.root}/config/couchdb.yml")[Rails.env]['printer_name'].split(',') rescue []
     
     @tasks = ActionMatrix.read(@current_user.role, @statuses)

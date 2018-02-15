@@ -464,7 +464,7 @@
 
                     <tr class="table-row">
                         <th class="table-cell"> Nationality</th>
-                        <td class="table-cell"><%= @person.nationality%></td>
+                        <td class="table-cell"><%= @person.nationality != 'Other'? @person.nationality : @person.other_nationality %></td>
                     </tr>
                     <tr class="table-row">
                       <th class="table-cell">Date of Birth</th>
@@ -483,19 +483,10 @@
 
                     <tr>
                       <th class="table-cell" >Place of death</th>
-                    <% if @person.place_of_death == 'Health Facility'%>
 
-                      <td class="table-cell"><%= @person.hospital_of_death %></td>
+                      <td class="table-cell"><%= @place_of_death %></td>
 
-                    <%elsif @person.place_of_death == 'Home'%>
-
-                       <td class="table-cell"><%= @person.place_of_death_village %> Village, TA <%= @person.place_of_death_ta%> , <%= @person.place_of_death_village%> District</td>
-
-                    <%elsif @person.place_of_death == 'Other' %>
-
-                       <td class="table-cell"><%= @person.other_place_of_death rescue '' %></td>
-
-                    <% end %>
+                    
                     </tr>
 
                     <tr class="table-row">
