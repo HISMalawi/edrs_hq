@@ -269,6 +269,15 @@ CSV.foreach("#{Rails.root}/app/assets/data/country.csv", :headers => true) do |r
   end
 
 end
+#Other Country
+ucountry = Country.by_name.key("Other").first
+if ucountry.blank?
+  ucountry = Country.new()
+  ucountry.name = "Other"
+  ucountry.save
+else
+  puts "Other Country already exists"
+end
 #Unknown Country
 ucountry = Country.by_name.key("Unknown").first
 if ucountry.blank?
@@ -293,6 +302,16 @@ CSV.foreach("#{Rails.root}/app/assets/data/nationality.txt", :headers => false) 
   end
 
 end
+#Other
+unationality = Nationality.by_nationality.key("Other").first
+if unationality.blank?
+  unationality = Nationality.new()
+  unationality.nationality = "Other"
+  unationality.save
+else
+  puts "Other Nationality already exists"
+end
+
 #Unknown 
 unationality = Nationality.by_nationality.key("Unknown").first
 if unationality.blank?

@@ -15,10 +15,8 @@ class AssignDrn
     end
     queue.each do |record|
         person = record.person
-
         PersonIdentifier.assign_drn(person, record.creator)
         #checkCreatedSync(record.id, "HQ OPEN", record.request_status)
-
         SuckerPunch.logger.info "#{record.id} => #{record.district_id_number}"
     end rescue (AssignDrn.perform_in(job_interval))
 
