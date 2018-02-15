@@ -448,9 +448,6 @@ class CaseController < ApplicationController
             cases << fields_for_data_table(person)
         end 
     end
-   
-
-
     render text: cases.to_json and return
   end
 
@@ -479,27 +476,97 @@ class CaseController < ApplicationController
 
       case person.place_of_death
       when "Home"
-          place_of_death = "#{person.place_of_death_district} #{person.place_of_death_ta} #{person.place_of_death_village}"
+          if person.place_of_death_village.present? && person.place_of_death_village.to_s.length > 0
+              place_of_death = person.place_of_death_village
+          end
+          if person.place_of_death_ta.present? && person.place_of_death_ta.to_s.length > 0
+              place_of_death = "#{place_of_death},#{person.place_of_death_district}"
+          end
+          if person.place_of_death_district.present? && person.place_of_death_district.to_s.length > 0
+              place_of_death = "#{place_of_death},#{person.place_of_death_district}"
+          end
       when "Health Facility"
-          place_of_death = "#{person.hospital_of_death rescue ''}"
+          place_of_death = "#{person.hospital_of_death}, #{person.place_of_death_district}"
       else  
-          place_of_death = "#{person.other_place_of_death}"
+          place_of_death = "#{person.other_place_of_death}, #{person.place_of_death_district}"
       end
 
       if person.place_of_death && person.place_of_death.strip.downcase.include?("facility")
-                 place_of_death  = person.hospital_of_death;
+                 place_of_death = "#{person.hospital_of_death}, #{person.place_of_death_district}"
       elsif person.place_of_death_foreign && person.place_of_death_foreign.strip.downcase.include?("facility")
-                 place_of_death  = person.place_of_death_foreign_hospital
-      elsif person.place_of_death_foreign && person.place_of_death_foreign.strip !="facility"
-                 place_of_death  = (person.place_of_death_foreign_state rescue "") +" " 
-                  + (person.place_of_death_foreign_district rescue  "" ) + " "+ 
-                   ( person.place_of_death_foreign_village  rescue "");
+             if person.place_of_death_foreign_hospital.present? && person.place_of_death_foreign_hospital.to_s.length > 0
+                place_of_death  = person.place_of_death_foreign_hospital
+             end
+              
+             if person.place_of_death_country.present? && person.place_of_death_country.to_s.length > 0
+                if person.place_of_death_country == "Other"
+                  place_of_death = "#{place_of_death},#{person.other_place_of_death_country}"
+                else
+                  place_of_death = "#{place_of_death},#{person.place_of_death_country}"
+                end
+                 
+             end
+      elsif person.place_of_death_foreign && person.place_of_death_foreign.strip =="Home"
+
+              if person.place_of_death_foreign_village.present? && person.place_of_death_foreign_village.length > 0
+                 place_of_death = person.place_of_death_foreign_village
+              end
+
+              if person.place_of_death_foreign_district.present? && person.place_of_death_foreign_district.to_s.length > 0
+                 place_of_death = "#{place_of_death},#{person.place_of_death_foreign_district}"
+              end
+
+              if person.place_of_death_foreign_state.present? && person.place_of_death_foreign_state.to_s.length > 0
+                 place_of_death = "#{place_of_death},#{person.place_of_death_foreign_state}"
+              end
+
+              if person.place_of_death_country.present? && person.place_of_death_country.to_s.length > 0
+                if person.place_of_death_country == "Other"
+                  place_of_death = "#{place_of_death},#{person.other_place_of_death_country}"
+                else
+                  place_of_death = "#{place_of_death},#{person.place_of_death_country}"
+                end
+                 
+              end
+        elsif person.place_of_death_foreign && person.place_of_death_foreign.strip =="Other"
+               if person.other_place_of_death.present? && person.person.other_place_of_death.to_s.length > 0
+                 place_of_death = person.other_place_of_death
+              end
+
+              if person.place_of_death_foreign_village.present? && person.place_of_death_foreign_village.length > 0
+                 place_of_death = "#{place_of_death},#{person.place_of_death_foreign_village}"
+              end
+
+              if person.place_of_death_foreign_district.present? && person.place_of_death_foreign_district.to_s.length > 0
+                 place_of_death = "#{place_of_death},#{person.place_of_death_foreign_district}"
+              end
+
+              if person.place_of_death_foreign_state.present? && person.place_of_death_foreign_state.to_s.length > 0
+                 place_of_death = "#{place_of_death},#{person.place_of_death_foreign_state}"
+              end
+
+              if person.place_of_death_country.present? && person.place_of_death_country.to_s.length > 0
+                if person.place_of_death_country == "Other"
+                  place_of_death = "#{place_of_death},#{person.other_place_of_death_country}"
+                else
+                  place_of_death = "#{place_of_death},#{person.place_of_death_country}"
+                end
+                 
+              end
 
       elsif person.place_of_death  && person.place_of_death =="Other"
                  place_of_death  = person.other_place_of_death;
 
       elsif person.place_of_death  && person.place_of_death =="Home"
-                place_of_death  =  "#{person.place_of_death_district} #{ person.place_of_death_ta} #{ person.place_of_death_village}"
+          if person.place_of_death_village.present? && person.place_of_death_village.to_s.length > 0
+              place_of_death = person.place_of_death_village
+          end
+          if person.place_of_death_ta.present? && person.place_of_death_ta.to_s.length > 0
+              place_of_death = "#{place_of_death},#{person.place_of_death_district}"
+          end
+          if person.place_of_death_district.present? && person.place_of_death_district.to_s.length > 0
+              place_of_death = "#{place_of_death},#{person.place_of_death_district}"
+          end
 
       end
 
