@@ -463,6 +463,7 @@ class Person < CouchRest::Model::Base
   property :nationality_id, String
   property :nationality, String
   property :other_nationality, String
+  property :place_of_registration, String
   property :place_of_death, String
   property :hospital_of_death_id, String
   property :hospital_of_death, String
@@ -554,8 +555,9 @@ class Person < CouchRest::Model::Base
   property :court_order, String, :default => "No"
   property :court_order_number, String 
   property :police_report, String, :default => "No"
-  property :police_report_number, String
-  property :commissioner_documents, String, :default => "No"
+  property :police_report_details, String
+  property :reason_police_report_not_available, String
+  property :proof_of_death_abroad, String, :default => "No"
 
   #Person's mother properties
   #property :mother do
