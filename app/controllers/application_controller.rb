@@ -169,7 +169,7 @@ class ApplicationController < ActionController::Base
               place_of_death = person.place_of_death_village
           end
           if person.place_of_death_ta.present? && person.place_of_death_ta.to_s.length > 0
-              place_of_death = "#{place_of_death},#{person.place_of_death_district}"
+              place_of_death = "#{place_of_death},#{person.place_of_death_ta}"
           end
           if person.place_of_death_district.present? && person.place_of_death_district.to_s.length > 0
               place_of_death = "#{place_of_death},#{person.place_of_death_district}"
@@ -251,7 +251,7 @@ class ApplicationController < ActionController::Base
               place_of_death = person.place_of_death_village
           end
           if person.place_of_death_ta.present? && person.place_of_death_ta.to_s.length > 0
-              place_of_death = "#{place_of_death},#{person.place_of_death_district}"
+              place_of_death = "#{place_of_death},#{person.place_of_death_ta}"
           end
           if person.place_of_death_district.present? && person.place_of_death_district.to_s.length > 0
               place_of_death = "#{place_of_death},#{person.place_of_death_district}"
