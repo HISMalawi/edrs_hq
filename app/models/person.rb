@@ -702,6 +702,7 @@ class Person < CouchRest::Model::Base
   property :informant_signed, String
   property :informant_signature_date, Date
   property :informant_designation, String
+  property :informant_employment_number, String 
   property :informant_office_name,String
   property :informant_office_address, String
   #end
