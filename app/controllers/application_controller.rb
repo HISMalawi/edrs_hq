@@ -218,7 +218,7 @@ class ApplicationController < ActionController::Base
                  
               end
         elsif person.place_of_death_foreign && person.place_of_death_foreign.strip =="Other"
-               if person.other_place_of_death.present? && person.person.other_place_of_death.to_s.length > 0
+               if person.other_place_of_death.present? && person.other_place_of_death.to_s.length > 0
                  place_of_death = person.other_place_of_death
               end
 
@@ -259,6 +259,19 @@ class ApplicationController < ActionController::Base
 
     end
     return place_of_death 
+  end
+
+  def write_file(file, content)
+    if !File.exists?(file)
+        File.new(file, 'w')
+        File.open(file, 'w') do |f|
+            f.puts "#{content}"
+        end
+    else
+         File.open(file, 'w') do |f|
+            f.puts "#{content}"
+        end
+    end
   end
 
   protected

@@ -386,7 +386,7 @@
             cancel_url = "/" if (!cancel_url.match('case/') rescue true)
           %>
 
-          <div onclick= "window.parent.location = '<%= cancel_url%>' " class="dynamic-button btn btn-small btn-default pull-left btn-danger"><span>Cancel</span></div>
+          <div onclick= "window.parent.location = '<%= params[:next_url].present? ? params[:next_url] : '/' %>' " class="dynamic-button btn btn-small btn-default pull-left btn-primary"><span>Back</span></div>
           <% @tasks.each do |task|
             onclick = ''
 

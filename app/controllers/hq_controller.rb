@@ -313,7 +313,9 @@ class HqController < ApplicationController
   end
 
   def do_dispatch_these
-    Person.dispatch = params[:ids]
+
+
+    write_file("#{Rails.root}/tmp/dispatch.txt", params[:ids].join(",").to_s)
 
     print_url ="/dispatch_preview"
 
@@ -325,7 +327,7 @@ class HqController < ApplicationController
 
     t4 = Thread.new {
 
-        PDFKit.new(input_url, :page_size => 'A4').to_file(output_file)
+        PDFKit.new(input_url, :page_size => 'A4',:orientation => 'Landscape').to_file(output_file)
 
         sleep(4)
 
@@ -344,35 +346,12 @@ class HqController < ApplicationController
 
       @data = []
       @district = params[:district]
-      Person.dispatch.each do |id|
-        person = Person.find(id)
-        place_of_death = ""
 
-        case person.place_of_death
-        when "Home"
-            place_of_death = "#{person.place_of_death_district} #{person.place_of_death_ta} #{person.place_of_death_village}"
-        when "Health Facility"
-            place_of_death = "#{person.hospital_of_death rescue ''}"
-        else  
-            place_of_death = "#{person.other_place_of_death}"
-        end
+      dispatch = "#{Rails.root}/tmp/dispatch.txt"
 
-        if person.place_of_death && person.place_of_death.strip.downcase.include?("facility")
-                 place_of_death  = person.hospital_of_death;
-        elsif person.place_of_death_foreign && person.place_of_death_foreign.strip.downcase.include?("facility")
-                   place_of_death  = person.place_of_death_foreign_hospital
-        elsif person.place_of_death_foreign && person.place_of_death_foreign.strip !="facility"
-                   place_of_death  = (person.place_of_death_foreign_state rescue "") +" " 
-                    + (person.place_of_death_foreign_district rescue  "" ) + " "+ 
-                     ( person.place_of_death_foreign_village  rescue "");
-
-        elsif person.place_of_death  && person.place_of_death =="Other"
-                   place_of_death  = person.other_place_of_death;
-
-        elsif person.place_of_death  && person.place_of_death =="Home"
-                  #place_of_death  =  "#{person.place_of_death_district} #{ person.place_of_death_ta} #{ person.place_of_death_village}"
-
-        end
+      dispatch_ids = File.open(dispatch) { |f| f.read }.to_s.split(",")
+      dispatch_ids.each do |id|
+        person = Person.find(id.gsub("\n",""))
         @data << {
             'name'                => "#{person.first_name} #{person.middle_name rescue ''} #{person.last_name}".squish,
             'drn'                 => person.drn,
@@ -380,9 +359,10 @@ class HqController < ApplicationController
             'dob'                 => person.birthdate.to_date.strftime('%d/%b/%Y'),
             'dod'                 => person.date_of_death.to_date.strftime('%d/%b/%Y'),
             'sex'                 => person.gender,
-            'place_of_death'      => place_of_death,
+            'place_of_death'      => place_of_death(person),
             'date_registered'     => (person.created_at.to_date.strftime('%d/%b/%Y') rescue nil)
         }
+        PersonRecordStatus.change_status(person,"HQ DISPATCHED")
       end
 
       render :layout => false
@@ -764,30 +744,30 @@ class HqController < ApplicationController
     @tasks = []
 
     if has_role("View a record")
-      @tasks << ['Active records','Active record from DC','/open_cases','manage-cases.png']
+      @tasks << ['Active records','Active record from DC',"/open_cases?next_url=#{request.path}",'manage-cases.png']
     end
 
     if has_role("Manage incomplete records")
-      @tasks << ['Incomplete records from   DV','View incomplete cases','/incomplete_cases','']
+      @tasks << ['Incomplete records from   DV','View incomplete cases',"/incomplete_cases?next_url=#{request.path}",'']
 
     end
     
     if has_role("Reject a record")
-       @tasks << ['Conflict cases','View cases with queries','/conflict','conflict_case.png']
+       @tasks << ['Conflict cases','View cases with queries',"/conflict?next_url=#{request.path}",'conflict_case.png']
     end
 
     if has_role("View closed cases")
-      @tasks << ['View printed records','Print records','/closed_cases','lock.png']
+      @tasks << ['View printed records','Print records',"/closed_cases?next_url=#{request.path}",'lock.png']
       @tasks << ['Dispatched records','Dispatched records with an option of viewing a copy of printed certificate','/dispatched','dispatch.png']
     end
 
     if has_role("Void outstanding records")
-      @tasks << ['Void cases','Void cases','/void_cases','']
-      @tasks << ['Voided cases','View void cases','/voided_cases','']
+      @tasks << ['Void cases','Void cases',"/void_cases?next_url=#{request.path}",'']
+      @tasks << ['Voided cases','View void cases',"/voided_cases?next_url=#{request.path}",'']
     end
 
     if has_role(("Assess certificate quality"))
-      @tasks << ['Verify certificates','Verify certificates','/verify_certificates','']
+      @tasks << ['Verify certificates','Verify certificates',"/verify_certificates?next_url=#{request.path}",'']
     end
      @section ="Manage Cases"
 
@@ -796,12 +776,12 @@ class HqController < ApplicationController
   def rejected_cases_tasks
     @tasks = []
      if has_role("Manage incomplete records") 
-      @tasks << ['Approved for printing','Approved records by DM for printing that were marked as incomplete by DS','/approved_incomplete','']
-      @tasks << ['Rejected records','Incomplete records waiting to be sent to DC for editing','/rejected_cases','']
+      @tasks << ['Approved for printing','Approved records by DM for printing that were marked as incomplete by DS',"/approved_incomplete?next_url=#{request.path}",'']
+      @tasks << ['Rejected records','Incomplete records waiting to be sent to DC for editing',"/rejected_cases?next_url=#{request.path}",'']
     end
     if has_role("Reject a record")
-       @tasks << ['Approved for printing','Approved records by DM for printing that were marked as incomplete by DS','/approved_incomplete','']
-      @tasks << ['Incomplete cases','Reject record','/hq_incomplete','']
+       @tasks << ['Approved for printing','Approved records by DM for printing that were marked as incomplete by DS',"/approved_incomplete?next_url=#{request.path}",'']
+      @tasks << ['Incomplete cases','Reject record',"/hq_incomplete?next_url=#{request.path}",'']
     end
      @section ="Rejected Cases"
     render :template => "/hq/tasks"
@@ -809,11 +789,11 @@ class HqController < ApplicationController
 
   def special_cases_tasks
     @tasks = []
-    @tasks << ['Unnatural','Unnatural death record','/special_cases?registration_type=Unnatural Deaths','']
-    @tasks << ['Unclaimed bodies','Unclaimed bodies record','/special_cases?registration_type=Unclaimed bodies','']
-    @tasks << ['Missing persons','Missing persons record','/special_cases?registration_type=Missing Person','']
-    @tasks << ['Death abroad','Death abroad record','/special_cases?registration_type=Deaths Abroad','']
-    @tasks << ['Printed/Dispatched Certificates','Printed/Dispatched Certificates','','']
+    @tasks << ['Abnormal Deaths','Abnormal death records',"/special_cases?registration_type=Abnormal Deaths&next_url=#{request.path}",'']
+    @tasks << ['Unclaimed bodies','Unclaimed bodies record',"/special_cases?registration_type=Unclaimed bodies&next_url=#{request.path}",'']
+    @tasks << ['Missing persons','Missing persons record',"/special_cases?registration_type=Missing Person&next_url=#{request.path}",'']
+    @tasks << ['Death abroad','Death abroad record',"/special_cases?registration_type=Deaths Abroad&next_url=#{request.path}",'']
+    @tasks << ['Printed/Dispatched Certificates',"Printed/Dispatched Certificates?next_url=#{request.path}",'','']
     @tasks << ['Rejected special cases','Rejected special cases','','']
     @section ="Special Cases"
     render :template => "/hq/tasks"
@@ -822,13 +802,13 @@ class HqController < ApplicationController
   def duplicate_cases_tasks
      @tasks = []
      if has_role("Manage incomplete records") 
-      @tasks << ['Potential Duplicates','Records marked as potential duplicates','/potential','']
-      @tasks << ['Can Confirm Duplicates','Can be sent to DC or Voided upon DM approval','/can_confirm','']
+      @tasks << ['Potential Duplicates','Records marked as potential duplicates',"/potential?next_url=#{request.path}",'']
+      @tasks << ['Can Confirm Duplicates','Can be sent to DC or Voided upon DM approval',"/can_confirm?next_url=#{request.path}",'']
       @tasks << ['Confirmed Duplicates','Confirmed duplicates','','']
       @tasks << ['Approved for Printing','All potential duplicates that were approved and printed by DS, Option to view comments','','']
     end
     if has_role("Reject a record")
-       @tasks << ['Resolve Duplicates','Records marked as potential duplicates','/resolve_duplicates','']
+       @tasks << ['Resolve Duplicates','Records marked as potential duplicates',"/resolve_duplicates?next_url=#{request.path}",'']
        @tasks << ['Approved for Printing','All potential duplicates that were approved and printed by DS, Option to view comments','','']
     end
     @section ="Duplicate Cases"
@@ -838,12 +818,12 @@ class HqController < ApplicationController
   def amendment_cases_tasks
     @tasks = []
     if has_role("Make ammendments") || has_role("Manage duplicates")
-      @tasks << ['Lost/Damaged','All records that have been requested to be reprinted after first copy of the certificates was Lost/Damaged','/reprint_requests','']
-      @tasks << ['Amendments','All records that has under gone changes after the certificate was printed','/amendment_requests','']
+      @tasks << ['Lost/Damaged','All records that have been requested to be reprinted after first copy of the certificates was Lost/Damaged',"/reprint_requests?next_url=#{request.path}",'']
+      @tasks << ['Amendments','All records that has under gone changes after the certificate was printed',"/amendment_requests?next_url=#{request.path}",'']
       if has_role("Make ammendments")
-        @tasks << ['Rejected amended','All records that has under gone changes after the certificate was printed','/rejected_requests','']
+        @tasks << ['Rejected amended','All records that has under gone changes after the certificate was printed',"/rejected_requests?next_url=#{request.path}",'']
       end
-      @tasks << ['Printed/Dispatched Certificates','Printed/Dispatched Certificates','/printed_amended_or_reprint','']
+      @tasks << ['Printed/Dispatched Certificates','Printed/Dispatched Certificates',"/printed_amended_or_reprint?next_url=#{request.path}",'']
     end
     @section ="Re-prints and amendments"
     render :template => "/hq/tasks"
@@ -852,16 +832,16 @@ class HqController < ApplicationController
   def print_out_tasks
     @tasks = []
     if has_role("Authorise printing")
-      @tasks << ['Approve for printing','Approve for printing','/approve_for_printing','']
-      @tasks << ['Print Certificates','Print Certificates','/print','']
+      @tasks << ['Approve for printing','Approve for printing',"/approve_for_printing?next_url=#{request.path}",'']
+      @tasks << ['Print Certificates','Print Certificates',"/print?next_url=#{request.path}",'']
     end 
     if has_role("Authorise reprinting of a certificate")
-      @tasks << ['Approve re-printing','Approve for re-printing','/approve_reprint','']
+      @tasks << ['Approve re-printing','Approve for re-printing',"/approve_reprint?next_url=#{request.path}",'']
     end
      if has_role("Authorise printing")
-      @tasks << ['Re-print certificates','Re-print certificates','/re_print','']
-      @tasks << ['Dispatch print outs','View dispatched print outs','/dispatch_printouts','']
-      @tasks << ['Closed Re-printed certificates','All reprinteed records, those didn’t pass QC, option to view comments','/reprinted_certificates','']
+      @tasks << ['Re-print certificates','Re-print certificates',"/re_print?next_url=#{request.path}",'']
+      @tasks << ['Dispatch print outs','View dispatched print outs',"/dispatch_printouts?next_url=#{request.path}",'']
+      @tasks << ['Closed Re-printed certificates','All reprinteed records, those didn’t pass QC, option to view comments',"/reprinted_certificates?next_url=#{request.path}",'']
     end 
     @section ="Print out"
     render :template => "/hq/tasks"

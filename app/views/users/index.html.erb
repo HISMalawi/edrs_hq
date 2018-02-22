@@ -13,7 +13,7 @@
                 overflow-x: hidden; padding-top: 10px; border-top: 1px solid #999; border-right: 1px solid #999;
                 border-bottom: 1px solid #999; border-left: none;">
 
-          <div class="button" onclick="window.location = '<%= new_user_path %>'" tag=0>
+          <div class="button" onclick="window.location = '<%= new_user_path %>?next_url=<%= request.path %>'" tag=0>
             <table style="width: 100%">
               <tr>
                 <td align="right">

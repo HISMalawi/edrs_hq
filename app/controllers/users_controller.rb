@@ -294,11 +294,11 @@ class UsersController < ApplicationController
     end
 
     if has_role("Create User") 
-      @tasks << ['Add user','Create new user','/users/new','add_person.png']
+      @tasks << ['Add user','Create new user',"/users/new?next_url=#{request.path}",'add_person.png']
     end
 
     if has_role("View user log")
-      @tasks << ['View users','View existing users','/view_users','config-users.png']
+      @tasks << ['View users','View existing users',"/view_users?next_url=#{request.path}",'config-users.png']
       #@tasks << ['Edit users','Edit existing users','/search_user?title=Search+for+user+to+edit&cat=edit','config-users.png']
     end
 

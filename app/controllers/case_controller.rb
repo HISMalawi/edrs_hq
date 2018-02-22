@@ -529,7 +529,7 @@ class CaseController < ApplicationController
                  
               end
         elsif person.place_of_death_foreign && person.place_of_death_foreign.strip =="Other"
-               if person.other_place_of_death.present? && person.person.other_place_of_death.to_s.length > 0
+               if person.other_place_of_death.present? && person.other_place_of_death.to_s.length > 0
                  place_of_death = person.other_place_of_death
               end
 

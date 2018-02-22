@@ -83,7 +83,9 @@ function dispatchSelected(){
                     district: district
               },
               success: function(result){
-                  console.log(results);
+                  if(result){
+                     location.reload();
+                  }
               }
         })
       }else{
@@ -122,7 +124,7 @@ function addRows(data, skip_parse) {
       btn.setAttribute("value", "View");
       btn.setAttribute("class", "btn btn-info btn-small");
       btn.setAttribute("person_id", person_id);
-      btn.setAttribute("onclick", ("window.location = '/show/"  + person_id + "'"));
+      btn.setAttribute("onclick", ("window.location = '/show/"  + person_id + "?next_url=<%= request.path %>'"));
       spam.appendChild(btn);
 
       /*age = patients[i]["age"];
@@ -313,6 +315,7 @@ function getCases() {
 <div style=" height:30px;width: 100%;padding: 1%;background: #ffffff;box-shadow: 1.0px 1.0px 0.5px #adaba8;border-bottom: 2px solid darkgoldenrod;margin-bottom:1%">
     
 </div>
+<button class="btn btn-primary pull-left" onclick="window.location='<%= params[:next_url].present? ? params[:next_url] : '/' %> '">Back</button>
 <% if @dispatch.present? && @dispatch %>
     <button id="print_btn" class="btn btn-success pull-right hidden " onclick="loadPopup('printers')">Dispatch Selected</button>
 <%else%>
