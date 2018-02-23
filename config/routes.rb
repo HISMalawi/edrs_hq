@@ -106,6 +106,7 @@ Rails.application.routes.draw do
   get "/do_search" => "hq#do_search"
   get "/cause_of_death_preview" => "hq#cause_of_death_preview"
   get "/cause_of_death" => "hq#cause_of_death"
+  get "/hq/sequencing"
   get "/save_cause_of_death" => "hq#save_cause_of_death"
   get "/cause_of_death_list" => "hq#cause_of_death_list"
   get "/nocause_available/:id" => "hq#nocause_available"

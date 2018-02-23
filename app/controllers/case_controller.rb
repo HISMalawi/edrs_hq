@@ -603,7 +603,7 @@ class CaseController < ApplicationController
   def more_special_cases
      cases = []
     (Person.by_registration_type.key(params[:registration_type]).page(params[:page_number]).per(10) || []).each do |person|
-      cases << fields_for_data_table(person)
+      cases << fields_for_data_table(person) if person.den.present?
     end 
 
     render text: cases.to_json and return

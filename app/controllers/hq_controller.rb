@@ -312,6 +312,10 @@ class HqController < ApplicationController
   
   end
 
+  def sequencing
+    
+  end
+
   def do_dispatch_these
 
 
@@ -790,6 +794,7 @@ class HqController < ApplicationController
   def special_cases_tasks
     @tasks = []
     @tasks << ['Abnormal Deaths','Abnormal death records',"/special_cases?registration_type=Abnormal Deaths&next_url=#{request.path}",'']
+    @tasks << ['Dead on Arrival','Dead on Arrival',"/special_cases?registration_type=Dead on Arrival&next_url=#{request.path}",'']
     @tasks << ['Unclaimed bodies','Unclaimed bodies record',"/special_cases?registration_type=Unclaimed bodies&next_url=#{request.path}",'']
     @tasks << ['Missing persons','Missing persons record',"/special_cases?registration_type=Missing Person&next_url=#{request.path}",'']
     @tasks << ['Death abroad','Death abroad record',"/special_cases?registration_type=Deaths Abroad&next_url=#{request.path}",'']

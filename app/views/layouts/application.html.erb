@@ -283,7 +283,7 @@
                       </a>
                   </li> 
                   <%end%>
-                  <% if has_role("Manage incomplete records")  || has_role("Create User") %>
+                  <% if has_role("Manage incomplete records")  || has_role("Create User") || has_role("Reject a record")%>
                   <li class="">
                       <a href="/special_cases_tasks" class="">
                           <i class="icon_document_alt"></i>
@@ -311,7 +311,7 @@
                     <li class="">
                       <a href="/print_out_tasks" class="">
                           <i class="icon_document_alt"></i>
-                          <span>Print out</span>
+                          <span>Print Cases</span>
                       </a>
                   </li>  
                   <%end%>

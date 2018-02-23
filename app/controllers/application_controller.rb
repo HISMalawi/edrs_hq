@@ -274,6 +274,9 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def districts
+    @district = District.all.each
+  end
   protected
   def check_user
 

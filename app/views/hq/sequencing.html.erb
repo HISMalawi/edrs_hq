@@ -1,0 +1,128 @@
+<style type="text/css">
+	 #containt_table{
+	      width: 100%;
+	      padding: 1%;
+	      background: #ffffff;
+	      box-shadow: 1.0px 1.0px 0.5px #adaba8;
+	      border-top: 2px solid darkgoldenrod;
+     }
+</style>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<style>
+	  #sortable { 
+	  	list-style-type: none; 
+	  	margin: auto; 
+	  	margin-top: 0.5%;
+	  	margin-bottom: 0.5%;
+	  	padding: 0;
+	  	width: 98%;
+	 }
+	  #sortable li {
+	  		 margin: 0 3px 3px 3px; 
+	  		 padding: 0.4em; 
+	  		 padding-left: 1.5em; 
+	  		 font-size: 1.4em; 
+	  		 border: 1px solid #cac8c8;
+	  		 width: 100%;
+	  		 background: #ffffff !important;
+	  }
+	  //#sortable li span { position: absolute; margin-left: -1.3em; }
+</style>
+
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#sortable" ).sortable();
+    $( "#sortable" ).disableSelection();
+  } );
+  </script>
+<div id="containt_table">
+   <div class="row col-md-12" style="width:100%"><h3>Cause of death sequencing</h3></div>
+   <div class="row" style=" width:96%; margin:auto;margin-top:2%;margin-left:2%;background:#cee3fd">
+    	<center><i>click and drag the entries of the list to correctly position the condtions then click save when satisfied </i></center>
+		<ul id="sortable">
+		  <li>a) Diarrhea  3 hours (D23.1)<span class="fa fa-edit pull-right" data-toggle="modal" data-target="#myModal"></span></li>
+		  <li>b) Malaria 3 days (M23.1)<span class="fa fa-edit pull-right" data-toggle="modal" data-target="#myModal"></span></li>
+		  <li>c) Coughing  3 hours (C23.1) <span class="fa fa-edit pull-right" data-toggle="modal" data-target="#myModal"></span></li>
+		  <li>d) Head Injury  30 minutes (M23.1)<span class="fa fa-edit pull-right" data-toggle="modal" data-target="#myModal"></span></li>
+		  <li>e) Internal Breeding 3 days (H23.1) <span class="fa fa-edit pull-right" data-toggle="modal" data-target="#myModal"></span></li>
+		</ul>
+
+		<div style="background: #ffffff;">
+		<center>
+		<table style=" margin-top:2%">
+			<tr>
+				<td><b>Tentative ICD Code :</b></td>
+				<td> 
+					<input id="final_icd_code" class="form-control"  name="final_icd_code" value="M12.3" style="width:100px" disabled = true>
+				</td>
+				<td>
+					<span id="code_edit" style="font-size: 1.6em;" class="fa fa-edit" onclick="activateCode()"></span>
+				</td>
+			</tr>
+		</table>
+		</center>
+		</div>
+	</div>
+
+	<div class="row" style="margin-top: 1%">
+			<button class="pull-left btn btn-primary" style="margin-left: 1%">Back</button>
+			<button class="pull-right btn btn-success" style="margin-right: 1%">Save</button>
+	</div>
+</div>
+
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Edit Condition</h4>
+      </div>
+      <div class="modal-body">
+        <b>Condition</b>
+        <br/>
+        <input type="" name="" class="form-control">
+        <b>Time interval between onset and death</b>
+        <br/>
+        <input type="" name=""  class="form-control">
+        <b>Unit</b>
+        <br/>
+        <select name="interval_unit1" id="interval_unit1" load="" class="form-control">
+                          <option ></option>
+                          <option >Second(s)</option>
+                          <option>Minute(s)</option>
+                          <option>Hour(s)</option>
+                          <option>Day(s)</option>
+                          <option>Week(s)</option>
+                          <option>Month(s)</option>
+                          <option>Year(s)</option>
+
+                        </select>
+        <b>ICD Code </b>
+        <br/>
+        <input type="" name=""  class="form-control">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Save</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script type="text/javascript">
+	function activateCode(){
+		var final_code = $('#final_icd_code')
+		if(final_code.attr("disabled")){
+			$("code_edit").attr("class","fa fa-ban")
+			final_code.removeAttr("disabled")
+			final_code.focus();
+		}else{
+			$("code_edit").attr("class","fa fa-edit")
+			final_code.attr("disabled","true")
+		}
+	}
+</script>
