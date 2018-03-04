@@ -530,8 +530,89 @@
           </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger"onclick="changeStatusComment('<%= @next_state[@current_user.role][1] rescue nil%>','Reason for marking record incomplete')" > Incomplete </button>
-        <button type="button" class="btn btn-success" onclick="ajaxChange('<%= @next_state[@current_user.role][0] rescue nil%>')" > Complete </button>
+        <button type="button" class="btn btn-success" onclick="ajaxChange('<%= @next_state[@current_user.role][0] rescue nil%>')" id="complete_button" > Complete </button>
         <button type="button" class="btn btn-default" onclick="__$('completeness').style.display = 'none';hideModal()" > Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+<div class="" id="approve_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header btn-primary" >
+        <button type="button" class="close"  onclick="__$('approve_modal').style.display = 'none'">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title" id="approve_title">Approve Record</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-lg-12">
+
+            <div class=" form-group">
+              <table class="table table-condensed table-striped table-bordered table-hover">
+                <tbody>
+                    <tr class="table-row">
+                        <th class="table-cell">Death Entry Number</th>
+                        <td class="table-cell"><%= @person.den%></td>
+                    </tr>
+                    <tr class="table-row">
+                        <th class="table-cell"> Name</th>
+                        <td class="table-cell"><%= @person.first_name%> <%= @person.middle_name rescue ''%> <%= @person.last_name%></td>
+                    </tr>
+
+                    <tr class="table-row">
+                        <th class="table-cell"> Nationality</th>
+                        <td class="table-cell"><%= @person.nationality != 'Other'? @person.nationality : @person.other_nationality %></td>
+                    </tr>
+                    <tr class="table-row">
+                      <th class="table-cell">Date of Birth</th>
+                      <td class="table-cell"><%= @person.birthdate.to_date.strftime('%d/%b/%Y') rescue nil%></td>
+                    </tr>
+
+                    <tr class="table-row">
+                      <th class="table-cell">Sex</th>
+                      <td class="table-cell"><%= @person.gender%></td>
+                    </tr>
+
+                    <tr class="table-row">
+                      <th class="table-cell">Date of Death</th>
+                      <td class="table-cell"><%= @person.date_of_death.to_date.strftime('%d/%b/%Y') rescue nil%></td>
+                    </tr>
+
+                    <tr>
+                      <th class="table-cell" >Place of death</th>
+
+                      <td class="table-cell"><%= @place_of_death %></td>
+
+                    
+                    </tr>
+
+                    <tr class="table-row">
+                      <th class="table-cell">Name of Mother</th>
+                      <td class="table-cell"><%= @person.mother_first_name%> <%= @person.mother_middle_name rescue ''%> <%= @person.mother_last_name  rescue 'N/A'%></td>
+                    </tr>
+
+                    <tr class="table-row">
+                      <th class="table-cell">Name of Father</th>
+                      <td class="table-cell"><%= @person.father_first_name%> <%= @person.father_middle_name rescue ''%> <%= @person.father_last_name  rescue 'N/A'%></td>
+                    </tr>
+
+                    <tr class="table-row">
+                      <th class="table-cell">Date of Registration</th>
+                      <td class="table-cell"><%= @person.created_at.to_date.strftime('%d/%b/%Y')%></td>
+                    </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success pull-right" id="approve_modal_button" > Proceed </button>
+        <button type="button" class="btn btn-default pull-left" onclick="__$('approve_modal').style.display = 'none';hideModal()" > Close</button>
       </div>
     </div>
   </div>
@@ -977,9 +1058,39 @@
         })
     }
 
+    function showApprovalModal(){
+        jQuery("#shield").show();
+        jQuery("#approve_modal").show();
+    }
+
+    function approve(status, title,comments){
+        showApprovalModal();
+        __$("approve_title").innerHTML = title;
+        if (comments) {
+            __$("approve_modal_button").onmousedown =function(){
+                changeStatusComment(status,title + " Comment")
+            }
+        }else{
+          __$("approve_modal_button").onmousedown = function(){
+              ajaxChange(status)
+          }
+        }
+    }
+
+    function completenessCheck(comments){
+        jQuery("#shield").show();
+        jQuery("#completeness").show();
+        if (comments) {
+            __$("complete_button").removeAttribute("onclick")
+            var status = "<%= @next_state[@current_user.role][0] rescue nil%>";
+            __$("complete_button").onmousedown =function(){
+                changeStatusComment(status,"Completeness Check comment")
+            }
+        }
+    }
 </script>
 <style>
-  #completeness, #printers, #comments,#action_modal,#duplicate_modal{
+  #completeness, #printers, #comments,#action_modal,#duplicate_modal,#approve_modal{
       position : absolute;
       left: 30%;
       top: 13.5%;
