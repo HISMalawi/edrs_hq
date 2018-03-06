@@ -1080,6 +1080,7 @@
     function completenessCheck(comments){
         jQuery("#shield").show();
         jQuery("#completeness").show();
+        
         if (comments) {
             __$("complete_button").removeAttribute("onclick")
             var status = "<%= @next_state[@current_user.role][0] rescue nil%>";

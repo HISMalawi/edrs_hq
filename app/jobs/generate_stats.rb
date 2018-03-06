@@ -3,7 +3,7 @@ class GenerateStats
   	workers 1
   
   	def perform()
-      `rake edrs:stats`
+      `bundle exec rake edrs:stats`
   		GenerateStats.perform_in(600)
   	end
 end

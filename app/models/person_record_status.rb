@@ -79,6 +79,12 @@ class PersonRecordStatus < CouchRest::Model::Base
 		                  	}
 	    			   }"
 	    view :by_status_and_created_at
+	    view :by_record_status_and_created_at,
+	    	  :map =>"function(doc){
+		    			   if (doc['type'] == 'PersonRecordStatus' && doc['voided'] == false){
+		                    	emit(doc['status'] +'_'+doc['created_at'], 1);
+		                  	}
+	    			   }"
 	    view :by_reprint_date,
 	    	  :map =>"function(doc){
 		    			   if (doc['type'] == 'PersonRecordStatus' && doc['voided'] == false && doc['reprint']==true){

@@ -236,6 +236,7 @@ class CaseController < ApplicationController
   def ajax_change_status
 
     next_status = params[:next_status].gsub(/\-/, ' ') rescue nil
+
     render :text => "Error!" and return if next_status.blank?
     person = Person.find(params[:person_id])
     
@@ -259,7 +260,7 @@ class CaseController < ApplicationController
           PersonRecordStatus.nextstatus[params[:person_id]] = next_status
         end
 
-        PersonRecordStatus.change_status(Person.find(params[:person_id]),"MARKED HQ APPROVAL")
+        PersonRecordStatus.change_status(Person.find(params[:person_id]),"MARKED HQ APPROVAL",(params[:comment].present? ? params[:comment] : nil))
         render :text => "ok" and return
       end
     end
@@ -279,6 +280,7 @@ class CaseController < ApplicationController
             :district_code => person.district_code,
             :prev_status => status.status,
             :creator => @current_user.id,
+            :comment =>(params[:comment].present? ? params[:comment] : nil),
             :status => "HQ POTENTIAL DUPLICATE"
         )
       end
