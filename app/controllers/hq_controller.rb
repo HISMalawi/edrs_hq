@@ -209,7 +209,7 @@ class HqController < ApplicationController
     @section = "Print Preview"
     @targeturl = "/print" 
     @person = Person.find(params[:person_id])
-    @available_printers = CONFIG["printer_name"].split(',')
+    @available_printers = SETTINGS["printer_name"].split(',')
     render :layout => "application"
   end
   
@@ -258,6 +258,7 @@ class HqController < ApplicationController
     
     create_barcode   
     
+    
     if CONFIG['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A4"
        render :layout => false, :template => 'hq/death_certificate_print'
     elsif CONFIG['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A5"
@@ -294,7 +295,7 @@ class HqController < ApplicationController
 
       t4 = Thread.new {
 
-        PDFKit.new(input_url, :page_size => paper_size).to_file(output_file)
+        PDFKit.new(input_url, :page_size => paper_size, :zoom => zoom).to_file(output_file)
 
         sleep(4)
 

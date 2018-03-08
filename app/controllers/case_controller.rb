@@ -24,7 +24,7 @@ class CaseController < ApplicationController
     end
    
     session[:return_url] = request.path
-    @available_printers = CONFIG["printer_name"].split(',')
+    @available_printers = SETTINGS["printer_name"].split(',')
     render :template => "case/default_batch"
   end
 
@@ -189,7 +189,7 @@ class CaseController < ApplicationController
     end
     @page = 1
     session[:return_url] = request.path
-    @available_printers = CONFIG["printer_name"].split(',')
+    @available_printers = SETTINGS["printer_name"].split(',')
     render :template => "case/default_batch"
   end
 
@@ -199,7 +199,7 @@ class CaseController < ApplicationController
     @page = 1
     @drn = true
     session[:return_url] = request.path
-    @available_printers = CONFIG["printer_name"].split(',')
+    @available_printers = SETTINGS["printer_name"].split(',')
     render :template => "case/default_batch"
   end
 
@@ -697,7 +697,7 @@ class CaseController < ApplicationController
     end
 
     @place_of_death = place_of_death(@person)
-    @available_printers = YAML.load_file("#{Rails.root}/config/couchdb.yml")[Rails.env]['printer_name'].split(',') rescue []
+    @available_printers = SETTINGS["printer_name"].split(',') rescue []
     
     @tasks = ActionMatrix.read(@current_user.role, @statuses)
   end
