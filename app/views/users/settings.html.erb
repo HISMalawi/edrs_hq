@@ -1,6 +1,21 @@
 <div id="main" >
   <h3 style="padding-left: 15px;"><%= @section rescue 'Case management' %></h3>
   <div id="button-container">
+      <% if @current_user.role == "Certificate Signatory" %>
+            <center>
+                  <form>
+                      <table>
+                        <tr>
+                            <th>Signature Upload</th>
+                            <td> : </td>
+                            <td><input type="file" name="signature" class="form-control"></td>
+                            <td><button class="btn btn-success">upload</button></td>
+                        </tr>
+                      </table>
+                   </form>
+            </center>
+         
+      <%else%>
         <%(@tasks || []).each do |title, desc, link, icon|%>
 
               <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" onclick="window.location='<%= link%>'">
@@ -13,6 +28,7 @@
                 
               </div>
          <%end%>
+      <%end%>
   </div>
 </div>   
 <script>

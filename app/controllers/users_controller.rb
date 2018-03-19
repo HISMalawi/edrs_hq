@@ -320,13 +320,19 @@ class UsersController < ApplicationController
       @tasks << ['Paper size','Edit certificate paper size','/paper_size','papersize.png']
       @tasks << ['Signature','Add signatures','/signature','signatures.jpeg']
     end
-                    
+    
+    if @current_user.role == "Certificate Signatory"
+       @tasks << ['Add Signature','Add signatures','/signature/add','signatures.jpeg']
+    end
+
     if has_role("Update system") 
       #@tasks << ['Build MySQL DB','Copy data to MySQL database','/build_mysql_database','MySQL_DB.png']
     end
 
     if has_role("Change own password") 
     end 
+
+    @section = "Settings"
 
   end
 

@@ -347,6 +347,7 @@
                       </ul>
                   </li-->
                   <% end %>
+                  
                   <% if has_role("Create User") %>
                   <li class="sub-menu">
                       <a href="/manage_users" class="">
@@ -355,6 +356,14 @@
                       </a>
                   </li>
                   <%end %>
+                  <% if @current_user.role == "Certificate Signatory" %>
+                  <li class="sub-menu">
+                      <a href="/settings" class="">
+                          <i class="fa fa-users"></i>
+                          <span>Setting</span>
+                      </a>
+                  </li>
+                  <%end%>
                    <li class="sub-menu">
                       <a href="javascript:;" class="">
                           <i class="fa fa-gears"></i>
