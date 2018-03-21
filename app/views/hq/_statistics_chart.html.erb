@@ -25,7 +25,7 @@
                   $(function () {
                     $('#chart-container').highcharts({
                         title: {
-                            text: (title.length > 0 ? title : 'National statistics'),
+                            text: (title.length > 0 ? title : 'National Statistics <%= Date.today.year %>'),
                             x: -20 //center
                         },
                         subtitle: {

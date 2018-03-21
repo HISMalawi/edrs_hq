@@ -122,11 +122,14 @@ class PersonIdentifier < CouchRest::Model::Base
                     :drn_sort_value => drn_sort_value,
                     :district_code => (person.district_code rescue CONFIG['district_code'])
                 })
-    if drn_record.present? 
+    sleep(0.1)
+    if drn_record.present? && person.drn.present?
+         create_barcode(person)
          status = PersonRecordStatus.by_person_recent_status.key(person.id.to_s).last
 
-        status.update_attributes({:voided => true})
-
+         if status.present?
+           status.update_attributes({:voided => true})
+         end
         
         if PersonRecordStatus.nextstatus.present? && PersonRecordStatus.nextstatus[person.id].present?
           record_status = PersonRecordStatus.nextstatus[person.id]
@@ -138,7 +141,8 @@ class PersonIdentifier < CouchRest::Model::Base
                                   :status => record_status,
                                   :prev_status => status.status,
                                   :district_code => person.district_code,
-                                  :creator => creator})
+                                  :creator => creator,
+                                  :comment => "Approved record at HQ"})
 
         PersonRecordStatus.nextstatus.delete(person.id) if PersonRecordStatus.nextstatus.present?
         
@@ -168,5 +172,25 @@ class PersonIdentifier < CouchRest::Model::Base
 
       end
       sql_record.save
+  end
+
+  self.def create_barcode(person)
+    if person.npid.blank?
+       npid = Npid.by_assigned.keys([false]).first
+       person.npid = npid.national_id
+       person.save
+    end
+    if @barcode.nil?
+      process = Process.fork{`bin/generate_barcode #{person.npid} #{person.id} #{CONFIG['barcodes_path']}`}
+      Process.detach(process)
+    end
+     
+    if File.exists?("#{CONFIG['barcodes_path']}#{@person.id}.png")
+        @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
+        return
+    else
+        sleep(0.1)
+        create_barcode
+    end
   end
 end

@@ -8,36 +8,41 @@
           margin: 0;
           -moz-user-select: none;
           font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
-          margin-left: 5px;
-          margin-right: 5px;
+          margin-left: 10px;
+          margin-right: 10px;
           color: #000;
           font-size: 20px;
-         
-        
       }
-    
-    #mainc {
-    height: 100% !important;
-    
-    }  
+      
       #barcode {
-        margin-right: 0px;
-        padding-right: 0px;
+        margin-right: 30px;
         padding-top: 0px;
-        margin-top: 0px;
-        float: right !important;
-        
+        margin-top: 30px;
+        float: right;
       }
       
       #childdata {
        clear: both;
        width: 21cm;
-       margin-top: 45cm;
-       padding-top: 6cm;
+       margin-top: 40cm;
+       padding-top: 8cm;
        margin-left: auto;
        margin-right: auto;
-       height: 20cm;
-       }}
+      
+      }
+      
+      #childdata #birthoath 
+      {
+        text-align: center;
+        
+      }
+      
+      #childdata #signature 
+      {
+        text-align: left;
+        float: right;
+        
+      }}
    
   </style>
 </head>
@@ -64,7 +69,7 @@
 
 <table style="width: 21cm; font-weight: normal;" cellpadding="8" width="100%">
         <tr>
-        <td style="width: 50px;" align="right">
+        <td style="width: 130px;" align="right">
           1.
         </td>
         <td align="left" style="width: 300px;">
@@ -75,7 +80,7 @@
         </td>
       </tr>
       <tr>
-        <td style="width: 50px;" align="right">
+        <td style="width: 130px;" align="right">
           2.
         </td>
         <td align="left" style="width: 300px;">
@@ -86,7 +91,7 @@
         </td>
       </tr>
       <tr>
-        <td style="width: 50px;" align="right">
+        <td style="width: 130px;" align="right">
           3.
         </td>
         <td align="left" style="width: 300px;">
@@ -97,7 +102,7 @@
         </td>
       </tr>
       <tr>
-        <td style="width: 50px;" align="right">
+        <td style="width: 130px;" align="right">
           4.
         </td>
         <td align="left" style="width: 300px;">
@@ -111,7 +116,7 @@
         </td>
       </tr>
       <tr>
-        <td style="width: 50px;" align="right">
+        <td style="width: 130px;" align="right">
           5.
         </td>
         <td align="left" style="width: 300px;">
@@ -122,10 +127,10 @@
         </td>
       </tr>
       <tr>
-          <td style="width: 50px;" align="right">
+          <td style="width: 130px;" align="right">
             6.
           </td>
-          <td align="left" style="width: 250px;">
+          <td align="left" style="width: 300px;">
             Date of Death
           </td>
           <td align="left">
@@ -136,10 +141,10 @@
           </td>
         </tr>
         <tr>
-          <td style="width: 50px;" align="right">
+          <td style="width: 130px;" align="right">
             7.
           </td>
-          <td align="left" style="width: 250px;">
+          <td align="left" style="width: 300px;">
             Place of Death
           </td>
           <td align="left">
@@ -148,10 +153,10 @@
         </tr>
         <% if @person[:mother_last_name].present? && @person[:mother_first_name].present? %>
         <tr>
-          <td style="width: 50px;" align="right">
+          <td style="width: 130px;" align="right">
             8.
           </td>
-          <td align="left" style="width: 250px;">
+          <td align="left" style="width: 300px;">
             Name of Mother
           </td>
           <td align="left">
@@ -161,14 +166,14 @@
         <%end%>
         <% if @person[:father_last_name].present? && @person[:father_first_name].present?%>
         <tr>
-          <td style="width: 50px;" align="right">
+          <td style="width: 130px;" align="right">
             <% if @person[:mother_last_name].blank?%>
                8.
             <%else%>
                9.
             <%end%>
           </td>
-          <td align="left" style="width: 250px;">
+          <td align="left" style="width: 300px;">
             Name of Father
           </td>
           <td align="left">
@@ -177,7 +182,7 @@
         </tr>
         <%end%>
         <tr>
-          <td style="width: 50px;" align="right">
+          <td style="width: 130px;" align="right">
             <% if @person[:mother_last_name].blank? && @person[:father_last_name].blank?%>
                8.
             <%elsif @person[:mother_last_name].blank? || @person[:father_last_name].blank?%>
@@ -186,7 +191,7 @@
               10.
             <%end%>
           </td>
-          <td align="left" style="width: 250px;">
+          <td align="left" style="width: 300px;">
             Date of Registration
           </td>
           <td align="left">

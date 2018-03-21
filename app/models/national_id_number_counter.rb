@@ -3,7 +3,6 @@ require 'thread'
 
 class NationalIdNumberCounter < CouchRest::Model::Base
 
-  use_database "local"
 
   cattr_accessor :mutex
 

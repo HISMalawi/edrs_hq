@@ -220,8 +220,8 @@ class HqController < ApplicationController
 
     @place_of_death = place_of_death(@person)
 
-    @drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([@person.id, "DEATH REGISTRATION NUMBER"]).last.identifier
-    @den = PersonIdentifier.by_person_record_id_and_identifier_type.key([@person.id, "DEATH ENTRY NUMBER"]).last.identifier
+    @drn = @person.drn
+    @den = @person.den
 
     if File.exists?("#{CONFIG['barcodes_path']}#{@person.id}.png")
 
@@ -252,12 +252,9 @@ class HqController < ApplicationController
   def death_certificate
     @person = Person.find(params[:id])
     @place_of_death = place_of_death(@person)
-    @drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([@person.id, "DEATH REGISTRATION NUMBER"]).last.identifier
-    @den = PersonIdentifier.by_person_record_id_and_identifier_type.key([@person.id, "DEATH ENTRY NUMBER"]).last.identifier
+    @drn = @person.drn
+    @den = @person.den
     @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
-    
-    create_barcode   
-    
     
     if CONFIG['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A4"
        render :layout => false, :template => 'hq/death_certificate_print'
