@@ -111,19 +111,24 @@ class PersonIdentifier < CouchRest::Model::Base
   end
 
   def self.assign_drn(person, creator)
-    drn_values = self.generate_drn(person)
-    drn = drn_values[0]
-    drn_sort_value = drn_values[1].to_i
-    drn_record = self.create({
+
+    drn_record = PersonIdentifier.by_person_record_id_and_identifier_type.key([person.id, "DEATH REGISTRATION NUMBER"]).first
+    if drn_record.blank?
+       drn_values = self.generate_drn(person)
+       drn = drn_values[0]
+       drn_sort_value = drn_values[1].to_i
+       drn_record = self.create({
                     :person_record_id=>person.id.to_s,
                     :identifier_type =>"DEATH REGISTRATION NUMBER",
                     :identifier => drn,
                     :creator => creator,
                     :drn_sort_value => drn_sort_value,
                     :district_code => (person.district_code rescue CONFIG['district_code'])
-                })
+                }) 
+    end
+ 
     sleep(0.1)
-    if drn_record.present? && person.drn.present?
+    if drn_record.present?
          create_barcode(person)
          status = PersonRecordStatus.by_person_recent_status.key(person.id.to_s).last
 
@@ -174,23 +179,13 @@ class PersonIdentifier < CouchRest::Model::Base
       sql_record.save
   end
 
-  self.def create_barcode(person)
+  def self.create_barcode(person)
     if person.npid.blank?
        npid = Npid.by_assigned.keys([false]).first
        person.npid = npid.national_id
        person.save
     end
-    if @barcode.nil?
-      process = Process.fork{`bin/generate_barcode #{person.npid} #{person.id} #{CONFIG['barcodes_path']}`}
-      Process.detach(process)
-    end
-     
-    if File.exists?("#{CONFIG['barcodes_path']}#{@person.id}.png")
-        @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
-        return
-    else
-        sleep(0.1)
-        create_barcode
-    end
+    process = Process.fork{`bin/generate_barcode #{person.npid} #{person.id} #{CONFIG['barcodes_path']}`}
+    Process.detach(process)
   end
 end

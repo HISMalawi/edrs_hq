@@ -15,9 +15,9 @@ class AssignDrn
     end
     queue.each do |record|
         person = record.person
-        next if person.drn.present?
+        SuckerPunch.logger.info "Approving for printing #{person.drn} Before Skip"
         PersonIdentifier.assign_drn(person, record.creator)
-        sleep(0.2)
+        #sleep(0.2)
         #checkCreatedSync(record.id, "HQ OPEN", record.request_status)
         SuckerPunch.logger.info "#{record.id} => #{record.district_id_number}"
     end rescue (AssignDrn.perform_in(job_interval))

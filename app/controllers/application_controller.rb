@@ -244,8 +244,12 @@ class ApplicationController < ActionController::Base
               end
 
       elsif person.place_of_death  && person.place_of_death =="Other"
-                 place_of_death  = person.other_place_of_death;
-
+                if person.other_place_of_death.present?
+                    place_of_death  = person.other_place_of_death;
+                end
+                if person.place_of_death_district.present?
+                    place_of_death = "#{place_of_death},#{person.place_of_death_district}"
+                end
       elsif person.place_of_death  && person.place_of_death =="Home"
           if person.place_of_death_village.present? && person.place_of_death_village.to_s.length > 0
               place_of_death = person.place_of_death_village

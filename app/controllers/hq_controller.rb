@@ -223,30 +223,10 @@ class HqController < ApplicationController
     @drn = @person.drn
     @den = @person.den
 
-    if File.exists?("#{CONFIG['barcodes_path']}#{@person.id}.png")
+    @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
 
-      @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
+    render :layout => false, :template => 'hq/death_certificate'
 
-    else
-      @barcode = nil
-    end
-
-    if @barcode.nil?
-      process = Process.fork{`bin/generate_barcode #{@drn} #{@person.id} #{CONFIG['barcodes_path']}`}
-      Process.detach(process)
-      sleep(0.5)
-
-    end
-
-    #sleep(0.5)
-
-    if File.exists?("#{CONFIG['barcodes_path']}#{@person.id}.png")
-      @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
-      render :layout => false, :template => 'hq/death_certificate'
-    else
-      @barcode = nil
-      redirect_to request.fullpath
-    end
   end
   
   def death_certificate
