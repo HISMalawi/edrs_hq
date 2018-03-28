@@ -60,152 +60,151 @@
     <br/><%= @person.npid %></p>
   </div>
 
-<div id="childdata">
+  <div id="childdata">
 
-<table style="width: 21cm; font-weight: normal;" cellpadding="8" width="100%">
-        <tr>
-        <td style="width: 130px;" align="right">
-          1.
-        </td>
-        <td align="left" style="width: 300px;">
-          Death Entry Number
-        </td>
-        <td align="left">
-         <%= @den %>
-        </td>
-      </tr>
-      <tr>
-        <td style="width: 130px;" align="right">
-          2.
-        </td>
-        <td align="left" style="width: 300px;">
-          Registration Number
-        </td>
-        <td align="left">
-          <%= @drn %>
-        </td>
-      </tr>
-      <tr>
-        <td style="width: 130px;" align="right">
-          3.
-        </td>
-        <td align="left" style="width: 300px;">
-          Name
-        </td>
-        <td align="left">
-         <%= @person[:first_name] %> <%= @person[:middle_name] %> <%= @person[:last_name] %>
-        </td>
-      </tr>
-      <tr>
-        <td style="width: 130px;" align="right">
-          4.
-        </td>
-        <td align="left" style="width: 300px;">
-          Date of Birth
-        </td>
-        <td align="left">
-          <%= (!@person[:birthdate].blank? ? @person[:birthdate].to_date.day : "") %><sup
-            style="font-size: 18px;"><%= (!@person[:birthdate].blank? ?
-                  @person[:birthdate].to_date.day.ordinalize.match(/([a-z]+)/).captures.first : "") %></sup>
-            <%= (!@person[:birthdate].blank? ? @person[:birthdate].to_date.strftime("%B, %Y") : "") %>
-        </td>
-      </tr>
-      <tr>
-        <td style="width: 130px;" align="right">
-          5.
-        </td>
-        <td align="left" style="width: 300px;">
-          Sex
-        </td>
-        <td align="left">
-          <%= @person.gender %>
-        </td>
-      </tr>
-      <tr>
-          <td style="width: 130px;" align="right">
-            6.
-          </td>
-          <td align="left" style="width: 300px;">
-            Date of Death
-          </td>
-          <td align="left">
-            <%= (!@person[:date_of_death].blank? ? @person[:date_of_death].to_date.day : "") %><sup
-            style="font-size: 18px;"><%= (!@person[:date_of_death].blank? ?
-                  @person[:date_of_death].to_date.day.ordinalize.match(/([a-z]+)/).captures.first : "") %></sup>
-            <%= (!@person[:date_of_death].blank? ? @person[:date_of_death].to_date.strftime("%B, %Y") : "") %>
-          </td>
-        </tr>
-        <tr>
-          <td style="width: 130px;" align="right">
-            7.
-          </td>
-          <td align="left" style="width: 300px;">
-            Place of Death
-          </td>
-          <td align="left">
-            <%= @place_of_death %>
-          </td>
-        </tr>
-        <% if @person[:mother_last_name].present? && @person[:mother_first_name].present? %>
-        <tr>
-          <td style="width: 130px;" align="right">
-            8.
-          </td>
-          <td align="left" style="width: 300px;">
-            Name of Mother
-          </td>
-          <td align="left">
-            <%= @person[:mother_first_name] %> <%= @person[:mother_middle_name] %> <%= @person[:mother_last_name] %>
-          </td>
-        </tr>
-        <%end%>
-        <% if @person[:father_last_name].present? && @person[:father_first_name].present?%>
-        <tr>
-          <td style="width: 130px;" align="right">
-            <% if @person[:mother_last_name].blank?%>
-               8.
-            <%else%>
-               9.
+    <table style="width: 21cm; font-weight: normal;" cellpadding="8" width="100%">
+            <tr>
+            <td style="width: 130px;" align="right">
+              1.
+            </td>
+            <td align="left" style="width: 300px;">
+              Death Entry Number
+            </td>
+            <td align="left">
+             <%= @den %>
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 130px;" align="right">
+              2.
+            </td>
+            <td align="left" style="width: 300px;">
+              Registration Number
+            </td>
+            <td align="left">
+              <%= @drn %>
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 130px;" align="right">
+              3.
+            </td>
+            <td align="left" style="width: 300px;">
+              Name
+            </td>
+            <td align="left">
+             <%= @person[:first_name] %> <%= @person[:middle_name] %> <%= @person[:last_name] %>
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 130px;" align="right">
+              4.
+            </td>
+            <td align="left" style="width: 300px;">
+              Date of Birth
+            </td>
+            <td align="left">
+              <%= (!@person[:birthdate].blank? ? @person[:birthdate].to_date.day : "") %><sup
+                style="font-size: 18px;"><%= (!@person[:birthdate].blank? ?
+                      @person[:birthdate].to_date.day.ordinalize.match(/([a-z]+)/).captures.first : "") %></sup>
+                <%= (!@person[:birthdate].blank? ? @person[:birthdate].to_date.strftime("%B, %Y") : "") %>
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 130px;" align="right">
+              5.
+            </td>
+            <td align="left" style="width: 300px;">
+              Sex
+            </td>
+            <td align="left">
+              <%= @person.gender %>
+            </td>
+          </tr>
+          <tr>
+              <td style="width: 130px;" align="right">
+                6.
+              </td>
+              <td align="left" style="width: 300px;">
+                Date of Death
+              </td>
+              <td align="left">
+                <%= (!@person[:date_of_death].blank? ? @person[:date_of_death].to_date.day : "") %><sup
+                style="font-size: 18px;"><%= (!@person[:date_of_death].blank? ?
+                      @person[:date_of_death].to_date.day.ordinalize.match(/([a-z]+)/).captures.first : "") %></sup>
+                <%= (!@person[:date_of_death].blank? ? @person[:date_of_death].to_date.strftime("%B, %Y") : "") %>
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 130px;" align="right">
+                7.
+              </td>
+              <td align="left" style="width: 300px;">
+                Place of Death
+              </td>
+              <td align="left">
+                <%= @place_of_death %>
+              </td>
+            </tr>
+            <% if @person[:mother_last_name].present? && @person[:mother_first_name].present? %>
+            <tr>
+              <td style="width: 130px;" align="right">
+                8.
+              </td>
+              <td align="left" style="width: 300px;">
+                Name of Mother
+              </td>
+              <td align="left">
+                <%= @person[:mother_first_name] %> <%= @person[:mother_middle_name] %> <%= @person[:mother_last_name] %>
+              </td>
+            </tr>
             <%end%>
-          </td>
-          <td align="left" style="width: 300px;">
-            Name of Father
-          </td>
-          <td align="left">
-            <%= @person[:father_first_name] %> <%= @person[:father_middle_name] %> <%= @person[:father_last_name] %>
-          </td>
-        </tr>
-        <%end%>
-        <tr>
-          <td style="width: 130px;" align="right">
-            <% if @person[:mother_last_name].blank? && @person[:father_last_name].blank?%>
-               8.
-            <%elsif @person[:mother_last_name].blank? || @person[:father_last_name].blank?%>
-               9.
-            <%else%>
-              10.
+            <% if @person[:father_last_name].present? && @person[:father_first_name].present?%>
+            <tr>
+              <td style="width: 130px;" align="right">
+                <% if @person[:mother_last_name].blank?%>
+                   8.
+                <%else%>
+                   9.
+                <%end%>
+              </td>
+              <td align="left" style="width: 300px;">
+                Name of Father
+              </td>
+              <td align="left">
+                <%= @person[:father_first_name] %> <%= @person[:father_middle_name] %> <%= @person[:father_last_name] %>
+              </td>
+            </tr>
             <%end%>
-          </td>
-          <td align="left" style="width: 300px;">
-            Date of Registration
-          </td>
-          <td align="left">
-            <%= (!@person[:created_at].blank? ? @person[:created_at].to_date.day : "") %><sup
-            style="font-size: 18px;"><%= (!@person[:created_at].blank? ?
-                  @person[:created_at].to_date.day.ordinalize.match(/([a-z]+)/).captures.first : "") %></sup>
-            <%= (!@person[:created_at].blank? ? @person[:created_at].to_date.strftime("%B, %Y") : "") %>
-          </td>
-        </tr>
-        
-       <tr><td colspan="3" align="center" valign="middle"><p style="font-size: 18px; font-weight: normal;"><br>I hereby certify the above to be a true and correct extract from the<br/>
-          Death Register kept at NRB.<br/><br/>
-          
-          Dated this <%= Date.today.strftime("%d").to_i rescue nil %><sup><%= Date.today.strftime("%d").to_i.ordinalize.gsub(/\d+/, "") rescue nil %></sup> 
-          <%= Date.today.strftime("%B") rescue nil %>, <%= Date.today.strftime("%Y") rescue nil %>
-          
-      </p></td></tr> 
-        
-    </table>
+            <tr>
+              <td style="width: 130px;" align="right">
+                <% if @person[:mother_last_name].blank? && @person[:father_last_name].blank?%>
+                   8.
+                <%elsif @person[:mother_last_name].blank? || @person[:father_last_name].blank?%>
+                   9.
+                <%else%>
+                  10.
+                <%end%>
+              </td>
+              <td align="left" style="width: 300px;">
+                Date of Registration
+              </td>
+              <td align="left">
+                <%= (!@person[:created_at].blank? ? @person[:created_at].to_date.day : "") %><sup
+                style="font-size: 18px;"><%= (!@person[:created_at].blank? ?
+                      @person[:created_at].to_date.day.ordinalize.match(/([a-z]+)/).captures.first : "") %></sup>
+                <%= (!@person[:created_at].blank? ? @person[:created_at].to_date.strftime("%B, %Y") : "") %>
+              </td>
+            </tr>
+            
+           <tr><td colspan="3" align="center" valign="middle"><p style="font-size: 18px; font-weight: normal;"><br>I hereby certify the above to be a true and correct extract from the<br/>
+              Death Register kept at NRB.<br/><br/>
+              
+              Dated this <%= Date.today.strftime("%d").to_i rescue nil %><sup><%= Date.today.strftime("%d").to_i.ordinalize.gsub(/\d+/, "") rescue nil %></sup> 
+              <%= Date.today.strftime("%B") rescue nil %>, <%= Date.today.strftime("%Y") rescue nil %>
+              
+          </p></td></tr>  
+        </table>
     </div>
     	
     <div id="signature">

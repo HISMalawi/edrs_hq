@@ -270,9 +270,12 @@ class HqController < ApplicationController
 
       input_url = "#{CONFIG["protocol"]}://#{request.env["SERVER_NAME"]}:#{request.env["SERVER_PORT"]}/death_certificate/#{id}"
 
+      #raise "wkhtmltopdf --zoom #{zoom} --page-size #{paper_size} #{input_url} #{output_file}"
+
       t4 = Thread.new {
 
-        PDFKit.new(input_url, :page_size => paper_size, :zoom => zoom).to_file(output_file)
+        Kernel.system "wkhtmltopdf --zoom #{zoom} --page-size #{paper_size} #{input_url} #{output_file}"
+        #PDFKit.new(input_url, :page_size => paper_size, :zoom => zoom).to_file(output_file)
 
         sleep(4)
 

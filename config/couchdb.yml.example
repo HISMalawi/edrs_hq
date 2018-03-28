@@ -2,8 +2,8 @@ development: &development
   protocol: 'http'
   host: localhost
   port: 5984 
-  prefix: 
-  suffix: 
+  prefix: edrs
+  suffix: hq
   username: 
   password: 
   crtkey: 
@@ -12,14 +12,10 @@ development: &development
   print_password:
   printer_name: Printer1, Printer2
   pre_printed_paper: true
-  duplicate_score: 6
   ben_assignment_interval: 3
   barcodes_path: /home/usr/barcodes/ 
   certificates_path: /home/usr/certificates/
-  dispatch_path: /home/usr/dispatch/ 
-  duplicate_score: 6
-  ben_assignment_interval: 3
-  printer_name: ME,Printer2
+  dispatch_path: /home/usr/dispatch/
 
 test:
   <<: *development
@@ -28,4 +24,4 @@ test:
 production:
   <<: *development
   protocol: 'http'
-  suffix:
+  suffix: hq

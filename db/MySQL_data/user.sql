@@ -25,4 +25,4 @@
     ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
 
 INSERT INTO user (user_id, username, first_name, last_name, password_hash, last_password_date, password_attempt, login_attempt, email, active, notify, role, site_code, district_code, creator, plain_password, un_or_block_reason, signature, _rev, updated_at, created_at) VALUES 
-('c49bdea959fa41c275450f3806f739d1', "admin","EDRS","Administrator","$2a$10$FTHHpXeRYbv6EXti0FNPle7UL0Rhh9AlyM776FGh8NJTzfEoaCKnu","2017-12-05 11:38:39",'0','0',"admin@baobabhealth.org",'true',0, "System Administrator","HQ",NULL, "admin",NULL, NULL, NULL, "1-ccd32923fbe06fd05ff37dd525bde968","2017-12-05 11:38:39","2017-12-05 11:38:39");
+('04c8c805acb334b4b7584f307a1e24f3', "admin","EDRS","Administrator","$2a$10$f5hay2vxxdCRFshTRvB1guRMH8KRe8KoNCNDQ1ZTNu7EYuaCF1s..","2018-03-28 08:22:45",'0','0',"admin@baobabhealth.org",'true',0, "System Administrator","HQ",NULL, "admin",NULL, NULL, NULL, "1-0e1f6d9fd07a5bbd9f2d2e65b80c7982","2018-03-28 08:22:45","2018-03-28 08:22:45");

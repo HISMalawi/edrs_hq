@@ -517,6 +517,7 @@ class CaseController < ApplicationController
   def show
 
     @person = Person.find(params[:person_id])
+    @results = []
     begin
         @person.save
         PersonRecordStatus.by_person_recent_status.key(params[:id]).last.save
@@ -552,7 +553,7 @@ class CaseController < ApplicationController
           if @person.status =="HQ POTENTIAL DUPLICATE TBA"
             
           end
-          @results = []
+         
           if @person.status == "HQ ACTIVE"
                         
             duplicates = SimpleElasticSearch.query_duplicate_coded(record,SETTINGS['duplicate_precision'])
