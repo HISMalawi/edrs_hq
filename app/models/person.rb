@@ -157,7 +157,7 @@ class Person < CouchRest::Model::Base
 
   def change_status(nextstatus)
     status = PersonRecordStatus.by_person_recent_status.key(self.id.to_s).last
-    status.update_attributes({:voided => true})
+    status.update_attributes({:voided => true}) if status.present?
     PersonRecordStatus.create({
                         :person_record_id => self.id.to_s,
                         :status => nextstatus,
@@ -554,7 +554,7 @@ class Person < CouchRest::Model::Base
   property :approved_by, String
   property :approved_at, Time
   property :delayed_registration, String,  :default =>"No"
-  property :registration_type, String, :default => "Natural Death" # Unnatural Death | Unclaimed bodies | Missing Persons | Death abroad
+  property :registration_type, String, :default => "Normal Cases" # Abnormal Death | Unclaimed bodies | Missing Persons | Death abroad
   property :court_order, String
   property :court_order_details, String 
   property :police_report, String

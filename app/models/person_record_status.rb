@@ -102,11 +102,19 @@ class PersonRecordStatus < CouchRest::Model::Base
 	end
 
 	def set_facility_code
-		self.facility_code = self.person.facility_code
+		if self.person.facility_code.present?
+			self.facility_code = self.person.facility_code
+		else
+			self.facility_code = nil
+		end
 	end
 
 	def set_registration_type
-		self.registration_type = self.person.registration_type
+		if self.person.registration_type.present?
+			self.registration_type = self.person.registration_type
+		else
+			self.registration_type = "Normal Cases"
+		end		
 	end
 
 	def person

@@ -12,46 +12,19 @@ $olddata = "#{Rails.root}/bin/scripts/migration/persondata.csv"
 password = CONFIG["crtkey"] rescue nil
 password = "password" if password.blank?
 
-$docs_with_issues = ['2381037872008bd526c50803e48a8541',
-                     '23bb787af2de33cf1c3b94fb4164473f',
-                     'a1f8cfc17eaed9ef9a565319f353d84b',
-                     '0499759122205161dd74e70c239dcb19',
-                     '086d76023d215701f7b430f563ba2386',
-                     '25e2b4e59786a90bf54b6418ffff0c4f',
-                     '3a2f7759f2b1581211fd6cc1fb853d4b',
-                     '3a2f7759f2b1581211fd6cc1fb854245',
-                     '3b8950b942854c84b27fa8711edfc791',
-                     '3f69ebd631c6a88fcfceb451f8d0f378',
-                     '4045a248ef5fde881f6ef6520d75aace',
-                     '4c9423434d80b44384e836d6af9236a9',
-                     '4d7466ce4980b01ac80d3d0dfdcd382c',
-                     '4f7c4ffb2f4bc5197521961c9f491ab5',
-                     '5643e09f0494a24918c34f6650c57ab3',
-                     '56d72abbf130cda0c708165391dc176',
-                     '56d72abbf130cda0c708165391dc1769',
-                     '571df3b3e2fe1f0a711efee6c5a46e9c',
-                     '66a4a7ad9c231650ed73bdcfdb35d799',
-                     '683b474552a375211e6261dafae37bb1',
-                     '6959d4a1571d4e7348fba6832d399f6f',
-                     '7d5a55d4deca257dd7d3d0e8994a8747',
-                     '82a89cb4e21f757eca091c460207faee',
-                     '8a41f24cc64259df0fe39af41edf3f8a',
-                     '9244f706eb4f2ca7ff9e2dde63894436',
-                     '9343307ee2783c47bfa17de00e8b19a9',
-                     '9343307ee2783c47bfa17de00e8b41ab',
-                     '9343307ee2783c47bfa17de00e8b4e36',
-                     '99c1e61c0f708f0fbbd095dadfc5b6a6',
-                     'a09f55fb3a312f859a82e2cbe6476caf',
-                     'a93c70f1d91e5743069eef75a97916d3',
-                     'ad8ca9a29dc8f7775462d4fc5bd6f1f1']
+$district_name = {"Nkhata Bay" => "Nkhata-bay"}
+
+User.current_user = User.first
+
+$docs_with_issues = ['4045a248ef5fde881f6ef6520d75aace']
 
 $private_key = OpenSSL::PKey::RSA.new(File.read("#{Rails.root}/config/private.pem"), password)
 
 $status_map ={
                 "Printed" =>"HQ DISPATCHED",
                 "Reprinted" =>"HQ DISPATCHED",
-                "Active"     => "DC COMPLETE",
-                "Approved" => "HQ APPROVED"
+                "Active"     => "HQ ACTIVE",
+                "Approved" => "HQ CAN PRINT"
 }
 
 $mapped = {}
@@ -110,7 +83,7 @@ end
 
 
 def transform_data(records)
-
+  place_of_d = ""
   begin
     map = CSV.foreach($mapping, :headers => true)
     map.collect do |row|
@@ -162,6 +135,8 @@ def transform_data(records)
                   'informant_id_number'
                   ]
 
+    i = 0
+
     (records || []).each do |doc|
 
        r = doc["doc"].with_indifferent_access
@@ -175,16 +150,16 @@ def transform_data(records)
 
     if !$docs_with_issues.include? r['_id']
 
-       puts "Migrating doc: #{r['_id']}"
+       #puts "Migrating doc: #{r['_id']}"
 
        $debug_variable = r['_id']
 
        source_fields.each do |field|
         
         next if ["_rev"].include?(field.squish)
-
+          
         if mapped_fields[field].present?
-
+            
            new_field = (mapped_fields[field][0] rescue '')
            
            if new_field.present?
@@ -214,19 +189,39 @@ def transform_data(records)
      end
 
      if["Hospital/Institution"].include? r['place_of_death']
-        person['place_of_death'] = "Hospital"
+        person['place_of_death'] = "Health Facility"
      end
 
      if !r['place_of_death'].present? && !r['other_place_of_death'].present?
          person['other_place_of_death'] ="Other"
      end
+
+     
      
      if r['place_of_death_district'].present?
-       person['district_code'] = District.by_name.key(r['place_of_death_district']).first.id
+        person["place_of_death_district"] = $district_name[r['place_of_death_district']]
+        if District.by_name.key(r['place_of_death_district']).first.present?
+          
+          person['district_code'] = District.by_name.key(r['place_of_death_district']).first.id
+
+        elsif $district_name[r['place_of_death_district']].present?
+
+             person['district_code'] = District.by_name.key($district_name[r['place_of_death_district']]).first.id
+        else
+           puts r['place_of_death_district']
+           raise r['place_of_death_district'].inspect
+        end
+     else
+        person['district_code'] = "LL"
      end
- 
+     
+     person["registration_type"] =  (r["registration_type"].present? ? r["registration_type"] : "Normal Cases")
+
+     #`echo -n '#{person}' >> #{@dump_files}person.txt`
      person.save
      person.reload
+
+     sleep 0.5
 
      $person_rec = Person.find(person.id)
      $id = person.id
@@ -236,16 +231,12 @@ def transform_data(records)
 
            if identifiers["DEATH ENTRY NUMBER"].present?
 
-              puts "================================= Saving DEN for   #{person.id}"
-
               identifiers_present = PersonIdentifier.by_identifier.keys().each
 
               if identifiers_present.include? identifiers["DEATH ENTRY NUMBER"]
 
-                 puts " Duplicate DEN found! >>>>>>>>>>>>>>> Resolving ..."
                  identifiers["DEATH ENTRY NUMBER"] = new_den(identifiers_present,identifiers["DEATH ENTRY NUMBER"])
-                 puts ".........................."
-                 puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> DEN Resolved!"
+
               end
 
               person_identifier = PersonIdentifier.new
@@ -259,24 +250,18 @@ def transform_data(records)
 
               person_identifier.save
 
-              puts "=========================== DEN for   #{person.id}   successfully saved ==========="
             end
         #else
             #$id = $id + ","
             #{}`echo -n '#{$id}' >> #{@dump_files}duplicate_docs.txt`
         #end
-        #Death registration Number
+        
         if identifiers["DEATH REGISTRATION NUMBER"].present?
 
           identifiers_present = PersonIdentifier.by_identifier.keys().each
 
             if identifiers_present.include? identifiers["DEATH REGISTRATION NUMBER"]
-
-                 puts " Duplicate DRN found! >>>>>>>>>>>>>>> Migration will abort ... Doc id: #{$person_rec['_id']}"
-                 puts " >>>>>>>>>>>>>>> Resolving ..."
                  identifiers["DEATH REGISTRATION NUMBER"] = new_den(identifiers_present,identifiers["DEATH REGISTRATION NUMBER"])
-                 puts ".........................."
-                 puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> DRN Resolved!"
             end
 
           person_identifier = PersonIdentifier.new
@@ -285,12 +270,29 @@ def transform_data(records)
           person_identifier.identifier = identifiers["DEATH REGISTRATION NUMBER"]
           district_code = (District.by_name.key(person.place_of_death_district).first.code rescue 'LL')
           person_identifier.district_code = district_code
-          person_identifier.save
+          if person_identifier.save
+                  old_drn = identifiers["DEATH REGISTRATION NUMBER"]
+                  drn = "0#{old_drn[0,5]}0#{old_drn[5,9]}"
+                  drn_record = PersonIdentifier.create({
+                    :person_record_id=>person.id.to_s,
+                    :identifier_type =>"DEATH REGISTRATION NUMBER",
+                    :identifier => drn,
+                    :creator => User.current_user.id,
+                    :drn_sort_value => old_drn[5,9],
+                    :district_code => district_code
+                }) 
+          end
 
         end
 
         #Death registration Number
         if identifiers["National ID"].present?
+
+            identifiers_present = PersonIdentifier.by_identifier.keys().each
+
+            if identifiers_present.include? identifiers["National ID"]
+                 identifiers["National ID"] = new_den(identifiers_present,identifiers["National ID"])
+            end
 
           person_identifier = PersonIdentifier.new
           person_identifier.person_record_id = person.id
@@ -303,7 +305,8 @@ def transform_data(records)
         end
         #raise $status_map[status].inspect
         if $status_map[status].present? && person.first_name.present?
-
+          prev_status = PersonRecordStatus.by_person_recent_status.key(person.id).last
+          prev_status.update_attributes({:voided => true}) if prev_status.present?
           record_status = PersonRecordStatus.new
           record_status.person_record_id = person.id
           record_status.status = $status_map[status]
@@ -315,6 +318,9 @@ def transform_data(records)
 
         else
 
+          prev_status = PersonRecordStatus.by_person_recent_status.key(person.id).last
+          prev_status.update_attributes({:voided => true}) if prev_status.present?
+
           record_status = PersonRecordStatus.new
           record_status.person_record_id = person.id
           record_status.status = "HQ INCOMPLETE MIGRATION"
@@ -322,7 +328,10 @@ def transform_data(records)
           record_status.save
 
         end
-
+        i = i + 1
+        if i % 20 == 0
+          puts "#{i} records migrated"
+        end
         puts "Migrated #{person.first_name} #{person.last_name}"
 
         sleep 0.5
@@ -332,8 +341,8 @@ def transform_data(records)
    end
   puts "Records migrated so far: #{Person.count}"
   rescue Exception => e
-
-      puts "#{e.message} >>>>>>>>>>>>>>>>>>>>#{$id} >>>>>>>>>>>>>>>>>>> Doc id: #{$debug_variable}" 
+      #raise e.inspect
+      #puts "#{e.message} >>>>>>>>>>>>>>>>>>>>#{$id} >>>>>>>>>>>>>>>>>>> Doc id: #{$debug_variable}" 
        
   end
 end
@@ -354,123 +363,122 @@ def fetch_source_data
 end
 
 def start
-  map = CSV.foreach($mapping, :headers => true)
-  map.collect do |row|
-    old_edrs_field = row[0]
-    new_edrs_field = row[1]
-    new_edrs_model = row[2]
-    new_edrs_model_type = row[3]
-    new_edrs_model_field = row[4]
+map = CSV.foreach($mapping, :headers => true)
+map.collect do |row|
+  old_edrs_field = row[0]
+  new_edrs_field = row[1]
+  new_edrs_model = row[2]
+  new_edrs_model_type = row[3]
+  new_edrs_model_field = row[4]
 
-    field_array = ['','','','']
-    unless old_edrs_field.blank?
-      unless new_edrs_field.blank?
-        $mapped[old_edrs_field] = ["#{new_edrs_field}",'','','']
-        #puts ">>>>>>>> #{old_edrs_field} == #{new_edrs_field}"
+  field_array = ['','','','']
+  unless old_edrs_field.blank?
+    unless new_edrs_field.blank?
+      $mapped[old_edrs_field] = ["#{new_edrs_field}",'','','']
+      #puts ">>>>>>>> #{old_edrs_field} == #{new_edrs_field}"
 
-      else
-        if not new_edrs_model.blank?
-          $mapped[old_edrs_field] = ['',"#{new_edrs_model}","#{new_edrs_model_type}","#{new_edrs_model_field}"]
-         # puts "::::::: #{old_edrs_field} == #{eval(new_edrs_model).count} .......... #{new_edrs_field2}"
-
-        end
-      end
     else
-      if not new_edrs_field.blank?
-       #puts "NEW FIEELD >>> #{Person.last.send(new_edrs_field)}"
+      if not new_edrs_model.blank?
+        $mapped[old_edrs_field] = ['',"#{new_edrs_model}","#{new_edrs_model_type}","#{new_edrs_model_field}"]
+       # puts "::::::: #{old_edrs_field} == #{eval(new_edrs_model).count} .......... #{new_edrs_field2}"
 
-            end
       end
-  end
-
-  mapped_fields = JSON.parse($mapped.to_json)
-  #puts mapped_fields
-
-  headers = []
-  file = File.open($olddata).each_line do |line|
-    row = line.gsub("&#39;","'").split(";");
-    if row[0]=='first_name'
-      headers = row
-      next
     end
-    identifiers ={}
-    status = ''
-    person = Person.new
-    headers.each do |field|
-         if mapped_fields[field].present?
-           new_field = (mapped_fields[field][0] rescue '')
-           if new_field.present?
-             person[new_field] = row[headers.index(field)]
-           else
-              if mapped_fields[field][2].present?
-                 identifiers[mapped_fields[field][2]] = row[headers.index(field)]
-              else
-                 status = row[headers.index(field)]
-              end
+  else
+    if not new_edrs_field.blank?
+     #puts "NEW FIEELD >>> #{Person.last.send(new_edrs_field)}"
 
-           end
+          end
+    end
+end
+
+mapped_fields = JSON.parse($mapped.to_json)
+#puts mapped_fields
+
+headers = []
+file = File.open($olddata).each_line do |line|
+  row = line.gsub("&#39;","'").split(";");
+  if row[0]=='first_name'
+    headers = row
+    next
+  end
+  identifiers ={}
+  status = ''
+  person = Person.new
+  headers.each do |field|
+       if mapped_fields[field].present?
+         new_field = (mapped_fields[field][0] rescue '')
+         if new_field.present?
+           person[new_field] = row[headers.index(field)]
          else
+            if mapped_fields[field][2].present?
+               identifiers[mapped_fields[field][2]] = row[headers.index(field)]
+            else
+               status = row[headers.index(field)]
+            end
 
          end
+       else
 
-    end
+       end
 
-
-    person.save
-    person.reload
-    #Death entry Nunmber
-    if identifiers["DEATH ENTRY NUMBER"].present?
-      person_identifier = PersonIdentifier.new
-      person_identifier.person_record_id = person.id
-      person_identifier.identifier_type = "DEATH ENTRY NUMBER"
-      person_identifier.identifier = identifiers["DEATH ENTRY NUMBER"]
-      district_code = (District.by_name.key(person.place_of_death_district).first.code rescue 'HQ')
-      person_identifier.district_code = district_code
-      sort_value = (identifiers["DEATH ENTRY NUMBER"].split("/")[2] + identifiers["DEATH ENTRY NUMBER"].split("/")[1]).to_i
-      person_identifier.den_sort_value = sort_value
-      person_identifier.save
-     end
-    #Death registration Number
-    if identifiers["DEATH REGISTRATION NUMBER"].present?
-      person_identifier = PersonIdentifier.new
-      person_identifier.person_record_id = person.id
-      person_identifier.identifier_type = "DEATH REGISTRATION NUMBER"
-      person_identifier.identifier = identifiers["DEATH REGISTRATION NUMBER"]
-      district_code = (District.by_name.key(person.place_of_death_district).first.code rescue 'HQ')
-      person_identifier.district_code = district_code
-      person_identifier.save
-    end
-
-    #Death registration Number
-    if identifiers["National ID"].present?
-      person_identifier = PersonIdentifier.new
-      person_identifier.person_record_id = person.id
-      person_identifier.identifier_type = "National ID"
-      person_identifier.identifier = identifiers["National ID"]
-      district_code = (District.by_name.key(person.place_of_death_district).first.code rescue 'HQ')
-      person_identifier.district_code = district_code
-      person_identifier.save
-    end
-    if $status_map[status].present? && person.first_name.present?
-      record_status = PersonRecordStatus.new
-      record_status.person_record_id = person.id
-      record_status.status = $status_map[status]
-      if status == "Reprinted"
-        record_status.reprint = true
-      end
-      record_status.district_code =  (District.by_name.key(person.place_of_death_district).first.code  rescue 'HQ')
-      record_status.save
-    else
-      record_status = PersonRecordStatus.new
-      record_status.person_record_id = person.id
-      record_status.status = "HQ INCOMPLETE MIGRATION"
-      record_status.district_code =  (District.by_name.key(person.place_of_death_district).first.code  rescue 'HQ')
-      record_status.save
-    end
   end
+
+
+  person.save
+  person.reload
+  #Death entry Nunmber
+  if identifiers["DEATH ENTRY NUMBER"].present?
+    person_identifier = PersonIdentifier.new
+    person_identifier.person_record_id = person.id
+    person_identifier.identifier_type = "DEATH ENTRY NUMBER"
+    person_identifier.identifier = identifiers["DEATH ENTRY NUMBER"]
+    district_code = (District.by_name.key(person.place_of_death_district).first.code rescue 'HQ')
+    person_identifier.district_code = district_code
+    sort_value = (identifiers["DEATH ENTRY NUMBER"].split("/")[2] + identifiers["DEATH ENTRY NUMBER"].split("/")[1]).to_i
+    person_identifier.den_sort_value = sort_value
+    person_identifier.save
+   end
+  #Death registration Number
+  if identifiers["DEATH REGISTRATION NUMBER"].present?
+    person_identifier = PersonIdentifier.new
+    person_identifier.person_record_id = person.id
+    person_identifier.identifier_type = "DEATH REGISTRATION NUMBER"
+    person_identifier.identifier = identifiers["DEATH REGISTRATION NUMBER"]
+    district_code = (District.by_name.key(person.place_of_death_district).first.code rescue 'HQ')
+    person_identifier.district_code = district_code
+    person_identifier.save
+  end
+
+  #Death registration Number
+  if identifiers["National ID"].present?
+    person_identifier = PersonIdentifier.new
+    person_identifier.person_record_id = person.id
+    person_identifier.identifier_type = "National ID"
+    person_identifier.identifier = identifiers["National ID"]
+    district_code = (District.by_name.key(person.place_of_death_district).first.code rescue 'HQ')
+    person_identifier.district_code = district_code
+    person_identifier.save
+  end
+  if $status_map[status].present? && person.first_name.present?
+    record_status = PersonRecordStatus.new
+    record_status.person_record_id = person.id
+    record_status.status = $status_map[status]
+    if status == "Reprinted"
+      record_status.reprint = true
+    end
+    record_status.district_code =  (District.by_name.key(person.place_of_death_district).first.code  rescue 'HQ')
+    record_status.save
+  else
+    record_status = PersonRecordStatus.new
+    record_status.person_record_id = person.id
+    record_status.status = "HQ INCOMPLETE MIGRATION"
+    record_status.district_code =  (District.by_name.key(person.place_of_death_district).first.code  rescue 'HQ')
+    record_status.save
+  end
+end
 
 end
 
-start
+#start
 fetch_source_data
-

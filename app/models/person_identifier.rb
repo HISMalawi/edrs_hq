@@ -71,8 +71,12 @@ class PersonIdentifier < CouchRest::Model::Base
   end
 
   def set_distict_code
-    self.district_code = self.person.district_code
-
+    if self.person.district_code.present?
+      self.district_code = self.person.district_code
+    else
+      raise self.person.inspect
+    end
+    
   end
 
   def self.calculate_check_digit(serial_number)
