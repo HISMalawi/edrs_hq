@@ -34,11 +34,23 @@ class HqController < ApplicationController
     results = []
     @title = "Search Results"
     @statuses = []
-
+    @districts = []
+    District.all.each do |d| 
+      next if d.name.blank?
+      next if d.name.include?("City")
+      @districts << d.name 
+    end
     case params[:search_type]
       when "barcode"
-          PersonIdentifier.by_identifier_and_identifier_type.key([params[:barcode], "Form Barcode"]).each do |identifier|
-          results << identifier.person
+          if ["Quality Supervisor"].include?(User.current_user.role)
+              Person.by_npid.key(params[:barcode]).each do |person|
+                results << person
+              end
+          else
+              PersonIdentifier.by_identifier_and_identifier_type.key([params[:barcode], "Form Barcode"]).each do |identifier|
+              results << identifier.person
+          end
+
         end
       when "den"
         PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH ENTRY NUMBER"]).each do |identifier|
@@ -117,16 +129,16 @@ class HqController < ApplicationController
     end
 
     @cases = []
+    #raise results.inspect
     results.each do |person|
       @cases << {
-          drn: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH REGISTRATION NUMBER"]).last.identifier rescue nil),
-          den: (PersonIdentifier.by_person_record_id_and_identifier_type.key( [person.id, "DEATH ENTRY NUMBER"]).last.identifier rescue nil),
+          drn: (person.drn rescue nil),
+          den: (person.den rescue nil),
           name: "#{person.first_name} #{person.middle_name rescue ''} #{person.last_name}",
           gender:     person.gender,
           dob:        person.birthdate.strftime("%d/%b/%Y"),
-          dob:  person.date_of_death.strftime("%d/%b/%Y"),
-          place_of_death: "",
-          physical_address: "",
+          dod:        person.date_of_death.strftime("%d/%b/%Y"),
+          place_of_death: place_of_death(person),
           person_id:  person.id
       }
     end

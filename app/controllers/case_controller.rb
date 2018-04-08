@@ -152,7 +152,7 @@ class CaseController < ApplicationController
 
   def approve_reprint
     @title = "Approve for Re-printing"
-    @statuses = ["HQ COMPLETE"]
+    @statuses = ["HQ RE PRINT"]
     @page = 1
     session[:return_url] = request.path
 
@@ -195,7 +195,7 @@ class CaseController < ApplicationController
 
   def re_print
     @title = "Re-print Certificates"
-    @statuses = ["HQ REPRINT"]
+    @statuses = ["HQ CAN RE PRINT"]
     @page = 1
     @drn = true
     session[:return_url] = request.path
@@ -224,7 +224,7 @@ class CaseController < ApplicationController
 
   def reprinted_certificates
     @title = "Re printed Certificates"
-    @prev_status = "HQ REPRINT"
+    @prev_statuses = ["HQ CAN RE PRINT"]
     @status = "HQ CLOSED"
     @statuses = ["HQ CLOSED","HQ DISPATCHED"]
     @page = 1

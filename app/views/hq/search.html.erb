@@ -208,10 +208,11 @@
     <td id = "input-td" class="" style="width: 99%; border: 1px solid gray">
 
            <div id="barcode" class="container custom">
-            <form id="do_search" class="form-horizontal" role="form" action="/do_search">
+            <form id="do_search" class="form-horizontal" role="form" action="/do_search?next_url=/search">
               <div class="form-group"  style="margin: auto;margin-top: 100px;margin-bottom: 100px;width: 45%;">
                 <label for="barcode" style="font-size: 1.15em">Scan Barcode</label>
                 <input name="search_type" value="barcode" type="hidden" type="text" />
+                <input type="hidden" name="next_url" value="/search">
                 <input name="barcode" id="barcode_person" class="form-control" type="text" onkeyup="checkBarcode()" />
                 <button type="submit" class="btn btn-primary pull-right" style="margin-top: 15px;"><span class="fa fa-search" aria-hidden="true"></span></button>
               </div>

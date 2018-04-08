@@ -16,5 +16,3 @@ Country|country:
     _id: country_id
 Nationality|nationality:
     _id: nationality_id
-ICDCode|icd_codes:
-	_id: icd_code_id

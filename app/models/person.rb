@@ -34,9 +34,9 @@ class Person < CouchRest::Model::Base
 
   before_save :set_facility_code,:set_district_code
 
-  after_create :create_status,:insert_update_into_mysql
+  after_create :create_status #,:insert_update_into_mysql
 
-  after_save :insert_update_into_mysql
+  #after_save :insert_update_into_mysql
 
   cattr_accessor :duplicate
   
@@ -760,6 +760,8 @@ class Person < CouchRest::Model::Base
                   }
                 }"
     view :by_district_code_and_created_at
+
+    view :by_npid
 
     filter :facility_sync, "function(doc,req) {return req.query.facility_code == doc.facility_code}"
     filter :district_sync, "function(doc,req) {return req.query.district_code == doc.district_code}"

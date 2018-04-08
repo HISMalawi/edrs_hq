@@ -33,4 +33,9 @@ namespace :edrs do
   task stats: :environment do
     require Rails.root.join('bin','./scripts/stats.rb')
   end
+
+  desc "Couch MYSQL"
+  task couch_mysql: :environment do
+    require Rails.root.join('bin','./scripts/couch-mysql.rb')
+  end
 end
