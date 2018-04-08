@@ -7,7 +7,7 @@ end
 
 GenerateStats.perform_in(10)
 if Rails.env == 'development'
-    UpdateSyncStatus.perform_in(10)
+    UpdateSyncStatus.perform_in(900)
 else
   	UpdateSyncStatus.perform_in(1000)
 end
