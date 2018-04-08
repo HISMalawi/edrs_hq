@@ -23,7 +23,7 @@ $private_key = OpenSSL::PKey::RSA.new(File.read("#{Rails.root}/config/private.pe
 $status_map ={
                 "Printed" =>"HQ DISPATCHED",
                 "Reprinted" =>"HQ DISPATCHED",
-                "Active"     => "HQ ACTIVE",
+                "Active"     => "DC ACTIVE",
                 "Approved" => "HQ CAN PRINT"
 }
 
