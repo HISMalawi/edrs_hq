@@ -346,6 +346,7 @@ def transform_data(records)
         puts "Migrated #{person.first_name} #{person.last_name}"
 
         sleep 0.3
+        Sync.create(person_record_id: person.id, district_code: (District.by_name.key(person.place_of_death_district).first.code  rescue 'LL'),hq_sync_status: true)
 
     end
 
@@ -434,7 +435,14 @@ couch_port = couch_db_settings["port"]
 changes_link = "#{couch_protocol}://#{couch_username}:#{couch_password}@#{couch_host}:#{couch_port}/#{couch_db}/_changes"
 data = JSON.parse(RestClient.get(changes_link))
 if data.present?
-        couchdb_sequence = CouchdbSequence.create(seq: data["last_seq"].to_i)
+        couchdb_sequence = CouchdbSequence.last
+        if couchdb_sequence.present?
+          couchdb_sequence.seq = data["last_seq"].to_i
+          couchdb_sequence.save
+        else
+          couchdb_sequence = CouchdbSequence.create(seq: data["last_seq"].to_i)
+        end
+        
 end
 
 puts "Migration done"
