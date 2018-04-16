@@ -1,0 +1,275 @@
+<style type="text/css">
+	  #shield{
+	      position: absolute;
+	      width: 100% !important;
+	      height: 100% !important;
+	      left: 0px;
+	      top: 0px;
+	      background: rgba(128,128,128,0.35);
+	      z-index: 1050;
+	      display: none;
+	   }
+	  .modal-body{
+	      background: #ffffff;
+	   }
+	   #completeness, #printers, #comments,#action_modal,#duplicate_modal,#approve_modal{
+		      position : absolute;
+		      left: 30%;
+		      top: 13.5%;
+		      display: none;
+		      z-index: 4000
+		}
+
+		.comments-list .media{
+	      border-bottom: 1px dotted #ccc;
+	  	}
+	  	#comments-list{
+	      max-height: 300px;
+	      overflow: auto;
+	      width: 100%;
+	  	}
+</style>
+<div style="background: white">
+  <div style="height: 600px; width: 100%; overflow: auto;padding: 0px; margin:0px;">
+  		<iframe  src="/pdf_certificate/<%=params[:id]%>" style ="height:580px;width:100%"></iframe>
+  </div>
+  <div style="width:100%">
+  		<button class="btn btn-primary pull-left" onclick="window.location='<%=params[:next_url]%>'">Back</button>
+  		<% if User.current_user.role == "Quality Supervisor" %>
+  			 <button class="btn btn-success pull-right" style="margin-left:1%" onclick="changeStatusComment('HQ RE PRINT', 'Reason for reprint record')">Open for Reprint</button>
+  			 <button class="dynamic-button btn btn-small btn-primary pull-right primary" onclick= "ajaxPullComments()">View Trail</button>
+  		<%end%>
+  </div>
+</div>
+<div id="shield">
+	<div class="" id="action_modal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header btn-primary">
+	        <h4 class="modal-title" id="action_modal_title">Add Comments</h4>
+	      </div>
+	      <div class="modal-body">
+
+	        <div class="row">
+	          <div class="col-lg-12">
+
+	            <div class=" form-group">
+	              <div class="container">
+	                <div class="row" style="width: 550px;">
+
+	                    <div id="action_comments_list">
+
+	                    </div>
+
+	                    <div style="width: 100%;margin-top: 20px;border-top: 1px solid #d3d3d3">
+	                        <form id="comment-form" action="/ajax_save_comment">
+	                          <textarea class="form-control" name="comment" placeholder="Add Comment" id="action_textarea" style="width: 98%;margin-top: 4px;margin-bottom: 4px;"></textarea>
+	                        </form>
+	                    </div>
+	                  </div>
+	              </div>
+	            </div>
+	          </div>
+	          <div class="modal-footer">
+	            <button type="button" id="close" class="btn btn-sm btn-default pull-left" onclick="__$('action_modal').style.display = 'none';hideModal()" > Close </button>
+	            <button id="action_comment_proceed" type="button" class="btn btn-sm btn-success" > Proceed </button>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<div class="" id="comments">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header btn-primary">
+		        <h4 class="modal-title">Death Record Comments</h4>
+		      </div>
+		      <div class="modal-body">
+
+		        <div class="row">
+		          <div class="col-lg-12">
+
+		            <div class=" form-group">
+		              <div class="container">
+		                <div class="row" style="width: 550px;">
+
+		                    <div id="comments-list">
+
+		                    </div>
+
+		                    <div style="width: 100%;margin-top: 20px;border-top: 1px solid #d3d3d3" class="hidden">
+		                        <form id="comment-form" action="/ajax_save_comment">
+		                          <textarea class="form-control" name="comment" placeholder="New Comment" id="textarea" style="width: 98%;margin-top: 4px;margin-bottom: 4px;"></textarea>
+
+		                          <div onclick="saveComment();" class="btn btn-sm btn-primary pull-left">Submit</div>
+		                        </form>
+		                    </div>
+		                  </div>
+		              </div>
+		            </div>
+		          </div>
+		          <div class="modal-footer">
+		            <button type="button" class="btn btn-sm btn-default pull-left" onclick="__$('comments').style.display = 'none';hideModal()" > Close </button>
+		            <button id="comment_close" type="button" class="btn btn-sm btn-success hidden" onclick="__$('textarea').value = ''; hideModal()" > Finish </button>
+		          </div>
+		        </div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	function loadPopup(id){
+        $("#shield").show()
+        __$(id).style.display = "block";
+    }
+
+    function __$(id){
+        return document.getElementById(id);
+    }
+
+    function ___$(clas){
+        return document.getElementsByClassName(clas)[0];
+    }
+
+
+    function hideModal(){
+        $("#shield").css('display','none')
+    }
+
+
+    function ajaxChange(status){
+        $.ajax({
+            url: "/ajax_change_status?next_status=" + status + "&person_id=<%=params['id']%>",
+            success: function(feedback){
+                jQuery(".modal-dialog").parent().hide();
+
+                var status_arr = ["HQ INCOMPLETE", "HQ POTENTIAL INCOMPLETE", "HQ CONFIRMED INCOMPLETE",
+                    "HQ POTENTIAL DUPLICATE", "HQ DUPLICATE", "HQ CONFIRMED DUPLICATE", "HQ VOID", "HQ REOPEN",
+                    "HQ AMMEND"
+                ];
+
+                if(status_arr.indexOf(status) >= 0){
+                    var link = "<%= (session[:return_url] || '/')%>".trim();
+                    next_status = status;
+                    ajaxPullComments(link);
+                }else {
+                    window.parent.location = "<%= (session[:return_url] || request.referrer)%>";
+                }
+            },
+            error: function(error){
+                alert("Something went wrong!");
+            }
+        })
+    }
+
+    function ajaxify(route, btn){
+        $.ajax({
+            url: route + "&person_id=<%=params['id']%>",
+            success: function(feedback){
+                window.parent.location = "<%= session[:return_url] || request.referrer%>";
+            },
+            error: function(error){
+                alert("Something went wrong!");
+            }
+        })
+    }
+	function ajaxPullComments(link){
+        jQuery("#comment-list").html("");
+
+        jQuery.ajax(
+                {
+                    url: "/get_comments?person_id=<%= params[:id]%>",
+                    success: function(results){
+                        results = JSON.parse(results);
+                        var parent = document.getElementById("comments-list");
+                        parent.innerHTML = "";
+                        var clone = document.getElementById("clone_me");
+                        for(var i = 0; i < results.length; i++){
+                            var dup = clone.cloneNode(true);
+                            dup.id = i;
+                            dup.style.display = "block";
+                            //set values
+                            dup.getElementsByClassName("name")[0].innerHTML = results[i]['user']
+                                    + " <small class='user_role'>" + results[i]['user_role'] + " - " + results[i]['date_added'] + " </small>";
+                            dup.getElementsByClassName("comment")[0].innerHTML = results[i]['comment'];
+
+                            parent.appendChild(dup);
+                        }
+                        jQuery("#shield").show();
+                        jQuery("#comments").show();
+
+                        parent.scrollTop = parent.scrollHeight;
+
+                        document.getElementById("comment_close").onmousedown = function(){
+                            if(link){
+                                window.parent.location = link;
+                            }else{
+                                window.parent.location = "/";
+                            }
+                        }
+                    },
+                    error: function(e){
+                        //alert("Something went wrong!")
+                    }
+                }
+        )
+    }
+    function changeStatusComment(status,title){
+        $("#shield").show()
+        __$("action_modal").style.display = "block";
+        __$("action_modal_title").innerHTML = title;
+        __$("action_comments_list").innerHTML = ""
+        jQuery.ajax(
+                {
+                    url: "/get_comments?person_id=<%= params[:id]%>",
+                    success: function(results){
+                        results = JSON.parse(results);
+                        var parent = document.getElementById("action_comments_list");
+                        parent.innerHTML = "";
+                        var clone = document.getElementById("clone_me");
+                        for(var i = 0; i < results.length; i++){
+                            var dup = clone.cloneNode(true);
+                            dup.id = i;
+                            dup.style.display = "block";
+                            //set values
+                            dup.getElementsByClassName("name")[0].innerHTML = results[i]['user']
+                                    + " <small class='user_role'>" + results[i]['user_role'] + " - " + results[i]['date_added'] + " </small>";
+                            dup.getElementsByClassName("comment")[0].innerHTML = results[i]['comment'];
+
+                            parent.appendChild(dup);
+                        }
+                        parent.scrollTop = parent.scrollHeight;
+                    },
+                    error: function(e){
+                        //alert("Something went wrong!")
+                    }
+                }
+        )
+        var url = "/ajax_change_status?next_status="+status+"&person_id=<%=params[:id]%>"
+        __$("action_comment_proceed").setAttribute("onclick","changeStatus('"+url+"')")
+    }
+
+    function changeStatus(url){
+      var comment = __$("action_textarea").value
+      if (comment.length == 0){
+          __$("action_textarea").style.border ="1px solid red";
+          __$("action_textarea").focus();
+          return;
+      }
+      url = url +"&comment="+comment;
+
+      $.ajax({
+            url: url,
+            success: function(feedback){
+                window.parent.location = "<%= session[:return_url] || request.referrer%>";
+            },
+            error: function(error){
+                alert("Something went wrong!");
+            }
+        })
+    }
+
+</script>

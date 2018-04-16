@@ -23,7 +23,7 @@ $private_key = OpenSSL::PKey::RSA.new(File.read("#{Rails.root}/config/private.pe
 $status_map ={
                 "Printed" =>"HQ DISPATCHED",
                 "Reprinted" =>"HQ DISPATCHED",
-                "Active"     => "HQ ACTIVE",
+                "Active"     => "DC ACTIVE",
                 "Approved" => "HQ CAN PRINT"
 }
 
@@ -199,7 +199,11 @@ def transform_data(records)
      
      
      if r['place_of_death_district'].present?
-        person["place_of_death_district"] = $district_name[r['place_of_death_district']]
+        if $district_name[r['place_of_death_district']].present?
+            person["place_of_death_district"] = $district_name[r['place_of_death_district']]
+        else
+            person["place_of_death_district"] = r['place_of_death_district']
+        end
         if District.by_name.key(r['place_of_death_district']).first.present?
           
           person['district_code'] = District.by_name.key(r['place_of_death_district']).first.id
@@ -250,6 +254,8 @@ def transform_data(records)
 
               person_identifier.save
 
+               sleep 0.1
+
             end
         #else
             #$id = $id + ","
@@ -270,6 +276,7 @@ def transform_data(records)
           person_identifier.identifier = identifiers["DEATH REGISTRATION NUMBER"]
           district_code = (District.by_name.key(person.place_of_death_district).first.code rescue 'LL')
           person_identifier.district_code = district_code
+           sleep 0.1
           if person_identifier.save
                   old_drn = identifiers["DEATH REGISTRATION NUMBER"]
                   drn = "0#{old_drn[0,5]}0#{old_drn[5,9]}"
@@ -302,6 +309,8 @@ def transform_data(records)
           person_identifier.district_code = district_code
           person_identifier.save
 
+           sleep 0.1
+
         end
         #raise $status_map[status].inspect
         if $status_map[status].present? && person.first_name.present?
@@ -315,6 +324,7 @@ def transform_data(records)
           end
           record_status.district_code =  (District.by_name.key(person.place_of_death_district).first.code  rescue 'LL')
           record_status.save
+           sleep 0.1
 
         else
 
@@ -326,6 +336,7 @@ def transform_data(records)
           record_status.status = "HQ INCOMPLETE MIGRATION"
           record_status.district_code =  (District.by_name.key(person.place_of_death_district).first.code  rescue 'LL')
           record_status.save
+           sleep 0.1
 
         end
         i = i + 1
@@ -334,7 +345,8 @@ def transform_data(records)
         end
         puts "Migrated #{person.first_name} #{person.last_name}"
 
-        sleep 0.5
+        sleep 0.3
+        Sync.create(person_record_id: person.id, district_code: (District.by_name.key(person.place_of_death_district).first.code  rescue 'LL'),hq_sync_status: true)
 
     end
 
@@ -362,123 +374,75 @@ def fetch_source_data
 
 end
 
-def start
-map = CSV.foreach($mapping, :headers => true)
-map.collect do |row|
-  old_edrs_field = row[0]
-  new_edrs_field = row[1]
-  new_edrs_model = row[2]
-  new_edrs_model_type = row[3]
-  new_edrs_model_field = row[4]
-
-  field_array = ['','','','']
-  unless old_edrs_field.blank?
-    unless new_edrs_field.blank?
-      $mapped[old_edrs_field] = ["#{new_edrs_field}",'','','']
-      #puts ">>>>>>>> #{old_edrs_field} == #{new_edrs_field}"
-
-    else
-      if not new_edrs_model.blank?
-        $mapped[old_edrs_field] = ['',"#{new_edrs_model}","#{new_edrs_model_type}","#{new_edrs_model_field}"]
-       # puts "::::::: #{old_edrs_field} == #{eval(new_edrs_model).count} .......... #{new_edrs_field2}"
-
-      end
-    end
-  else
-    if not new_edrs_field.blank?
-     #puts "NEW FIEELD >>> #{Person.last.send(new_edrs_field)}"
-
-          end
-    end
-end
-
-mapped_fields = JSON.parse($mapped.to_json)
-#puts mapped_fields
-
-headers = []
-file = File.open($olddata).each_line do |line|
-  row = line.gsub("&#39;","'").split(";");
-  if row[0]=='first_name'
-    headers = row
-    next
-  end
-  identifiers ={}
-  status = ''
-  person = Person.new
-  headers.each do |field|
-       if mapped_fields[field].present?
-         new_field = (mapped_fields[field][0] rescue '')
-         if new_field.present?
-           person[new_field] = row[headers.index(field)]
-         else
-            if mapped_fields[field][2].present?
-               identifiers[mapped_fields[field][2]] = row[headers.index(field)]
-            else
-               status = row[headers.index(field)]
-            end
-
-         end
-       else
-
-       end
-
-  end
-
-
-  person.save
-  person.reload
-  #Death entry Nunmber
-  if identifiers["DEATH ENTRY NUMBER"].present?
-    person_identifier = PersonIdentifier.new
-    person_identifier.person_record_id = person.id
-    person_identifier.identifier_type = "DEATH ENTRY NUMBER"
-    person_identifier.identifier = identifiers["DEATH ENTRY NUMBER"]
-    district_code = (District.by_name.key(person.place_of_death_district).first.code rescue 'HQ')
-    person_identifier.district_code = district_code
-    sort_value = (identifiers["DEATH ENTRY NUMBER"].split("/")[2] + identifiers["DEATH ENTRY NUMBER"].split("/")[1]).to_i
-    person_identifier.den_sort_value = sort_value
-    person_identifier.save
-   end
-  #Death registration Number
-  if identifiers["DEATH REGISTRATION NUMBER"].present?
-    person_identifier = PersonIdentifier.new
-    person_identifier.person_record_id = person.id
-    person_identifier.identifier_type = "DEATH REGISTRATION NUMBER"
-    person_identifier.identifier = identifiers["DEATH REGISTRATION NUMBER"]
-    district_code = (District.by_name.key(person.place_of_death_district).first.code rescue 'HQ')
-    person_identifier.district_code = district_code
-    person_identifier.save
-  end
-
-  #Death registration Number
-  if identifiers["National ID"].present?
-    person_identifier = PersonIdentifier.new
-    person_identifier.person_record_id = person.id
-    person_identifier.identifier_type = "National ID"
-    person_identifier.identifier = identifiers["National ID"]
-    district_code = (District.by_name.key(person.place_of_death_district).first.code rescue 'HQ')
-    person_identifier.district_code = district_code
-    person_identifier.save
-  end
-  if $status_map[status].present? && person.first_name.present?
-    record_status = PersonRecordStatus.new
-    record_status.person_record_id = person.id
-    record_status.status = $status_map[status]
-    if status == "Reprinted"
-      record_status.reprint = true
-    end
-    record_status.district_code =  (District.by_name.key(person.place_of_death_district).first.code  rescue 'HQ')
-    record_status.save
-  else
-    record_status = PersonRecordStatus.new
-    record_status.person_record_id = person.id
-    record_status.status = "HQ INCOMPLETE MIGRATION"
-    record_status.district_code =  (District.by_name.key(person.place_of_death_district).first.code  rescue 'HQ')
-    record_status.save
-  end
-end
-
-end
-
 #start
+puts "Migration started"
 fetch_source_data
+
+puts "Indexing to elasticsearch"
+people_count = Person.count
+
+page_number = 0
+page_size = 100
+
+pages = people_count / page_size
+
+(0..pages).each do |page|
+    Person.by__id.page(page).per(page_size).each do |person|
+        if SETTINGS["potential_duplicate"]
+              record = {}
+              record["first_name"] = person.first_name
+              record["last_name"] = person.last_name
+              record["middle_name"] = (person.middle_name rescue nil)
+              record["gender"] = person.gender
+              record["place_of_death_district"] = person.place_of_death_district
+              record["birthdate"] = person.birthdate
+              record["date_of_death"] = person.date_of_death
+              record["mother_last_name"] = (person.mother_last_name rescue nil)
+              record["mother_middle_name"] = (person.mother_middle_name rescue nil)
+              record["mother_first_name"] = (person.mother_first_name rescue nil)
+              record["father_last_name"] = (person.father_last_name rescue nil)
+              record["father_middle_name"] = (person.father_middle_name rescue nil)
+              record["father_first_name"] = (person.father_first_name rescue nil)
+              record["id"] = person.id
+              record["district_code"] = person.district_code
+              begin
+                  SimpleElasticSearch.add(record)
+                  sleep 0.1
+              rescue Exception => e
+                  
+              end
+
+        else
+          next
+        end
+    end
+    puts "Indexed #{(page + 1) * page_size}"
+end
+
+puts "Data to mysql"
+`bundle exec rake edrs:build_mysql`
+
+puts "Update couch sequence"
+couch_mysql_path =  "#{Rails.root}/config/couchdb.yml"
+db_settings = YAML.load_file(couch_mysql_path)
+couch_db_settings =  db_settings[Rails.env]
+couch_protocol = couch_db_settings["protocol"]
+couch_username = couch_db_settings["username"]
+couch_password = couch_db_settings["password"]
+couch_host = couch_db_settings["host"]
+couch_db = couch_db_settings["prefix"] + (couch_db_settings["suffix"] ? "_" + couch_db_settings["suffix"] : "" )
+couch_port = couch_db_settings["port"]
+changes_link = "#{couch_protocol}://#{couch_username}:#{couch_password}@#{couch_host}:#{couch_port}/#{couch_db}/_changes"
+data = JSON.parse(RestClient.get(changes_link))
+if data.present?
+        couchdb_sequence = CouchdbSequence.last
+        if couchdb_sequence.present?
+          couchdb_sequence.seq = data["last_seq"].to_i
+          couchdb_sequence.save
+        else
+          couchdb_sequence = CouchdbSequence.create(seq: data["last_seq"].to_i)
+        end
+        
+end
+
+puts "Migration done"

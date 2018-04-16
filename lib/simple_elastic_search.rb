@@ -202,7 +202,7 @@ class SimpleElasticSearch
 
     create_string = self.escape_single_quotes(person.as_json.to_json)
 
-    create_query = "curl -XPUT 'http://#{SETTING['host']}:#{SETTING['port']}/#{SETTING['index']}/#{SETTING['type']}/#{person['id']}'  -d '
+    create_query = "curl -s -XPUT 'http://#{SETTING['host']}:#{SETTING['port']}/#{SETTING['index']}/#{SETTING['type']}/#{person['id']}'  -d '
                 #{create_string}'"
 
     `#{create_query}`

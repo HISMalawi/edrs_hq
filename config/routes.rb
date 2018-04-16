@@ -53,6 +53,7 @@ Rails.application.routes.draw do
   get '/hq_incomplete' => 'case#hq_incomplete'
   get '/conflict' => 'case#conflict'
   get '/approve_potential_duplicates' => 'case#approve_potential_duplicates'
+  get '/approved_duplicate' =>"case#approved_duplicate"
   get '/approve_for_reprinting' => 'case#approve_for_reprinting'
   get '/reprinted_certificates' =>"case#reprinted_certificates"
   get '/local_cases' => 'case#local_cases'
@@ -83,19 +84,24 @@ Rails.application.routes.draw do
   get '/can_confirm' => 'case#can_confirm'
   get '/confirmed' => 'case#confirmed'
   get '/rejected_requests' => 'case#rejected_requests'
-  get '/verify_certificates' => 'case#dispatch_printouts'
+  get '/verify_certificates' => 'case#verify_certificates'
   get '/printed_amended_or_reprint' => "case#printed_amended_or_reprint"
 
 
   get 'add_more_open_cases/:page_number' => 'case#more_open_cases'
   get '/add_more_open_cases_with_prev_status/:page_number' => "case#more_open_cases_with_prev_status"
   get '/add_more_special_cases/:page_number' => "case#more_special_cases"
+  get '/add_more_special_cases_by_status/:page_number' => "case#more_special_cases_by_status"
   get '/add_more_reprint_or_amended/:page_number' => "case#more_amended_or_reprinted_cases"
   get '/special_cases'=>"case#special_cases"
+  get '/printed_special_case' =>"case#printed_special_case"
+  get '/rejected_special_case' => "case#rejected_special_case"
   get '/approved_incomplete' => "case#approved_for_print_marked_incomplete"
   get 'view_cases/:person_id' => 'case#show'
   get '/show/:person_id' => 'case#show'
   get '/incomplete_cases' => 'case#incomplete_cases'
+  get "/view_certificate/:id" => "case#view_certificate"
+  get "/pdf_certificate/:id" => "case#pdf_certificate"
   get '/rejected_cases' => 'case#rejected_cases'
 
   #################################Duplicate capturing and resolving routes ##################

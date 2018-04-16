@@ -275,7 +275,7 @@ class HqController < ApplicationController
       person = Person.find(key.strip)
 
       next if person.blank?
-      PersonRecordStatus.change_status(person,"HQ CLOSED")
+      PersonRecordStatus.change_status(person,"HQ PRINTED")
       id = person.id
       
       output_file = "#{CONFIG['certificates_path']}#{id}.pdf"
@@ -400,7 +400,7 @@ class HqController < ApplicationController
         (today - 3.months), (today - 2.months), (today - 1.months), (today)] .each do |date|
 
         status = ["HQ ACTIVE", "HQ APPROVED","DC REAPPROVED", "HQ REAPPROVED", "HQ COMPLETE", "HQ INCOMPLETE", "HQ DUPLICATE",
-                  "HQ POTENTIAL DUPLICATE", "HQ CLOSED", "HQ POTENTIAL INCOMPLETE",
+                  "HQ POTENTIAL DUPLICATE", "HQ PRINTED", "HQ POTENTIAL INCOMPLETE",
                   "HQ DISPATCHED", "HQ CAN PRINT", "HQ REPRINT", "HQ AMMEND", "DC AMMEND"].uniq
         month = date.strftime("%b`%y")
         count = 0.0
@@ -434,7 +434,7 @@ class HqController < ApplicationController
         ["hq_reprint", ["HQ REPRINT"]],
         ["hq_duplicate", ["HQ POTENTIAL DUPLICATE", "HQ DUPLICATE", "HQ CONFIRMED DUPLICATE"]],
         ["hq_incomplete", ["HQ POTENTIAL INCOMPLETE", "HQ INCOMPLETE"]],
-        ["hq_printed", ["HQ CLOSED"]],
+        ["hq_printed", ["HQ PRINTED"]],
         ["hq_dispatched", ["HQ DISPATCHED"]]
      ]
 
@@ -791,8 +791,8 @@ class HqController < ApplicationController
     @tasks << ['Unclaimed bodies','Unclaimed bodies record',"/special_cases?registration_type=Unclaimed bodies&next_url=#{request.path}",'']
     @tasks << ['Missing persons','Missing persons record',"/special_cases?registration_type=Missing Person&next_url=#{request.path}",'']
     @tasks << ['Death abroad','Death abroad record',"/special_cases?registration_type=Deaths Abroad&next_url=#{request.path}",'']
-    @tasks << ['Printed/Dispatched Certificates',"Printed/Dispatched Certificates?next_url=#{request.path}",'','']
-    @tasks << ['Rejected special cases','Rejected special cases','','']
+    @tasks << ['Printed/Dispatched Certificates',"Printed/Dispatched Certificates","/printed_special_case?next_url=#{request.path}",'']
+    @tasks << ['Rejected special cases','Rejected special cases',"/rejected_special_case?next_url=#{request.path}",'']
     @section ="Special Cases"
     render :template => "/hq/tasks"
   end
@@ -803,11 +803,11 @@ class HqController < ApplicationController
       @tasks << ['Potential Duplicates','Records marked as potential duplicates',"/potential?next_url=#{request.path}",'']
       @tasks << ['Can Confirm Duplicates','Can be sent to DC or Voided upon DM approval',"/can_confirm?next_url=#{request.path}",'']
       @tasks << ['Confirmed Duplicates','Confirmed duplicates','','']
-      @tasks << ['Approved for Printing','All potential duplicates that were approved and printed by DS, Option to view comments','','']
+      @tasks << ['Approved for Printing','All potential duplicates that were approved and printed by DS, Option to view comments',"/approved_duplicate?next_url=#{request.path}",'']
     end
     if has_role("Reject a record")
        @tasks << ['Resolve Duplicates','Records marked as potential duplicates',"/resolve_duplicates?next_url=#{request.path}",'']
-       @tasks << ['Approved for Printing','All potential duplicates that were approved and printed by DS, Option to view comments','','']
+       @tasks << ['Approved for Printing','All potential duplicates that were approved and printed by DS, Option to view comments',"/approved_duplicate?next_url=#{request.path}",'']
     end
     @section ="Duplicate Cases"
     render :template => "/hq/tasks"
@@ -976,18 +976,5 @@ class HqController < ApplicationController
   end
 
   private
-  def create_barcode
-    if @barcode.nil?
-      process = Process.fork{`bin/generate_barcode #{@drn} #{@person.id} #{CONFIG['barcodes_path']}`}
-      Process.detach(process)
-    end
-     
-    if File.exists?("#{CONFIG['barcodes_path']}#{@person.id}.png")
-        @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
-        return
-    else
-        sleep(0.5)
-        create_barcode
-    end
-  end
+
 end
