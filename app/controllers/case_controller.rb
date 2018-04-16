@@ -11,7 +11,7 @@ class CaseController < ApplicationController
 
   def closed
     @title = "Closed Cases"
-    @statuses = ["HQ CLOSED"]
+    @statuses = ["HQ PRINTED"]
     @page = 1
     @drn = true
     @dispatch = true
@@ -31,6 +31,7 @@ class CaseController < ApplicationController
   def dispatched
     @title = "Dispatched Certificates"
     @statuses = ["HQ DISPATCHED"]
+    @drn = true
     @page = 1
     session[:return_url] = request.path
 
@@ -90,6 +91,15 @@ class CaseController < ApplicationController
     render :template => "case/default"
   end
 
+  def approved_duplicate
+    @title = "Approved duplicates"
+    @prev_statuses = ["HQ POTENTIAL DUPLICATE TBA","HQ NOT DUPLICATE TBA","HQ POTENTIAL DUPLICATE","HQ DUPLICATE"]
+    @page = 1
+    @statuses = ["HQ CAN PRINT"]
+    session[:return_url] = request.path
+    render :template => "case/default"
+  end
+
   def local_cases
     @title = "Local Cases"
     @statuses = ["-"]
@@ -110,7 +120,7 @@ class CaseController < ApplicationController
 
   def re_open_cases
     @title = "Re-open Cases"
-    @statuses = ["HQ CLOSED", "HQ DISPATCHED"]
+    @statuses = ["HQ PRINTED", "HQ DISPATCHED"]
     @page = 1
     session[:return_url] = request.path
 
@@ -225,8 +235,8 @@ class CaseController < ApplicationController
   def reprinted_certificates
     @title = "Re printed Certificates"
     @prev_statuses = ["HQ CAN RE PRINT"]
-    @status = "HQ CLOSED"
-    @statuses = ["HQ CLOSED","HQ DISPATCHED"]
+    @status = "HQ PRINTED"
+    @statuses = ["HQ PRINTED","HQ DISPATCHED"]
     @page = 1
     session[:return_url] = request.path
 
@@ -240,7 +250,7 @@ class CaseController < ApplicationController
     render :text => "Error!" and return if next_status.blank?
     person = Person.find(params[:person_id])
     
-    if ["HQ CAN PRINT", "HQ REPRINT", "HQ APPROVED", "HQ REAPPROVED"].include?(next_status)
+    if ["HQ CAN PRINT", "HQ RE PRINT", "HQ APPROVED", "HQ REAPPROVED"].include?(next_status)
       
       drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([params[:person_id], "DEATH REGISTRATION NUMBER"]).last
       if drn.blank?
@@ -262,6 +272,10 @@ class CaseController < ApplicationController
 
         PersonRecordStatus.change_status(Person.find(params[:person_id]),"MARKED HQ APPROVAL",(params[:comment].present? ? params[:comment] : nil))
         render :text => "ok" and return
+      else
+          if !File.exist?("#{CONFIG['barcodes_path']}#{params[:person_id]}.png")
+              create_barcode(person)
+          end
       end
     end
 
@@ -298,6 +312,17 @@ class CaseController < ApplicationController
     @page = 1
 
     render :template => "case/default"
+  end
+
+  def verify_certificates
+    @title = "Printed Certificates"
+    @drn = true
+    @statuses = ["HQ PRINTED","HQ DISPATCHED"]
+    session[:return_url] = request.path
+
+    @page = 1
+
+    render :template => "case/default"      
   end
 
   def search_similar_record(params)
@@ -500,18 +525,73 @@ class CaseController < ApplicationController
 
   def special_cases
       @title = params[:registration_type].humanize
-      @statuses = ["DC AMENDED"]
+      @statuses = []
       @page = 1
       session[:return_url] = request.path
       render :template => "case/default"
   end
-  def more_special_cases
-     cases = []
-    (Person.by_registration_type.key(params[:registration_type]).page(params[:page_number]).per(10) || []).each do |person|
-      cases << fields_for_data_table(person) if person.den.present?
-    end 
 
+
+  def more_special_cases
+    cases = []
+    if params[:district].present?
+        district_code = District.by_name.key(params[:district]).first.id
+        (Person.by_registration_type_and_district_code.key([params[:registration_type],district_code]).page(params[:page_number]).per(10) || []).each do |person|
+          cases << fields_for_data_table(person) if person.den.present?
+        end 
+    else
+      (Person.by_registration_type.key(params[:registration_type]).page(params[:page_number]).per(10) || []).each do |person|
+        cases << fields_for_data_table(person) if person.den.present?
+      end 
+    end
     render text: cases.to_json and return
+  end
+
+  def printed_special_case
+     @title = "Printed Special Cases"
+     @statuses = ["HQ PRINTED"]
+     @registration_types = ["Abnormal Deaths","Dead on Arrival","Unclaimed bodies","Missing Person","Deaths Abroad"]
+     @page = 1
+     session[:return_url] = request.path
+     render :template => "case/default"
+  end
+
+  def rejected_special_case
+     @title = "Printed Special Cases"
+     @statuses = ["HQ REJECTED"]
+     @registration_types = ["Abnormal Deaths","Dead on Arrival","Unclaimed bodies","Missing Person","Deaths Abroad"]
+     @page = 1
+     session[:return_url] = request.path
+     render :template => "case/default"
+  end
+
+  def more_special_cases_by_status
+      keys = []
+      cases = []
+      if params[:district].present?
+        district_code = District.by_name.key(params[:district]).first.id
+        params[:statuses].split("|").each do |status|
+            params[:registration_types].split("|").each do |type|
+                keys << [type,district_code,status]
+            end  
+        end
+        
+        (PersonRecordStatus.by_registration_type_and_district_code_and_status.keys(keys).page(params[:page_number]).per(10) || []).each do |status|
+          person = status.person
+          cases << fields_for_data_table(person) if person.den.present?
+        end 
+      else
+        params[:statuses].split("|").each do |status|
+            params[:registration_types].split("|").each do |type|
+                keys << [type,status]
+            end  
+        end
+        (PersonRecordStatus.by_registration_type_and_status.keys(keys).page(params[:page_number]).per(10) || []).each do |status|
+          person = status.person
+          cases << fields_for_data_table(person) if person.den.present?
+        end 
+      end
+      render text: cases.to_json and return
   end
 
   def show
@@ -635,7 +715,14 @@ class CaseController < ApplicationController
 
       @title = "Resolve Duplicate"
   end
+  def view_certificate
+    
+  end
 
+  def pdf_certificate
+      pdf_filename = "#{CONFIG['certificates_path']}#{params[:id]}.pdf"
+      send_file(pdf_filename, :filename => "#{params[:id]}.pdf", :disposition => 'inline', :type => "application/pdf")
+  end
   def find
       person = Person.find(params[:id])
       person["status"] = PersonRecordStatus.by_person_recent_status.key(params[:id]).last.status

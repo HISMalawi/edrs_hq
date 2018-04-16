@@ -2,6 +2,7 @@
 var dataTable = null;
 var prev_statuses = "<%=@prev_statuses.join('|') rescue ''%>";
 var registration_type ="<%= params[:registration_type] rescue '' %>"
+var registration_type_and_status = "<%= @registration_types rescue ''%>"
 var amendment = "<%=@amendment rescue ''%>";
 
 function __$(id){
@@ -83,11 +84,13 @@ function getCases() {
     }                                                                         
   } 
 
-  var url ="";                                                                  
-  if(prev_statuses && prev_statuses.length > 0){
+  var url ="";   
+  if(registration_type_and_status.length > 0){
+      url = ("/add_more_special_cases_by_status/" +current_page + "?statuses=<%=@statuses.join('|') rescue ''%>&registration_types=<%= @registration_types.join('|') rescue ''%>&district=<%=params[:district]%>")
+  }else if(prev_statuses && prev_statuses.length > 0){
       url = ("/add_more_open_cases_with_prev_status/"+current_page + "?statuses=<%=@statuses.join('|') rescue ''%>&prev_statuses=<%=@prev_statuses.join('|') rescue ''%>&district=<%=params[:district]%>")
   }else if(registration_type && registration_type.length > 0){
-      url = ("/add_more_special_cases/"+current_page + "?registration_type="+registration_type)
+      url = ("/add_more_special_cases/"+current_page + "?registration_type="+registration_type+"&statuses=<%=@statuses.join('|') rescue ''%>")
   }else if(amendment && amendment.length > 0){
       url = ("/add_more_reprint_or_amended/"+current_page)
   }else{
@@ -99,7 +102,7 @@ function getCases() {
             status += ("|" + "<%= s.split(/\s+/).join('_')%>");
         }
       <% } %>
-      url = ("/add_more_open_cases/"+current_page + "?statuses=" + status)
+      url = ("/add_more_open_cases/"+current_page + "?statuses=" + status+"&district=<%=params[:district]%>")
   }
  
 
@@ -266,8 +269,8 @@ function changeEntryLength(element){
 }
 
 function changeDistrict(element){
-    var  pathname = window.location.pathname
-    window.location.href = pathname+"?district="+element.value
+    var  pathname = "<%= request.fullpath %>"
+    window.location.href = pathname+"&district="+element.value
 }
 
 </script>

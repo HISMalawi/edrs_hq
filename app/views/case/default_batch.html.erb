@@ -168,7 +168,6 @@ function getCases() {
 
   var url ="";                                                                  
   if(prev_statuses && prev_statuses.length > 0){
-      console.log(prev_statuses);
       url = ("/add_more_open_cases_with_prev_status/"+current_page + "?statuses=<%=@statuses.join('|') rescue ''%>&prev_statuses=<%=@prev_statuses.join('|') rescue ''%>&district=<%=params[:district]%>")
   }else if(registration_type && registration_type.length > 0){
       url = ("/add_more_special_cases/"+current_page + "?registration_type="+registration_type)

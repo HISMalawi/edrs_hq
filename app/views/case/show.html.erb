@@ -411,9 +411,9 @@
           <% end %>
 
           <% if comment == true && false%>
-            <div onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary"><span>View Comments</span></div>
+            <div onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary"><span>View Trail</span></div>
           <% end %>
-          <div id="comment_div" onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary" style="visibility: hidden;"><span>View Comments</span></div>
+          <div id="comment_div" onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary" style="visibility: hidden;"><span>View Trail</span></div>
         </th>
       </tr>
       </tfoot>
@@ -1088,6 +1088,10 @@
                 changeStatusComment(status,"Completeness Check comment")
             }
         }
+    }
+
+    function viewCertificate(){
+        window.location = "/view_certificate/<%= @person.id%>?next_url=<%=request.fullpath %>"
     }
 </script>
 <style>

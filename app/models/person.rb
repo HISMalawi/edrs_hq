@@ -753,6 +753,8 @@ class Person < CouchRest::Model::Base
 
     view :by_registration_type
 
+    view :by_registration_type_and_district_code
+
     view :by_coder_and_coded_at,
          :map => "function(doc) {
                   if (doc['type'] == 'Person' && doc['coder'] != null) {

@@ -281,6 +281,15 @@ class ApplicationController < ActionController::Base
   def districts
     @district = District.all.each
   end
+  def create_barcode(person)
+    if person.npid.blank?
+       npid = Npid.by_assigned.keys([false]).first
+       person.npid = npid.national_id
+       person.save
+    end
+    process = Process.fork{`bin/generate_barcode #{person.npid} #{person.id} #{CONFIG['barcodes_path']}`}
+    Process.detach(process)
+  end
   protected
   def check_user
 

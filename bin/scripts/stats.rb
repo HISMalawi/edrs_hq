@@ -18,7 +18,7 @@ printed = []
 
   			approved << PersonRecordStatus.by_status_and_created_at.startkey(["HQ ACTIVE",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey(["HQ ACTIVE",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
         
-        printed << PersonRecordStatus.by_status_and_created_at.startkey(["HQ CLOSED",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey(["HQ CLOSED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count 
+        printed << PersonRecordStatus.by_status_and_created_at.startkey(["HQ PRINTED",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey(["HQ PRINTED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count 
   			
         beginning = beginning + 1.months
   			
@@ -39,7 +39,7 @@ cummulatives["Conflict cases"] = PersonRecordStatus.by_record_status.key("HQ CON
 cummulatives["Print Queue"] = PersonRecordStatus.by_record_status.key("HQ CAN PRINT").each.count rescue 0
 cummulatives["Re pritnt- Queue"] = PersonRecordStatus.by_record_status.keys(["HQ REPRINT","HQ REPRINT REQUEST"]).each.count rescue 0
 cummulatives["Suspected duplicates"] = PersonRecordStatus.by_record_status.keys(["HQ POTENTIAL DUPLICATE","HQ DUPLICATE"]).each.count rescue 0
-cummulatives["Printed"] = PersonRecordStatus.by_record_status.key("HQ CLOSED").each.count rescue 0
+cummulatives["Printed"] = PersonRecordStatus.by_record_status.key("HQ PRINTED").each.count rescue 0
 cummulatives["Dispatched"] =  PersonRecordStatus.by_record_status.key("HQ DISPATCHED").each.count rescue 0
 stats[:cummulative] = cummulatives;
       #puts "Stats generated :)::::::::::::::)::::::::::::::)::::::::::::::):::::::::::::)::::::::::::::::::::)"
@@ -62,7 +62,7 @@ District.all.each do |district|
             district_registered << Person.by_district_code_and_created_at.startkey([district.id, start_date]).endkey([district.id, end_date]).each.count
             district_approved << PersonRecordStatus.by_district_code_and_status_and_created_at.startkey([district.id,"HQ ACTIVE",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey([district.id,"HQ ACTIVE",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
             
-            district_closed  = PersonRecordStatus.by_district_code_and_status_and_created_at.startkey([district.id,"HQ CLOSED",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey([district.id,"HQ CLOSED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
+            district_closed  = PersonRecordStatus.by_district_code_and_status_and_created_at.startkey([district.id,"HQ PRINTED",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey([district.id,"HQ PRINTED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
             district_dispatched = PersonRecordStatus.by_district_code_and_status_and_created_at.startkey([district.id,"HQ DISPATCHED",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey([district.id,"HQ DISPATCHED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
             
             district_printed << district_closed.to_i + district_dispatched.to_i
