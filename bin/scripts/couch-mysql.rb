@@ -121,6 +121,9 @@ begin
 				parts = key.split("|")
 				if record["doc"]["type"] == parts[0]
 					save_to_mysql(record,key,db_maps)
+					if record["doc"]["type"] =="PersonRecordStatus"
+						#SimpleElasticSearch.add_status(record["doc"]["_id"])
+					end
 				else
 					next
 				end

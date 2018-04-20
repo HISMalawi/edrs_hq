@@ -72,6 +72,9 @@
             <div onclick= "window.parent.location = '/cause_of_death?person_id=<%= @person.id%>'"
                  class="dynamic-button btn btn-small btn-default pull-right btn-primary"><span>Edit Cause of death</span></div>
         <%end%>
+         <% if @person.barcode.blank? %>
+            <button class="btn btn-primary pull-right" onclick="addBarcode()">Add Barcode</button>
+        <%end%>
             <div onclick= "window.parent.location = '/search'"
                  class="dynamic-button btn btn-small btn-default pull-left btn-danger"><span>Cancel</span></div>
         </th>
@@ -79,6 +82,45 @@
       </tfoot>
     </table>
   </div>
+</div>
+<div id="shield">
+    <div class="" id="barcode_modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header btn-primary">
+            <h4 class="modal-title" id="action_modal_title">Scan / Type Barcode</h4>
+          </div>
+          <div class="modal-body">
+
+            <div class="row">
+              <div class="col-lg-12">
+
+                <div class=" form-group">
+                  <div class="container">
+                    <div class="row" style="width: 550px;">
+
+                        <div id="action_comments_list">
+
+                        </div>
+
+                        <div style="width: 100%;margin-top: 20px;border-top: 1px solid #d3d3d3">
+                            <form id="comment-form">
+                              <input class="form-control" name="barcode" placeholder="1234567890" id="barcode" style="width: 98%;margin-top: 4px;margin-bottom: 4px;" onfocus="checkBarcode()" onblur="stopBarodeCheck()">
+                            </form>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="close" class="btn btn-sm btn-default pull-left" onclick="__$('barcode_modal').style.display = 'none';hideModal()" > Close </button>
+                <button id="action_comment_proceed" type="button" class="btn btn-sm btn-success" onclick="saveBarcode(__$('barcode').value)"> Proceed </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 </div>
 
 <script>
@@ -92,6 +134,10 @@
 
     function ___$(clas){
         return document.getElementsByClassName(clas)[0];
+    }
+
+    function hideModal(){
+        $("#shield").css('display','none')
     }
 
     function updateValue(obj){
@@ -128,13 +174,83 @@
         })
     }
 
-</script>
-<style>
-    #completeness, #printers{
-        position : absolute;
-        left: 30%;
-        top: 15%;
-        display: none;
+    function addBarcode(){
+         $("#shield").show();
+        __$("barcode_modal").style.display = "block";
     }
+
+    var checkBarcodeInterval = null
+
+
+    function checkBarcode(){
+        checkBarcodeInterval = setInterval(function(){
+            var value = __$("barcode").value
+            if(value.indexOf("$") >= 0){
+                clearInterval(checkBarcodeInterval);
+                saveBarcode(value);
+            }
+        },80)
+    }
+
+    function stopBarodeCheck(){
+        clearInterval(checkBarcodeInterval)
+    }
+
+    function saveBarcode(value){
+        var barcode_value = ""
+        if(value.indexOf("$") >= 0){
+            barcode_value = value.slice(0, value.length - 1)
+            
+        }else{
+            barcode_value = value;
+        }
+
+        $.ajax({
+                url: "/save_barcode/<%=@person.id%>",
+                data: {
+                        barcode: barcode_value
+                },
+                success: function(result){
+                    if(result == "saved"){
+                        location.reload();
+                    }else{
+
+                    }
+                }
+        })
+    }
+
+
+</script>
+<style type="text/css">
+      #shield{
+          position: absolute;
+          width: 100% !important;
+          height: 100% !important;
+          left: 0px;
+          top: 0px;
+          background: rgba(128,128,128,0.35);
+          z-index: 1050;
+          display: none;
+       }
+      .modal-body{
+          background: #ffffff;
+       }
+       #completeness, #printers, #comments,#action_modal,#duplicate_modal,#approve_modal,#barcode_modal{
+              position : absolute;
+              left: 30%;
+              top: 13.5%;
+              display: none;
+              z-index: 4000
+        }
+
+        .comments-list .media{
+          border-bottom: 1px dotted #ccc;
+        }
+        #comments-list{
+          max-height: 300px;
+          overflow: auto;
+          width: 100%;
+        }
 </style>
 

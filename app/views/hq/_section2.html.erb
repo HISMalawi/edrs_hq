@@ -102,7 +102,7 @@
                   <td id="other_cause_of_death" colspan="6" style="padding:0px !important" valign="top">
                       <table style="width:100%" style="margin:0px !important">
 
-                            <%  @person.cause_of_death_conditions.keys.each do |key| %>
+                            <%  (@person.cause_of_death_conditions.keys rescue []).each do |key| %>
                             <tr>
                               <td style="width:13%;border-right:none"><b>Condition :</b></td>
                               <td style="border-left:none">

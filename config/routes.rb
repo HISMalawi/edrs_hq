@@ -76,6 +76,8 @@ Rails.application.routes.draw do
   get '/dispatch_printouts' => 'case#dispatch_printouts'
   get '/ajax_change_status' => 'case#ajax_change_status'
   post '/ajax_change_status' => 'case#ajax_change_status'
+  get "/save_barcode/:id" => "case#save_barcode"
+  post "/save_barcode/:id" => "case#save_barcode"
 
   get '/void_cases' => 'case#void_cases'
   get '/voided_cases' => 'case#voided_cases'

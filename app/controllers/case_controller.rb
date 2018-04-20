@@ -1,5 +1,19 @@
 class CaseController < ApplicationController
   before_filter :get_districts
+  def save_barcode
+    person = Person.find(params[:id])
+    barcode = PersonIdentifier.new
+    barcode.person_record_id = person.id
+    barcode.identifier = params[:barcode]
+    barcode.identifier_type = "Form Barcode"
+    barcode.creator = (User.current_user.id rescue (@current_user.id rescue nil))
+    barcode.district_code = (person.district_code rescue CONFIG['district_code'])
+    if barcode.save
+        render :text => "saved"
+    else
+        render :text => "error"
+    end
+  end
   def open
     @title = "Open Cases"
     @statuses = ["HQ ACTIVE"]
@@ -663,6 +677,9 @@ class CaseController < ApplicationController
 
     @status = PersonRecordStatus.by_person_recent_status.key(params[:id]).last
     
+    if @status ="HQ PRINTED"
+        @dispatch = true 
+    end
 
     @person_place_details = place_details(@person)
 

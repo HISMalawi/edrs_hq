@@ -438,7 +438,7 @@
             <table class="table table-condensed table-striped table-hover">
               <tbody>
                 <% @available_printers.each do |printer| %>
-                    <tr onmousedown="updateValue(this)" value="<%= printer %>" class="table-row" style="cursor: pointer">
+                    <tr onmousedown="updateValue(this);setPrinter('<%= printer %>')" value="<%= printer %>" class="table-row" style="cursor: pointer">
                       <td class="table-cell"><input type="radio" class="printer_radio_button" value="<%= printer %>" name="printer_name"/></td>
                       <td class="table-cell" style="text-align: left; padding-left:50px;"><%= printer %></td>
                     </tr>
@@ -447,7 +447,11 @@
             </table>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" onclick="__$('frm').submit()" > Print </button>
+            <% if @dispatch.present? && @dispatch %>
+              <button type="button" class="btn btn-primary" onclick="dispatchSelected()" >Dispatch</button>
+            <%else%>
+              <button type="button" class="btn btn-primary" onclick="printSelected()" > Print </button>
+            <%end%>
             <button type="button" class="btn btn-default" onclick="__$('printers').style.display = 'none';hideModal()" > Close</button>
           </div>
         </div>
@@ -751,6 +755,8 @@
         __$(id).style.display = "block";
     }
 
+
+
     function __$(id){
         return document.getElementById(id);
     }
@@ -764,11 +770,22 @@
         __$("printer_name").value = obj.getAttribute('value');
     }
 
+    var printer = "";
+
+    var district = "<%= District.find(@person.district_code).name rescue 'Lilongwe' %>".trim();
+
     function selectPrinter(){
         __$("printer_name").value = '';
         $(".printer_radio_button").prop( "checked", false );
+
+        printer = printer_name;
     }
 
+
+
+    function setPrinter(printer_name){
+          printer = printer_name;
+    }
     function ajaxChange(status){
         $.ajax({
             url: "/ajax_change_status?next_status=" + status + "&person_id=<%=params['person_id']%>",
@@ -1093,6 +1110,34 @@
     function viewCertificate(){
         window.location = "/view_certificate/<%= @person.id%>?next_url=<%=request.fullpath %>"
     }
+
+    function dispatchRecord(){
+        loadPopup('printers');
+    }
+
+
+    function dispatchSelected(){
+        if(printer.length > 0){
+          var dispatch_url =  "/hq/do_dispatch_these?printer_name="+printer
+          var ids = ["<%= @person.id%>"];
+          $.ajax({
+                url: dispatch_url,
+                data: {
+                      ids: ids,
+                      district: district
+                },
+                success: function(result){
+                    if(result){
+                       location.reload();
+                    }
+                }
+          })
+        }else{
+
+            loadPopup('printers');
+
+        }
+  }
 </script>
 <style>
   #completeness, #printers, #comments,#action_modal,#duplicate_modal,#approve_modal{

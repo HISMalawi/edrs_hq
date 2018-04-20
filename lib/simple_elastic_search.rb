@@ -210,6 +210,84 @@ class SimpleElasticSearch
     return self.find(person["id"])
   end
 
+  def self.add_status(id)
+    status = {}
+    status_record = PersonRecordStatus.find(id)
+    status_record.keys.each do |key|
+      next if ["_rev", "type"].include?(key)
+      if key == "_id"
+        status["id"] = status_record[key]
+      else
+        status[key] = status_record[key]
+      end
+    end
+    create_string = self.escape_single_quotes(status.as_json.to_json)
+
+    create_query = "curl -s -XPUT 'http://#{SETTING['host']}:#{SETTING['port']}/#{SETTING['index']}/PersonRecordStatus/#{id}'  -d '
+                #{create_string}'"
+
+    `#{create_query}`
+    sleep 0.2
+    return self.find_status(id)
+  end
+
+  def self.find_status(id)
+        find_query = "curl -s -XGET 'http://#{SETTING['host']}:#{SETTING['port']}/#{SETTING['index']}/PersonRecordStatus/#{id}' "
+      record = JSON.parse(`#{find_query}`)
+    begin
+      record = JSON.parse(`#{find_query}`)
+      return record["_source"].merge({"id" => record["_id"]}) 
+    rescue Exception => e
+      return {}
+    end
+  end
+
+  def self.match_by_status(params)
+    params_keys = params.keys rescue nil
+    if params_keys.present?
+
+      match = []
+      params_keys.each do |key|
+        match << {:match => { key => params[key]}}
+      end
+      query = "curl -XGET 'http://#{SETTING['host']}:#{SETTING['port']}/#{SETTING['index']}/PersonRecordStatus/_search?pretty=true'  -d '
+              {
+                \"query\": {
+                  \"bool\": {
+                    \"must\":#{self.escape_single_quotes(match.to_json.to_s)}
+                    }
+                  }
+                }
+              }'"
+      return JSON.parse(`#{query}`)["hits"]
+    else
+      return "parameter bad format"
+    end
+  end
+
+  def self.status_count(params)
+    params_keys = params.keys rescue nil
+    if params_keys.present?
+
+      match = []
+      params_keys.each do |key|
+        match << {:match => { key => params[key]}}
+      end
+      query = "curl -XGET 'http://#{SETTING['host']}:#{SETTING['port']}/#{SETTING['index']}/PersonRecordStatus/_search?pretty=true'  -d '
+              {
+                \"query\": {
+                  \"bool\": {
+                    \"must\":#{self.escape_single_quotes(match.to_json.to_s)}
+                    }
+                  }
+                }
+              }'"
+      return JSON.parse(`#{query}`)["hits"]["total"]
+    else
+      return "parameter bad format"
+    end
+  end
+
   #Retriving record from elastic research
   def self.find(id)
     find_query = "curl -s -XGET 'http://#{SETTING['host']}:#{SETTING['port']}/#{SETTING['index']}/#{SETTING['type']}/#{id}' "
@@ -243,7 +321,7 @@ class SimpleElasticSearch
                   }
                 }
               }'"
-            return JSON.parse(`#{query}`)["hits"]["hits"].collect{|hit| hit["_source"].merge({"id" => hit["_id"]})}
+      return JSON.parse(`#{query}`)["hits"]["hits"].collect{|hit| hit["_source"].merge({"id" => hit["_id"]})}
     else
       return "parameter bad format"
     end
