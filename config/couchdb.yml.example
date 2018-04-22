@@ -12,7 +12,6 @@ development: &development
   print_password:
   printer_name: Printer1, Printer2
   pre_printed_paper: true
-  ben_assignment_interval: 3
   barcodes_path: /home/usr/barcodes/ 
   certificates_path: /home/usr/certificates/
   dispatch_path: /home/usr/dispatch/

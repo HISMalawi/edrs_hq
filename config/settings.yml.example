@@ -2,7 +2,7 @@ exact_duplicate: true
 potential_duplicate: true
 duplicate_precision: 80 #percentage precision
 duplicate_score: 6
-ben_assignment_interval: 3
+drn_assignment_interval: 3
 printer_name: ME,Printer2
 sampling_frequency: Daily #Weekly|Monthly
 sample_percentage: 5

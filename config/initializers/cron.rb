@@ -1,3 +1,6 @@
+if HQCronJobsTracker.first.blank?
+	HQCronJobsTracker.new.save
+end
 if CONFIG['site_type'].to_s != "facility"
     if (defined? PersonIdentifier.can_assign_drn).nil?
        PersonIdentifier.can_assign_drn = true

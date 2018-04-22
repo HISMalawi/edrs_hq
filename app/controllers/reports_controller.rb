@@ -8,7 +8,7 @@ class ReportsController < ApplicationController
   		@tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
   	else
-	    @tasks << ['Death reports','Death reports','/death_reports?time_line=Today&status=DC ACTIVE']
+	    @tasks << ['By District of Registration and Gender','By District of Registration and Gender','/reports/district_and_gender']
 	    @tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
 	end
@@ -46,5 +46,15 @@ class ReportsController < ApplicationController
     @section = "Death report"
     @districts = District.all.each
     @data = Report.general(params)
+  end
+
+  def district_and_gender
+      @districts = District.all.each
+  end
+
+  def by_district_registered_and_gender
+
+      @data = Report.district_registered_and_gender(params)
+      render :text => @data.to_json
   end
 end

@@ -30,19 +30,27 @@ stats[:year_registered] = registered
 stats[:year_approved] = approved
 stats[:year_printed] = printed
 
+connection = ActiveRecord::Base.connection
+
+cummulatives_keys = {}
+cummulatives_keys["Newly Received"] = ["HQ ACTIVE"]
+cummulatives_keys["Verified by DV"] = ["HQ COMPLETE"]
+cummulatives_keys["Marked incomplete by DV"] = ["HQ INCOMPLETE TBA"]
+cummulatives_keys["Incomplete Records"]  = ["HQ INCOMPLETE"]
+cummulatives_keys["Conflict cases"] = ["HQ CONFLICT"]
+cummulatives_keys["Print Queue"] = ["HQ CAN PRINT"]
+cummulatives_keys["Re pritnt- Queue"] = ["HQ REPRINT","HQ REPRINT REQUEST"]
+cummulatives_keys["Suspected duplicates"] = ["HQ POTENTIAL DUPLICATE","HQ DUPLICATE"]
+cummulatives_keys["Printed"] = ["HQ PRINTED"]
+cummulatives_keys["Dispatched"] =  ["HQ DISPATCHED"]
+
 cummulatives = {}
-cummulatives["Newly Received"] = PersonRecordStatus.by_record_status.key("HQ ACTIVE").each.count rescue 0
-cummulatives["Verified by DV"] = PersonRecordStatus.by_record_status.key("HQ COMPLETE").each.count rescue 0
-cummulatives["Marked incomplete by DV"] = PersonRecordStatus.by_record_status.key("HQ INCOMPLETE TBA").each.count rescue 0
-cummulatives["Incomplete Records"]  = PersonRecordStatus.by_record_status.key("HQ INCOMPLETE").each.count rescue 0
-cummulatives["Conflict cases"] = PersonRecordStatus.by_record_status.key("HQ CONFLICT").each.count rescue 0
-cummulatives["Print Queue"] = PersonRecordStatus.by_record_status.key("HQ CAN PRINT").each.count rescue 0
-cummulatives["Re pritnt- Queue"] = PersonRecordStatus.by_record_status.keys(["HQ REPRINT","HQ REPRINT REQUEST"]).each.count rescue 0
-cummulatives["Suspected duplicates"] = PersonRecordStatus.by_record_status.keys(["HQ POTENTIAL DUPLICATE","HQ DUPLICATE"]).each.count rescue 0
-cummulatives["Printed"] = PersonRecordStatus.by_record_status.key("HQ PRINTED").each.count rescue 0
-cummulatives["Dispatched"] =  PersonRecordStatus.by_record_status.key("HQ DISPATCHED").each.count rescue 0
+cummulatives_keys.keys.each do |key|
+    query =  "SELECT count(*) as total FROM person_record_status WHERE status IN('#{cummulatives_keys[key].join("','")}') AND voided = 0"
+    cummulatives[key] = connection.select_all(query).as_json.last['total'] rescue 0
+end
 stats[:cummulative] = cummulatives;
-      #puts "Stats generated :)::::::::::::::)::::::::::::::)::::::::::::::):::::::::::::)::::::::::::::::::::)"
+#puts "Stats generated :)::::::::::::::)::::::::::::::)::::::::::::::):::::::::::::)::::::::::::::::::::)"
 
 
 stats["districts"] = {}
@@ -57,15 +65,26 @@ District.all.each do |district|
           district_printed = []
 
           (1..current_month_num).each do |i|
-            start_date = beginning
-            end_date = beginning.end_of_month
-            district_registered << Person.by_district_code_and_created_at.startkey([district.id, start_date]).endkey([district.id, end_date]).each.count
-            district_approved << PersonRecordStatus.by_district_code_and_status_and_created_at.startkey([district.id,"HQ ACTIVE",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey([district.id,"HQ ACTIVE",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
+            start_date = beginning.strftime("%Y-%m-%d 0:00:00:000Z")
+            end_date = beginning.end_of_month.strftime("%Y-%m-%d 23:59:59.999Z")
+
+            district_registered << connection.select_all("SELECT count(*) as total FROM people WHERE 
+                                                          TIME(created_at) >= TIME('#{start_date}') AND TIME(created_at) <= TIME('#{end_date}')
+                                                          AND district_code ='#{district.id}'").as_json.last['total'] rescue 0
+
+          
+
+            district_approved << connection.select_all("SELECT count(*) as total FROM person_record_status 
+                                                        WHERE status IN('HQ ACTIVE') AND
+                                                        TIME(created_at) >= TIME('#{start_date}') AND TIME(created_at) <= TIME('#{end_date}')
+                                                        AND district_code ='#{district.id}'").as_json.last['total'] rescue 0
+      
             
-            district_closed  = PersonRecordStatus.by_district_code_and_status_and_created_at.startkey([district.id,"HQ PRINTED",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey([district.id,"HQ PRINTED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
-            district_dispatched = PersonRecordStatus.by_district_code_and_status_and_created_at.startkey([district.id,"HQ DISPATCHED",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey([district.id,"HQ DISPATCHED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
-            
-            district_printed << district_closed.to_i + district_dispatched.to_i
+            district_printed  = connection.select_all("SELECT count(*) as total FROM person_record_status 
+                                                        WHERE status IN('HQ PRINTED') AND 
+                                                        TIME(created_at) >= TIME('#{start_date}') AND TIME(created_at) <= TIME('#{end_date}')
+                                                        AND district_code ='#{district.id}'").as_json.last['total'] rescue 0      
+            district_printed << district_printed
             beginning = beginning + 1.months
             
             #puts "Iterator #{start_date} : #{end_date}"

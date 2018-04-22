@@ -205,4 +205,31 @@ class Report < ActiveRecord::Base
 		    end
 		    return sample_details
 	end
+
+	def self.district_registered_and_gender(params)
+		district_query = ""
+		if params[:district].present? && params[:district] != "All"
+			district_query = "AND person_record_status.district_code = '#{District.by_name.key(params[:district]).first.id}'"
+		end
+		gender_query =""
+		if params[:gender].present? && params[:gender] != "Total"
+			gender_query = "AND gender='#{params[:gender]}'"
+		end
+		
+		status = params[:status].present? ? params[:status] : 'DC ACTIVE'
+
+	
+		start_date = params[:start_date].to_time.strftime("%Y-%m-%d 0:00:00:000Z")
+		end_date =	params[:end_date].to_time.strftime("%Y-%m-%d 23:59:59.999Z")
+
+
+		connection = ActiveRecord::Base.connection
+
+		query = "SELECT count(*) as total, gender , status, person_record_status.created_at , person_record_status.updated_at 
+	    				 FROM people INNER JOIN person_record_status ON people.person_id  = person_record_status.person_record_id
+					 	 WHERE status = '#{status}' #{gender_query} #{district_query} 
+					 	 AND Time(person_record_status.created_at) >= Time('#{start_date}')
+					 	 AND Time(person_record_status.created_at) <= Time('#{end_date}')"
+		return {:count => (connection.select_all(query).as_json.last['total'] rescue 0) , :gender =>params[:gender], :district => params[:district]}
+	end
 end

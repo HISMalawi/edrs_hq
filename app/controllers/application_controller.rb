@@ -4,10 +4,52 @@ class ApplicationController < ActionController::Base
   #protect_from_forgery	
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
 
-  before_filter :check_user,:check_database, :except => ['login', 'logout', 'death_certificate','dispatch_preview']
+  before_filter :check_user, :check_cron_jobs, :except => ['login', 'logout', 'death_certificate','dispatch_preview']
   
   def has_role(role)
     current_user.activities_by_level("HQ").include?(role.strip)
+  end
+
+  def check_cron_jobs
+      last_run_time = File.mtime("#{Rails.root}/public/sentinel").to_time
+      job_interval = SETTINGS['drn_assignment_interval']
+      job_interval = 1.5 if job_interval.blank?
+      job_interval = job_interval.to_f
+      now = Time.now
+
+      if (now - last_run_time).to_f > job_interval
+        if SETTINGS['site_type'].to_s != "facility"
+          if (defined? PersonIdentifier.can_assign_drn).nil?
+            PersonIdentifier.can_assign_drn = true
+          end
+          AssignDrn.perform_in(2)
+        end
+        
+      end
+
+      cron_job_tracker = HQCronJobsTracker.first
+      return if cron_job_tracker.blank?
+
+      if (now - (cron_job_tracker.time_last_sync_to_mysql.to_time rescue  Date.today.to_time)).to_i > 30
+            CouchSQL.perform_in(15)
+            cron_job_tracker.time_last_sync_to_mysql = now + 15.seconds
+            cron_job_tracker.save
+      end
+
+      if Rails.env == 'development'
+       if (now - (cron_job_tracker.time_last_updated_sync.to_time rescue  Date.today.to_time)).to_i > 120
+            UpdateSyncStatus.perform_in(900)
+            cron_job_tracker.time_last_updated_sync = now + 900.seconds
+            cron_job_tracker.save
+        end
+      else
+        if (now - (cron_job_tracker.time_last_updated_sync.to_time rescue  Date.today.to_time)).to_i > 600
+            UpdateSyncStatus.perform_in(1200)
+            cron_job_tracker.time_last_updated_sync = now + 1200.seconds
+            cron_job_tracker.save
+        end
+      end
+
   end
 
   def place_details(person)
@@ -126,39 +168,6 @@ class ApplicationController < ActionController::Base
                     " Born on #{DateTime.parse(person.birthdate.to_s).strftime('%d/%B/%Y')} "+
                     " died on #{DateTime.parse(person.date_of_death.to_s).strftime('%d/%B/%Y')} " +
                     " at #{person.place_of_death_district}"]
-  end
-
-  def check_database
-    create_query = "CREATE TABLE IF NOT EXISTS documents (
-                    id int(11) NOT NULL AUTO_INCREMENT,
-                    couchdb_id varchar(255) NOT NULL UNIQUE,
-                    group_id varchar(255) DEFAULT NULL,
-                    group_id2 varchar(255) DEFAULT NULL,
-                    date_added datetime DEFAULT NULL,
-                    title TEXT,
-                    content TEXT,
-                    created_at datetime NOT NULL,
-                    updated_at datetime NOT NULL,
-                    PRIMARY KEY (id),
-                    FULLTEXT KEY content (content)
-                  ) ENGINE=MyISAM DEFAULT CHARSET=utf8;"
-    SimpleSQL.query_exec(create_query) 
-
-    create_query_drn_table = "DROP TABLE IF EXISTS drns;
-                    CREATE TABLE IF NOT EXISTS drns(
-                                      drn_id int(11) NOT NULL AUTO_INCREMENT,
-                                      person_id varchar(225) NOT NULL,
-                                      drn varchar(15) NOT NULL,
-                                      drn_sort_value varchar(15) NOT NULL,
-                                      created_at datetime NOT NULL,
-                                      updated_at datetime NOT NULL,
-                                      PRIMARY KEY (drn_id),
-                                      UNIQUE KEY drn (drn),
-                                      KEY person_id (person_id),
-                                      CONSTRAINT drn_person  FOREIGN KEY (person_id) REFERENCES people (person_id)
-                                  ) ENGINE=InnoDB DEFAULT CHARSET=latin1;"
-    SimpleSQL.query_exec(create_query_drn_table) 
-                      
   end
 
   def place_of_death(person)
