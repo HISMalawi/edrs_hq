@@ -49,7 +49,7 @@
 
     %>
     
-    <% raw_sig = File.read(Rails.root.join("public","uploads",User.by_username.key(GlobalProperty.find("signatory").value).first.signature)) rescue nil %>        
+    <% raw_sig = File.read(Rails.root.join("public","uploads",User.by_username.key(GlobalProperty.find("signatory").value).last.signature)) rescue nil %>        
     <% if raw_sig
       @sig = Base64.encode64(raw_sig)
      end %>
@@ -142,7 +142,7 @@
               <td align="left" style="width: 300px;">
                 Place of Death
               </td>
-              <td align="justify">
+              <td align="left">
                 <%= @place_of_death %>
               </td>
             </tr>
@@ -208,6 +208,7 @@
     </div>
     	
     <div id="signature">
+
       <img src ="data:image/png;base64,<%= @sig %>" width="120" height="50" align="right" style="padding-right: 40px;margin-right: 40px;" />
    </div>
  </div>  

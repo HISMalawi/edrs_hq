@@ -1,6 +1,6 @@
 exact_duplicate: true
 potential_duplicate: true
-duplicate_precision: 80 #percentage precision
+duplicate_precision: 90 #percentage precision
 duplicate_score: 6
 drn_assignment_interval: 3
 printer_name: ME,Printer2

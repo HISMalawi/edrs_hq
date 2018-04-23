@@ -247,11 +247,10 @@
           <table style="border: 1px solid #000; margin-right: 0px;" cellpadding="5" cellspacing="10">
             <tr>
               <td style="border-bottom: 1px dotted #000; font-size: 32px; height: 50px;">
-               <% raw = File.read(Rails.root.join("public","uploads",@signature)) rescue nil %>
-                 
-                 <% if raw
-                      @sig = Base64.encode64(raw)
-                    end %>
+                <% raw_sig = File.read(Rails.root.join("public","uploads",User.by_username.key(GlobalProperty.find("signatory").value).last.signature)) rescue nil %>        
+                <% if raw_sig
+                  @sig = Base64.encode64(raw_sig)
+                 end %>
                     
                  <% if @sig.present? %>
                     <img src ="data:image/png;base64,<%= @sig %>" width="120" height="50" />

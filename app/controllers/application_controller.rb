@@ -178,10 +178,10 @@ class ApplicationController < ActionController::Base
               place_of_death = person.place_of_death_village
           end
           if person.place_of_death_ta.present? && person.place_of_death_ta.to_s.length > 0
-              place_of_death = "#{place_of_death},#{person.place_of_death_ta}"
+              place_of_death = "#{place_of_death}, #{person.place_of_death_ta}"
           end
           if person.place_of_death_district.present? && person.place_of_death_district.to_s.length > 0
-              place_of_death = "#{place_of_death},#{person.place_of_death_district}"
+              place_of_death = "#{place_of_death}, #{person.place_of_death_district}"
           end
       when "Health Facility"
           place_of_death = "#{person.hospital_of_death}, #{person.place_of_death_district}"
@@ -198,9 +198,9 @@ class ApplicationController < ActionController::Base
               
              if person.place_of_death_country.present? && person.place_of_death_country.to_s.length > 0
                 if person.place_of_death_country == "Other"
-                  place_of_death = "#{place_of_death},#{person.other_place_of_death_country}"
+                  place_of_death = "#{place_of_death}, #{person.other_place_of_death_country}"
                 else
-                  place_of_death = "#{place_of_death},#{person.place_of_death_country}"
+                  place_of_death = "#{place_of_death}, #{person.place_of_death_country}"
                 end
                  
              end
@@ -211,18 +211,18 @@ class ApplicationController < ActionController::Base
               end
 
               if person.place_of_death_foreign_district.present? && person.place_of_death_foreign_district.to_s.length > 0
-                 place_of_death = "#{place_of_death},#{person.place_of_death_foreign_district}"
+                 place_of_death = "#{place_of_death}, #{person.place_of_death_foreign_district}"
               end
 
               if person.place_of_death_foreign_state.present? && person.place_of_death_foreign_state.to_s.length > 0
-                 place_of_death = "#{place_of_death},#{person.place_of_death_foreign_state}"
+                 place_of_death = "#{place_of_death}, #{person.place_of_death_foreign_state}"
               end
 
               if person.place_of_death_country.present? && person.place_of_death_country.to_s.length > 0
                 if person.place_of_death_country == "Other"
-                  place_of_death = "#{place_of_death},#{person.other_place_of_death_country}"
+                  place_of_death = "#{place_of_death}, #{person.other_place_of_death_country}"
                 else
-                  place_of_death = "#{place_of_death},#{person.place_of_death_country}"
+                  place_of_death = "#{place_of_death}, #{person.place_of_death_country}"
                 end
                  
               end
@@ -232,22 +232,22 @@ class ApplicationController < ActionController::Base
               end
 
               if person.place_of_death_foreign_village.present? && person.place_of_death_foreign_village.length > 0
-                 place_of_death = "#{place_of_death},#{person.place_of_death_foreign_village}"
+                 place_of_death = "#{place_of_death}, #{person.place_of_death_foreign_village}"
               end
 
               if person.place_of_death_foreign_district.present? && person.place_of_death_foreign_district.to_s.length > 0
-                 place_of_death = "#{place_of_death},#{person.place_of_death_foreign_district}"
+                 place_of_death = "#{place_of_death}, #{person.place_of_death_foreign_district}"
               end
 
               if person.place_of_death_foreign_state.present? && person.place_of_death_foreign_state.to_s.length > 0
-                 place_of_death = "#{place_of_death},#{person.place_of_death_foreign_state}"
+                 place_of_death = "#{place_of_death}, #{person.place_of_death_foreign_state}"
               end
 
               if person.place_of_death_country.present? && person.place_of_death_country.to_s.length > 0
                 if person.place_of_death_country == "Other"
-                  place_of_death = "#{place_of_death},#{person.other_place_of_death_country}"
+                  place_of_death = "#{place_of_death}, #{person.other_place_of_death_country}"
                 else
-                  place_of_death = "#{place_of_death},#{person.place_of_death_country}"
+                  place_of_death = "#{place_of_death}, #{person.place_of_death_country}"
                 end
                  
               end
@@ -257,17 +257,17 @@ class ApplicationController < ActionController::Base
                     place_of_death  = person.other_place_of_death;
                 end
                 if person.place_of_death_district.present?
-                    place_of_death = "#{place_of_death},#{person.place_of_death_district}"
+                    place_of_death = "#{place_of_death}, #{person.place_of_death_district}"
                 end
       elsif person.place_of_death  && person.place_of_death =="Home"
           if person.place_of_death_village.present? && person.place_of_death_village.to_s.length > 0
               place_of_death = person.place_of_death_village
           end
           if person.place_of_death_ta.present? && person.place_of_death_ta.to_s.length > 0
-              place_of_death = "#{place_of_death},#{person.place_of_death_ta}"
+              place_of_death = "#{place_of_death}, #{person.place_of_death_ta}"
           end
           if person.place_of_death_district.present? && person.place_of_death_district.to_s.length > 0
-              place_of_death = "#{place_of_death},#{person.place_of_death_district}"
+              place_of_death = "#{place_of_death}, #{person.place_of_death_district}"
           end
 
     end

@@ -242,6 +242,7 @@ class HqController < ApplicationController
   end
   
   def death_certificate
+    
     @person = Person.find(params[:id])
     @place_of_death = place_of_death(@person)
     @drn = @person.drn
