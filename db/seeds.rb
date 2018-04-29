@@ -199,7 +199,7 @@ user = User.by_username.key('admin').first
 if user.blank?
 
   username = "admin"
-  user = User.create(username: username, plain_password: "password", last_password_date: Time.now,
+  user = User.create(username: username, plain_password: "p@ssw0rd", last_password_date: Time.now,
                      password_attempt: 0, login_attempt: 0, first_name: "EDRS",
                      last_name: "Administrator", role: "System Administrator",
                      email: "admin@baobabhealth.org")
@@ -357,6 +357,7 @@ Audit.count
 PersonIdentifier.count
 Sync.count
 PersonRecordStatus.count
+Barcode.count
 Person.count rescue nil
 
 `rake edrs:build_mysql`
@@ -383,4 +384,4 @@ couch_sequence = "CREATE TABLE couchdb_sequence (couchdb_sequence_id int(11) NOT
 SimpleSQL.query_exec(couch_sequence)
 
 puts "Application setup succesfully!!!"
-puts "Login details username: #{user.username} password: password"
+puts "Login details username: #{user.username} password: p@ssw0rd"
