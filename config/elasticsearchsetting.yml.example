@@ -2,5 +2,5 @@ elasticsearch:
   index: edrs_hq
   port: 9200
   host: localhost
-  precision: 75 #percentage for precision control
+  precision: 90 #percentage for precision control
   type: Person

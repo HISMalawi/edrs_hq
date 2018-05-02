@@ -6,6 +6,7 @@
  PersonIdentifier.can_assign_drn = false
  LoadMysql.load_mysql = false
  @@file_path = "#{Rails.root.to_s}/db/MySQL_data/"
+ Dir.mkdir(@@file_path)
  @couchdb_files = {
       'Person' => {count: Person.count, name: 'Person doc.', id: 'person_doc', 
         doc_primary_key: 'person_id', table_name: 'people'},
@@ -41,6 +42,8 @@
         id: 'icd_code_doc', doc_primary_key: 'icd_code_id', table_name: 'icd_codes'}
 
 }
+
+
 def create_file(doc_primary_key, doc, table_name)
     #Create insert statments for all documets
     #Ducument path: app/assets/data/MySQL_data/
@@ -94,6 +97,7 @@ EOF
 EOF
 
     if !File.exists?(@@file_path + "#{table_name}.sql")
+
       file = File.new(@@file_path + "#{table_name}.sql", 'w')
     end
 
