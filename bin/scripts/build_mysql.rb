@@ -6,7 +6,7 @@
  PersonIdentifier.can_assign_drn = false
  LoadMysql.load_mysql = false
  @@file_path = "#{Rails.root.to_s}/db/MySQL_data/"
- Dir.mkdir(@@file_path)
+ Dir.mkdir(@@file_path) unless Dir.exist?(@@file_path)
  @couchdb_files = {
       'Person' => {count: Person.count, name: 'Person doc.', id: 'person_doc', 
         doc_primary_key: 'person_id', table_name: 'people'},
