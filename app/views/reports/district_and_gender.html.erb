@@ -232,8 +232,9 @@
 						})
 			}
 
-			 $('#start_date').val($.datepicker.formatDate('yy-mm-dd',new Date(start)));
-			 $('#end_date').val($.datepicker.formatDate('yy-mm-dd',new Date(end)))
+
+			 $('#start_date').val($.datepicker.formatDate('yy-mm-dd',new Date(start_date)));
+			 $('#end_date').val($.datepicker.formatDate('yy-mm-dd',new Date(end_date)))
 			 $("#status").val(status)
 	}
 
@@ -247,6 +248,7 @@
 					}
 		<%end%>
 		
+
 		var start = $("#start_date").val();
 		var end = $("#end_date").val();
 		var status = $("#status").val();

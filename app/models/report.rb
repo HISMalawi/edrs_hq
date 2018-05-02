@@ -226,10 +226,10 @@ class Report < ActiveRecord::Base
 		connection = ActiveRecord::Base.connection
 
 		query = "SELECT count(*) as total, gender , status, person_record_status.created_at , person_record_status.updated_at 
-	    				 FROM people INNER JOIN person_record_status ON people.person_id  = person_record_status.person_record_id
-					 	 WHERE status = '#{status}' #{gender_query} #{district_query} 
-					 	 AND Time(person_record_status.created_at) >= Time('#{start_date}')
-					 	 AND Time(person_record_status.created_at) <= Time('#{end_date}')"
+	    		 FROM people INNER JOIN person_record_status ON people.person_id  = person_record_status.person_record_id
+				 WHERE status = '#{status}' #{gender_query} #{district_query} AND person_record_status.voided = 0
+				 AND DATE_FORMAT(person_record_status.created_at,'%Y-%m-%d') BETWEEN '#{start_date}' AND '#{end_date}'"
+		
 		return {:count => (connection.select_all(query).as_json.last['total'] rescue 0) , :gender =>params[:gender], :district => params[:district]}
 	end
 end
