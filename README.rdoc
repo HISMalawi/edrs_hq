@@ -24,7 +24,7 @@ Things you may want to cover:
 
 * Database creation and initialization
 	* run bundle exec rake edrs:setup
-
+* Load NPIDs in couchDB
 * How to run the test suite
 	* passenger start or rails s
 	* use username and password shown on terminal to login
