@@ -46,11 +46,8 @@ cummulatives_keys["Dispatched"] =  ["HQ DISPATCHED"]
 
 cummulatives = {}
 cummulatives_keys.keys.each do |key|
-  cummulatives[key] = PersonRecordStatus.by_person_recent_status.keys(cummulatives_keys[key]).each.count
-=begin
     query =  "SELECT count(*) as total FROM person_record_status WHERE status IN('#{cummulatives_keys[key].join("','")}') AND voided = 0"
     cummulatives[key] = connection.select_all(query).as_json.last['total'] rescue 0
-=end
 end
 stats[:cummulative] = cummulatives;
 #puts "Stats generated :)::::::::::::::)::::::::::::::)::::::::::::::):::::::::::::)::::::::::::::::::::)"
@@ -71,18 +68,6 @@ District.all.each do |district|
             start_date = beginning.strftime("%Y-%m-%d 0:00:00:000Z")
             end_date = beginning.end_of_month.strftime("%Y-%m-%d 23:59:59.999Z")
 
-            district_registered << Person.by_district_code_and_created_at.startkey([district.id,start_date]).endkey([district.id,end_date]).each.count
-
-
-            district_approved << PersonRecordStatus.by_district_code_and_status_and_created_at.startkey([district.id,"HQ ACTIVE",start_date]).endkey([district.id,"HQ ACTIVE",end_date]).each.count
-
-          
-      
-            
-            district_printed  =  PersonRecordStatus.by_district_code_and_status_and_created_at.startkey([district.id,"HQ PRINTED",start_date]).endkey([district.id,"HQ ACTIVE",end_date]).each.count
-
-            district_printed << district_printed
-=begin
             district_registered << connection.select_all("SELECT count(*) as total FROM people WHERE 
                                                           TIME(created_at) >= TIME('#{start_date}') AND TIME(created_at) <= TIME('#{end_date}')
                                                           AND district_code ='#{district.id}'").as_json.last['total'] rescue 0
@@ -100,7 +85,6 @@ District.all.each do |district|
                                                         TIME(created_at) >= TIME('#{start_date}') AND TIME(created_at) <= TIME('#{end_date}')
                                                         AND district_code ='#{district.id}'").as_json.last['total'] rescue 0      
             district_printed << district_printed
-=end
             beginning = beginning + 1.months
             
             #puts "Iterator #{start_date} : #{end_date}"
