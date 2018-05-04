@@ -317,7 +317,7 @@ class HqController < ApplicationController
 
     print_url ="/dispatch_preview"
 
-    output_file = "#{CONFIG['certificates_path']}Dispatched_#{Time.now.to_s.gsub(' ','_')}.pdf"
+    output_file = "#{CONFIG['dispatch_path']}Dispatched_#{Time.now.to_s.gsub(' ','_')}.pdf"
 
    
 

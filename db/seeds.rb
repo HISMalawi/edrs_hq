@@ -1,5 +1,10 @@
 LoadMysql.load_mysql = false
 
+puts "Creating Barcode / Certificate and Dispatch paths"
+Dir.mkdir(CONFIG['barcodes_path']) unless Dir.exist?(CONFIG['barcodes_path'])
+Dir.mkdir(CONFIG['certificates_path']) unless Dir.exist?(CONFIG['certificates_path'])
+Dir.mkdir(CONFIG['dispatch_path']) unless Dir.exist?(CONFIG['dispatch_path'])
+
 puts "Clearing Elasticsearch"
 SETTING = YAML.load_file("#{Rails.root}/config/elasticsearchsetting.yml")['elasticsearch']
 puts `curl -XDELETE #{SETTING['host']}:#{SETTING['port']}/#{SETTING['index']}`
