@@ -125,6 +125,7 @@ class PersonRecordStatus < CouchRest::Model::Base
 
 	def self.change_status(person,currentstatus,comment=nil)
 		status = PersonRecordStatus.by_person_recent_status.key(person.id).last
+		
 		if status.present?
 			if ["HQ PRINT AMEND","HQ REPRINT REQUEST"].include? (status.status)
 				reprint = true

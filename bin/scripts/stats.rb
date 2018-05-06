@@ -11,18 +11,18 @@ printed = []
 
 
 (1..current_month_num).each do |i|
-  			start_date = beginning
-  			end_date = beginning.end_of_month
+        start_date = beginning
+        end_date = beginning.end_of_month
 
-  			registered << Person.by_created_at.startkey(start_date.strftime("%Y-%m-%dT00:00:00:000Z")).endkey(end_date.strftime("%Y-%m-%dT23:59:59.999Z")).each.count
+        registered << Person.by_created_at.startkey(start_date.strftime("%Y-%m-%dT00:00:00:000Z")).endkey(end_date.strftime("%Y-%m-%dT23:59:59.999Z")).each.count
 
-  			approved << PersonRecordStatus.by_status_and_created_at.startkey(["HQ ACTIVE",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey(["HQ ACTIVE",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
+        approved << PersonRecordStatus.by_status_and_created_at.startkey(["HQ ACTIVE",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey(["HQ ACTIVE",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count
         
         printed << PersonRecordStatus.by_status_and_created_at.startkey(["HQ PRINTED",start_date.strftime("%Y-%m-%dT00:00:00:000Z")]).endkey(["HQ PRINTED",end_date.strftime("%Y-%m-%dT23:59:59.999Z")]).each.count 
-  			
+        
         beginning = beginning + 1.months
-  			
-  			#puts "Iterator #{start_date} : #{end_date}"
+        
+        #puts "Iterator #{start_date} : #{end_date}"
 
 end
 
@@ -46,8 +46,10 @@ cummulatives_keys["Dispatched"] =  ["HQ DISPATCHED"]
 
 cummulatives = {}
 cummulatives_keys.keys.each do |key|
-    query =  "SELECT count(*) as total FROM person_record_status WHERE status IN('#{cummulatives_keys[key].join("','")}') AND voided = 0"
-    cummulatives[key] = connection.select_all(query).as_json.last['total'] rescue 0
+
+    #query =  "SELECT count(*) as total FROM person_record_status WHERE status IN('#{cummulatives_keys[key].join("','")}') AND voided = 0"
+    #cummulatives[key] = connection.select_all(query).as_json.last['total'] rescue 0
+    cummulatives[key] = PersonRecordStatus.by_record_status.keys(cummulatives_keys[key]).each.count
 end
 stats[:cummulative] = cummulatives;
 #puts "Stats generated :)::::::::::::::)::::::::::::::)::::::::::::::):::::::::::::)::::::::::::::::::::)"
@@ -69,20 +71,20 @@ District.all.each do |district|
             end_date = beginning.end_of_month.strftime("%Y-%m-%d 23:59:59.999Z")
 
             district_registered << connection.select_all("SELECT count(*) as total FROM people WHERE 
-                                                          TIME(created_at) >= TIME('#{start_date}') AND TIME(created_at) <= TIME('#{end_date}')
+                                                          DATE_FORMAT(created_at,'%Y-%m-%d') >= '#{start_date}' AND DATE_FORMAT(created_at,'%Y-%m-%d') <= '#{end_date}'
                                                           AND district_code ='#{district.id}'").as_json.last['total'] rescue 0
 
           
 
             district_approved << connection.select_all("SELECT count(*) as total FROM person_record_status 
                                                         WHERE status IN('HQ ACTIVE') AND
-                                                        TIME(created_at) >= TIME('#{start_date}') AND TIME(created_at) <= TIME('#{end_date}')
+                                                        DATE_FORMAT(created_at,'%Y-%m-%d') >= '#{start_date}' AND DATE_FORMAT(created_at,'%Y-%m-%d') <= '#{end_date}'
                                                         AND district_code ='#{district.id}'").as_json.last['total'] rescue 0
       
             
             district_printed  = connection.select_all("SELECT count(*) as total FROM person_record_status 
                                                         WHERE status IN('HQ PRINTED') AND 
-                                                        TIME(created_at) >= TIME('#{start_date}') AND TIME(created_at) <= TIME('#{end_date}')
+                                                        DATE_FORMAT(created_at,'%Y-%m-%d') >= '#{start_date}' AND DATE_FORMAT(created_at,'%Y-%m-%d') <= '#{end_date}'
                                                         AND district_code ='#{district.id}'").as_json.last['total'] rescue 0      
             district_printed << district_printed
             beginning = beginning + 1.months
@@ -96,7 +98,7 @@ District.all.each do |district|
           stats["districts"][district.id][:year_printed] = district_printed
 end
 if newfile
-  			 newfile.syswrite(stats.to_json)
+         newfile.syswrite(stats.to_json)
 else
-  			puts "Unable to open file"	
+        puts "Unable to open file"  
 end

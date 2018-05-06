@@ -17,6 +17,7 @@ class User < CouchRest::Model::Base
   property :notify, TrueClass, :default => false
   property :role, String
   property :site_code, String
+  property :preferred_keyboard, String, :default => 'abc'
   property :district_code, String
   property :creator, String
   property :plain_password, String

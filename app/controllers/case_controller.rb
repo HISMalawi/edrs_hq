@@ -259,6 +259,7 @@ class CaseController < ApplicationController
 
   def ajax_change_status
 
+    
     next_status = params[:next_status].gsub(/\-/, ' ') rescue nil
 
     render :text => "Error!" and return if next_status.blank?

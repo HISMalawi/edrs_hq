@@ -32,7 +32,7 @@ def create
 
     person.reload
 
-    status = "MARKED HQ APPROVAL"
+    status = "HQ ACTIVE"
 
     record_status = PersonRecordStatus.new 
     record_status.person_record_id = person.id.to_s
