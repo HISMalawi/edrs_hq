@@ -1,0 +1,31 @@
+<form method="GET" action="/hq/quality_check">
+	<input type="text" name="certificate_barcode" helpText="Scan Certificate Barcode" tt_pageStyleClass = "NoKeyboard" tt_onUnLoad = "removeDollar()">
+	<select id="verdict" name="verdict" class="input_cell" helpText = "Does certificate meet quality metrics?">
+          <option></option>
+          <option value="Yes" >Yes</option>
+          <option value="No" >No</option>
+    </select>
+    <select id="reason" name="reason" class="input_cell" condition="__$('verdict').value.trim() == 'No' " helpText="Explanation for rejected certificate" >
+          <option></option>
+          <option value="blurred print out" >Blurred print out</option>
+          <option value="distorted characters" >Distorted characters</option>
+          <option value="wrinkles or creases" >Wrinkles or creases</option>
+          <option value="skewed page" >Skewed page</option>
+          <option value="unwanted ink dots" >Unwanted ink dots</option>
+          <option value="other" >Other</option>
+      </select>
+</form>
+<script type="text/javascript">
+	function removeDollar(){
+		var value = __$('touchscreenInput' + tstCurrentPage).value;
+		if (value.indexOf("$") == (value.length - 1) ) {
+			__$("certificate_barcode").value = value.slice(0,value.length - 1)
+		}
+	}
+
+	setTimeout(function(){
+		__$("cancelButton").onmousedown = function(){
+			window.top.location.href = "/"
+		}
+	},2000);
+</script>

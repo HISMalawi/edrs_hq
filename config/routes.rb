@@ -105,6 +105,7 @@ Rails.application.routes.draw do
   get "/view_certificate/:id" => "case#view_certificate"
   get "/pdf_certificate/:id" => "case#pdf_certificate"
   get '/rejected_cases' => 'case#rejected_cases'
+  get "/view_stats" => "case#view_stats"
 
   #################################Duplicate capturing and resolving routes ##################
   get "/duplicate/:id" =>"case#show_duplicate"
@@ -176,6 +177,10 @@ Rails.application.routes.draw do
   get '/amendment_cases_tasks' =>"hq#amendment_cases_tasks"
   get '/amendment_requests' =>"case#amendment_requests"
   get '/reprint_requests' => "case#reprint_requests"
+  get '/hq/quality_control'
+  get '/hq/quality_reopen'
+  post "/hq/quality_check"
+  get  "/hq/quality_check"
 
 
   get '/reports' => "reports#index"

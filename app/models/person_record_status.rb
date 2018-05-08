@@ -124,19 +124,23 @@ class PersonRecordStatus < CouchRest::Model::Base
 	end
 
 	def self.change_status(person,currentstatus,comment=nil)
-		status = PersonRecordStatus.by_person_recent_status.key(person.id).last
+		statuses = PersonRecordStatus.by_person_recent_status.key(person.id).each
 		
-		if status.present?
-			if ["HQ PRINT AMEND","HQ REPRINT REQUEST"].include? (status.status)
-				reprint = true
-			else
-				reprint = (status.reprint rescue false)
+		if statuses.present?
+			reprint = false
+			statuses.each do |s|
+				if reprint
+				else
+					reprint = true if ["HQ PRINT AMEND","HQ REPRINT REQUEST"].include?(s.status)
+				end
+				s.voided = true
+				s.save
 			end
-			status.update_attributes({:voided => true})
+			
 			PersonRecordStatus.create({
                                   :person_record_id => person.id.to_s,
                                   :status => currentstatus,
-                                  :prev_status => status.status,
+                                  :prev_status => (statuses.last.status rescue nil),
                                   :reprint => reprint,
                                   :comment => comment,
                                   :district_code => person.district_code,

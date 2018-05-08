@@ -28,9 +28,9 @@ class ApplicationController < ActionController::Base
       end
 
       cron_job_tracker = HQCronJobsTracker.first
-      return if cron_job_tracker.blank?
+      HQCronJobsTracker.new.save if cron_job_tracker.blank?
 
-      if (now - (cron_job_tracker.time_last_sync_to_mysql.to_time rescue  Date.today.to_time)).to_i > 30
+      if (now - (cron_job_tracker.time_last_sync_to_mysql.to_time rescue  Date.today.to_time)).to_i > 15
             CouchSQL.perform_in(15)
             cron_job_tracker.time_last_sync_to_mysql = now + 15.seconds
             cron_job_tracker.save
@@ -50,6 +50,19 @@ class ApplicationController < ActionController::Base
         end
       end
 
+      if Rails.env == "development"
+         if (now - (cron_job_tracker.time_last_generate_stats.to_time rescue  Date.today.to_time)).to_i > 15
+             GenerateStats.perform_in(15)
+             cron_job_tracker.time_last_generate_stats = now + 15.seconds
+             cron_job_tracker.save
+         end
+      else
+          if (now - (cron_job_tracker.time_last_generate_stats.to_time rescue  Date.today.to_time)).to_i > 120
+             GenerateStats.perform_in(120)
+             cron_job_tracker.time_last_generate_stats = now + 120.seconds
+             cron_job_tracker.save
+         end
+      end
   end
 
   def place_details(person)

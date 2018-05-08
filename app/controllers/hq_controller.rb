@@ -29,6 +29,23 @@ class HqController < ApplicationController
     @title = "Search Death Records"
   end
 
+  def quality_control
+    @section = "Quality control"
+    render :layout => "landing"
+  end
+
+  def quality_reopen
+    render :layout => "touch"
+  end
+
+  def quality_check
+      if params[:verdict] == "No"
+          person = Person.by_npid.key(params[:certificate_barcode]).last
+          PersonRecordStatus.change_status(person,"HQ RE PRINT",(params[:reason].present? ? params[:reason] : nil))
+      end
+      redirect_to "/hq/quality_reopen"
+  end
+
   def do_search
 
     results = []
@@ -98,7 +115,7 @@ class HqController < ApplicationController
           results = Person.by_informant_current_village_id.key(village_id)
         end
       when "general_search"
-        require 'sql_search'
+        require 'simple_sql'
         map = {
                 "details_of_deceased" => ['first_name', 'last_name', 'gender'],
                 "home_address" => ['home_country', 'home_ta', 'home_village'],

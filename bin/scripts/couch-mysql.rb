@@ -11,11 +11,12 @@ def save_to_mysql(record,map_key,db_maps)
 				"user" => "UserModel"
 	}
 
+
+
 	table = map_key.split("|")[1]
 	primary_key = db_maps[map_key]["_id"] 
 
 	return if $models[table].blank?
-	
 
 	mysql_record = eval($models[table]).where("#{primary_key}= '#{record['id']}'").first rescue nil
 
@@ -108,7 +109,7 @@ mysql_adapter = mysql_db_settings["adapter"]
 db_map_path ="#{Rails.root}/config/db_mapping.yml"
 db_maps = YAML.load_file(db_map_path)
 
-begin
+#begin
 	seq = CouchdbSequence.last.seq rescue 0 
 
 	changes_link = "#{couch_protocol}://#{couch_username}:#{couch_password}@#{couch_host}:#{couch_port}/#{couch_db}/_changes?include_docs=true&limit=500&since=#{seq}"
@@ -135,6 +136,6 @@ begin
 			last_seq.seq = data["last_seq"] 
 			last_seq.save
 	end
-rescue Exception => e
-	puts e.to_s
-end
+#rescue Exception => e
+	#puts e.to_s
+#end

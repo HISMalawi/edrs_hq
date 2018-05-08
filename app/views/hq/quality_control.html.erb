@@ -1,0 +1,22 @@
+<div id="iframediv" style="width:99.5%">
+	<iframe id="iframe" style="width:99.5%" src="/hq/quality_reopen">
+		
+	</iframe>
+</div>
+<script>
+	
+	function __$(id){
+        return document.getElementById(id);
+    }
+
+    function resizeDiv(){
+      var wH = window.innerHeight;
+
+      __$("containt").style.height = (wH * 0.815)+"px";
+      __$("iframediv").style.height = (wH * 0.8)+"px";
+      __$("iframe").style.height = (wH * 0.8)+"px";
+    }
+
+    resizeDiv();
+
+</script>

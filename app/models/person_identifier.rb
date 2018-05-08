@@ -188,6 +188,8 @@ class PersonIdentifier < CouchRest::Model::Base
        npid = Npid.by_assigned.keys([false]).first
        person.npid = npid.national_id
        person.save
+       npid.assigned = true
+       npid.save
     end
     process = Process.fork{`bin/generate_barcode #{person.npid} #{person.id} #{CONFIG['barcodes_path']}`}
     Process.detach(process)

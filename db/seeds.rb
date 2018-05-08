@@ -1,9 +1,19 @@
 LoadMysql.load_mysql = false
 
 puts "Creating Barcode / Certificate and Dispatch paths"
+
 Dir.mkdir(CONFIG['barcodes_path']) unless Dir.exist?(CONFIG['barcodes_path'])
+File.chmod(0777, CONFIG['barcodes_path'])
+puts File.stat(CONFIG['barcodes_path']).mode.to_s(8)
+
 Dir.mkdir(CONFIG['certificates_path']) unless Dir.exist?(CONFIG['certificates_path'])
+File.chmod(0777, CONFIG['certificates_path'])
+puts File.stat(CONFIG['certificates_path']).mode.to_s(8)
+
 Dir.mkdir(CONFIG['dispatch_path']) unless Dir.exist?(CONFIG['dispatch_path'])
+File.chmod(0777, CONFIG['dispatch_path'])
+puts File.stat(CONFIG['dispatch_path']).mode.to_s(8)
+
 
 puts "Clearing Elasticsearch"
 SETTING = YAML.load_file("#{Rails.root}/config/elasticsearchsetting.yml")['elasticsearch']
@@ -365,7 +375,6 @@ PersonRecordStatus.count
 Barcode.count
 Person.count rescue nil
 
-`rake edrs:build_mysql`
 
 ActiveRecord::Schema.define(version: 0) do
       create_table "name_directory", primary_key: "name_directory_id", force: :cascade do |t|
@@ -383,10 +392,13 @@ puts "Loading directory names"
 
 SimpleSQL.load_dump("#{Rails.root}/db/directory.sql");
 
-LoadMysql.load_mysql = true
+
 
 couch_sequence = "CREATE TABLE couchdb_sequence (couchdb_sequence_id int(11) NOT NULL AUTO_INCREMENT,seq bigint(20) NOT NULL, PRIMARY KEY (couchdb_sequence_id));"
 SimpleSQL.query_exec(couch_sequence)
 
+`rake edrs:build_mysql`
+
+LoadMysql.load_mysql = true
 puts "Application setup succesfully!!!"
 puts "Login details username: #{user.username} password: p@ssw0rd"

@@ -5,6 +5,7 @@ class HQCronJobsTracker < CouchRest::Model::Base
   property :time_updated_sync_scheduled, Time
   property :time_last_assigned_drn, Time
   property :time_last_sync_to_mysql, Time
+  property :time_last_generate_stats, Time
   timestamps!
   design do
     view :by__id

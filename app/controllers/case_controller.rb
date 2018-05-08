@@ -437,6 +437,30 @@ class CaseController < ApplicationController
     render :template => "case/default"
   end
 
+  def view_stats
+    redirect_to "/" and return if params[:stat].blank?
+    @title = params[:stat]
+
+    cummulatives_keys = {}
+    cummulatives_keys["Newly Received"] = ["HQ ACTIVE"]
+    cummulatives_keys["Verified by DV"] = ["HQ COMPLETE"]
+    cummulatives_keys["Marked incomplete by DV"] = ["HQ INCOMPLETE TBA"]
+    cummulatives_keys["Incomplete Records"]  = ["HQ INCOMPLETE"]
+    cummulatives_keys["Conflict cases"] = ["HQ CONFLICT"]
+    cummulatives_keys["Can reject to DC"] = ["HQ CAN REJECT"]
+    cummulatives_keys["Print Queue"] = ["HQ CAN PRINT"]
+    cummulatives_keys["Re pritnt- Queue"] = ["HQ REPRINT","HQ REPRINT REQUEST"]
+    cummulatives_keys["Suspected duplicates"] = ["HQ POTENTIAL DUPLICATE","HQ DUPLICATE"]
+    cummulatives_keys["Printed"] = ["HQ PRINTED"]
+    cummulatives_keys["Dispatched"] =  ["HQ DISPATCHED"]
+
+    @statuses = cummulatives_keys[@title]
+    @page = 1
+    session[:return_url] = request.path
+
+    render :template => "case/default"
+  end
+
   def reprint_requests
     @title = "Reprint request"
     if User.current_user.role =="Data Manager"

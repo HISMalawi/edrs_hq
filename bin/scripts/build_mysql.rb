@@ -258,6 +258,46 @@ build_mysql_database
 generate_files
 load_sql_files
 
+couch_mysql_path =  "#{Rails.root}/config/couchdb.yml"
+db_settings = YAML.load_file(couch_mysql_path)
+
+couch_db_settings =  db_settings[Rails.env]
+
+couch_protocol = couch_db_settings["protocol"]
+couch_username = couch_db_settings["username"]
+couch_password = couch_db_settings["password"]
+couch_host = couch_db_settings["host"]
+couch_db = couch_db_settings["prefix"] + (couch_db_settings["suffix"] ? "_" + couch_db_settings["suffix"] : "" )
+couch_port = couch_db_settings["port"]
+
+mysql_path = "#{Rails.root}/config/database.yml"
+mysql_db_settings = YAML.load_file(mysql_path)
+mysql_db_settings = mysql_db_settings[Rails.env]
+
+mysql_username = mysql_db_settings["username"]
+mysql_password = mysql_db_settings["password"]
+mysql_host = mysql_db_settings["host"]
+mysql_db = mysql_db_settings["database"]
+mysql_port =  "3306"
+mysql_adapter = mysql_db_settings["adapter"]
+
+
+#reading db_mapping
+db_map_path ="#{Rails.root}/config/db_mapping.yml"
+db_maps = YAML.load_file(db_map_path)
+
+#begin
+seq = CouchdbSequence.last.seq rescue 0 
+
+changes_link = "#{couch_protocol}://#{couch_username}:#{couch_password}@#{couch_host}:#{couch_port}/#{couch_db}/_changes?include_docs=true"
+data = JSON.parse(RestClient.get(changes_link))
+
+last_seq = CouchdbSequence.last
+last_seq = CouchdbSequence.new if last_seq.blank?
+last_seq.seq = data["last_seq"] 
+last_seq.save
+
+
 PersonIdentifier.can_assign_den = true
 PersonIdentifier.can_assign_drn = true
 LoadMysql.load_mysql = true

@@ -44,20 +44,50 @@
     </tbody>
   </table>
   <script type="text/javascript">
-       function loadTable(dashboard_data) {
+    tooltipTitles = {}
+    tooltipTitles["Newly Received"] = "Records that have been approved at DC and have not been seen at HQ"
+    tooltipTitles["Verified by DV"] = "Records that have been marked as complete by Data verifier"
+    tooltipTitles["Marked incomplete by DV"] = "Records that have been marked as incomplete by Data verifier"
+    tooltipTitles["Incomplete Records"]  = "Records that have been marked as incomplete by Data Supervisor"
+    tooltipTitles["Conflict cases"] = "Records that have been marked as incomplete by Data verifier and Marked as complete by Data Supervisor"
+    tooltipTitles["Can reject to DC"] = "Records that can be rejected to DC"
+    tooltipTitles["Print Queue"] =  "Records that are in the print Queue";
+    tooltipTitles["Re pritnt- Queue"] = "Records that are in the Re-print Queue";
+    tooltipTitles["Suspected duplicates"] = "Records that are suspected as duplicates at all level";
+    tooltipTitles["Printed"] = "Records that are printed yet to be Dispatched";
+    tooltipTitles["Dispatched"] =  "Records that are Printed  and have been Dispatched";
+
+    function loadTable(dashboard_data) {
           var table = $("tbody");
           table.empty();
           var table_data = dashboard_data['cummulative'];
           var keys = Object.keys(table_data);
           for (var i =  0 ; i < keys.length ; i++){
             var tr = document.createElement("tr");
+            tr.setAttribute("onmousedown","gotoStat('"+keys[i]+"')")
+            tr.setAttribute("data-toggle","tooltip");
+            tr.setAttribute("title",tooltipTitles[keys[i]])
             table.append(tr);
             var td = document.createElement("td");
+            td.setAttribute("data-toggle","tooltip");
+            td.setAttribute("title",tooltipTitles[keys[i]])
             td.innerHTML = keys[i];
             tr.appendChild(td);
             var td = document.createElement("td");
+            td.style.paddingRight = "5%";
+            td.style.textAlign = "right"
             td.innerHTML = table_data[keys[i]];
+            td.setAttribute("data-toggle","tooltip");
+            td.setAttribute("title",tooltipTitles[keys[i]])
             tr.appendChild(td);
           }
     }
+
+    function gotoStat(stat){
+        window.location.href = "/view_stats?stat="+stat
+    }
+
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+  });
   </script>
