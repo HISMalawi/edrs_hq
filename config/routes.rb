@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   get "/search_by_username/:id" => "users#search_by_username"
   get "/search_by_username" => "users#search_by_username"
   get "/username_availability" => "users#username_availability"
+  get "/users/clear_all_locks"
 
   get "/confirm_username" => "users#confirm_username"
   post "/confirm_username" => "users#confirm_username"
@@ -63,6 +64,7 @@ Rails.application.routes.draw do
   get 'rejected_and_approved_cases' => 'case#rejected_and_approved_cases'
   get '/edited_from_dc' => "case#edited_from_dc"
   get "/case/find/:id" => "case#find"
+  get "/case/unlock_record"
 
   get '/get_comments' => 'hq#get_comments'
   get '/ajax_save_comment' => 'hq#ajax_save_comment'

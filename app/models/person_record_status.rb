@@ -154,6 +154,11 @@ class PersonRecordStatus < CouchRest::Model::Base
                                   :comment => comment,
                                   :creator => (User.current_user.id rescue (@current_user.id rescue nil))})
 		end
+
+		lock = MyLock.by_person_id.key(person.id).last
+		if lock.present? 
+			lock.destroy
+		end
 	end
 
 	def insert_update_into_mysql

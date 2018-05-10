@@ -142,7 +142,7 @@ roles = {
             "Edit cause of death",
             "Test proficiency"
         ],
-        "Data Checking Clerk" => [
+        "Data Verifier" => [
             "View a record",
             "Check completeness",
             "Check for duplicates",

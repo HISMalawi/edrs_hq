@@ -219,8 +219,8 @@ class Report < ActiveRecord::Base
 		status = params[:status].present? ? params[:status] : 'DC ACTIVE'
 
 	
-		start_date = params[:start_date].to_time.strftime("%Y-%m-%d 0:00:00:000Z")
-		end_date =	params[:end_date].to_time.strftime("%Y-%m-%d 23:59:59.999Z")
+		start_date = params[:start_date].to_time.strftime("%Y-%m-%d")
+		end_date =	params[:end_date].to_time.strftime("%Y-%m-%d")
 
 
 		connection = ActiveRecord::Base.connection

@@ -3,6 +3,9 @@ class UsersController < ApplicationController
   @@file_path = "#{Rails.root.to_s}/app/assets/data/MySQL_data/"
 
 	def login 
+    MyLock.by_user_id.key(User.current_user.id).each do |lock|
+      lock.destroy
+    end
 		reset_session
 
     if request.post?
@@ -288,6 +291,14 @@ class UsersController < ApplicationController
 
   end
 
+  def clear_all_locks
+      MyLock.all.each do |lock|
+        lock.destroy
+      end
+      flash[:notice] = "Successfully unlock all records"
+      redirect_to "/"
+  end
+
   def manage_users
     @tasks = []
     if has_role("Manage Sites")
@@ -303,10 +314,11 @@ class UsersController < ApplicationController
     end
 
     if has_role("Deactivate User") 
-      @tasks <<['Block users','Block existing active users','/search_user?title=Search+for+user+to+block&cat=block','block.png']
+      #@tasks <<['Block users','Block existing active users','/search_user?title=Search+for+user+to+block&cat=block','block.png']
     end
 
     if has_role( "Activate User")
+       @tasks <<['Unlock all records','Unlock all records','/users/clear_all_locks','block.png']
     end
 
     if has_role("View user log") 

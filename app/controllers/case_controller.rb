@@ -294,7 +294,9 @@ class CaseController < ApplicationController
       end
     end
 
-    PersonRecordStatus.change_status(Person.find(params[:person_id]), next_status,params[:comment])
+    comment = params[:comment]
+    comment = "Marked as complete" if next_status == "HQ COMPLETE"
+    PersonRecordStatus.change_status(Person.find(params[:person_id]), next_status,comment)
 
     if next_status == "HQ COMPLETE"
       @person = Person.find(params[:person_id])
@@ -633,6 +635,17 @@ class CaseController < ApplicationController
       render text: cases.to_json and return
   end
 
+  def unlock_record
+      lock = MyLock.find(params[:lock_id]) rescue nil
+ 
+      if lock.present?
+        if lock.user_id == User.current_user.id
+          lock.destroy
+        end
+      end
+      redirect_to params[:next_url]
+  end
+
   def show
 
     @person = Person.find(params[:person_id])
@@ -648,6 +661,17 @@ class CaseController < ApplicationController
         redirect_to "/duplicate/#{@person.id}?index=0"
     elsif ['HQ-AMEND','HQ-AMEND-GRANTED','HQ-AMEND-REJECTED'].include? @status 
         redirect_to "/person/ammend_case?id=#{@person.id}"
+    end
+
+    @lock = MyLock.by_person_id.key(params[:person_id]).last
+    if @lock.blank?
+        @lock = MyLock.create(:person_id => params[:person_id],:user_id => User.current_user.id)
+    end
+
+    if User.current_user.id != @lock.user_id
+        @locked = true
+    else
+        @locked = false
     end
 
     if SETTINGS["potential_duplicate"]
@@ -710,13 +734,13 @@ class CaseController < ApplicationController
 
     if @person.status == "DC REAPPROVED"
             @next_state ={
-                "Data Checking Clerk" => ["HQ COMPLETE", "HQ INCOMPLETE TBA"],
+                "Data Verifier" => ["HQ COMPLETE", "HQ INCOMPLETE TBA"],
                 "Data Supervisor" => ["HQ COMPLETE", "HQ INCOMPLETE"],
                 "Data Manager" => ["HQ CAN PRINT", "HQ CONFIRMED INCOMPLETE"]
             }
     else
           @next_state ={
-                "Data Checking Clerk" => ["HQ COMPLETE", "HQ INCOMPLETE TBA"],
+                "Data Verifier" => ["HQ COMPLETE", "HQ INCOMPLETE TBA"],
                 "Data Supervisor" => ["HQ CONFLICT", "HQ INCOMPLETE"],
                 "Data Manager" => ["HQ CAN PRINT", "HQ CONFIRMED INCOMPLETE"]
             }

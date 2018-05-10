@@ -92,6 +92,11 @@
 <div style="background: white">
   <div style="height: 535px; overflow: auto;padding: 0px; margin:0px;">
     <table class="summary" id="summary"  style="">
+        <% if @locked %>
+          <tr>
+              <td colspan="6" style="color:red;text-align:center"> <center><b>Record is locked since it is been reviewed by another user please check later</b></center></td>
+          </tr>
+        <%end%>
           <tr>
               <% if @person.court_order.present? && @person.registration_type == "Missing Persons"%>
               <td ><b >Court order attached ? :</b> </td>
@@ -110,7 +115,11 @@
               <% if @person.facility_code.to_s.present? %>
                 <td colspan="3" style="color:#4775a1;border-left:none"><%= HealthFacility.by_facility_code.key(@person.facility_code).first.name %> , <%= District.find(@person.district_code).name %></td>
               <%else%>
-                <td colspan="3" style="color:#4775a1;border-left:none"><%= District.find(@person.district_code).name %> DRO</td>
+                  <% if@person.registration_type == "Dead on Arrival" %>
+                      <td colspan="3" style="color:#4775a1;border-left:none"><%= @person.place_of_registration %>,<%= District.find(@person.district_code).name %></td>
+                 <%else%>
+                    <td colspan="3" style="color:#4775a1;border-left:none"><%= District.find(@person.district_code).name %> DRO</td>
+                  <%end%>
               <%end%>
           </tr>
           <tr>
@@ -385,7 +394,8 @@
             cancel_url = "/" if (!cancel_url.match('case/') rescue true)
           %>
 
-          <div onclick= "window.parent.location = '<%= params[:next_url].present? ? params[:next_url] : '/' %>' " class="dynamic-button btn btn-small btn-default pull-left btn-primary"><span>Back</span></div>
+          <div onclick= "clearLockAndRedirect()" class="dynamic-button btn btn-small btn-default pull-left btn-primary"><span>Back</span></div>
+          <% if !@locked %>
           <% @tasks.each do |task|
             onclick = ''
 
@@ -408,7 +418,7 @@
 
               <div onclick= "<%= onclick %>" class="dynamic-button btn btn-small btn-primary pull-right <%= task['class'].downcase rescue ''%>"><span><%= task['button_name']%></span></div>
           <% end %>
-
+          <%end%>
           <% if comment == true && false%>
             <div onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary"><span>View Trail</span></div>
           <% end %>
@@ -780,7 +790,10 @@
         printer = printer_name;
     }
 
-
+    function clearLockAndRedirect(){
+        var next_url = "<%= params[:next_url].present? ? params[:next_url] : '/' %>";
+        window.location.href = "/case/unlock_record?lock_id=<%= @lock.id %>&next_url="+next_url
+    }
 
     function setPrinter(printer_name){
           printer = printer_name;

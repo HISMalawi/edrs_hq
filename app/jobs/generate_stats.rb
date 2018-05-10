@@ -8,7 +8,6 @@ class GenerateStats
       	 GenerateStats.perform_in(10)
       else	
       	GenerateStats.perform_in(300)
-      end
-  		
+      end	
   	end
 end
