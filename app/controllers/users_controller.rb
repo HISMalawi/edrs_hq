@@ -3,9 +3,12 @@ class UsersController < ApplicationController
   @@file_path = "#{Rails.root.to_s}/app/assets/data/MySQL_data/"
 
 	def login 
-    MyLock.by_user_id.key(User.current_user.id).each do |lock|
-      lock.destroy
+    if User.current_user.present?
+        MyLock.by_user_id.key(User.current_user.id).each do |lock|
+          lock.destroy
+        end
     end
+
 		reset_session
 
     if request.post?

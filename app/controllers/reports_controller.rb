@@ -9,9 +9,11 @@ class ReportsController < ApplicationController
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
   	else
 	    @tasks << ['By District of Registration and Gender','By District of Registration and Gender','/reports/district_and_gender']
-	    @tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
+	    @tasks << ['User audit trail','Report for user audit trail','','']
+      @tasks << ['Cummulative and  gender','Report for cummulative','','']
+      @tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
-	end
+	  end
     @section ="Reports"
     render :template => "/hq/tasks"
   end
@@ -56,5 +58,9 @@ class ReportsController < ApplicationController
 
       @data = Report.district_registered_and_gender(params)
       render :text => @data.to_json
+  end
+
+  def cummulative
+    
   end
 end
