@@ -759,30 +759,30 @@ class HqController < ApplicationController
     @tasks = []
 
     if has_role("View a record")
-      @tasks << ['Active records','Active record from DC',"/open_cases?next_url=#{request.path}",'manage-cases.png']
+      @tasks << ['Active records','Active record from DC',"/open_cases?next_url=#{request.fullpath}",'manage-cases.png']
     end
 
     if has_role("Manage incomplete records")
-      @tasks << ['Incomplete records from   DV','View incomplete cases',"/incomplete_cases?next_url=#{request.path}",'']
-
+      @tasks << ['Incomplete records from   DV','View incomplete cases',"/incomplete_cases?next_url=#{request.fullpath}",'']
+      @tasks << ['Rejected Cases','View rejected cases',"/rejected_cases_tasks?next_url=#{request.fullpath}",'']
     end
     
     if has_role("Reject a record")
-       @tasks << ['Conflict cases','View cases with queries',"/conflict?next_url=#{request.path}",'conflict_case.png']
+       @tasks << ['Conflict cases','View cases with queries',"/conflict?next_url=#{request.fullpath}",'conflict_case.png']
     end
 
     if has_role("View closed cases")
-      @tasks << ['View printed records','Print records',"/closed_cases?next_url=#{request.path}",'lock.png']
+      @tasks << ['View printed records','Print records',"/closed_cases?next_url=#{request.fullpath}",'lock.png']
       @tasks << ['Dispatched records','Dispatched records with an option of viewing a copy of printed certificate','/dispatched','dispatch.png']
     end
 
     if has_role("Void outstanding records")
-      @tasks << ['Void cases','Void cases',"/void_cases?next_url=#{request.path}",'']
-      @tasks << ['Voided cases','View void cases',"/voided_cases?next_url=#{request.path}",'']
+      @tasks << ['Void cases','Void cases',"/void_cases?next_url=#{request.fullpath}",'']
+      @tasks << ['Voided cases','View void cases',"/voided_cases?next_url=#{request.fullpath}",'']
     end
 
     if has_role(("Assess certificate quality"))
-      @tasks << ['Verify certificates','Verify certificates',"/verify_certificates?next_url=#{request.path}",'']
+      @tasks << ['Verify certificates','Verify certificates',"/verify_certificates?next_url=#{request.fullpath}",'']
     end
      @section ="Manage Cases"
 
@@ -791,12 +791,12 @@ class HqController < ApplicationController
   def rejected_cases_tasks
     @tasks = []
      if has_role("Manage incomplete records") 
-      @tasks << ['Approved for printing','Approved records by DM for printing that were marked as incomplete by DS',"/approved_incomplete?next_url=#{request.path}",'']
-      @tasks << ['Rejected records','Incomplete records waiting to be sent to DC for editing',"/rejected_cases?next_url=#{request.path}",'']
+      @tasks << ['Approved for printing','Approved records by DM for printing that were marked as incomplete by DS',"/approved_incomplete?next_url=#{request.fullpath}",'']
+      @tasks << ['Rejected records','Incomplete records waiting to be sent to DC for editing',"/rejected_cases?next_url=#{request.fullpath}",'']
     end
     if has_role("Reject a record")
-       @tasks << ['Approved for printing','Approved records by DM for printing that were marked as incomplete by DS',"/approved_incomplete?next_url=#{request.path}",'']
-      @tasks << ['Incomplete cases','Reject record',"/hq_incomplete?next_url=#{request.path}",'']
+       @tasks << ['Approved for printing','Approved records by DM for printing that were marked as incomplete by DS',"/approved_incomplete?next_url=#{request.fullpath}",'']
+      @tasks << ['Incomplete cases','Reject record',"/hq_incomplete?next_url=#{request.fullpath}",'']
     end
      @section ="Rejected Cases"
     render :template => "/hq/tasks"
@@ -804,13 +804,13 @@ class HqController < ApplicationController
 
   def special_cases_tasks
     @tasks = []
-    @tasks << ['Abnormal Deaths','Abnormal death records',"/special_cases?registration_type=Abnormal Deaths&next_url=#{request.path}",'']
-    @tasks << ['Dead on Arrival','Dead on Arrival',"/special_cases?registration_type=Dead on Arrival&next_url=#{request.path}",'']
-    @tasks << ['Unclaimed bodies','Unclaimed bodies record',"/special_cases?registration_type=Unclaimed bodies&next_url=#{request.path}",'']
-    @tasks << ['Missing persons','Missing persons record',"/special_cases?registration_type=Missing Person&next_url=#{request.path}",'']
-    @tasks << ['Death abroad','Death abroad record',"/special_cases?registration_type=Deaths Abroad&next_url=#{request.path}",'']
-    @tasks << ['Printed/Dispatched Certificates',"Printed/Dispatched Certificates","/printed_special_case?next_url=#{request.path}",'']
-    @tasks << ['Rejected special cases','Rejected special cases',"/rejected_special_case?next_url=#{request.path}",'']
+    @tasks << ['Abnormal Deaths','Abnormal death records',"/special_cases?registration_type=Abnormal Deaths&next_url=#{request.fullpath}",'']
+    @tasks << ['Dead on Arrival','Dead on Arrival',"/special_cases?registration_type=Dead on Arrival&next_url=#{request.fullpath}",'']
+    @tasks << ['Unclaimed bodies','Unclaimed bodies record',"/special_cases?registration_type=Unclaimed bodies&next_url=#{request.fullpath}",'']
+    @tasks << ['Missing persons','Missing persons record',"/special_cases?registration_type=Missing Person&next_url=#{request.fullpath}",'']
+    @tasks << ['Death abroad','Death abroad record',"/special_cases?registration_type=Deaths Abroad&next_url=#{request.fullpath}",'']
+    @tasks << ['Printed/Dispatched Certificates',"Printed/Dispatched Certificates","/printed_special_case?next_url=#{request.fullpath}",'']
+    @tasks << ['Rejected special cases','Rejected special cases',"/rejected_special_case?next_url=#{request.fullpath}",'']
     @section ="Special Cases"
     render :template => "/hq/tasks"
   end
@@ -818,14 +818,14 @@ class HqController < ApplicationController
   def duplicate_cases_tasks
      @tasks = []
      if has_role("Manage incomplete records") 
-      @tasks << ['Potential Duplicates','Records marked as potential duplicates',"/potential?next_url=#{request.path}",'']
-      @tasks << ['Can Confirm Duplicates','Can be sent to DC or Voided upon DM approval',"/can_confirm?next_url=#{request.path}",'']
+      @tasks << ['Potential Duplicates','Records marked as potential duplicates',"/potential?next_url=#{request.fullpath}",'']
+      @tasks << ['Can Confirm Duplicates','Can be sent to DC or Voided upon DM approval',"/can_confirm?next_url=#{request.fullpath}",'']
       @tasks << ['Confirmed Duplicates','Confirmed duplicates','','']
-      @tasks << ['Approved for Printing','All potential duplicates that were approved and printed by DS, Option to view comments',"/approved_duplicate?next_url=#{request.path}",'']
+      @tasks << ['Approved for Printing','All potential duplicates that were approved and printed by DS, Option to view comments',"/approved_duplicate?next_url=#{request.fullpath}",'']
     end
     if has_role("Reject a record")
-       @tasks << ['Resolve Duplicates','Records marked as potential duplicates',"/resolve_duplicates?next_url=#{request.path}",'']
-       @tasks << ['Approved for Printing','All potential duplicates that were approved and printed by DS, Option to view comments',"/approved_duplicate?next_url=#{request.path}",'']
+       @tasks << ['Resolve Duplicates','Records marked as potential duplicates',"/resolve_duplicates?next_url=#{request.fullpath}",'']
+       @tasks << ['Approved for Printing','All potential duplicates that were approved and printed by DS, Option to view comments',"/approved_duplicate?next_url=#{request.fullpath}",'']
     end
     @section ="Duplicate Cases"
     render :template => "/hq/tasks"
@@ -834,12 +834,12 @@ class HqController < ApplicationController
   def amendment_cases_tasks
     @tasks = []
     if has_role("Make ammendments") || has_role("Manage duplicates")
-      @tasks << ['Lost/Damaged','All records that have been requested to be reprinted after first copy of the certificates was Lost/Damaged',"/reprint_requests?next_url=#{request.path}",'']
-      @tasks << ['Amendments','All records that has under gone changes after the certificate was printed',"/amendment_requests?next_url=#{request.path}",'']
+      @tasks << ['Lost/Damaged','All records that have been requested to be reprinted after first copy of the certificates was Lost/Damaged',"/reprint_requests?next_url=#{request.fullpath}",'']
+      @tasks << ['Amendments','All records that has under gone changes after the certificate was printed',"/amendment_requests?next_url=#{request.fullpath}",'']
       if has_role("Make ammendments")
-        @tasks << ['Rejected amended','All records that has under gone changes after the certificate was printed',"/rejected_requests?next_url=#{request.path}",'']
+        @tasks << ['Rejected amended','All records that has under gone changes after the certificate was printed',"/rejected_requests?next_url=#{request.fullpath}",'']
       end
-      @tasks << ['Printed/Dispatched Certificates','Printed/Dispatched Certificates',"/printed_amended_or_reprint?next_url=#{request.path}",'']
+      @tasks << ['Printed/Dispatched Certificates','Printed/Dispatched Certificates',"/printed_amended_or_reprint?next_url=#{request.fullpath}",'']
     end
     @section ="Re-prints and amendments"
     render :template => "/hq/tasks"
@@ -848,16 +848,16 @@ class HqController < ApplicationController
   def print_out_tasks
     @tasks = []
     if has_role("Authorise printing")
-      @tasks << ['Approve for printing','Approve for printing',"/approve_for_printing?next_url=#{request.path}",'']
-      @tasks << ['Print Certificates','Print Certificates',"/print?next_url=#{request.path}",'']
+      @tasks << ['Approve for printing','Approve for printing',"/approve_for_printing?next_url=#{request.fullpath}",'']
+      @tasks << ['Print Certificates','Print Certificates',"/print?next_url=#{request.fullpath}",'']
     end 
     if has_role("Authorise reprinting of a certificate")
-      @tasks << ['Approve re-printing','Approve for re-printing',"/approve_reprint?next_url=#{request.path}",'']
+      @tasks << ['Approve re-printing','Approve for re-printing',"/approve_reprint?next_url=#{request.fullpath}",'']
     end
      if has_role("Authorise printing")
-      @tasks << ['Re-print certificates','Re-print certificates',"/re_print?next_url=#{request.path}",'']
-      @tasks << ['Dispatch print outs','View dispatched print outs',"/dispatch_printouts?next_url=#{request.path}",'']
-      @tasks << ['Closed Re-printed certificates','All reprinteed records, those didn’t pass QC, option to view comments',"/reprinted_certificates?next_url=#{request.path}",'']
+      @tasks << ['Re-print certificates','Re-print certificates',"/re_print?next_url=#{request.fullpath}",'']
+      @tasks << ['Dispatch print outs','View dispatched print outs',"/dispatch_printouts?next_url=#{request.fullpath}",'']
+      @tasks << ['Closed Re-printed certificates','All reprinteed records, those didn’t pass QC, option to view comments',"/reprinted_certificates?next_url=#{request.fullpath}",'']
     end 
     @section ="Print out"
     render :template => "/hq/tasks"

@@ -6,6 +6,7 @@ class CouchSQL
   workers 1
   def perform()
    `bundle exec rake edrs:couch_mysql`
+   CouchSQL.perform_in(15)
   end rescue CouchSQL.perform_in(15)
 end
 

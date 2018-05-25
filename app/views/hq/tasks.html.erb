@@ -32,8 +32,11 @@
               </div>
          <%end%>
   </div>
-</div>    
-
+</div> 
+<br/>   
+<% if params[:next_url].present? %>
+  <button class="btn btn-primary pull-left" onclick="window.location='<%=params[:next_url] %>'">Back</button>
+<%end%>
 
 
 <script>
