@@ -405,13 +405,22 @@ class Person < CouchRest::Model::Base
 
   #Identifiers
   def den
-    return PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id, "DEATH ENTRY NUMBER"]).first.identifier rescue nil
+    if PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id, "DEATH ENTRY NUMBER"]).first.present?
+      return PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id, "DEATH ENTRY NUMBER"]).first.identifier rescue nil
+    else
+      return nil
+    end
   end
   def national_id
     return PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id,"National ID"]).first.identifier rescue nil
   end
   def barcode
-      PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id,"Form Barcode"]).first.identifier rescue nil
+    if PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id,"Form Barcode"]).first.present?
+      return PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id,"Form Barcode"]).first.identifier rescue nil
+    else 
+      return nil
+    end
+      
   end
 
   def drn
