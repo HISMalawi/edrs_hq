@@ -769,6 +769,7 @@ class HqController < ApplicationController
     
     if has_role("Reject a record")
        @tasks << ['Conflict cases','View cases with queries',"/conflict?next_url=#{request.fullpath}",'conflict_case.png']
+       @tasks << ['Rejected Cases','View rejected cases',"/rejected_cases_tasks?next_url=#{request.fullpath}",'']
     end
 
     if has_role("View closed cases")
