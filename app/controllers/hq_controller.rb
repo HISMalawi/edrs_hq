@@ -292,6 +292,11 @@ class HqController < ApplicationController
 
       person = Person.find(key.strip)
 
+      if !File.exist?("#{CONFIG['barcodes_path']}#{person.id}.png")
+              create_barcode(person)
+      end
+
+
       next if person.blank?
       PersonRecordStatus.change_status(person,"HQ PRINTED")
       id = person.id
@@ -303,7 +308,7 @@ class HqController < ApplicationController
       #raise "wkhtmltopdf --zoom #{zoom} --page-size #{paper_size} #{input_url} #{output_file}"
 
       t4 = Thread.new {
-
+        raise "wkhtmltopdf --zoom #{zoom} --page-size #{paper_size} #{input_url} #{output_file}".inspect
         Kernel.system "wkhtmltopdf --zoom #{zoom} --page-size #{paper_size} #{input_url} #{output_file}"
         #PDFKit.new(input_url, :page_size => paper_size, :zoom => zoom).to_file(output_file)
 

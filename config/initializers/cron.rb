@@ -19,4 +19,4 @@ if Rails.env == 'development'
 else
   	UpdateSyncStatus.perform_in(diff)
 end
-CouchSQL.perform_in(20)
+CouchSQL.perform_in(600)

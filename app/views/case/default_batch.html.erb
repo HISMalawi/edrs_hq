@@ -113,7 +113,7 @@ function addRows(data, skip_parse) {
     name = people[i]['name'];
     gender = people[i]['gender'];
     dob = people[i]['dob'];
-    dob = people[i]['dod'];
+    dod = people[i]['dod'];
     place_of_death = people[i]['place_of_death'];
     physical_address = people[i]["physical_address"];
     person_id = people[i]["person_id"];
@@ -130,7 +130,7 @@ function addRows(data, skip_parse) {
       /*age = patients[i]["age"];
       patient_id = patients[i]["patient_id"];
       account_number = patients[i]["account_number"];*/
-    dataTable.api().row.add([drn, den, name, gender,dob,dob, place_of_death,spam.innerHTML,select]).draw();
+    dataTable.api().row.add([drn, den, name, gender,dob,dod, place_of_death,spam.innerHTML,select]).draw();
 
   }
 

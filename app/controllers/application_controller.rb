@@ -22,7 +22,9 @@ class ApplicationController < ActionController::Base
           if (defined? PersonIdentifier.can_assign_drn).nil?
             PersonIdentifier.can_assign_drn = true
           end
-          AssignDrn.perform_in(2)
+          if SuckerPunch::Queue.stats["AssignDrn"]["workers"]["idle"].to_i == 1
+            AssignDrn.perform_in(15)
+          end
         end
         
       end
@@ -30,37 +32,47 @@ class ApplicationController < ActionController::Base
       cron_job_tracker = HQCronJobsTracker.first
       HQCronJobsTracker.new.save if cron_job_tracker.blank?
 
-      if (now - (cron_job_tracker.time_last_sync_to_mysql.to_time rescue  Date.today.to_time)).to_i > 15
-            CouchSQL.perform_in(15)
-            cron_job_tracker.time_last_sync_to_mysql = now + 15.seconds
+      if (now - (cron_job_tracker.time_last_sync_to_mysql.to_time rescue  Date.today.to_time)).to_i > 511
+        if SuckerPunch::Queue.stats["CouchSQL"]["workers"]["idle"].to_i == 1
+            CouchSQL.perform_in(511)
+            cron_job_tracker.time_last_sync_to_mysql = now + 511.seconds
             cron_job_tracker.save
+        end
       end
 
       if Rails.env == 'development'
        if (now - (cron_job_tracker.time_last_updated_sync.to_time rescue  Date.today.to_time)).to_i > 120
+          if SuckerPunch::Queue.stats["UpdateSyncStatus"]["workers"]["idle"].to_i == 1
             UpdateSyncStatus.perform_in(900)
             cron_job_tracker.time_last_updated_sync = now + 900.seconds
             cron_job_tracker.save
+          end
         end
       else
-        if (now - (cron_job_tracker.time_last_updated_sync.to_time rescue  Date.today.to_time)).to_i > 600
-            UpdateSyncStatus.perform_in(1200)
-            cron_job_tracker.time_last_updated_sync = now + 1200.seconds
+        if (now - (cron_job_tracker.time_last_updated_sync.to_time rescue  Date.today.to_time)).to_i > 10800
+          if SuckerPunch::Queue.stats["UpdateSyncStatus"]["workers"]["idle"].to_i == 1
+            UpdateSyncStatus.perform_in(10800)
+            cron_job_tracker.time_last_updated_sync = now + 10800.seconds
             cron_job_tracker.save
+          end
         end
       end
 
       if Rails.env == "development"
          if (now - (cron_job_tracker.time_last_generate_stats.to_time rescue  Date.today.to_time)).to_i > 15
-             GenerateStats.perform_in(15)
-             cron_job_tracker.time_last_generate_stats = now + 15.seconds
-             cron_job_tracker.save
+            if SuckerPunch::Queue.stats["GenerateStats"]["workers"]["idle"].to_i == 1
+               GenerateStats.perform_in(15)
+               cron_job_tracker.time_last_generate_stats = now + 15.seconds
+               cron_job_tracker.save
+            end
          end
       else
-          if (now - (cron_job_tracker.time_last_generate_stats.to_time rescue  Date.today.to_time)).to_i > 120
-             GenerateStats.perform_in(120)
-             cron_job_tracker.time_last_generate_stats = now + 120.seconds
-             cron_job_tracker.save
+          if (now - (cron_job_tracker.time_last_generate_stats.to_time rescue  Date.today.to_time)).to_i > 700
+            if SuckerPunch::Queue.stats["GenerateStats"]["workers"]["idle"].to_i == 1
+               GenerateStats.perform_in(700)
+               cron_job_tracker.time_last_generate_stats = now + 700.seconds
+               cron_job_tracker.save
+            end
          end
       end
   end
@@ -274,10 +286,20 @@ class ApplicationController < ActionController::Base
                 end
       elsif person.place_of_death  && person.place_of_death =="Home"
           if person.place_of_death_village.present? && person.place_of_death_village.to_s.length > 0
-              place_of_death = person.place_of_death_village
+            if person.place_of_death_village == "Other"
+               place_of_death = person.other_place_of_death_village
+            else
+               place_of_death = person.place_of_death_village
+            end
+             
           end
           if person.place_of_death_ta.present? && person.place_of_death_ta.to_s.length > 0
-              place_of_death = "#{place_of_death}, #{person.place_of_death_ta}"
+            if person.place_of_death_ta == "Other"
+                place_of_death = "#{place_of_death}, #{person.other_place_of_death_ta}"
+            else
+                place_of_death = "#{place_of_death}, #{person.place_of_death_ta}"
+            end
+              
           end
           if person.place_of_death_district.present? && person.place_of_death_district.to_s.length > 0
               place_of_death = "#{place_of_death}, #{person.place_of_death_district}"

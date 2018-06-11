@@ -5,9 +5,9 @@ class GenerateStats
   	def perform()
       `bundle exec rake edrs:stats`
       if Rails.env == "development"
-      	 GenerateStats.perform_in(10)
+      	 GenerateStats.perform_in(233)
       else	
-      	GenerateStats.perform_in(300)
+      	GenerateStats.perform_in(511)
       end	
   	end
 end

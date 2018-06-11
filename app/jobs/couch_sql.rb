@@ -5,8 +5,8 @@ class CouchSQL
   include SuckerPunch::Job
   workers 1
   def perform()
-   `bundle exec rake edrs:couch_mysql`
-   CouchSQL.perform_in(15)
-  end rescue CouchSQL.perform_in(15)
+   load "#{Rails.root}/bin/script/couch-mysql.rb"
+   CouchSQL.perform_in(511)
+  end rescue CouchSQL.perform_in(511)
 end
 
