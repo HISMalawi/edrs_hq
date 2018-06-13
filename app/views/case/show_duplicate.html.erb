@@ -132,36 +132,29 @@
 
 						<tr>
 							<td><b>Place of Death</b></td>
-							<% if @person.place_of_death == 'Health Facility'%>
-
-						 	<td><%= @person.hospital_of_death %></td>
-
-							<%elsif @person.place_of_death == 'Home'%>
-
-								 <td><%= @person.place_of_death_village %> Village, TA <%= @person.place_of_death_ta%> , <%= @person.place_of_death_village%> District</td>
-
-							<%elsif @person.place_of_death == 'Other' %>
-
-								 <td><%= @person.other_place_of_death rescue '' %></td>
-
-							<% end %>
+							<td><%= place_of_death(@person) %></td>
 						</tr>
-						<tr>
-							<td><b>Mother surname</b></td>
-							<td><%= @person.mother_last_name %></td>
-						</tr>
+
 						<tr>
 							<td><b>Mother Firstname</b></td>
 							<td><%= @person.mother_first_name %></td>
 						</tr>
+
 						<tr>
-							<td><b>Father Surname</b></td>
-							<td><%= @person.father_last_name %></td>
+							<td><b>Mother surname</b></td>
+							<td><%= @person.mother_last_name %></td>
 						</tr>
+
 						<tr>
 							<td><b>Father Firstname</b></td>
 							<td><%= @person.father_first_name %></td>
 						</tr>
+
+						<tr>
+							<td><b>Father Surname</b></td>
+							<td><%= @person.father_last_name %></td>
+						</tr>
+
 					</tbody>
 
 		</table>
@@ -195,36 +188,30 @@
 
 						<tr>
 							<td><b>Place of Death</b></td>
-							<% if @person.place_of_death == 'Health Facility'%>
-
-						 	<td><%= @person.hospital_of_death %></td>
-
-							<%elsif @person.place_of_death == 'Home'%>
-
-								 <td><%= @person.place_of_death_village %> Village, TA <%= @person.place_of_death_ta%> , <%= @person.place_of_death_village%> District</td>
-
-							<%elsif @person.place_of_death == 'Other' %>
-
-								 <td><%= @person.other_place_of_death rescue '' %></td>
-
-							<% end %>
+							<td><%= place_of_death(@person) %></td>
 						</tr>
-						<tr>
-							<td><b>Mother surname</b></td>
-							<td><%= @person.mother_last_name %></td>
-						</tr>
+
 						<tr>
 							<td><b>Mother Firstname</b></td>
 							<td><%= @person.mother_first_name %></td>
 						</tr>
+
 						<tr>
-							<td><b>Father Surname</b></td>
-							<td><%= @person.father_last_name %></td>
+							<td><b>Mother surname</b></td>
+							<td><%= @person.mother_last_name %></td>
 						</tr>
+
+
 						<tr>
 							<td><b>Father Firstname</b></td>
 							<td><%= @person.father_first_name %></td>
 						</tr>
+
+						<tr>
+							<td><b>Father Surname</b></td>
+							<td><%= @person.father_last_name %></td>
+						</tr>
+
 					</tbody>
 		</table>
 	</div>
@@ -463,18 +450,7 @@
 
 					var td = document.createElement("td");
 
-					if (data.place_of_death == 'Hospital/Institution'){
-
-					 	td.innerHTML = data.hospital_of_death;
-
-					}else if(data.place_of_death == 'Home'){
-						 td.innerHTML = data.place_of_death_village +"Village, TA "+data.place_of_death_ta+
-						 				data.place_of_death_village+" District";
-
-					}else if(data.place_of_death == 'Other'){
-
-						 td.innerHTML = data.other_place_of_death
-					}
+					td.innerHTML = data.death_place
 
 					tr.appendChild(td);
 

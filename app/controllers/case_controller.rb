@@ -832,6 +832,7 @@ class CaseController < ApplicationController
                       current_country:  ( person.current_country rescue ""),
                       den: (person.den rescue ""),
                       status: (person.status),
+                      death_place: place_of_death(person),
                       nationality: person.nationality
                      }
   end

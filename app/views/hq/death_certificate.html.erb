@@ -219,10 +219,10 @@
             Date of Registration
           </td>
           <td align="left">
-            <%= (!@person[:created_at].blank? ? @person[:created_at].to_date.day : "") %><sup
-            style="font-size: 18px;"><%= (!@person[:created_at].blank? ?
-                  @person[:created_at].to_date.day.ordinalize.match(/([a-z]+)/).captures.first : "") %></sup>
-            <%= (!@person[:created_at].blank? ? @person[:created_at].to_date.strftime("%B, %Y") : "") %>
+                <%= (!@date_registered.blank? ? @date_registered.to_date.day : "") %><sup
+                style="font-size: 18px;"><%= (!@date_registered.blank? ?
+                      @date_registered.to_date.day.ordinalize.match(/([a-z]+)/).captures.first : "") %></sup>
+                <%= (!@date_registered.blank? ? @date_registered.to_date.strftime("%B, %Y") : "") %>
           </td>
         </tr>
       

@@ -9,11 +9,11 @@ class UpdateSyncStatus
       update_sync_tracker.save
   		if Rails.env == "development"
           SuckerPunch.logger.info "Sync status update from DC Done"
-        end
-
-        if Rails.env == 'development'
+      end
+      
+      if Rails.env == 'development'
         	UpdateSyncStatus.perform_in(10800)
-        else
+      else
   			UpdateSyncStatus.perform_in(10800)
   		end
   	end
