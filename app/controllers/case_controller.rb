@@ -761,8 +761,6 @@ class CaseController < ApplicationController
 
       @existing_record = []
 
-      @place_of_death_function = place_of_death
-
       @existing_ids = ""
       @duplicates_audit = Audit.by_record_id_and_audit_type.key([@person.id.to_s, "POTENTIAL DUPLICATE"]).first
       @statuses = []
