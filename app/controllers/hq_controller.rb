@@ -251,7 +251,13 @@ class HqController < ApplicationController
 
     @drn = @person.drn
     @den = @person.den
-    @date_registered = PersonRecordStatus.by_person_record_id_and_status.key([@person.id,"HQ ACTIVE"]).first.created_at
+
+    if PersonRecordStatus.by_person_record_id_and_status.key([@person.id,"HQ ACTIVE"]).first.present?
+         @date_registered = PersonRecordStatus.by_person_record_id_and_status.key([@person.id,"HQ ACTIVE"]).first.created_at
+    else
+         @date_registered = @person.created_at
+    end
+   
     @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
 
     render :layout => false, :template => 'hq/death_certificate'
@@ -265,7 +271,12 @@ class HqController < ApplicationController
     @drn = @person.drn
     @den = @person.den
     @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
-    @date_registered = PersonRecordStatus.by_person_record_id_and_status.key([@person.id,"HQ ACTIVE"]).first.created_at
+    
+    if PersonRecordStatus.by_person_record_id_and_status.key([@person.id,"HQ ACTIVE"]).first.present?
+         @date_registered = PersonRecordStatus.by_person_record_id_and_status.key([@person.id,"HQ ACTIVE"]).first.created_at
+    else
+         @date_registered = @person.created_at
+    end
     
     if CONFIG['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A4"
        render :layout => false, :template => 'hq/death_certificate_print'
