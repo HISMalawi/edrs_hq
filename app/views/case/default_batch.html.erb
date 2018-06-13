@@ -439,6 +439,11 @@ function changeEntryLength(element){
 
 function changeDistrict(element){
     var  pathname = "<%= request.fullpath %>"
-    window.location.href = pathname+"&district="+element.value
+    if (pathname.match(/\?/)){
+        window.location.href = pathname+"&district="+element.value
+    }else{
+        window.location.href = pathname+"?district="+element.value
+    }
+    
 }
 </script>
