@@ -98,7 +98,7 @@ class CaseController < ApplicationController
 
   def resolve_duplicates
     @title = "Resolve duplicate cases"
-    @statuses = ["HQ POTENTIAL DUPLICATE TBA","HQ NOT DUPLICATE TBA"]
+    @statuses = ["HQ POTENTIAL DUPLICATE","HQ NOT DUPLICATE"]
     @page = 1
     session[:return_url] = request.path
 
@@ -387,7 +387,7 @@ class CaseController < ApplicationController
 
   def potential
     @title = "Potential Duplicates"
-    @statuses = ["HQ POTENTIAL DUPLICATE"]
+    @statuses = ["HQ POTENTIAL DUPLICATE TBA"]
     @page = 1 
     session[:return_url] = request.path
 
@@ -693,7 +693,7 @@ class CaseController < ApplicationController
           record["district_code"] = @person.district_code
           SimpleElasticSearch.add(record)
 
-          if @person.status =="HQ POTENTIAL DUPLICATE"
+          if @person.status =="HQ POTENTIAL DUPLICATE TBA"
             
           end
          
@@ -714,7 +714,7 @@ class CaseController < ApplicationController
                               :change_log => change_log
               })
 
-              PersonRecordStatus.change_status(@person,"HQ POTENTIAL DUPLICATE")
+              PersonRecordStatus.change_status(@person,"HQ POTENTIAL DUPLICATE TBA")
             else
             end
           end
