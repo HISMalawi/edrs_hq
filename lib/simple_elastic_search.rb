@@ -188,6 +188,7 @@ class SimpleElasticSearch
     content =  "#{person["first_name"]} #{person["last_name"]} #{self.format_content(person)}"
     hits.each do |hit|
       next if hit["_id"].squish ==(person["id"].squish rescue nil)
+      next if ["DC ACTIVE","DC COMPLETE"].include?(Person.find(person["id"]).status)
       hit_content = hit["_source"]["content"]
       potential_duplicates <<  hit if WhiteSimilarity.similarity(content, hit_content) >= (precision/100)
     end
