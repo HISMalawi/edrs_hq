@@ -24,9 +24,9 @@ connection = ActiveRecord::Base.connection
         registered << connection.select_all("SELECT count(*) as total FROM people WHERE 
                                              DATE_FORMAT(created_at,'%Y-%m-%d') >= '#{start_date}' AND DATE_FORMAT(created_at,'%Y-%m-%d') <= '#{end_date}'").as_json.last['total'] rescue 0
 
-        approved << connection.select_all("SELECT count(*) as total FROM person_record_status 
-                                                        WHERE status IN('HQ ACTIVE') AND
-                                                        DATE_FORMAT(created_at,'%Y-%m-%d') >= '#{start_date}' AND DATE_FORMAT(created_at,'%Y-%m-%d') <= '#{end_date}'").as_json.last['total'] rescue 0
+        #approved << connection.select_all("SELECT count(*) as total FROM person_record_status 
+        #                                                WHERE status IN('HQ ACTIVE') AND
+        #                                                DATE_FORMAT(created_at,'%Y-%m-%d') >= '#{start_date}' AND DATE_FORMAT(created_at,'%Y-%m-%d') <= '#{end_date}'").as_json.last['total'] rescue 0
         
         printed << connection.select_all("SELECT count(*) as total FROM person_record_status 
                                                         WHERE status IN('HQ PRINTED') AND 
@@ -39,7 +39,6 @@ connection = ActiveRecord::Base.connection
 end
 
 stats[:year_registered] = registered
-stats[:year_approved] = approved
 stats[:year_printed] = printed
 
 cummulatives_keys = {}
