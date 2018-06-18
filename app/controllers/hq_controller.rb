@@ -357,8 +357,8 @@ class HqController < ApplicationController
     input_url = "#{CONFIG["protocol"]}://#{request.env["SERVER_NAME"]}:#{request.env["SERVER_PORT"]}/dispatch_preview"
 
     t4 = Thread.new {
-
-        PDFKit.new(input_url, :page_size => 'A4',:orientation => 'Landscape').to_file(output_file)
+        Kernel.system "wkhtmltopdf  --orientation landscape --page-size A4 #{input_url} #{output_file}"
+        #PDFKit.new(input_url, :page_size => 'A4',:orientation => 'Landscape').to_file(output_file)
 
         sleep(4)
 
@@ -376,13 +376,22 @@ class HqController < ApplicationController
   def dispatch_preview
 
       @data = []
-      @district = params[:district]
+      @district = ""
 
       dispatch = "#{Rails.root}/tmp/dispatch.txt"
 
       dispatch_ids = File.open(dispatch) { |f| f.read }.to_s.split(",")
       dispatch_ids.each do |id|
         person = Person.find(id.gsub("\n",""))
+        if @district.blank?
+            @district = District.find(person.district_code).name
+        end
+        registered = PersonRecordStatus.by_person_record_id_and_status.key([person.id,"HQ ACTIVE"]).first
+        if registered.present?
+          date_registered = registered.created_at
+        else
+          date_registered = person.created_at
+        end
         @data << {
             'name'                => "#{person.first_name} #{person.middle_name rescue ''} #{person.last_name}".squish,
             'drn'                 => person.drn,
@@ -391,7 +400,7 @@ class HqController < ApplicationController
             'dod'                 => person.date_of_death.to_date.strftime('%d/%b/%Y'),
             'sex'                 => person.gender,
             'place_of_death'      => place_of_death(person),
-            'date_registered'     => (person.created_at.to_date.strftime('%d/%b/%Y') rescue nil)
+            'date_registered'     => (date_registered.to_date.strftime('%d/%b/%Y') rescue nil)
         }
         PersonRecordStatus.change_status(person,"HQ DISPATCHED")
       end
