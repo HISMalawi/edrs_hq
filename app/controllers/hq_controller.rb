@@ -164,14 +164,13 @@ class HqController < ApplicationController
   end
 
   def cause_of_death_list
-
-      diagnosis_list_csv = CSV.foreach("#{Rails.root}/app/assets/data/diagnoses_csv.csv", :headers => false)
-
-      diagnosis_list = diagnosis_list_csv.collect{|row| row[1] unless row[1].blank?}
-
-      diagnosis_list << ""
-
-      render :text => diagnosis_list.sort
+      causes = []
+      condition_a = Person.by_condition_a.keys
+      condition_b = Person.by_condition_b.keys
+      condition_c = Person.by_condition_c.keys
+      condition_d = Person.by_condition_d.keys
+      causes = condition_a + condition_b + condition_c + condition_d
+      render :text => causes.uniq.sort
       
   end
 

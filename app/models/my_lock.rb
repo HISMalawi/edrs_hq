@@ -1,6 +1,7 @@
 require 'couchrest_model'
 
 class MyLock < CouchRest::Model::Base
+	 use_database "local"
 	 before_save :set_district_code
 
 	 property :person_id, String

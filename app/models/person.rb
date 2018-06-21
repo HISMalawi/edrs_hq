@@ -775,6 +775,32 @@ class Person < CouchRest::Model::Base
 
     view :by_npid
 
+    view :by_condition_a,
+         :map => "function(doc) {
+                  if (doc['type'] == 'Person' && doc['cause_of_death1'] != null) {
+                    emit(doc['cause_of_death1'], 1);
+                  }
+                }"
+
+    view :by_condition_b,
+         :map => "function(doc) {
+                  if (doc['type'] == 'Person' && doc['cause_of_death2'] != null) {
+                    emit(doc['cause_of_death2'], 1);
+                  }
+                }"
+    view :by_condition_c,
+         :map => "function(doc) {
+                  if (doc['type'] == 'Person' && doc['cause_of_death3'] != null) {
+                    emit(doc['cause_of_death3'], 1);
+                  }
+                }"
+    view :by_condition_d,
+         :map => "function(doc) {
+                  if (doc['type'] == 'Person' && doc['cause_of_death4'] != null) {
+                    emit(doc['cause_of_death4'], 1);
+                  }
+                }"
+
     filter :facility_sync, "function(doc,req) {return req.query.facility_code == doc.facility_code}"
     filter :district_sync, "function(doc,req) {return req.query.district_code == doc.district_code}"
 

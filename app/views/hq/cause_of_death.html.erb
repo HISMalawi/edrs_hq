@@ -507,14 +507,22 @@
                    <div class="form-group" style=" padding-bottom:1%">
                    <div class="col-md-12">
                         <label for="onset_death_interval1">Condition (a) </label>
-                        <input name="cause_of_death1" id="cause_of_death1" value="<%= @person.cause_of_death1 rescue (@person.other_cause_of_death1 rescue '')%>" class="form-control select2" style="width:100%" onkeyup="addCauseField(this);checkSpace(this)" />
+                        <% if false %>
+                         <input name="cause_of_death1" id="cause_of_death1" value="<%= @person.cause_of_death1 rescue (@person.other_cause_of_death1 rescue '')%>" class="form-control select2" style="width:100%" onkeyup="addCauseField(this);checkSpace(this)" />
+                        <%else%>
+                          <select name="cause_of_death1" id="cause_of_death1" 
+                                  class="form-control select2" style="width:100%" 
+                                  onchange="addCauseField(this);checkSpace(this)">
+                              <option></option>
+                          </select>
+                        <%end%>
                     </div>
 
 
 
                   <div class="col-md-5">
                         <label for="onset_death_interval1">Time interval between onset and death </label>
-                        <input name="onset_death_interval1" id="onset_death_interval1"  value="<%= @person.onset_death_interval1%>" class="form-control" type="number" onkeyup="checkIfNumber(this)" min="1" />
+                        <input name="onset_death_interval1" id="onset_death_interval1"  value="<%= @person.onset_death_interval1%>" onfocus="cheIfConditionIsEntered(1)" class="form-control" type="number" onkeyup="checkIfNumber(this)" min="1" />
                     </div>
                     <div class="col-md-4">
                         <label for="interval_unit1">Units</label>
@@ -542,13 +550,28 @@
                   <div class="form-group" style=" padding-bottom:1%">
                     <div class="col-md-12">
                         <label for="">Condition (b) </label>
+                        <% if false %>
                          <input name="cause_of_death2" id="cause_of_death2" value="<%= @person.cause_of_death2 rescue (@person.other_cause_of_death2 rescue '')%>" class="form-control select2" style="width:100%" onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)" />
+                        <% else %>
+                          <select name="cause_of_death2" id="cause_of_death2" 
+                                  value="<%= @person.cause_of_death2 rescue (@person.other_cause_of_death2 rescue '')%>" 
+                                  class="form-control select2" style="width:100%" 
+                                  onchange="addCauseField(this);checkSpace(this)">
+                              <option></option>
+                          </select>
+                        <%end%>
                     </div>
 
 
                      <div class="col-md-5">
                         <label for="">Time interval between onset and death</label>
-                        <input name="onset_death_interval2" id="onset_death_interval2"  value="<%= @person.onset_death_interval2%>" class="form-control" type="number" onkeyup="checkIfNumber(this)" min="1" />
+                        <input name="onset_death_interval2" 
+                               id="onset_death_interval2"  
+                               value="<%= @person.onset_death_interval2%>" 
+                               class="form-control" 
+                               onfocus="cheIfConditionIsEntered(2)"
+                               type="number" 
+                               onkeyup="checkIfNumber(this)" min="1" />
                     </div>
                     <div class="col-md-4">
                         <label for="">Units</label>
@@ -574,14 +597,32 @@
 
                   <div class="form-group">
                     <div class="col-md-12">
+                    <% if false %>
                         <label for="">Condition (c)</label>
-                         <input name="cause_of_death3" id="cause_of_death3" value="<%= @person.cause_of_death3 rescue (@person.other_cause_of_death3 rescue '')%>" class="form-control select2" style="width:100%" onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)"/>
+                         <input name="cause_of_death3" id="cause_of_death3" 
+                                value="<%= @person.cause_of_death3 rescue (@person.other_cause_of_death3 rescue '')%>" 
+                                class="form-control select2" style="width:100%" 
+                                onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)"/>
+                    <% else%>
+                        <select name="cause_of_death3" 
+                                id="cause_of_death3"
+                                value="<%= @person.cause_of_death3 rescue (@person.other_cause_of_death3 rescue '')%>" 
+                                class="form-control select2" style="width:100%" 
+                                onchange="validatePrev(this);addCauseField(this);checkSpace(this)">
+                                <option></option>
+                        </select>
+                    <% end %>
                     </div>
 
 
                     <div class="col-md-5">
                         <label for="">Time interval between onset and death</label>
-                        <input name="onset_death_interval3" id="onset_death_interval3"  value="<%= @person.onset_death_interval3%>" class="form-control" type="number" onkeyup="checkIfNumber(this)" min="1"/>
+                        <input name="onset_death_interval3" 
+                              id="onset_death_interval3"  
+                              value="<%= @person.onset_death_interval3%>" 
+                              class="form-control" type="number"
+                              onfocus="cheIfConditionIsEntered(3)"
+                              onkeyup="checkIfNumber(this)" min="1"/>
                     </div>
                     <div class="col-md-4">
                         <label for="">Units</label>
@@ -608,12 +649,26 @@
                   <div class="form-group">
                   <div class="col-md-12">
                       <label for="">Condition (d)</label>
-                      <input name="cause_of_death4" id="cause_of_death4" value="<%= @person.cause_of_death4%>" class="form-control select2" style="width:100%" onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)" min="1"/>
+                  <% if false %>
+                      <input name="cause_of_death4" id="cause_of_death4" value="<%= @person.cause_of_death4%>" class="form-control select2" style="width:100%" onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)" />
+                  <% else %>
+                      <select   name="cause_of_death4" id="cause_of_death4"
+                                value="<%= @person.cause_of_death4%>" 
+                                class="form-control select2" style="width:100%" 
+                                onchange="validatePrev(this);addCauseField(this);checkSpace(this)">
+                            <option></option>
+                      </select>
+                  <% end %>
                     </div>
 
                      <div class="col-md-5">
                         <label for="">Time interval between onset and death</label>
-                        <input name="onset_death_interval4" id="onset_death_interval4"  value="<%= @person.onset_death_interval4%>" class="form-control" type="number" onkeyup="checkIfNumber(this)" />
+                        <input name="onset_death_interval4" 
+                          id="onset_death_interval4"  
+                          value="<%= @person.onset_death_interval4%>" 
+                          class="form-control" type="number" 
+                          onfocus="cheIfConditionIsEntered(4)"
+                          onkeyup="checkIfNumber(this)" />
                     </div>
                     <div class="col-md-4">
                         <label for="">Units</label>
@@ -1109,6 +1164,7 @@
         }
     }
     function validatePrev(element){
+      /*
         var name = element.name;
         var prevpos = parseInt(name.charAt(name.length-1)) - 1;
         var fields_map ={
@@ -1127,7 +1183,7 @@
               return;
 
             }
-        }
+        }*/
     }
     function changeToBorderGray(element){
         element.setAttribute("style",(element.getAttribute("style")? element.getAttribute("style")+";1px solid gray" : "1px solid gray"));
@@ -1284,7 +1340,7 @@
 
     $.getJSON("/cause_of_death_list",function(data){
 
-            for(var i =  1 ; i <=5 && false ; i++){
+            for(var i =  1 ; i <=5 ; i++){
                 switch(i){
                      case 1:
                         makeselect2("cause_of_death"+i, "<%= @person.cause_of_death1%>",data)
@@ -1299,7 +1355,7 @@
                         makeselect2("cause_of_death"+i, "<%= @person.cause_of_death4%>",data)
                         break;
                      case 5:
-                        makeselect2("cause_of_death_conditions",null,data)
+                        //makeselect2("cause_of_death_conditions",null,data)
                         break;
                 }
             }
@@ -1599,6 +1655,14 @@
             if (element.value.length > 0 ) {
                 __$("icd_10_code").value  = element.value
             }
+        }
+
+        function cheIfConditionIsEntered(position){
+              var condition = __$("cause_of_death"+position).value
+              var condition_map = {"1": "a", "2" : "b" , "3": "c" , "4":"d"}
+              if (condition.length == 0) {
+                     showValidationMessage("Condition", "Please enter Condition ("+condition_map[position] +")",__$("cause_of_death"+position))
+              }
         }
 
         $(document).ready(function(){

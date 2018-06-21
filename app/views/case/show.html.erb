@@ -92,7 +92,7 @@
 <div style="background: white">
   <div style="height: 535px; overflow: auto;padding: 0px; margin:0px;">
     <table class="summary" id="summary"  style="">
-        <% if @locked %>
+        <% if @locked && false%>
           <tr>
               <td colspan="6" style="color:red;text-align:center"> <center><b>Record is locked since it is been reviewed by another user please check later</b></center></td>
           </tr>
@@ -395,7 +395,6 @@
           %>
 
           <div onclick= "clearLockAndRedirect()" class="dynamic-button btn btn-small btn-default pull-left btn-primary"><span>Back</span></div>
-          <% if !@locked %>
           <% @tasks.each do |task|
             onclick = ''
 
@@ -418,7 +417,6 @@
 
               <div onclick= "<%= onclick %>" class="dynamic-button btn btn-small btn-primary pull-right <%= task['class'].downcase rescue ''%>"><span><%= task['button_name']%></span></div>
           <% end %>
-          <%end%>
           <% if comment == true && false%>
             <div onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary"><span>View Trail</span></div>
           <% end %>
