@@ -8,6 +8,9 @@ if CONFIG['site_type'].to_s != "facility"
    AssignDrn.perform_in(3)
 end
 
+
+=begin
+	
 GenerateStats.perform_in(60)
 
 midnight = (Date.today).to_date.strftime("%Y-%m-%d 23:59:59").to_time
@@ -20,3 +23,4 @@ else
   	UpdateSyncStatus.perform_in(diff)
 end
 CouchSQL.perform_in(600)
+=end

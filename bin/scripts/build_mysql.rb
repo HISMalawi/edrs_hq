@@ -4,7 +4,7 @@
  SimpleSQL.query_exec(sql)
  PersonIdentifier.can_assign_den = false
  PersonIdentifier.can_assign_drn = false
- LoadMysql.load_mysql = false
+ #LoadMysql.load_mysql = false
  @@file_path = "#{Rails.root.to_s}/db/MySQL_data/"
  Dir.mkdir(@@file_path) unless Dir.exist?(@@file_path)
  @couchdb_files = {
@@ -300,6 +300,6 @@ last_seq.save
 
 PersonIdentifier.can_assign_den = true
 PersonIdentifier.can_assign_drn = true
-LoadMysql.load_mysql = true
+#LoadMysql.load_mysql = true
 sql = "SET FOREIGN_KEY_CHECKS = 1;"
 SimpleSQL.query_exec(sql)

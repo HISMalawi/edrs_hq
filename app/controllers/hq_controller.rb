@@ -19,10 +19,10 @@ class HqController < ApplicationController
   end
 
   def dashbord_data
-    file_name = Rails.root.join('db', 'dashboard.json')
-    #file_name = Rails.root.join('db', 'dashboardtest.json')
-    fileinput = JSON.parse(File.read(file_name))
-    render :text => fileinput.to_json
+
+    data = RestClient.get("#{SETTINGS['app_jobs_url']}/application/get_stats")
+
+    render :text => data
     
   end
   def search

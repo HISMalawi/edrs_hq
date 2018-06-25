@@ -11,13 +11,13 @@ class ApplicationController < ActionController::Base
   end
 
   def check_cron_jobs
-      last_run_time = File.mtime("#{Rails.root}/public/sentinel").to_time
-      job_interval = SETTINGS['drn_assignment_interval']
-      job_interval = 1.5 if job_interval.blank?
-      job_interval = job_interval.to_f
-      now = Time.now
+    last_run_time = File.mtime("#{Rails.root}/public/sentinel").to_time
+    job_interval = SETTINGS['drn_assignment_interval']
+    job_interval = 1.5 if job_interval.blank?
+    job_interval = job_interval.to_f
+    now = Time.now
 
-      if (now - last_run_time).to_f > job_interval
+    if (now - last_run_time).to_f > job_interval
         if SETTINGS['site_type'].to_s != "facility"
           if (defined? PersonIdentifier.can_assign_drn).nil?
             PersonIdentifier.can_assign_drn = true
@@ -27,54 +27,14 @@ class ApplicationController < ActionController::Base
           end
         end
         
-      end
+    end
 
-      cron_job_tracker = HQCronJobsTracker.first
-      HQCronJobsTracker.new.save if cron_job_tracker.blank?
-
-      if (now - (cron_job_tracker.time_last_sync_to_mysql.to_time rescue  Date.today.to_time)).to_i > 511
-        if SuckerPunch::Queue.stats["CouchSQL"]["workers"]["idle"].to_i == 1
-            CouchSQL.perform_in(511)
-            cron_job_tracker.time_last_sync_to_mysql = now + 511.seconds
-            cron_job_tracker.save
-        end
-      end
-
-      if Rails.env == 'development'
-       if (now - (cron_job_tracker.time_last_updated_sync.to_time rescue  Date.today.to_time)).to_i > 120
-          if SuckerPunch::Queue.stats["UpdateSyncStatus"]["workers"]["idle"].to_i == 1
-            UpdateSyncStatus.perform_in(900)
-            cron_job_tracker.time_last_updated_sync = now + 900.seconds
-            cron_job_tracker.save
-          end
-        end
-      else
-        if (now - (cron_job_tracker.time_last_updated_sync.to_time rescue  Date.today.to_time)).to_i > 10800
-          if SuckerPunch::Queue.stats["UpdateSyncStatus"]["workers"]["idle"].to_i == 1
-            UpdateSyncStatus.perform_in(10800)
-            cron_job_tracker.time_last_updated_sync = now + 10800.seconds
-            cron_job_tracker.save
-          end
-        end
-      end
-
-      if Rails.env == "development"
-         if (now - (cron_job_tracker.time_last_generate_stats.to_time rescue  Date.today.to_time)).to_i > 15
-            if SuckerPunch::Queue.stats["GenerateStats"]["workers"]["idle"].to_i == 1
-               GenerateStats.perform_in(15)
-               cron_job_tracker.time_last_generate_stats = now + 15.seconds
-               cron_job_tracker.save
-            end
-         end
-      else
-          if (now - (cron_job_tracker.time_last_generate_stats.to_time rescue  Date.today.to_time)).to_i > 700
-            if SuckerPunch::Queue.stats["GenerateStats"]["workers"]["idle"].to_i == 1
-               GenerateStats.perform_in(700)
-               cron_job_tracker.time_last_generate_stats = now + 700.seconds
-               cron_job_tracker.save
-            end
-         end
-      end
+    process = fork{
+      Kernel.system "curl -s #{SETTINGS['app_jobs_url']}/application/start_generate_stats"
+      Kernel.system "curl -s #{SETTINGS['app_jobs_url']}/application/start_couch_to_mysql"
+      Kernel.system "curl -s #{SETTINGS['app_jobs_url']}/application/start_update_sync"
+    }
+    Process.detach(process)
   end
 
   def place_details(person)
