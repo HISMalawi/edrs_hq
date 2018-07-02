@@ -526,7 +526,7 @@
                     </div>
                     <div class="col-md-4">
                         <label for="interval_unit1">Units</label>
-                        <select name="interval_unit1" id="interval_unit1" load="" class="form-control" onchange="clearOnset(1)">
+                        <select name="interval_unit1" id="interval_unit1" load="" class="form-control" onchange="checkIfTimeEntered(1);clearOnset(1)">
                           <option ></option>
                           <option >Second(s)</option>
                           <option>Minute(s)</option>
@@ -540,7 +540,7 @@
                     </div>
                     <div class="col-md-3">
                         <label for="icd_10_1">ICD-10 </label>
-                        <input name="icd_10_1" id="icd_10_1"  value="" onfocus="activateICDValidate(this)" class="form-control" type="text" />
+                        <input name="icd_10_1" id="icd_10_1"  value="" onfocus="checkIfUnitEntered(1);checkIfTimeEntered(1);cheIfConditionIsEntered(1);activateICDValidate(this)" class="form-control" type="text" />
                     </div>
 
 
@@ -575,7 +575,7 @@
                     </div>
                     <div class="col-md-4">
                         <label for="">Units</label>
-                        <select name="interval_unit2" id="interval_unit2"  load="" class="form-control" onchange="clearOnset(2)">
+                        <select name="interval_unit2" id="interval_unit2"  load="" class="form-control" onchange="checkIfTimeEntered(2);clearOnset(2)">
                           <option ></option>
                           <option >Second(s)</option>
                           <option>Minute(s)</option>
@@ -589,7 +589,7 @@
 
                         <div class="col-md-3">
                         <label for="icd_10_2">ICD-10 </label>
-                        <input name="icd_10_2" id="icd_10_2"  value="" class="form-control" type="text" onfocus="activateICDValidate(this)" />
+                        <input name="icd_10_2" id="icd_10_2"  value="" class="form-control" type="text" onfocus="checkIfUnitEntered(2);checkIfTimeEntered(2);cheIfConditionIsEntered(2);activateICDValidate(this)" />
                     </div>
 
 
@@ -640,7 +640,7 @@
 
                        <div class="col-md-3">
                         <label for="icd_10_3">ICD-10 </label>
-                        <input name="icd_10_3" id="icd_10_3"  value="" class="form-control" type="text" onfocus="activateICDValidate(this)" />
+                        <input name="icd_10_3" id="icd_10_3"  value="" class="form-control" type="text" onfocus="checkIfUnitEntered(3);checkIfTimeEntered(3);cheIfConditionIsEntered(3);activateICDValidate(this)" />
                     </div>
 
                   </div>
@@ -672,7 +672,7 @@
                     </div>
                     <div class="col-md-4">
                         <label for="">Units</label>
-                        <select name="interval_unit4" id="interval_unit4"  load="" class="form-control" onchange="clearOnset(4)">
+                        <select name="interval_unit4" id="interval_unit4"  load="" class="form-control" onchange="checkIfTimeEntered(4);clearOnset(4)">
                           <option ></option>
                           <option >Second(s)</option>
                           <option>Minute(s)</option>
@@ -686,7 +686,7 @@
 
                         <div class="col-md-3">
                         <label for="icd_10_4">ICD-10 </label>
-                        <input name="icd_10_4" id="icd_10_4"  value="" class="form-control" type="text" onfocus="activateICDValidate(this)"/>
+                        <input name="icd_10_4" id="icd_10_4"  value="" class="form-control" type="text" onfocus="checkIfUnitEntered(4);checkIfTimeEntered(4);cheIfConditionIsEntered(4);activateICDValidate(this)"/>
                     </div>
 
                   </div>
@@ -1664,6 +1664,23 @@
                      showValidationMessage("Condition", "Please enter Condition ("+condition_map[position] +")",__$("cause_of_death"+position))
               }
         }
+
+        function checkIfTimeEntered(position){
+              var interval = __$("onset_death_interval"+position).value
+              var condition_map = {"1": "a", "2" : "b" , "3": "c" , "4":"d"}
+              if (interval.length == 0) {
+                     showValidationMessage("Interval", "Please enter Interval for condition ("+condition_map[position] +")",__$("onset_death_interval"+position))
+              }
+        }
+
+        function checkIfUnitEntered(position){
+              var unit = __$("interval_unit"+position).value
+              var condition_map = {"1": "a", "2" : "b" , "3": "c" , "4":"d"}
+              if (unit.length == 0) {
+                     showValidationMessage("Interval", "Please enter Unit Interval for condition ("+condition_map[position] +")",__$("interval_unit"+position))
+              }
+        }
+
 
         $(document).ready(function(){
              $("form").each(function(){
