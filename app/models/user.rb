@@ -40,6 +40,7 @@ class User < CouchRest::Model::Base
   end
 
   design do
+    view :by__id
     view :by_active
     view :by_role
     view :by_updated_at

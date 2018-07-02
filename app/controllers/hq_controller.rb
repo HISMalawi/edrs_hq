@@ -232,6 +232,59 @@ class HqController < ApplicationController
     @person = Person.find(params[:person_id])
     @person = to_readable(@person)
   end
+
+  def generate_cases
+    @section = "Generate Sample"
+    @users = User.by_role.key("Coder").each
+  end
+
+  def generate_sample
+
+    if params[:user] == "All"
+        users = User.by_role.key("Coder").each
+    else
+        users = User.by__id.key(params[:user]).each
+    end
+
+    users.each do |user|
+
+      sampling_frequency = SETTINGS['sampling_frequency']
+  
+      start_time = params[:start_date].to_date.beginning_of_day
+      end_time = ((params[:end_date].to_date + 1.day).midnight - 1.second).to_time
+
+      coders_records = Person.by_coder_and_coded_at.startkey([user.id, start_time]).endkey([user.id, end_time]).each.collect {|p| p.id}
+      
+      percent = ((SETTINGS['sample_percentage'].to_f/100) * coders_records.count).ceil
+
+      puts percent
+      
+      sample = []
+
+      for i in 0..(percent - 1)
+        population = coders_records - sample
+        id = sample_random(population)
+        sample << id unless id.blank?
+      end
+      unless sample.blank?
+        proficiency_sample = ProficiencySample.new
+        proficiency_sample.coder_id = user.id
+        proficiency_sample.sample = sample.sort
+        proficiency_sample.start_time = start_time
+        proficiency_sample.end_time = end_time
+        proficiency_sample.date_sampled = Date.today
+        proficiency_sample.save
+      end
+
+    end
+    redirect_to "/sampled_cases"
+  end
+
+  def sample_random(population)
+    random_number = rand(population.count - 1)
+    random_id = population[random_number]
+    return random_id
+  end
   
   def print_preview
     @section = "Print Preview"

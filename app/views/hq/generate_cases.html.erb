@@ -1,0 +1,48 @@
+<link href="/assets/jquery-ui/jquery-ui.min.css" rel="stylesheet">
+<script type="text/javascript" src="/assets/jquery-ui/jquery-ui.min.js"></script>
+<div id="main" style="text-align:center">
+  <h3><%= @section rescue 'Case management' %></h3>
+  <div id="button-container">
+        <form class="form" style="width:80%; margin:auto" method="get" action="/hq/generate_sample">
+              <table style="width:80%;margin:auto">
+                  <tr>
+                      <th>User</th>
+                      <td>
+                          <select name="user" class="form-control">
+                            <option> All </option>
+                            <% @users.each do |user| %>
+                                <option value="<%= user.id %>"><%= user.first_name %> <%= user.last_name %> (<%= user.username%>)</option>
+                            <%end%>
+                          </select>
+                      </td>
+                    </tr>
+                  <tr>
+                      <th>Start Date</th>
+                      <td>
+                          <input type="text" name="start_date" id="start_date" class="form-control">
+                      </td>
+                  </tr>
+                  <tr>
+                      <th>End Date</th>
+                      <td><input type="text" name="end_date" id="end_date" class="form-control"></td>
+                </tr>
+                  <tr>
+                      <td></td>
+                      <td>
+                        <input class="btn btn-success" type="submit" value="Generate Sample">
+                      </td>
+                  </tr>
+              </table>
+        </form>
+  </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+              var mindate = $.datepicker.formatDate('dd/mm/yy',new Date("2018-01-01"));
+              var maxdate =  $.datepicker.formatDate('dd/mm/yy',new Date());
+             $('#start_date').datepicker({ dateFormat: 'dd/mm/yy',minDate: mindate, maxDate: maxdate});
+             $('#end_date').datepicker({ dateFormat: 'dd/mm/yy',minDate: mindate, maxDate: maxdate});
+    });
+</script>
