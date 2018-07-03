@@ -64,8 +64,8 @@ class HqController < ApplicationController
                 results << person
               end
           else
-              PersonIdentifier.by_identifier_and_identifier_type.key([params[:barcode], "Form Barcode"]).each do |identifier|
-              results << identifier.person
+              Barcode.by_barcode.key(params[:barcode]).each do |barcode|
+              results << barcode.person
           end
 
         end

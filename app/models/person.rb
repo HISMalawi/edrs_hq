@@ -415,8 +415,8 @@ class Person < CouchRest::Model::Base
     return PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id,"National ID"]).first.identifier rescue nil
   end
   def barcode
-    if PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id,"Form Barcode"]).first.present?
-      return PersonIdentifier.by_person_record_id_and_identifier_type.key([self.id,"Form Barcode"]).first.identifier rescue nil
+    if Barcode.by_person_record_id.key(self.id).first.present?
+      return Barcode.by_person_record_id.key(self.id).first.barcode rescue nil
     else 
       return nil
     end
