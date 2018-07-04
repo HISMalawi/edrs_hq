@@ -722,10 +722,25 @@ class CaseController < ApplicationController
     end
 
     #raise PersonRecordStatus.by_person_recent_status.key(@person.id).last.status.inspect
-    @statuses = [PersonRecordStatus.by_person_recent_status.key(@person.id).last.status]
+  
 
-    @status = PersonRecordStatus.by_person_recent_status.key(params[:id]).last
-    
+    if @person.status.blank?
+        last_status = PersonRecordStatus.by_person_record_id.key(@person.id).each.sort_by{|d| d.created_at}.last
+        
+        states = {
+                    "HQ ACTIVE" =>"HQ COMPLETE",
+                    "HQ COMPLETE" => "MARKED HQ APPROVAL",
+                    "HQ PRINTED" => "HQ DISPATCHED"
+                 }
+
+        PersonRecordStatus.change_status(@person, states[last_status.status])
+        
+        redirect_to request.fullpath and return
+    end
+   
+    @status = PersonRecordStatus.by_person_recent_status.key(@person.id).last rescue nil
+    @statuses = [(@status.status rescue nil)]
+
     if @status ="HQ PRINTED"
         @dispatch = true 
     end

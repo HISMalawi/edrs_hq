@@ -152,7 +152,7 @@ class Person < CouchRest::Model::Base
   end
 
   def status
-    PersonRecordStatus.by_person_recent_status.key(self.id).last.status
+    PersonRecordStatus.by_person_recent_status.key(self.id).last.status rescue nil
   end
 
   def change_status(nextstatus)
