@@ -711,6 +711,18 @@
     </div>
   </div>
 </div>
+
+<div class="" id="wait">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header btn-primary">
+        <center><h4 class="modal-title" id="action_modal_title">Waiting for server to respond...</h4></center>
+      </div>
+      <div class="modal-body">
+      </div>
+    </div>
+  </div>
+</div>
 <div class="" id="duplicate_modal">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -761,7 +773,12 @@
 <script>
     var next_status ="";
     function loadPopup(id){
-        $("#shield").show()
+      __$("shield").style.display = "none";
+      var popups = ["#completeness", "#printers", "#comments","#action_modal","#duplicate_modal","#approve_modal","#wait"]
+      for(var i = 0 ; i < popups.length ; i++){
+        $(popups[i]).css("display","none")
+      }
+      $("#shield").show()
         __$(id).style.display = "block";
     }
 
@@ -800,6 +817,7 @@
           printer = printer_name;
     }
     function ajaxChange(status){
+        loadPopup("wait");
         $.ajax({
             url: "/ajax_change_status?next_status=" + status + "&person_id=<%=params['person_id']%>",
             success: function(feedback){
@@ -819,6 +837,7 @@
                 }
             },
             error: function(error){
+                window.location.reload();
                 //alert("Something went wrong!");
             }
         })
@@ -831,7 +850,8 @@
                 window.parent.location = "<%= session[:return_url] || request.referrer%>";
             },
             error: function(error){
-                alert("Something went wrong!");
+                window.location.reload();
+                //alert("Something went wrong!");
             }
         })
     }
@@ -872,6 +892,7 @@
                         }
                     },
                     error: function(e){
+                        window.location.reload();
                         //alert("Something went wrong!")
                     }
                 }
@@ -908,6 +929,7 @@
                        // alert("Comment Added Successfully")
                     },
                     error: function(){
+                        window.location.reload();
                         //alert("Something went wrong!")
                     }
                 }
@@ -930,6 +952,7 @@
                         }
                     },
                     error: function(e){
+                        window.location.reload();
                         //alert("Something went wrong!")
                     }
                 }
@@ -990,6 +1013,7 @@
                         parent.scrollTop = parent.scrollHeight;
                     },
                     error: function(e){
+                        window.location.reload();
                         //alert("Something went wrong!")
                     }
                 }
@@ -1026,6 +1050,7 @@
                         parent.scrollTop = parent.scrollHeight;
                     },
                     error: function(e){
+                        window.location.reload();
                         //alert("Something went wrong!")
                     }
                 }
@@ -1061,6 +1086,7 @@
                         parent.scrollTop = parent.scrollHeight;
                     },
                     error: function(e){
+                        window.location.reload();
                         //alert("Something went wrong!")
                     }
                 }
@@ -1077,12 +1103,15 @@
       }
       url = url +"&comment="+comment;
 
+      loadPopup("wait")
+
       $.ajax({
             url: url,
             success: function(feedback){
                 window.parent.location = "<%= session[:return_url] || request.referrer%>";
             },
             error: function(error){
+                //window.location.record();
                 //alert("Something went wrong!");
             }
         })
@@ -1153,7 +1182,7 @@
   }
 </script>
 <style>
-  #completeness, #printers, #comments,#action_modal,#duplicate_modal,#approve_modal{
+  #completeness, #printers, #comments,#action_modal,#duplicate_modal,#approve_modal,#wait{
       position : absolute;
       left: 30%;
       top: 13.5%;
