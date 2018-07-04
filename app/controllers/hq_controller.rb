@@ -778,13 +778,8 @@ class HqController < ApplicationController
       next if user.blank?
       next if status.comment.blank?
       user_name = (user.first_name + " " + user.last_name)
-      ago = ""
-      if (status.created_at.to_date == Date.today)
-        ago = "today"
-      else
-        ago = (Date.today - status.created_at.to_date).to_i
-        ago = ago.to_s + (ago.to_i == 1 ? " day ago" : " days ago")
-      end
+      ago = status.created_at.to_date.strftime("%d/%b/%Y")
+
       @comments << {
           "created_at" => status.created_at.to_time,
           'user' => user_name,
