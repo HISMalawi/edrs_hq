@@ -17,9 +17,12 @@
     var district = ""
     var title = ""
     function loadChart(){
-                  //loadTable();
+            $.getJSON('/dashbord_data',function(data){
+                  console.log(data)
                   if (district.length > 0) {
-                    data = data["districts"][district]
+                    data = data["age_group"]["districts"][district]
+                  }else{
+                    data = data["age_group"]
                   }
                   $(function () {
                     $('#chart-container').highcharts({
@@ -67,22 +70,22 @@
                         },
                         series: [{
                             name: 'Male',
-                            data: [2,1,4,6,7,8,3,5,1,4,5],
+                            data: data["Male"],
                             color: "#1e1c1c"
                         }, {
                             name: 'Female',
-                             data: [2,7,3,9,5,6,7,8,1,2,4],
+                             data: data["Female"],
                              color: "#368e59"
                         }]
                     });
                 }); 
-
+        });
     }
     $(document).ready(function(){
          loadChart();
          setInterval(function(){
                  loadChart();
-         },5000)
+         },10000)
         
     });
 </script>
