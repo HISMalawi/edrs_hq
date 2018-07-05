@@ -14,6 +14,11 @@
       
 <div class="col-lg-8">
 
+<% if ["Coder","Coding Unit Supervisor"].include?(User.current_user.role) %>
+  <div class="row" >
+      <%= render :partial => 'age_group_chart'%>
+  </div>
+<%else%>
   <div class="row">
     <%= render :partial => 'statistics_chart'%>
   </div>
@@ -21,7 +26,7 @@
   <div class="row" style="margin-top:2%">
     <%= render :partial => 'statistics_table'%>
   </div>
-
+<%end%>
 </div>
 
 </div>

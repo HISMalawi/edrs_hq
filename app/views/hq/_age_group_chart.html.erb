@@ -1,0 +1,89 @@
+
+<style type="text/css">
+    ${demo.css}
+		</style>
+
+		<script type="text/javascript">
+
+    
+</script>
+
+<script src="/assets/highCharts/highcharts.js"></script>
+<script src="/assets/highCharts/exporting.js"></script>
+
+<div id="chart-container" style="width: 98%; height: 600px; margin: 0 auto"></div>
+<script type="text/javascript">
+
+    var district = ""
+    var title = ""
+    function loadChart(){
+                  //loadTable();
+                  if (district.length > 0) {
+                    data = data["districts"][district]
+                  }
+                  $(function () {
+                    $('#chart-container').highcharts({
+                        title: {
+                            text: (title.length > 0 ? title : 'Reported deaths by age Group <%= Date.today.year %>'),
+                            x: -20 //center
+                        },
+                        chart: {
+                            type: 'bar'
+                        },
+                        subtitle: {
+                            text: '',
+                            x: -20
+                        },
+                        xAxis: {
+                            categories: ['<1', '1-4', '5-14', '15-24', '25-34', '35-44',
+                                '45-54', '55-64', '65-74', '75-84', '>85'],
+                            title: {
+                                text: 'Age Group'
+                            }
+                        },
+                        yAxis: {
+                            allowDecimals: false,
+                            min: 0,
+                            title: {
+                                text: 'Number of cases'
+                            },
+                            plotLines: [{
+                                value: 0,
+                                width: 1,
+                                color: '#808080'
+                            }]
+                        },
+                        credits: {
+                          enabled: false
+                        },
+                        tooltip: {
+                            valueSuffix: ''
+                        },
+                        exporting: {
+                          enabled: false
+                        },
+                        legend: {
+                          enabled: true
+                        },
+                        series: [{
+                            name: 'Male',
+                            data: [2,1,4,6,7,8,3,5,1,4,5],
+                            color: "#1e1c1c"
+                        }, {
+                            name: 'Female',
+                             data: [2,7,3,9,5,6,7,8,1,2,4],
+                             color: "#368e59"
+                        }]
+                    });
+                }); 
+
+    }
+    $(document).ready(function(){
+         loadChart();
+         setInterval(function(){
+                 loadChart();
+         },5000)
+        
+    });
+</script>
+

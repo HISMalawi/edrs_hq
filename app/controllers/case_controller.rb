@@ -731,8 +731,12 @@ class CaseController < ApplicationController
                     "HQ COMPLETE" => "MARKED HQ APPROVAL",
                     "HQ PRINTED" => "HQ DISPATCHED"
                  }
-
-        PersonRecordStatus.change_status(@person, states[last_status.status])
+        if states[last_status.status].blank?
+          PersonRecordStatus.change_status(@person, "HQ COMPLETE")
+        else  
+          PersonRecordStatus.change_status(@person, states[last_status.status])
+        end
+        
         
         redirect_to request.fullpath and return
     end
