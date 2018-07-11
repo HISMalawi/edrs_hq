@@ -324,10 +324,11 @@ class HqController < ApplicationController
     @den = @person.den
     @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
     
-    if PersonRecordStatus.by_person_record_id_and_status.key([@person.id,"HQ ACTIVE"]).first.present?
-         @date_registered = PersonRecordStatus.by_person_record_id_and_status.key([@person.id,"HQ ACTIVE"]).first.created_at
-    else
-         @date_registered = @person.created_at
+    @date_registered = @person.created_at
+    PersonRecordStatus.by_person_record_id.key(@person.id).each.sort_by{|s| s.created_at}.each do |state|
+      if state.status == "HQ ACTIVE"
+          @date_registered = state.created_at
+      end
     end
     
     if CONFIG['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A4"
