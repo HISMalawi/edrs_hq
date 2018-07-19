@@ -73,14 +73,29 @@
       z-index: 4000
   }
 
-  #final_result_modal{
+  #final_result_modal,#edit_code{
       position : absolute;
       left: 30%;
       top: 13.5%;
-      display: block;
+      display: none;
       z-index: 4000
   }
-   
+
+  #decision{
+    border: 1px solid gray;
+  }
+  
+  #decision th {
+      background-color: #6281a7;
+      color:#ffffff;
+      border: 1px solid gray;
+      text-align: center;
+  } 
+  #decision td {
+      border: 1px solid gray;
+      text-align: center;
+  } 
+
 </style>
 <% if params[:index].present? &&  @sample.final_result.blank? %>
     <div class="row">
@@ -106,6 +121,9 @@
 	            </div>
             <%end%>
             <% if @sample.final_result.blank? %>
+              <div onclick= "correct()"
+                 class="dynamic-button btn btn-small btn-default pull-right btn-success"><span>Decision</span>
+            </div>
             <div onclick= "correct()"
                  class="dynamic-button btn btn-small btn-default pull-right btn-success"><span>Correct ICD Code</span>
             </div>
@@ -187,6 +205,209 @@
 	    </div>
 	  </div>
 	</div>
+
+  <div class="" id="decision_modal" style="width:90%;margin-left:5%;margin-top:3%">
+    <div class="modal-dialog" style="width:100%">
+      <div class="modal-content">
+        <div class="modal-header btn-primary">
+          <h4 class="modal-title" id="decision_modal_title"><b>Decision trail</b></h4>
+        </div>
+        <div class="modal-body">
+
+          <div class="row">
+            <div class="col-lg-12">
+                <table style="width:98%;margin:auto;" id="decision">
+                      <tr>
+                          <th rowspan="2"></th>
+                          <th rowspan="2">Condition</th>
+                          <th rowspan="2">Time between onset and death</th>
+                          <th rowspan="2">Coder's ICD Code</th>
+                          <th colspan="2">Supervisor's decision</th>
+                          <th rowspan="2">Supervisor's ICD code</th>
+                          <th rowspan="2">Supervisor's Reason</th>
+                          <th rowspan="2">Final ICD Code</th>
+                      </tr>
+                      <tr>
+                          <td>Wrong</td>
+                          <td>Correct</td>
+                      </tr>
+                      <tr>
+                          <td>a.</td>
+                          <td><%= @person.cause_of_death1 %></td>
+                          <td><%= @person.onset_death_interval1 rescue "" %></td>
+                          <td><%= @person.icd_10_1 rescue "" %></td>
+                          <td>
+                              <input type="radio" name="icd_10_1_decision" id="icd_10_1_wrong" onclick="activateCode(this,1)"> 
+                          </td>
+                          <td>
+                              <input type="radio" name="icd_10_1_decision" id="icd_10_1_correct" onclick="activateCode(this,1)">
+                          </td>
+                          <td><input type="" name="icd_10_1_review" id="icd_10_1_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(1)"></td>
+                          <td>
+                              <input type="" name="reason_icd_10_1_changed" id="reason_icd_10_1_changed" class="form-control" disabled="true">
+                          </td>
+                          <td id="final_1"></td>
+                      </tr>
+                      <%if @person.cause_of_death2.present? %>
+                      <tr>
+                          <td>b.</td>
+                          <td><%= @person.cause_of_death2 %></td>
+                          <td><%= @person.onset_death_interval2 rescue "" %></td>
+                          <td><%= @person.icd_10_2 rescue "" %></td>
+                          <td>
+                              <input type="radio" name="icd_10_2_decision" id="icd_10_2_wrong" onclick="activateCode(this,2)"> 
+                          </td>
+                          <td>
+                              <input type="radio" name="icd_10_2_decision" id="icd_10_2_correct" onclick="activateCode(this,2)">
+                          </td>
+                          <td><input type="" name="icd_10_2_review" id="icd_10_2_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(2)"></td>
+                          <td>
+                              <input type="" name="reason_icd_10_2_changed" id="reason_icd_10_2_changed" class="form-control" disabled="true">
+                          </td>
+                          <td id="final_2"></td>
+                      </tr>
+                      <%end%>
+                      <%if @person.cause_of_death3.present? %>
+                      <tr>
+                          <td>c.</td>
+                          <td><%= @person.cause_of_death3 %></td>
+                          <td><%= @person.onset_death_interval3 rescue "" %></td>
+                          <td><%= @person.icd_10_3 rescue "" %></td>
+                          <td>
+                              <input type="radio" name="icd_10_3_decision" id="icd_10_3_wrong" onclick="activateCode(this,3)"> 
+                          </td>
+                          <td>
+                              <input type="radio" name="icd_10_3_decision" id="icd_10_3_correct" onclick="activateCode(this,3)">
+                          </td>
+                          <td><input type="" name="icd_10_3_review" id="icd_10_3_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(3)"></td>
+                          <td>
+                              <input type="" name="reason_icd_10_3_changed" id="reason_icd_10_3_changed" class="form-control" disabled="true">
+                          </td>
+                          <td id="final_3"></td>
+                      </tr>
+                      <%end%>
+                      <%if @person.cause_of_death4.present? %>
+                      <tr>
+                          <td>d.</td>
+                          <td><%= @person.cause_of_death4 %></td>
+                          <td><%= @person.onset_death_interval4 rescue "" %></td>
+                          <td><%= @person.icd_10_4 rescue "" %></td>
+                          <td>
+                              <input type="radio" name="icd_10_4_decision" id="icd_10_4_wrong" onclick="activateCode(this,4)"> 
+                          </td>
+                          <td>
+                              <input type="radio" name="icd_10_4_decision" id="icd_10_4_correct" onclick="activateCode(this,4)">
+                          </td>
+                          <td><input type="" name="icd_10_4_review" id="icd_10_4_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(4)"></td>
+                          <td>
+                              <input type="" name="reason_icd_10_4_changed" id="reason_icd_10_4_changed" class="form-control" disabled="true">
+                          </td>
+                          <td id="final_4"></td>
+                      </tr>
+                      <%end%>
+                      <% @other_causes_keys = @person.cause_of_death_conditions.keys rescue [] %>
+                      <% if @other_causes_keys.present?%>
+                          <tr><th colspan="9">Other significant causes of death</th></tr>
+                      <%end%>
+                      <% @other_causes_keys.each do |key| %>
+                          <tr>
+                              <td><%=key%></td>
+                              <td colspan="2"><%= @person.cause_of_death_conditions[key]["cause"] %></td>
+                              <td><%= @person.cause_of_death_conditions[key]["icd_code"] %></td>
+                              <td>
+                                  <input type="radio" name="icd_10_<%= key%>i_decision" id="icd_10_<%= key%>i_wrong" onclick="activateCode(this,'<%= key%>i')">
+                              </td>
+                              <td>
+                                  <input type="radio" name="icd_10_<%= key%>i_decision" id="icd_10_<%= key%>i_correct" onclick="activateCode(this,'<%= key%>i')">
+                              </td>
+                              <td>
+                                  <input type="" name="icd_10_<%= key%>i_review" id="icd_10_<%= key%>i_reviewed" class="form-control" disabled="true" onkeyup="fillFinal('<%= key%>i')">
+                              </td>
+                              <td>
+                                  <input type="" name="reason_icd_10_<%= key%>i_changed" id="reason_icd_10_<%= key%>i_changed" class="form-control" disabled="true">
+                              </td>
+                              <td id="final_<%=key%>i"></td>
+                          </tr>
+                      <%end%>
+                      <tr>
+                        <th colspan="2"></th>
+                        <th>Coder's ID Code</th>
+                        <th>Coder's Reason for Changing</th>
+                        <th colspan="2">Supervisor's decision</th>
+                        <th>Supervisor's ID Code</th>
+                        <th>Supervisor's Reason for Changing</th>
+                        <th>Final Code</th>
+                      </tr>
+                      <tr>
+                          <td colspan="2">Tentative Code</td>
+                          <td><%= @person_icd_code.tentative_code rescue "" %></td>
+                          <td><%= @person_icd_code.reason_tentative_differ_from_underlying rescue "" %></td>
+                          <td>
+                            <input type="radio" name="tentative_code_reviewed" id="tentative_code_reviewed_wrong">
+                          </td>
+                          <td>
+                              <input type="radio" name="tentative_code_reviewed" id="tentative_code_reviewed_correct">
+                          </td>
+                          <td>
+                              <input type="" name="tentative_code_reviewed" id="tentative_code_reviewed" class="form-control" disabled="true" >
+                          </td>
+                          <td>
+                              <input type="" name="reason_tentative_code_changed" id="reason_tentative_code_changed" class="form-control" disabled="true" >
+                          </td>
+                          <td id="tentative_code"></td>
+                      </tr>
+                      <tr>
+                          <td colspan="2">Final Code</td>
+                          <td><%= @person_icd_code.final_code rescue ""%></td>
+                          <td><%= @person_icd_code.reason_final_differ_from_tentative rescue ""%></td>
+                          <td >
+                              <input type="radio" name="final_code_reviewed" id="final_code_reviewed_wrong">
+                          </td>
+                          <td >
+                              <input type="radio" name="final_code_reviewed" id="final_code_reviewed_wrong">
+                          </td>
+                          <td>
+                              <input type="" name="final_code_reviewed" id="final_code_reviewed" class="form-control" disabled="true">                             
+                          </td>
+                          <td>
+                              <input type="" name="reason_final_code_changed" id="reason_final_code_changed" class="form-control" disabled="true" >
+                          </td>
+                          <td id="final_code"></td>
+                      </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-sm btn-default pull-left" onclick="__$('correct_modal').style.display = 'none';hideModal()" > Close </button>
+              <button id="action_correct_proceed" type="button" class="btn btn-sm btn-success" >Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="" id="edit_code">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header btn-primary">
+          <h4 class="modal-title" id="correct_modal_title">Edit Incorrect ICD Code</h4>
+        </div>
+        <div class="modal-body">
+
+          <div class="row">
+            <div class="col-lg-12">
+                <input type="" name="code" id="code" class="form-control">
+                <input type="hidden" name="" id="field" >
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-sm btn-default pull-left" onclick="__$('edit_code').style.display = 'none';hideModal()" > Close </button>
+              <button onclick="updateCode()" type="button" class="btn btn-sm btn-success" >Update</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <% if @sample.final_result.present? %>
   <script type="text/javascript">
      $(document).ready(function(){
@@ -258,4 +479,44 @@
         	window.location = '/save_mark?sample_id=<%=params[:id]%>&decision=correct&index=<%= params[:index] %>&person_id=<%=@person.id%>'
         }
       }
+  function editCode(element){
+    $("#shield").show()
+    __$("edit_code").style.display = "block";
+    __$("code").value = ""
+    __$("field").value = element;
+  }
+
+  function updateCode(){
+    var person_id = "<%= @person.id %>";
+    var code = __$("code").value
+    if (code.length == 0) {
+        __$("code").style.border = "1px solid red"
+    }else{
+        $.get("/edit_icd_code?id=<%=@person.id%>&code="+code+"&field="+__$("field").value,function(result){
+            if (result == "success") {
+               window.location.reload();
+            }
+        })
+    }
+    
+  }
+  function activateCode(element,position){
+
+      if (element.id =="icd_10_"+position+"_wrong") {
+          __$("icd_10_"+position+"_reviewed").removeAttribute("disabled");
+          __$("reason_icd_10_"+position+"_changed").removeAttribute("disabled");
+      }else{
+          __$("icd_10_"+position+"_reviewed").setAttribute("disabled","true");
+          __$("icd_10_"+position+"_reviewed").value = ""
+          __$("reason_icd_10_"+position+"_changed").removeAttribute("disabled");
+          __$("reason_icd_10_"+position+"_changed").value = "";
+      }
+
+  }
+  function fillFinal(position){
+      __$("final_"+position).innerHTML = __$("icd_10_"+position+"_reviewed").value
+  }
+  $(document).ready(function(){
+         $("#shield").show()
+  });
 </script>

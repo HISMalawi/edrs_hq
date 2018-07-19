@@ -215,8 +215,24 @@ class HqController < ApplicationController
     end
     params["coder"] = User.current_user.id
     params["coded_at"] = Time.now
+    person_icd_code = PersonICDCode.by_person_id.key(@person.id).first
+    if person_icd_code.blank?
+      person_icd_code = PersonICDCode.create({
+                  :person_id => @person.id,
+                  :tentative_code => params[:icd_10_code]  ,
+                  :reason_tentative_differ_from_underlying => params[:reason_tentative_differ_from_underlying],
+                  :final_code =>params[:final_icd_10_code],
+                  :reason_final_differ_from_tentative => params[:reason_final_differ_from_tentative]
+        })
+    else
+      person_icd_code.update_attributes({
+                  :tentative_code => params[:icd_10_code]  ,
+                  :reason_tentative_differ_from_underlying => params[:reason_tentative_differ_from_underlying],
+                  :final_code =>params[:final_icd_10_code],
+                  :reason_final_differ_from_tentative => params[:reason_final_differ_from_tentative]
+        })
+    end
     @person.update_attributes(params)
-
     flash[:success] = "Record updated successfully"
     redirect_to "/search?person_id=#{params[:person_id]}"
   end
@@ -230,6 +246,7 @@ class HqController < ApplicationController
 
   def cause_of_death_preview
     @person = Person.find(params[:person_id])
+    @person_icd_code = PersonICDCode.by_person_id.key(@person.id).first
     @person = to_readable(@person)
   end
 
@@ -294,6 +311,29 @@ class HqController < ApplicationController
     render :layout => "application"
   end
   
+  def edit_icd_code
+    person = Person.find(params[:id])
+
+    person_code = PersonFinalICDCode.by_person_id.key(person.id).first
+
+    if person_code.blank?
+      person_code = PersonFinalICDCode.new
+      person_code.person_id = person.id
+    end
+
+    person_code[params[:field]] = person[params[:field]]
+
+    person_code.save
+
+    person.update_attributes({"#{params[:field]}" => params[:code] })
+    #person[params[:field]] = params[:code]
+
+    #person.save
+    render :text => "success"
+
+    
+  end
+
   def death_certificate_preview
    
     @person = Person.find(params[:id])
@@ -986,6 +1026,8 @@ class HqController < ApplicationController
     @sample = ProficiencySample.find(params[:id])
     @sample.results = {} if @sample.results.blank?
     @person = Person.find(@sample.sample.sort[params[:index].to_i])
+    @person = to_readable(@person)
+    @person_icd_code = PersonICDCode.by_person_id.key(@person.id).first  
   end
 
   def save_mark

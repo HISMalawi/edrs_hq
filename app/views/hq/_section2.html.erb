@@ -48,8 +48,9 @@
               </tr>
               <tr>
                   <td colspan="2"><b>Barcode Number : </b><%= @person.barcode rescue ""%></td>
-                  <td colspan="3"><b>DEN </b>: <font id="den"><%= @person.den %></font></td>
-                  <td colspan="3"><b>Final ICD Code</b> : <%= @person.icd_10_code rescue ""%></td>
+                  <td colspan="2"><b>DEN </b>: <font id="den"><%= @person.den %></font></td>
+                  <td colspan="2"><b>Tentative ICD Code: </b> <%= @person_icd_code.tentative_code rescue "" %></td>
+                  <td colspan="2"><b>Final ICD Code</b> : <%= @person_icd_code.final_code rescue ""%></td>
               </tr>
               <tr>
                   <td rowspan="7" style="background-color:#dbdada;">1</td>
@@ -70,7 +71,7 @@
                   <%end%>
                   </td>
                   <td colspan="2"><%= @person.onset_death_interval1 rescue "" %></td>
-                  <td colspan="2"><%= @person.icd_10_1 rescue "" %></td>
+                  <td colspan="2"><%= @person.icd_10_1 rescue "" %> <% if @person.icd_10_1.present? && request.fullpath.include?("/review") %> <i class='fa fa-edit' onclick="editCode('icd_10_1')"></i> <%end%></td>
               </tr>
               <tr>
                   <td colspan="2">(b) <font id="cause_of_death_2"><%= @person.cause_of_death2 rescue "" %></font><br/>
@@ -79,7 +80,7 @@
                     <%end%>
                   </td>
                   <td colspan="2"><%= @person.onset_death_interval2 rescue "" %></td>
-                  <td colspan="2"><%= @person.icd_10_2 rescue "" %></td>
+                  <td colspan="2"><%= @person.icd_10_2 rescue "" %> <% if @person.icd_10_2.present? && request.fullpath.include?("/review") %> <i class='fa fa-edit' onclick="editCode('icd_10_2')"></i> <%end%></td>
               </tr>
               <tr>
                   <td colspan="2">(c) <font id="cause_of_death_3"><%= @person.cause_of_death3 rescue "" %></font><br/>
@@ -89,12 +90,12 @@
 
                   </td>
                   <td colspan="2"><%= @person.onset_death_interval3 rescue "" %></td>
-                  <td colspan="2"><%= @person.icd_10_3 rescue "" %></td>
+                  <td colspan="2"><%= @person.icd_10_3 rescue "" %> <% if @person.icd_10_3.present? &&request.fullpath.include?("/review") %> <i class='fa fa-edit' onclick="editCode('icd_10_3')"></i> <%end%></td>
               </tr>
               <tr>
                   <td colspan="2">(d) <font id="cause_of_death_4"><%= @person.cause_of_death4 rescue "" %></font></td>
                   <td colspan="2"><%= @person.onset_death_interval4 rescue "" %></td>
-                  <td colspan="2"><%= @person.icd_10_4 rescue "" %></td>
+                  <td colspan="2"><%= @person.icd_10_4 rescue "" %> <%  if @person.icd_10_4.present? && request.fullpath.include?("/review") %> <i class='fa fa-edit' onclick="editCode('icd_10_4')"></i> <%end%></td>
               </tr>
 
               <tr>
@@ -374,3 +375,6 @@
 
             </tr>
       </table>
+<script type="text/javascript">
+
+</script>

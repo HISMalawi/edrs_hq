@@ -904,11 +904,11 @@
                 </div>
          </fieldset>
         <div onclick="hit('manner_of_death_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
-                  <div onclick="validateCertifier('radio5','icd_10','icd_10_radio');" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
+                  <div onclick="setUnderlyingCause();causeOfDeathTable();validateCertifier('radio5','icd_10','icd_10_radio'); " class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
               </div>
 
            <div id="icd_10" class="container custom" style="display: none;" disabled="true">
-                      <table style="width:100%; margin:auto; margin-bottom: 5%" >
+                      <table style="width:100%; margin:auto; margin-bottom: 3%" >
                             <thead>
                               <tr>
                                   <th colspan="2">Person's sex,  other details and cause of death</th>
@@ -927,16 +927,24 @@
                                   <td><%= @person.died_while_pregnant rescue "No" %></td>
                               </tr>
                               <%end%>
-                              <tr>
-                                  <td>Physcial Adress</td>
-                                  <td><%= "#{@person.current_district} District , TA #{@person.current_ta} , #{@person.current_village}" rescue "No" %></td>
-                              </tr>
 
                              </thead>
                       </table>
+                      <table id="cause_of_death_table" style="width:100%; margin:auto; margin-bottom: 3%">
+                        
+                      </table>
                 <div class="form-group">
-                  <label for="icd_10_code">Tentantive ICD-10 Code</label>
-                  <input name="icd_10_code" id="icd_10_code" value="<%= @person.icd_10_code%>" class="form-control" type="text" />
+                  <label for="icd_10_code">Tentantive starting point ICD Code</label>
+                  <input name="icd_10_code" id="icd_10_code" value="<%= @person.icd_10_code%>" class="form-control" type="text"  onkeyup="checkIfCodeIsSame('icd_10_code','reason_tentative_differ_from_underlying')"/>
+                  <label for="reason_tentative_differ_from_underlying">Reason Codes is different</label>
+                    <input name="reason_tentative_differ_from_underlying" id="reason_tentative_differ_from_underlying" value="<%= @person.icd_10_code%>" class="form-control" type="text" disabled="disabled"/>
+              </div>
+
+              <div class="form-group">
+                  <label for="final_icd_10_code">Final ICD Code</label>
+                      <input name="final_icd_10_code" id="final_icd_10_code"  class="form-control" type="text" onkeyup="checkIfCodeIsSame('final_icd_10_code','reason_final_differ_from_tentative')" />
+                  <label for="reason_final_differ_from_tentative">Reason Code is different</label>
+                      <input name="reason_final_differ_from_tentative" id="reason_final_differ_from_tentative"  class="form-control" type="text" disabled="disabled" />
               </div>
 
               <div onclick="hit('certification_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
@@ -1026,6 +1034,8 @@
 <script src="assets/jquery-ui/jquery-ui.min.js"></script>
 <script src="/select2/select2.full.min.js"></script>
 <script>
+    var tentantive_icd_code  = ""
+    var final_code = ""
     String.prototype.capitalize = function(lower) {
         return (lower ? this.toLowerCase() : this).replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
     };
@@ -1623,7 +1633,7 @@
         }
 
         function activateICDValidate(element){
-              element.setAttribute("onblur","validateIDC10(this);setUnderlyingCause(this)");
+              element.setAttribute("onblur","validateIDC10(this)");
         }
 
         function validateMCMNumber(element){
@@ -1651,9 +1661,93 @@
              element.setAttribute("onblur","validateMCMNumber(this)");
         }
 
-        function setUnderlyingCause(element){
-            if (element.value.length > 0 ) {
-                __$("icd_10_code").value  = element.value
+        function setUnderlyingCause(){
+            for(var i = 1 ; i < 5; i++){
+                if (__$('icd_10_'+i)) {
+                  var tentantive_code = __$('icd_10_'+i).value
+                  if (tentantive_code.length != 0) {
+                     __$("icd_10_code").value  = tentantive_code
+                     tentantive_icd_code = tentantive_code
+                  }else if (tentantive_code.length == 0){
+                     break;
+                  }                   
+                }
+
+            }
+        }
+
+        function checkIfCodeIsSame(element,target){
+            if (element =="icd_10_code") {
+                  if(tentantive_icd_code.trim() != __$("icd_10_code").value.trim()){
+                      __$(target).removeAttribute("disabled")
+                  }else{
+                    __$(target).value = ""
+                    __$(target).setAttribute("disabled","true");
+                  }
+
+                  final_code = __$("icd_10_code").value.trim();
+                  __$("final_icd_10_code").value = final_code;
+            }
+
+            if (element =="final_icd_10_code") {
+
+                  if(final_code.trim() != __$("final_icd_10_code").value.trim()){
+                      __$(target).removeAttribute("disabled")
+                  }else{
+                    __$(target).value = ""
+                    __$(target).setAttribute("disabled","true");
+                  }
+            }
+
+        }
+
+        function causeOfDeathTable(){
+            var table = __$("cause_of_death_table");
+            var condition_map = {"1": "a", "2" : "b" , "3": "c" , "4":"d"}
+            table.innerHTML = "";
+            var tr = document.createElement("tr");
+            table.appendChild(tr);
+
+            var td = document.createElement("th");
+            td.innerHTML = "#"
+            tr.appendChild(td);
+
+            var td = document.createElement("th");
+            td.innerHTML = "Condition"
+            tr.appendChild(td);
+
+            var td = document.createElement("th");
+            td.innerHTML = "Time interval"
+            tr.appendChild(td);
+
+            var td = document.createElement("th");
+            td.innerHTML = "ICD Code"
+            tr.appendChild(td);
+
+            for(var i = 1 ; i < 5; i++){
+              if (__$('icd_10_'+i)) {
+                if (__$('icd_10_'+i).value.length == 0) {
+                  break;
+                }
+                var tr = document.createElement("tr");
+                table.appendChild(tr);
+
+                var td = document.createElement("td");
+                td.innerHTML = condition_map[i]
+                tr.appendChild(td);
+
+                var td = document.createElement("td");
+                td.innerHTML = __$('cause_of_death'+i).value
+                tr.appendChild(td);
+
+                var td = document.createElement("td");
+                td.innerHTML = __$('onset_death_interval'+i).value + " "+__$('interval_unit'+i).value
+                tr.appendChild(td);
+
+                var td = document.createElement("td");
+                td.innerHTML = __$('icd_10_'+i).value
+                tr.appendChild(td);
+              }
             }
         }
 

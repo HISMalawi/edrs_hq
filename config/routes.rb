@@ -125,6 +125,7 @@ Rails.application.routes.draw do
   get "/nocause_available/:id" => "hq#nocause_available"
   get "/sampled_cases" => "hq#sampled_cases"
   get "/save_proficiency_comment" => "hq#save_proficiency_comment"
+  get "/edit_icd_code" => "hq#edit_icd_code"
   get "/review/:id" => "hq#review"
   get "/save_mark" =>"hq#save_mark"
 
