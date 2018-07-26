@@ -81,6 +81,11 @@
       z-index: 4000
   }
 
+  #decision_modal{
+      display: none;
+      z-index: 4000
+  }
+
   #decision{
     border: 1px solid gray;
   }
@@ -97,6 +102,9 @@
   } 
 
 </style>
+<script type="text/javascript">
+      var results = {}
+</script>
 <% if params[:index].present? &&  @sample.final_result.blank? %>
     <div class="row">
         <span class="pull-right" style="width: 20%; height : 30px ; background:#6281a7; color:#ffffff; text-align:center;padding:0.5%;margin-right:2%; font-weight:bold">
@@ -121,14 +129,16 @@
 	            </div>
             <%end%>
             <% if @sample.final_result.blank? %>
-              <div onclick= "correct()"
-                 class="dynamic-button btn btn-small btn-default pull-right btn-success"><span>Decision</span>
+              <div onclick= "makeDecision()"
+                 class="dynamic-button btn btn-small btn-default pull-right btn-success"><span>Review</span>
             </div>
+            <% if false %>
             <div onclick= "correct()"
                  class="dynamic-button btn btn-small btn-default pull-right btn-success"><span>Correct ICD Code</span>
             </div>
             <div onclick= "wrong()" class="dynamic-button btn btn-small btn-default pull-right btn-danger"><span>Wrong ICD Code</span>
             </div>
+            <%end%>
             <%end%>
  
             <div onclick= "window.parent.location = '/search'"
@@ -235,12 +245,12 @@
                           <td>a.</td>
                           <td><%= @person.cause_of_death1 %></td>
                           <td><%= @person.onset_death_interval1 rescue "" %></td>
-                          <td><%= @person.icd_10_1 rescue "" %></td>
+                          <td id="code_1"><%= @person.icd_10_1 rescue "" %></td>
                           <td>
-                              <input type="radio" name="icd_10_1_decision" id="icd_10_1_wrong" onclick="activateCode(this,1)"> 
+                              <input type="radio" name="icd_10_1_decision" id="icd_10_1_wrong" onclick="activateCode(this,1);addResult(this,1)"> 
                           </td>
                           <td>
-                              <input type="radio" name="icd_10_1_decision" id="icd_10_1_correct" onclick="activateCode(this,1)">
+                              <input type="radio" name="icd_10_1_decision" id="icd_10_1_correct" onclick="activateCode(this,1);addResult(this,1)">
                           </td>
                           <td><input type="" name="icd_10_1_review" id="icd_10_1_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(1)"></td>
                           <td>
@@ -253,12 +263,12 @@
                           <td>b.</td>
                           <td><%= @person.cause_of_death2 %></td>
                           <td><%= @person.onset_death_interval2 rescue "" %></td>
-                          <td><%= @person.icd_10_2 rescue "" %></td>
+                          <td id="code_2"><%= @person.icd_10_2 rescue "" %></td>
                           <td>
-                              <input type="radio" name="icd_10_2_decision" id="icd_10_2_wrong" onclick="activateCode(this,2)"> 
+                              <input type="radio" name="icd_10_2_decision" id="icd_10_2_wrong" onclick="activateCode(this,2);addResult(this,2)"> 
                           </td>
                           <td>
-                              <input type="radio" name="icd_10_2_decision" id="icd_10_2_correct" onclick="activateCode(this,2)">
+                              <input type="radio" name="icd_10_2_decision" id="icd_10_2_correct" onclick="activateCode(this,2);addResult(this,2)">
                           </td>
                           <td><input type="" name="icd_10_2_review" id="icd_10_2_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(2)"></td>
                           <td>
@@ -272,12 +282,12 @@
                           <td>c.</td>
                           <td><%= @person.cause_of_death3 %></td>
                           <td><%= @person.onset_death_interval3 rescue "" %></td>
-                          <td><%= @person.icd_10_3 rescue "" %></td>
+                          <td id="code_3"><%= @person.icd_10_3 rescue "" %></td>
                           <td>
-                              <input type="radio" name="icd_10_3_decision" id="icd_10_3_wrong" onclick="activateCode(this,3)"> 
+                              <input type="radio" name="icd_10_3_decision" id="icd_10_3_wrong" onclick="activateCode(this,3);addResult(this,3)"> 
                           </td>
                           <td>
-                              <input type="radio" name="icd_10_3_decision" id="icd_10_3_correct" onclick="activateCode(this,3)">
+                              <input type="radio" name="icd_10_3_decision" id="icd_10_3_correct" onclick="activateCode(this,3);addResult(this,3)">
                           </td>
                           <td><input type="" name="icd_10_3_review" id="icd_10_3_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(3)"></td>
                           <td>
@@ -291,12 +301,12 @@
                           <td>d.</td>
                           <td><%= @person.cause_of_death4 %></td>
                           <td><%= @person.onset_death_interval4 rescue "" %></td>
-                          <td><%= @person.icd_10_4 rescue "" %></td>
+                          <td id="code_4"><%= @person.icd_10_4 rescue "" %></td>
                           <td>
-                              <input type="radio" name="icd_10_4_decision" id="icd_10_4_wrong" onclick="activateCode(this,4)"> 
+                              <input type="radio" name="icd_10_4_decision" id="icd_10_4_wrong" onclick="activateCode(this,4);addResult(this,4)'"> 
                           </td>
                           <td>
-                              <input type="radio" name="icd_10_4_decision" id="icd_10_4_correct" onclick="activateCode(this,4)">
+                              <input type="radio" name="icd_10_4_decision" id="icd_10_4_correct" onclick="activateCode(this,4);addResult(this,4)">
                           </td>
                           <td><input type="" name="icd_10_4_review" id="icd_10_4_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(4)"></td>
                           <td>
@@ -313,12 +323,12 @@
                           <tr>
                               <td><%=key%></td>
                               <td colspan="2"><%= @person.cause_of_death_conditions[key]["cause"] %></td>
-                              <td><%= @person.cause_of_death_conditions[key]["icd_code"] %></td>
+                              <td id="code_<%= key%>i"><%= @person.cause_of_death_conditions[key]["icd_code"] %></td>
                               <td>
-                                  <input type="radio" name="icd_10_<%= key%>i_decision" id="icd_10_<%= key%>i_wrong" onclick="activateCode(this,'<%= key%>i')">
+                                  <input type="radio" name="icd_10_<%= key%>i_decision" id="icd_10_<%= key%>i_wrong" onclick="activateCode(this,'<%= key%>i');addResult(this,'<%= key%>i')">
                               </td>
                               <td>
-                                  <input type="radio" name="icd_10_<%= key%>i_decision" id="icd_10_<%= key%>i_correct" onclick="activateCode(this,'<%= key%>i')">
+                                  <input type="radio" name="icd_10_<%= key%>i_decision" id="icd_10_<%= key%>i_correct" onclick="activateCode(this,'<%= key%>i');addResult(this,'<%= key%>i')">
                               </td>
                               <td>
                                   <input type="" name="icd_10_<%= key%>i_review" id="icd_10_<%= key%>i_reviewed" class="form-control" disabled="true" onkeyup="fillFinal('<%= key%>i')">
@@ -340,45 +350,45 @@
                       </tr>
                       <tr>
                           <td colspan="2">Tentative Code</td>
-                          <td><%= @person_icd_code.tentative_code rescue "" %></td>
-                          <td><%= @person_icd_code.reason_tentative_differ_from_underlying rescue "" %></td>
+                          <td id="tentative_code_of_coder"><%= @person_icd_code.tentative_code rescue "" %></td>
+                          <td ><%= @person_icd_code.reason_tentative_differ_from_underlying rescue "" %></td>
                           <td>
-                            <input type="radio" name="tentative_code_reviewed" id="tentative_code_reviewed_wrong">
+                            <input type="radio" name="tentative_code" id="tentative_code_reviewed_wrong" onclick="addFinalResults(this)">
                           </td>
                           <td>
-                              <input type="radio" name="tentative_code_reviewed" id="tentative_code_reviewed_correct">
+                              <input type="radio" name="tentative_code" id="tentative_code_reviewed_correct" onclick="addFinalResults(this)">
                           </td>
                           <td>
-                              <input type="" name="tentative_code_reviewed" id="tentative_code_reviewed" class="form-control" disabled="true" >
+                              <input type="" name="tentative_code_reviewed" id="tentative_code_reviewed" class="form-control" disabled="true" onkeyup="fillFinalCodes(this,'tentative_code')">
                           </td>
                           <td>
-                              <input type="" name="reason_tentative_code_changed" id="reason_tentative_code_changed" class="form-control" disabled="true" >
+                              <input type="" name="reason_tentative_code_changed" id="reason_tentative_code_changed" class="form-control" disabled="true" onkeyup="fillFinalCodes(this)" >
                           </td>
                           <td id="tentative_code"></td>
                       </tr>
                       <tr>
                           <td colspan="2">Final Code</td>
-                          <td><%= @person_icd_code.final_code rescue ""%></td>
+                          <td id="final_code_of_coder"><%= @person_icd_code.final_code rescue ""%></td>
                           <td><%= @person_icd_code.reason_final_differ_from_tentative rescue ""%></td>
                           <td >
-                              <input type="radio" name="final_code_reviewed" id="final_code_reviewed_wrong">
+                              <input type="radio" name="final_code" id="final_code_reviewed_wrong" onclick="addFinalResults(this)">
                           </td>
                           <td >
-                              <input type="radio" name="final_code_reviewed" id="final_code_reviewed_wrong">
+                              <input type="radio" name="final_code" id="final_code_reviewed_correct" onclick="addFinalResults(this)">
                           </td>
                           <td>
-                              <input type="" name="final_code_reviewed" id="final_code_reviewed" class="form-control" disabled="true">                             
+                              <input type="" name="final_code_reviewed" id="final_code_reviewed" class="form-control" disabled="true" onkeyup="fillFinalCodes(this,'final_code')">                             
                           </td>
                           <td>
-                              <input type="" name="reason_final_code_changed" id="reason_final_code_changed" class="form-control" disabled="true" >
+                              <input type="" name="reason_final_code_changed" id="reason_final_code_changed" class="form-control" disabled="true" onkeyup="fillFinalCodes(this)" >
                           </td>
                           <td id="final_code"></td>
                       </tr>
                 </table>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-sm btn-default pull-left" onclick="__$('correct_modal').style.display = 'none';hideModal()" > Close </button>
-              <button id="action_correct_proceed" type="button" class="btn btn-sm btn-success" >Next</button>
+              <button type="button" class="btn btn-sm btn-default pull-left" onclick="__$('decision_modal').style.display = 'none';hideModal()" > Close </button>
+              <button id="action_correct_proceed" type="button" class="btn btn-sm btn-success" onclick="saveReview()" >Next</button>
             </div>
           </div>
         </div>
@@ -508,15 +518,63 @@
       }else{
           __$("icd_10_"+position+"_reviewed").setAttribute("disabled","true");
           __$("icd_10_"+position+"_reviewed").value = ""
-          __$("reason_icd_10_"+position+"_changed").removeAttribute("disabled");
+          __$("reason_icd_10_"+position+"_changed").setAttribute("disabled","true");
           __$("reason_icd_10_"+position+"_changed").value = "";
       }
 
   }
   function fillFinal(position){
-      __$("final_"+position).innerHTML = __$("icd_10_"+position+"_reviewed").value
+      __$("final_"+position).innerHTML = __$("icd_10_"+position+"_reviewed").value;
+      results["icd_10_"+position+"_reviewed"]["code"] = __$("icd_10_"+position+"_reviewed").value
   }
-  $(document).ready(function(){
-         $("#shield").show()
-  });
+
+
+  function addResult(element,position){
+      if (element.id.match("correct")) {
+          results["icd_10_"+position+"_reviewed"] = {"code": "", "result" : 1}
+          __$("final_"+position).innerHTML = __$("code_"+position).innerHTML;
+          results["icd_10_"+position+"_reviewed"]["code"] = __$("code_"+position).innerHTML;;
+      }else{
+          results["icd_10_"+position+"_reviewed"] = {"code": "", "result" : 0}
+           __$("final_"+position).innerHTML = ""
+      }
+  }
+  function addFinalResults(element){
+        if (element.id.match("correct")){
+            results[element.name+"_reviewed"] = __$(element.name+"_of_coder").innerHTML.trim();
+            __$(element.name).innerHTML = __$(element.name+"_of_coder").innerHTML.trim();
+
+            __$(element.name + "_reviewed").value = "";
+            __$(element.name + "_reviewed").setAttribute("disabled","true");
+
+            __$("reason_"+element.name+"_changed").value = "";
+            __$("reason_"+element.name+"_changed").setAttribute("disabled","true");
+        }else{
+          __$(element.name).innerHTML = ""
+          __$(element.name + "_reviewed").value = ""
+          __$(element.name + "_reviewed").removeAttribute("disabled");
+           __$(element.name + "_reviewed").focus();
+          __$("reason_"+element.name+"_changed").removeAttribute("disabled");
+        }
+  }
+
+  function fillFinalCodes(element,target){
+      results[element.name] = element.value
+      if (target) {
+        __$(target).innerHTML = element.value;
+      }
+  }
+  function makeDecision(){
+           $("#shield").show();
+           __$("decision_modal").style.display ="block";
+
+  }
+  function saveReview(){
+      results["id"] = "<%= @person.id %>";
+      $.get("/hq/save_review",results, function(data){
+            if (data =="ok") {
+               window.location = "/review/<%= params[:id] %>?index=<%= params[:index].to_i + 1 %>";
+            }
+      });
+  }
 </script>

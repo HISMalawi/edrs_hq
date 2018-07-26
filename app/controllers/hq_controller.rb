@@ -244,6 +244,7 @@ class HqController < ApplicationController
     redirect_to "/search"
   end
 
+
   def cause_of_death_preview
     @person = Person.find(params[:person_id])
     @person_icd_code = PersonICDCode.by_person_id.key(@person.id).first
@@ -1076,6 +1077,55 @@ class HqController < ApplicationController
 
     sample.save
     redirect_to "/review/#{params[:sample_id]}?index=#{(params[:index].to_i + 1) % sample.sample.count}"
+  end
+
+  def save_review
+      person_icd_code = PersonICDCode.by_person_id.key(params[:id]).first
+      total = 0
+      score = 0
+      i = 1
+
+      causes_of_death = {}
+      while i < 5
+
+         break if params["icd_10_#{i}_reviewed"].blank?
+         if params["icd_10_#{i}_reviewed"]["result"].to_i == 1
+
+            causes_of_death["icd_10_#{i}_reviewed"] = params["icd_10_#{i}_reviewed"]["code"] 
+            causes_of_death["reason_icd_10_#{i}_changed"] = nil
+            score = score + 1
+         else
+            causes_of_death["icd_10_#{i}_reviewed"] = params["icd_10_#{i}_reviewed"]["code"] 
+            causes_of_death["reason_icd_10_#{i}_changed"] = params["reason_icd_10_#{i}_changed"]          
+         end
+         total = total + 1
+         i = i + 1
+      end
+
+      person_icd_code.update_attributes(causes_of_death)
+      other_significant_causes = {}
+
+      j = 0
+      while j < 10
+        break if params["icd_10_#{j}i_reviewed"].blank?
+        if params["icd_10_#{j}i_reviewed"]["result"].to_i == 1
+            score = sore + 1
+        else
+          other_significant_causes[j]["icd_code"] = params["icd_10_#{j}i_reviewed"]["code"]
+          other_significant_causes[j]["reason"] = params["reason_icd_10_#{j}i_changed"]
+        end
+        total = total + 1
+        j = j + 1
+      end
+      person_icd_code.update_attributes({
+                        :other_significant_causes => other_significant_causes, 
+                        :review_results =>"#{score/total}",
+                        :tentative_code_reviewed => params[:tentative_code_reviewed],
+                        :reason_tentative_code_changed => params[:reason_tentative_code_changed],
+                        :final_code_reviewed => params[:final_code_reviewed],
+                        :reason_final_code_changed => params[:reason_final_code_changed]})
+
+      render :text => "ok"
   end
 
   def save_proficiency_comment

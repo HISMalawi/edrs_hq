@@ -128,6 +128,7 @@ Rails.application.routes.draw do
   get "/edit_icd_code" => "hq#edit_icd_code"
   get "/review/:id" => "hq#review"
   get "/save_mark" =>"hq#save_mark"
+  get "/hq/save_review"
 
   #printing routes
   

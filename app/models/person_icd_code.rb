@@ -25,6 +25,8 @@ class PersonICDCode < CouchRest::Model::Base
 	property :final_code_reviewed, String
 	property :reason_final_code_changed, String
 
+	property :review_results
+
 	property :other_significant_causes, {}
 	timestamps!
 
