@@ -571,10 +571,15 @@
   }
   function saveReview(){
       results["id"] = "<%= @person.id %>";
-      $.get("/hq/save_review",results, function(data){
-            if (data =="ok") {
-               window.location = "/review/<%= params[:id] %>?index=<%= params[:index].to_i + 1 %>";
-            }
-      });
+      if (parseInt("<%= (params[:index].to_i + 1) %>") == parseInt("<%= @sample.sample.count %>")) {
+            alert("Hello")
+      }else{
+        $.get("/hq/save_review",results, function(data){
+              if (data =="ok") {
+                 window.location = "/review/<%= params[:id] %>?index=<%= (params[:index].to_i + 1) % @sample.sample.count %>";
+              }
+        });
+      }
+
   }
 </script>

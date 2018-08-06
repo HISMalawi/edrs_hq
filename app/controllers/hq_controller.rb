@@ -185,7 +185,7 @@ class HqController < ApplicationController
 
 
     i = 1
-    while i < 4  do
+    while i <= 4  do
        interval_unit = params["interval_unit#{i}"]
        case interval_unit
        when "Second(s)"
@@ -1029,6 +1029,7 @@ class HqController < ApplicationController
     @person = Person.find(@sample.sample.sort[params[:index].to_i])
     @person = to_readable(@person)
     @person_icd_code = PersonICDCode.by_person_id.key(@person.id).first  
+    
   end
 
   def save_mark
