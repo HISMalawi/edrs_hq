@@ -129,6 +129,8 @@ Rails.application.routes.draw do
   get "/review/:id" => "hq#review"
   get "/save_mark" =>"hq#save_mark"
   get "/hq/save_review"
+  get "/results/:id" => "hq#results"
+  get "/finalizereview/:id" => "hq#finalizereview"
 
   #printing routes
   

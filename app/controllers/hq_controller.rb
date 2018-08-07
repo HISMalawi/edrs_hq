@@ -1032,6 +1032,25 @@ class HqController < ApplicationController
     
   end
 
+  def results
+    sample = ProficiencySample.find(params[:id])
+    count = 0
+    sum = 0
+    sample.sample.each do |sample|
+        person_icd_code = PersonICDCode.by_person_id.key(sample).first 
+        count = count + 1
+        sum = sum + person_icd_code.review_results.to_f
+    end
+
+    render :text => (sum / count.to_f)
+  end
+
+  def finalizereview
+    sample = ProficiencySample.find(params[:id])
+    sample.update_attributes({reviewed: true})
+    redirect_to "/sampled_cases"
+  end
+
   def save_mark
     sample = ProficiencySample.find(params[:sample_id])
     case params[:decision]
@@ -1120,7 +1139,7 @@ class HqController < ApplicationController
       end
       person_icd_code.update_attributes({
                         :other_significant_causes => other_significant_causes, 
-                        :review_results =>"#{score/total}",
+                        :review_results =>"#{(score/total.to_f) * 100}",
                         :tentative_code_reviewed => params[:tentative_code_reviewed],
                         :reason_tentative_code_changed => params[:reason_tentative_code_changed],
                         :final_code_reviewed => params[:final_code_reviewed],

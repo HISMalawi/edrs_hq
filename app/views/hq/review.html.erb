@@ -101,6 +101,13 @@
       text-align: center;
   } 
 
+  #result_modal{
+      position : absolute;
+      display: none;
+      z-index: 4000;
+      left: 30%;
+      top: 13.5%;
+  }
 </style>
 <script type="text/javascript">
       var results = {}
@@ -216,11 +223,34 @@
 	  </div>
 	</div>
 
+  <div class="" id="result_modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header btn-primary">
+          <center>
+              <h4 class="modal-title" id="result_modal_title">Results from the sampled</h4>
+          </center>
+        </div>
+        <div class="modal-body">
+
+          <div class="row">
+            <div class="col-lg-12" id="review_result">
+                
+            </div>
+            <div class="modal-footer">
+              <button type="button" onclick="finalReview()" class="btn btn-sm btn-success" >OK</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="" id="decision_modal" style="width:90%;margin-left:5%;margin-top:3%">
     <div class="modal-dialog" style="width:100%">
       <div class="modal-content">
         <div class="modal-header btn-primary">
-          <h4 class="modal-title" id="decision_modal_title"><b>Decision trail</b></h4>
+          <center><h4 class="modal-title" id="decision_modal_title">Record review</h4></center>
         </div>
         <div class="modal-body">
 
@@ -456,6 +486,12 @@
 	  }
 
 	  function hideModal(){
+        var modals = $("#shield")[0].getElementsByTagName("div");
+        for(var i = 0 ; i < modals.length ; i++){
+            if (modals[i].id.match("modal")) {
+                modals[i].style.display = "none";
+            }
+        }
         $("#shield").css('display','none')
       }
 
@@ -571,15 +607,24 @@
   }
   function saveReview(){
       results["id"] = "<%= @person.id %>";
-      if (parseInt("<%= (params[:index].to_i + 1) %>") == parseInt("<%= @sample.sample.count %>")) {
-            alert("Hello")
-      }else{
         $.get("/hq/save_review",results, function(data){
               if (data =="ok") {
-                 window.location = "/review/<%= params[:id] %>?index=<%= (params[:index].to_i + 1) % @sample.sample.count %>";
+                  if (parseInt("<%= (params[:index].to_i + 1) %>") == parseInt("<%= @sample.sample.count %>")) {
+                      $.get("/results/<%= @sample.id %>",function(result){
+                          hideModal();
+                          $("#shield").show()
+                          __$("result_modal").style.display = "block";
+                          __$("review_result").innerHTML = "<center>"+result+" % </center>";
+                      });
+                  }else{
+                    window.location = "/review/<%= params[:id] %>?index=<%= (params[:index].to_i + 1) % @sample.sample.count %>";
+                  }
               }
         });
-      }
 
+  }
+
+  function finalReview(){
+     window.location = "/finalizereview/<%= @sample.id %>"
   }
 </script>
