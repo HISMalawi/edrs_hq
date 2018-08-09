@@ -1,0 +1,245 @@
+<style type="text/css">
+  #decision{
+    border: 1px solid gray;
+  }
+  
+  #decision th {
+      background-color: #6281a7;
+      color:#ffffff;
+      border: 1px solid gray;
+      text-align: center;
+  } 
+  #decision td {
+      border: 1px solid gray;
+      text-align: center;
+  } 
+</style>
+<div id="main" >
+  <div style="height: 535px; overflow: auto;padding: 0px; margin:0px;">
+    <center><h4>Review result (<%= @person_icd_code.review_results %> %) </h4></center>
+    <table style="width:98%;margin:auto;" id="decision">
+                      <tr>
+                          <th rowspan="2"></th>
+                          <th rowspan="2">Condition</th>
+                          <th rowspan="2">Time between onset and death</th>
+                          <th rowspan="2">Coder's ICD Code</th>
+                          <th colspan="2">Supervisor's decision</th>
+                          <th rowspan="2">Supervisor's ICD code</th>
+                          <th rowspan="2">Supervisor's Reason</th>
+                          <th rowspan="2">Final ICD Code</th>
+                      </tr>
+                      <tr>
+                          <td>Wrong</td>
+                          <td>Correct</td>
+                      </tr>
+                      <tr>
+                          <td>a.</td>
+                          <td><%= @person.cause_of_death1 %></td>
+                          <td><%= @person.onset_death_interval1 rescue "" %></td>
+                          <td id="code_1"><%= @person.icd_10_1 rescue "" %></td>
+                      <% if @person.icd_10_1 == @person_icd_code.icd_10_1_reviewed %>
+                          <td>
+                              <input type="radio" name="icd_10_1_decision" id="icd_10_1_wrong" disabled> 
+                          </td>
+                          <td>
+                              <input type="radio" name="icd_10_1_decision" id="icd_10_1_correct" checked="true" disabled>
+                          </td>
+                          <td></td>
+                          <td></td>
+                      <% else %>
+                          <td>
+                              <input type="radio" name="icd_10_1_decision" id="icd_10_1_wrong" checked="true" disabled> 
+                          </td>
+                          <td>
+                              <input type="radio" name="icd_10_1_decision" id="icd_10_1_correct" disabled>
+                          </td>
+                          <td><%= @person_icd_code.icd_10_1_reviewed %></td>
+                          <td><%= @person_icd_code.reason_icd_10_1_changed %></td>
+                      <%end%>
+
+                          <td id="final_1"><%= @person_icd_code.icd_10_1_reviewed %></td>
+                      </tr>
+                      <%if @person.cause_of_death2.present? %>
+                      <tr>
+                          <td>b.</td>
+                          <td><%= @person.cause_of_death2 %></td>
+                          <td><%= @person.onset_death_interval2 rescue "" %></td>
+                          <td id="code_2"><%= @person.icd_10_2 rescue "" %></td>
+                      <% if @person.icd_10_2 == @person_icd_code.icd_10_2_reviewed %>
+                          <td>
+                              <input type="radio" name="icd_10_2_decision" id="icd_10_2_wrong" disabled> 
+                          </td>
+                          <td>
+                              <input type="radio" name="icd_10_2_decision" id="icd_10_2_correct" checked="true" disabled>
+                          </td>
+                          <td></td>
+                          <td></td>
+                      <% else %>
+                          <td>
+                              <input type="radio" name="icd_10_2_decision" id="icd_10_2_wrong" checked="true" disabled> 
+                          </td>
+                          <td>
+                              <input type="radio" name="icd_10_2_decision" id="icd_10_2_correct" disabled>
+                          </td>
+                          <td><%= @person_icd_code.icd_10_2_reviewed %></td>
+                          <td><%= @person_icd_code.reason_icd_10_2_changed %></td>
+                      <%end%>
+                          <td id="final_2"><%= @person_icd_code.icd_10_2_reviewed %></td>
+                      </tr>
+                      <%end%>
+                      <%if @person.cause_of_death3.present? %>
+                      <tr>
+                          <td>c.</td>
+                          <td><%= @person.cause_of_death3 %></td>
+                          <td><%= @person.onset_death_interval3 rescue "" %></td>
+                          <td id="code_3"><%= @person.icd_10_3 rescue "" %></td>
+                      <% if @person.icd_10_3 == @person_icd_code.icd_10_3_reviewed %>
+                          <td>
+                              <input type="radio" name="icd_10_3_decision" id="icd_10_3_wrong" disabled> 
+                          </td>
+                          <td>
+                              <input type="radio" name="icd_10_3_decision" id="icd_10_3_correct" checked="true" disabled>
+                          </td>
+                          <td></td>
+                          <td></td>
+                      <% else %>
+                          <td>
+                              <input type="radio" name="icd_10_3_decision" id="icd_10_3_wrong" checked="true" disabled> 
+                          </td>
+                          <td>
+                              <input type="radio" name="icd_10_3_decision" id="icd_10_3_correct" disabled>
+                          </td>
+                          <td><%= @person_icd_code.icd_10_3_reviewed %></td>
+                          <td><%= @person_icd_code.reason_icd_10_3_changed %></td>
+                      <%end%>
+
+                          <td id="final_3"><%= @person_icd_code.icd_10_3_reviewed %></td>
+                      </tr>
+                      <%end%>
+                      <%if @person.cause_of_death4.present? %>
+                      <tr>
+                          <td>d.</td>
+                          <td><%= @person.cause_of_death4 %></td>
+                          <td><%= @person.onset_death_interval4 rescue "" %></td>
+                          <td id="code_4"><%= @person.icd_10_4 rescue "" %></td>
+                      <% if @person.icd_10_4 == @person_icd_code.icd_10_4_reviewed %>
+                          <td>
+                              <input type="radio" name="icd_10_4_decision" id="icd_10_4_wrong" disabled> 
+                          </td>
+                          <td>
+                              <input type="radio" name="icd_10_4_decision" id="icd_10_4_correct" checked="true" disabled>
+                          </td>
+                      <% else %>
+                          <td>
+                              <input type="radio" name="icd_10_4_decision" id="icd_10_4_wrong" checked="true" disabled> 
+                          </td>
+                          <td>
+                              <input type="radio" name="icd_10_4_decision" id="icd_10_4_correct" disabled>
+                          </td>
+                      <%end%>
+                          <td><input type="" name="icd_10_4_review" id="icd_10_4_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(4)"></td>
+                          <td>
+                              <input type="" name="reason_icd_10_4_changed" id="reason_icd_10_4_changed" class="form-control" disabled="true">
+                          </td>
+                          <td id="final_4"><%= @person_icd_code.icd_10_4_reviewed %></td>
+                      </tr>
+                      <%end%>
+                      <% @other_causes_keys = @person.cause_of_death_conditions.keys rescue [] %>
+                      <% if @other_causes_keys.present?%>
+                          <tr><th colspan="9">Other significant causes of death</th></tr>
+                      <%end%>
+                      <% @other_causes_keys.each do |key| %>
+                          <tr>
+                              <td><%=key%></td>
+                              <td colspan="2"><%= @person.cause_of_death_conditions[key]["cause"] %></td>
+                              <td id="code_<%= key%>i"><%= @person.cause_of_death_conditions[key]["icd_code"] %></td>
+                          <% if @person.cause_of_death_conditions[key]["icd_code"] == @person_icd_code.other_significant_causes[key]["icd_code"] %>
+                              <td>
+                                  <input type="radio" name="icd_10_<%= key%>i_decision" id="icd_10_<%= key%>i_wrong" disabled>
+                              </td>
+                              <td>
+                                  <input type="radio" name="icd_10_<%= key%>i_decision" id="icd_10_<%= key%>i_correct" checked="true" disabled>
+                              </td>
+                          <% else %>
+                              <td>
+                                  <input type="radio" name="icd_10_<%= key%>i_decision" id="icd_10_<%= key%>i_wrong" checked="true" disabled>
+                              </td>
+                              <td>
+                                  <input type="radio" name="icd_10_<%= key%>i_decision" id="icd_10_<%= key%>i_correct" disabled>
+                              </td>
+                          <%end%>
+                              <td>
+                                  <input type="" name="icd_10_<%= key%>i_review" id="icd_10_<%= key%>i_reviewed" class="form-control" disabled="true" onkeyup="fillFinal('<%= key%>i')">
+                              </td>
+                              <td>
+                                  <input type="" name="reason_icd_10_<%= key%>i_changed" id="reason_icd_10_<%= key%>i_changed" class="form-control" disabled="true">
+                              </td>
+                              <td id="final_<%=key%>i"><%=  @person_icd_code.other_significant_causes[key]["icd_code"] %> </td>
+                          </tr>
+                      <%end%>
+                      <tr>
+                        <th colspan="2"></th>
+                        <th>Coder's ID Code</th>
+                        <th>Coder's Reason for Changing</th>
+                        <th colspan="2">Supervisor's decision</th>
+                        <th>Supervisor's ID Code</th>
+                        <th>Supervisor's Reason for Changing</th>
+                        <th>Final Code</th>
+                      </tr>
+                      <tr>
+                          <td colspan="2">Tentative Code</td>
+                          <td id="tentative_code_of_coder"><%= @person_icd_code.tentative_code rescue "" %></td>
+                          <td ><%= @person_icd_code.reason_tentative_differ_from_underlying rescue "" %></td>
+                      <% if @person_icd_code.tentative_code == @person_icd_code.tentative_code_reviewed %>
+                          <td>
+                            <input type="radio" name="tentative_code" id="tentative_code_reviewed_wrong">
+                          </td>
+                          <td>
+                              <input type="radio" name="tentative_code" id="tentative_code_reviewed_correct" checked="true" disabled>
+                          </td>
+                      <% else %>
+                          <td>
+                            <input type="radio" name="tentative_code" id="tentative_code_reviewed_wrong" checked="true" disabled>
+                          </td>
+                          <td>
+                              <input type="radio" name="tentative_code" id="tentative_code_reviewed_correct" disabled>
+                          </td>
+                      <% end %>
+                          <td>
+                              <input type="" name="tentative_code_reviewed" id="tentative_code_reviewed" class="form-control" disabled="true">
+                          </td>
+                          <td>
+                              <input type="" name="reason_tentative_code_changed" id="reason_tentative_code_changed" class="form-control" disabled="true" >
+                          </td>
+                          <td id="tentative_code"><%= @person_icd_code.tentative_code_reviewed %></td>
+                      </tr>
+                      <tr>
+                          <td colspan="2">Final Code</td>
+                          <td id="final_code_of_coder"><%= @person_icd_code.final_code rescue ""%></td>
+                          <td><%= @person_icd_code.reason_final_differ_from_tentative rescue ""%></td>
+                      <% if @person_icd_code.final_code == @person_icd_code.final_code_reviewed %>
+                          <td >
+                              <input type="radio" name="final_code" id="final_code_reviewed_wrong" disabled>
+                          </td>
+                          <td >
+                              <input type="radio" name="final_code" id="final_code_reviewed_correct" checked="true" disabled>
+                          </td>
+                      <% else %>
+                          <td >
+                              <input type="radio" name="final_code" id="final_code_reviewed_wrong" checked="true" disabled>
+                          </td>
+                          <td >
+                              <input type="radio" name="final_code" id="final_code_reviewed_correct" disabled>
+                          </td>
+                      <% end %>
+                          <td>
+                              <input type="" name="final_code_reviewed" id="final_code_reviewed" class="form-control" disabled="true" onkeyup="fillFinalCodes(this,'final_code')">                             
+                          </td>
+                          <td>
+                              <input type="" name="reason_final_code_changed" id="reason_final_code_changed" class="form-control" disabled="true" onkeyup="fillFinalCodes(this)" >
+                          </td>
+                          <td id="final_code"><%= @person_icd_code.final_code_reviewed %></td>
+                      </tr>
+                </table>
+ </div>
+</div>

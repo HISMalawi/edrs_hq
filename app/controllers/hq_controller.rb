@@ -214,6 +214,7 @@ class HqController < ApplicationController
       params[:cause_of_death_conditions][key][:icd_code] = params[:other_significant_cause_icd_code][key]
     end
     params["coder"] = User.current_user.id
+
     params["coded_at"] = Time.now
     person_icd_code = PersonICDCode.by_person_id.key(@person.id).first
     if person_icd_code.blank?
@@ -233,6 +234,39 @@ class HqController < ApplicationController
         })
     end
     @person.update_attributes(params)
+
+    coder_stat = CoderStat.by_coder_id.key(User.current_user.id).first
+    if coder_stat.blank?
+      CoderStat.create({
+              coder_id: User.current_user.id, 
+              number_of_records_coded: 1, 
+              random_number: Random.rand(1..20),
+              sampled: 0,
+              reviewed: 0
+      })    
+    else
+      random_number = coder_stat.random_number
+      number_of_records_coded = coder_stat.number_of_records_coded.to_i + 1
+      if (number_of_records_coded - random_number) % 20 == 0
+          sample = ProficiencySample.by_coder_id.key(User.current_user.id).first
+          if sample.blank?
+            sample = ProficiencySample.new
+            sample.coder_id = User.current_user.id
+            sample.sample = [@person.id]
+            sample.reviewed = false
+            sample.save
+          else
+            sampled  = sample.sample
+            sampled << @person.id
+            sample.update_attributes({sample: sampled})          
+          end
+      end
+      coder_stat.update_attributes({
+                              number_of_records_coded: number_of_records_coded,
+                              sampled: (coder_stat.sampled.to_i + 1)
+                              })
+    end
+
     flash[:success] = "Record updated successfully"
     redirect_to "/search?person_id=#{params[:person_id]}"
   end
@@ -1029,7 +1063,18 @@ class HqController < ApplicationController
     @person = Person.find(@sample.sample.sort[params[:index].to_i])
     @person = to_readable(@person)
     @person_icd_code = PersonICDCode.by_person_id.key(@person.id).first  
+
     
+  end
+
+  def reviewed
+    @sample = ProficiencySample.find(params[:id])
+    @sample.results = {} if @sample.results.blank?
+    @person = Person.find(@sample.sample.sort[params[:index].to_i])
+    @person = to_readable(@person)
+    @person_icd_code = PersonICDCode.by_person_id.key(@person.id).first 
+    
+
   end
 
   def results
@@ -1041,6 +1086,8 @@ class HqController < ApplicationController
         count = count + 1
         sum = sum + person_icd_code.review_results.to_f
     end
+    final_score = sum / count.to_f
+    sample.update_attributes({final_result: final_score})
 
     render :text => (sum / count.to_f)
   end
@@ -1125,11 +1172,14 @@ class HqController < ApplicationController
       person_icd_code.update_attributes(causes_of_death)
       other_significant_causes = {}
 
-      j = 0
+      j = 1
+
       while j < 10
         break if params["icd_10_#{j}i_reviewed"].blank?
+        other_significant_causes[j] = {}
         if params["icd_10_#{j}i_reviewed"]["result"].to_i == 1
-            score = sore + 1
+          other_significant_causes[j]["icd_code"] = params["icd_10_#{j}i_reviewed"]["code"]
+            score = score + 1
         else
           other_significant_causes[j]["icd_code"] = params["icd_10_#{j}i_reviewed"]["code"]
           other_significant_causes[j]["reason"] = params["reason_icd_10_#{j}i_changed"]
@@ -1137,6 +1187,8 @@ class HqController < ApplicationController
         total = total + 1
         j = j + 1
       end
+
+      
       person_icd_code.update_attributes({
                         :other_significant_causes => other_significant_causes, 
                         :review_results =>"#{(score/total.to_f) * 100}",

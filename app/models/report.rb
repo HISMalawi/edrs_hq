@@ -194,7 +194,8 @@ class Report < ActiveRecord::Base
 		    sample = ProficiencySample.by_reviewed_and_created_at.startkey([true,start_date]).endkey([true,end_date]).each
 		    sample.each do |sp|
 		        user = User.find(sp.coder_id)
-		        sample_details << {
+		        sample_details << { 
+		         					  id: sp.id,
 		                              name: "#{user.first_name} #{user.last_name}",
 		                              sample: sp.sample,
 		                              sample_id: sp.id,

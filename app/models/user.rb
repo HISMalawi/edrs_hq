@@ -2,9 +2,11 @@ require 'couchrest_model'
 
 class User < CouchRest::Model::Base
 
+  after_save :check_random_number
   def username
     self['username']
   end
+
   property :username , String
   property :first_name, String
   property :last_name, String
@@ -39,6 +41,28 @@ class User < CouchRest::Model::Base
     Role.by_level_and_role.key([level, self.role]).last.activities  rescue []
   end
 
+  def check_random_number
+    file_path = "#{Rails.root}/db/random.json"
+    if !File.exists?(file_path)
+        file = File.new(file_path, 'w')
+        random_numbers = {}
+        random_numbers[self.id] = Random.rand(1..20)
+
+        File.open(file_path, 'w') do |f|
+            f.puts "#{random_numbers.to_json}"
+        end        
+    else
+        random_numbers = JSON.parse(File.read(file_path))
+        if random_numbers[self.id].blank?
+          random_numbers[self.id] = Random.rand(1..20)
+
+          File.open(file_path, 'w') do |f|
+              f.puts "#{random_numbers.to_json}"
+          end           
+        end
+    end
+  end
+
   design do
     view :by__id
     view :by_active
@@ -66,11 +90,15 @@ class User < CouchRest::Model::Base
   end
 
   before_save do |pass|
+
     self.password_hash = BCrypt::Password.create(self.plain_password) if not self.plain_password.blank?
 
     self.plain_password = nil
 
+    #check_random_number
+
     self.creator = 'admin' if self.creator.blank?
+
   end
 
   def password_matches?(plain_password)

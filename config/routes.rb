@@ -131,6 +131,7 @@ Rails.application.routes.draw do
   get "/hq/save_review"
   get "/results/:id" => "hq#results"
   get "/finalizereview/:id" => "hq#finalizereview"
+  get "/reviewed/:id/:index" => "hq#reviewed"
 
   #printing routes
   

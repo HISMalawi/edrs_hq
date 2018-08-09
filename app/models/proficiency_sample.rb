@@ -14,7 +14,7 @@ class ProficiencySample < CouchRest::Model::Base
 	timestamps!
 	design do
     	view :by_end_time
-    	view :by_code_id
+    	view :by_coder_id
     	view :by_reviewed
     	view :by_created_at
     	view :by_reviewed_and_created_at

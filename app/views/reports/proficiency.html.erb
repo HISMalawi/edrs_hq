@@ -72,6 +72,7 @@
 				<th>Date Sampled</th>
 				<th>No. of records</th>
 				<th>Score</th>
+				<th>Details</th>
 				<th>Comment</th>
 			</tr>
 		</thead>
@@ -84,7 +85,9 @@
 						<td><%= details[:date_sampled] %></td>
 						<td><%= details[:sample].count %></td>
 						<td><%= "#{details[:final_result]} %" %></td>
+						<td><i class="fa fa-eye" onclick="window.location.href = '/reviewed/<%= details[:id] %>/0'"></td>
 						<td>
+
 							<% if details[:comment].blank? %>
 								<i class="fa fa-plus clickable" onclick="addComment('<%=details[:sample_id]%>')">
 							<%else%>
