@@ -17,6 +17,7 @@
 				<th>Name of Coder</th>
 				<th>No. of records Sampled</th>
 				<th>No. of records Reviewed</th>
+				<th>No. of records Pending Review</th>
 				<th>Operation</th>
 			</tr>
 		</thead>
@@ -27,7 +28,8 @@
 						<td><%= @i%></td>
 						<td><%= details[:name] %></td>
 						<td><%= details[:sample].count %></td>
-						<td><%= details[:reviewed].count %></td>
+						<td class="success"><%= details[:reviewed].count %></td>
+						<td class="warning"><%= details[:sample].count - details[:reviewed].count %></td>
 						<td>
 							<% if details[:sample].count == details[:reviewed].count %>
 								<button class="btn disabled">Review</button>

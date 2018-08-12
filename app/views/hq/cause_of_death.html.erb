@@ -184,6 +184,21 @@
             display: none;
 
     }
+    .detailstable{
+      width: 100%;
+      border: 1px solid gray;
+      border-collapse: collapse;
+    }
+
+    .detailstable td{
+      border: 1px solid lightgrey;
+      padding: 0.4em;
+    }
+
+    .detailstable td:nth-child(even) {
+        //background: #ebe9e9;
+    }
+
     #shield{
       position: absolute;
       width: 100% !important;
@@ -1006,6 +1021,51 @@
         </div>
       </div>
     </div>
+    <div id="deceaseddeatails" class="messagebox">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header btn-primary" >
+            <button type="button" class="close"    onclick="$('#shield').css('display','none');$('#deceaseddeatails').css('display','none')">
+              <span aria-hidden="true">&times;</span>
+              <span class="sr-only">Close</span>
+            </button>
+            <center><h4 class="modal-title" id="title">Derails of the deceased</h4></center>
+          </div>
+          <div class="modal-body">
+
+            <div class="row">
+              <div class="col-lg-12" id="message" style="text-align:center;padding:0">
+                  <table class="detailstable">
+                              <tr>
+                                  <td>Sex</td>
+                                  <td><%= @person.gender %></td>
+                              </tr>
+                              <tr>
+                                  <td>Date of Birth</td>
+                                  <td><%= Date.parse(@person.birthdate.to_s).strftime("%d/%b/%Y") %></td>
+                              </tr>
+
+                              <tr>
+                                  <td>Date of Death</td>
+                                  <td><%= Date.parse(@person.date_of_death.to_s).strftime("%d/%b/%Y") %></td>
+                              </tr>
+
+                              <% if @person.died_while_pregnant=="Yes" %>
+                              <tr>
+                                  <td>Death occured while pregnant</td>
+                                  <td><%= @person.died_while_pregnant rescue "No" %></td>
+                              </tr>
+                              <%end%>
+                  </table>
+              </div>
+              <div class="modal-footer">
+                <button id="finish" class="btn btn-success pull-right" id="finish" onclick="$('#shield').css('display','none');$('#deceaseddeatails').css('display','none')">OK</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div id="fieldvalidation" class="messagebox" >
       <div class="modal-dialog">
         <div class="modal-content">
@@ -1800,5 +1860,8 @@
              setInterval(function(){
                   $("#main-content").scrollTop();
              },2000);
+
+            $("#shield").show();
+            $("#deceaseddeatails").show();
         });
 </script>
