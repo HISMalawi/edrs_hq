@@ -253,7 +253,7 @@ class HqController < ApplicationController
             sample = ProficiencySample.new
             sample.coder_id = User.current_user.id
             sample.sample = [@person.id]
-            sample.reviewed = false
+            sample.reviewed = []
             sample.save
           else
             sampled  = sample.sample
@@ -1044,12 +1044,13 @@ class HqController < ApplicationController
 
   def sampled_cases
     @sample_details = []
-    sample = ProficiencySample.by_reviewed.key(false).each
+    sample = ProficiencySample.all.each
     sample.each do |sp|
         user = User.find(sp.coder_id)
         @sample_details << {
                               name: "#{user.first_name} #{user.last_name}",
                               sample: sp.sample,
+                              reviewed: sp.reviewed,
                               sample_id: sp.id,
                               date_sampled: sp.date_sampled
                             }
@@ -1060,7 +1061,8 @@ class HqController < ApplicationController
   def review
     @sample = ProficiencySample.find(params[:id])
     @sample.results = {} if @sample.results.blank?
-    @person = Person.find(@sample.sample.sort[params[:index].to_i])
+    sampled = @sample.sample.sort - @sample.reviewed
+    @person = Person.find(sampled.sort[params[:index].to_i])
     @person = to_readable(@person)
     @person_icd_code = PersonICDCode.by_person_id.key(@person.id).first  
 
@@ -1093,8 +1095,8 @@ class HqController < ApplicationController
   end
 
   def finalizereview
-    sample = ProficiencySample.find(params[:id])
-    sample.update_attributes({reviewed: true})
+    #sample = ProficiencySample.find(params[:id])
+    #sample.update_attributes({reviewed: true})
     redirect_to "/sampled_cases"
   end
 
@@ -1196,6 +1198,14 @@ class HqController < ApplicationController
                         :reason_tentative_code_changed => params[:reason_tentative_code_changed],
                         :final_code_reviewed => params[:final_code_reviewed],
                         :reason_final_code_changed => params[:reason_final_code_changed]})
+
+      sample = ProficiencySample.find(params[:sample_id])
+
+      reviewed = sample.reviewed
+
+      reviewed << params[:id]
+
+      sample.update_attributes({reviewed: reviewed.uniq})
 
       render :text => "ok"
   end

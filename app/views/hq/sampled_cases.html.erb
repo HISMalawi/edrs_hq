@@ -15,8 +15,8 @@
 			<tr>
 				<th>#</th>
 				<th>Name</th>
-				<th>Date Sampled</th>
-				<th>No. of records</th>
+				<th>No. of records Sampled</th>
+				<th>No. of records Reviewed</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -26,10 +26,15 @@
 				<tr>
 						<td><%= @i%></td>
 						<td><%= details[:name] %></td>
-						<td><%= details[:date_sampled] %></td>
 						<td><%= details[:sample].count %></td>
+						<td><%= details[:reviewed].count %></td>
 						<td>
-							<button class="btn btn-success" onclick="window.location='/review/<%=details[:sample_id]%>?index=0'">Review</button>
+							<% if details[:sample].count == details[:reviewed].count %>
+								<button class="btn disabled">Review</button>
+
+							<%else%>
+								<button class="btn btn-success" onclick="window.location='/review/<%=details[:sample_id]%>?index=0'">Review</button>
+							<%end%>
 						</td>
 				</tr>
 				<% @i = @i + 1 %>

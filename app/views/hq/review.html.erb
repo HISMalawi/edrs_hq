@@ -607,6 +607,7 @@
   }
   function saveReview(){
       results["id"] = "<%= @person.id %>";
+      results["sample_id"] = "<%= @sample.id %>"
         $.get("/hq/save_review",results, function(data){
               if (data =="ok") {
                   if (parseInt("<%= (params[:index].to_i + 1) %>") == parseInt("<%= @sample.sample.count %>")) {

@@ -5,7 +5,7 @@ class ProficiencySample < CouchRest::Model::Base
 	property :sample, []
 	property :results, {}
 	property :final_result, String
-	property :reviewed, TrueClass, :default => false
+	property :reviewed, []
 	property :comment, String
 	property :supervisor,String
 	property :date_sampled, Date
@@ -15,9 +15,7 @@ class ProficiencySample < CouchRest::Model::Base
 	design do
     	view :by_end_time
     	view :by_coder_id
-    	view :by_reviewed
     	view :by_created_at
-    	view :by_reviewed_and_created_at
     	view :by_result,
     		 :map => "function(){
     		 				if(doc['type']=='ProficiencySample' && doc['final_result'] >= 0){
