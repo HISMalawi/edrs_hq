@@ -1061,8 +1061,8 @@ class HqController < ApplicationController
   def review
     @sample = ProficiencySample.find(params[:id])
     @sample.results = {} if @sample.results.blank?
-    sampled = @sample.sample.sort - @sample.reviewed
-    @person = Person.find(sampled.sort[params[:index].to_i])
+    @sampled = @sample.sample.sort - @sample.reviewed
+    @person = Person.find(@sampled.sort[params[:index].to_i])
     @person = to_readable(@person)
     @person_icd_code = PersonICDCode.by_person_id.key(@person.id).first  
 

@@ -115,7 +115,7 @@
 <% if params[:index].present? &&  @sample.final_result.blank? %>
     <div class="row">
         <span class="pull-right" style="width: 20%; height : 30px ; background:#6281a7; color:#ffffff; text-align:center;padding:0.5%;margin-right:2%; font-weight:bold">
-          Reviewing <%= params[:index].to_i + 1 %> / <%= @sample.sample.count %>
+          Reviewing <%= params[:index].to_i + 1 %> / <%= @sampled.count %>
         </span>
     </div>
 <%else%>
@@ -130,23 +130,14 @@
       <tr>
         <th colspan="2" style="padding-left: 10px !important;">
        
-       		<% if (@sample.sample.count-1 ) == params[:index].to_i %>
+       		<% if (@sampled.count - 1 ) == params[:index].to_i %>
 	       		<div onclick= ""
 	                 class="dynamic-button btn btn-small btn-default pull-right btn-primary hidden "><span>Finish</span>
 	            </div>
             <%end%>
-            <% if @sample.final_result.blank? %>
               <div onclick= "makeDecision()"
                  class="dynamic-button btn btn-small btn-default pull-right btn-success"><span>Review</span>
-            </div>
-            <% if false %>
-            <div onclick= "correct()"
-                 class="dynamic-button btn btn-small btn-default pull-right btn-success"><span>Correct ICD Code</span>
-            </div>
-            <div onclick= "wrong()" class="dynamic-button btn btn-small btn-default pull-right btn-danger"><span>Wrong ICD Code</span>
-            </div>
-            <%end%>
-            <%end%>
+              </div>
  
             <div onclick= "window.parent.location = '/search'"
                  class="dynamic-button btn btn-small btn-default pull-left btn-danger"><span>Cancel</span></div>
@@ -448,7 +439,7 @@
     </div>
   </div>
 
-<% if @sample.final_result.present? %>
+<% if @sample.final_result.present? && false %>
   <script type="text/javascript">
      $(document).ready(function(){
           $("#shield").show()
@@ -610,7 +601,7 @@
       results["sample_id"] = "<%= @sample.id %>"
         $.get("/hq/save_review",results, function(data){
               if (data =="ok") {
-                  if (parseInt("<%= (params[:index].to_i + 1) %>") == parseInt("<%= @sample.sample.count %>")) {
+                  if (parseInt("<%= (params[:index].to_i + 1) %>") == parseInt("<%= @sampled.count %>")) {
                       $.get("/results/<%= @sample.id %>",function(result){
                           hideModal();
                           $("#shield").show()
@@ -618,7 +609,7 @@
                           __$("review_result").innerHTML = "<center>"+result+" % </center>";
                       });
                   }else{
-                    window.location = "/review/<%= params[:id] %>?index=<%= (params[:index].to_i + 1) % @sample.sample.count %>";
+                    window.location = "/review/<%= params[:id] %>?index=0";
                   }
               }
         });
