@@ -1341,7 +1341,7 @@
           if(icd_10_regex.test(value)){
                   element.style.borderColor = "#b6b5b5";
           }else{
-                  showValidationMessage("Code Validation", "Invade ICD Code",element);
+                  showValidationMessage("Code Validation", "Invade ICD Code",null);
                   return;
           }
 
@@ -1504,13 +1504,20 @@
         if(field){
           $("#ok").attr("onclick", "hideAndFocus('"+field.id+"')");
           $("#close").attr("onclick", "hideAndFocus('"+field.id+"')");
+        }else{
+            $("#ok").attr("onclick","hideModal('fieldvalidation')")
         }
+    }
+
+    function hideModal(modal){
+        $('#shield').css('display','none');
+        $("#"+modal).css('display','none');
     }
 
     function hideAndFocus(field){
          $('#shield').css('display','none');
          if(__$(field)){
-          __$(field).focus();
+          //__$(field).focus();
           __$(field).style.border = "1px solid red";
          }
 
@@ -1609,6 +1616,9 @@
       }
 
       function validateICDParts(value){
+            if (value.replace(".","").length > 4) {
+                return false;
+            }
             if (value.charAt(0).length === 1 && value.charAt(0).match(/[a-z]/i)) {
 
             }else{
