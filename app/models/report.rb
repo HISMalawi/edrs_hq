@@ -191,13 +191,14 @@ class Report < ActiveRecord::Base
 
 	def self.proficiency(start_date, end_date)
 		    sample_details = []
-		    sample = ProficiencySample.by_reviewed_and_created_at.startkey([true,start_date]).endkey([true,end_date]).each
+		    sample = ProficiencySample.all.each
 		    sample.each do |sp|
 		        user = User.find(sp.coder_id)
 		        sample_details << { 
 		         					  id: sp.id,
 		                              name: "#{user.first_name} #{user.last_name}",
 		                              sample: sp.sample,
+		                              reviewed: sp.reviewed,
 		                              sample_id: sp.id,
 		                              date_sampled: sp.date_sampled,
 		                              final_result: sp.final_result.to_f.round(2),
