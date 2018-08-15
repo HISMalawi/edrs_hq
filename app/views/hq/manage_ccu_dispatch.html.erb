@@ -1,0 +1,26 @@
+
+<div id="main" >
+  <h3 style="padding-left: 15px;"><%= @section rescue 'Case management' %></h3>
+  <div id="button-container">
+              <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" onclick="window.location='/view_ccu_dispatch'">
+                <div class="divbtn">
+                    <span class="icons">
+                        <img class="icon-attr" src="/assets/folder3.png">
+                        <p>CCU Dispatch from DC</p>
+                    </span>
+                </div> 
+              </div> 
+              <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" onclick="window.location='/view_ccu__confirmed_dispatch'">
+                <div class="divbtn">
+                    <span class="icons">
+                        <img class="icon-attr" src="/assets/folder3.png">
+                        <p>CCU Dispatch Report</p>
+                    </span>
+                </div> 
+              </div>              
+  </div>
+</div> 
+<br/>   
+
+<button class="btn btn-primary pull-left" onclick="window.location='/'">Back</button>
+

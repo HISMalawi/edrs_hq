@@ -271,6 +271,28 @@ class HqController < ApplicationController
     redirect_to "/search?person_id=#{params[:person_id]}"
   end
 
+  def manage_ccu_dispatch
+      
+  end
+
+  def confirm_ccu_dispatch
+      @ccu_dispatch = CauseOfDeathDispatch.find(params[:dispatch])
+  end
+
+  def confirm_dispatch
+     ccu_dispatch = CauseOfDeathDispatch.find(params[:dispatch])
+     ccu_dispatch.update_attributes({received: params[:barcodes], reviewed: true})
+     render :text => "ok"
+  end
+
+  def view_ccu_dispatch
+    @ccu_dispatch = CauseOfDeathDispatch.by_reviewed.key(false).each
+  end
+
+  def view_ccu__confirmed_dispatch
+     @ccu_dispatch = CauseOfDeathDispatch.by_reviewed.key(true).each
+  end
+
   def nocause_available
     person = Person.find(params[:id])
     person.cause_of_death_available = "No"

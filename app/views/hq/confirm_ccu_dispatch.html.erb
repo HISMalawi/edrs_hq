@@ -1,0 +1,91 @@
+
+<div style="background: white">
+  <div style="height: 535px; overflow: auto;padding: 0px; margin:0px;">
+  	<div style="width:90%; margin:auto;"><h3>Scan Barcorde</h3> <br/><input type="" name="" class="form-control" id="barcode"></div>
+  	<div style="width:100%;height: 420px ;overflow-y: scroll">
+	  	<div style="width:45%;float:left;margin-left:2%;background:#ffffff">
+	  		<h3>DC Dispacthed Barcodes (<%= @ccu_dispatch.dispatch.count %> )</h3>
+
+	  		<% @ccu_dispatch.dispatch.sort.each do |barcode| %>
+	  			<br/>
+	  			<span id="<%= barcode %>"><%= barcode %></span>
+	  		<%end%>
+	  	</div>
+	  	<div style="width:45%;float:right;margin-right:2%;background:#ffffff" id="barcode_in_hq">
+	  		<h3>Barcodes in HQ (<span id="hq"></span>)</h3>
+	  	</div>
+	 </div>
+  </div>
+</div> 
+<br/>   
+
+<button class="btn btn-primary pull-left" onclick="window.location='/'">Back</button>
+<button class="btn btn-success pull-right" onclick="confirmBarcodes()">Finish</button>
+<script type="text/javascript">
+
+	  var  barcodeInterval;
+      barcodeInterval = setInterval(function(){
+            checkBarcode();
+      },300);
+
+      function __$(id){
+      	return document.getElementById(id);
+      }
+      function checkBarcode(){
+        var barcode_element = __$("barcode")
+        var value = barcode_element.value;
+
+        if (value.length == 0) {
+            return;
+        }else{
+            if (value.match(/\$/)) {
+              console.log(value);
+                addRow(value.substring(0,value.length - 1));
+                barcode_element.value = ""
+            }
+        }
+      }
+
+      var barcodes = []
+
+      function addRow(value){
+      	if(__$(value)){
+
+      		if (!__$(value + "hq")) {
+		         var barcode_in_hq = __$("barcode_in_hq");
+
+		         var br = document.createElement("br");
+		         barcode_in_hq.appendChild(br);
+
+		         var span = document.createElement("span");
+
+		         span.innerHTML = value;
+
+		         span.id = value + "hq"
+
+		         barcode_in_hq.appendChild(span);
+
+		         __$(value).style.color = "green";
+
+		         barcodes.push(value);
+
+		         __$("hq").innerHTML = barcodes.length;    			
+      		}
+
+      		console.log(barcodes)
+      	}
+      }
+
+      function confirmBarcodes(){
+      	if (barcodes.length > 0) {
+      		console.log(barcodes)
+      		$.get("/confirm_dispatch/<%= @ccu_dispatch.id %>", {"barcodes[]" : barcodes},function(response){
+      				if (response == "ok") {
+      					window.location = "/manage_ccu_dispatch"
+      				}
+      		})
+      	}
+      }
+
+</script>
+

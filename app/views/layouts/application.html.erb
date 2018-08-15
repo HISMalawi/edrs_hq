@@ -251,6 +251,14 @@
                           <span>Search</span>
                       </a>
                   </li>
+                  <% if has_role("Add cause of death") %>
+                  <li class="">
+                      <a class="" href="/manage_ccu_dispatch">
+                          <i class="icon_document_alt"></i>
+                          <span>CCU Dispatch</span>
+                      </a>
+                  </li>
+                  <%end%>
                   <% if has_role("View a record")  || has_role("Create User") %>
                   <li class="">
                       <a href="/tasks" class="">

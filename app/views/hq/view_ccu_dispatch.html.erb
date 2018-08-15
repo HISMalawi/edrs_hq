@@ -1,0 +1,64 @@
+<style type="text/css">
+    .summary{
+      margin-bottom: 1%;
+      width: 100%;
+  }
+   .summary th{
+      background: #344351;
+      color:#ffffff;
+      text-align: center;
+    }
+  .summary td {
+      background: #ffffff;
+      text-align: center !important;
+      padding: 5px;
+      padding-left: 10px;
+      border: 1px solid lightslategrey;
+      color :#344351;
+
+  }
+</style>
+<div style="background: white">
+  <div style="height: 535px; overflow: auto;padding: 0px; margin:0px;">
+
+    <table id="records_table" class="summary">
+        <thead>
+          <tr>
+            <th>
+              #
+            </th>
+            <th>
+              No. of Record
+            </th>
+            <th>
+              Time dispatched created
+            </th>
+            <th>
+               Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody id="table_body">
+            <% @i = 1 %>
+            <% @ccu_dispatch.each do |dispatch| %>
+              <td>
+                <%= @i%>
+              </td>
+              <td>
+                <%= dispatch.dispatch.count%>
+              </td>
+              <td>
+                 <%= dispatch.created_at %>
+              </td>
+              <td>
+                 <button class="btn btn-success" onclick="window.location='/confirm_ccu_dispatch?dispatch=<%=dispatch.id%>'">View</button>
+              </td>
+            <%end%>
+        </tbody>
+    </table>
+  </div>
+</div> 
+<br/>   
+
+<button class="btn btn-primary pull-left" onclick="window.location='/'">Back</button>
+
