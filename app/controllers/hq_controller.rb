@@ -177,6 +177,7 @@ class HqController < ApplicationController
   def cause_of_death
     @title = "Cause of death"
     @person = Person.find(params[:person_id])
+    @place_of_death = place_of_death(@person)
   end
 
   def save_cause_of_death

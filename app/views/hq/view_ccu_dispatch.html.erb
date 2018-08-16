@@ -28,6 +28,9 @@
               #
             </th>
             <th>
+              District
+            </th>
+            <th>
               No. of Record
             </th>
             <th>
@@ -43,6 +46,10 @@
             <% @ccu_dispatch.each do |dispatch| %>
               <td>
                 <%= @i%>
+              </td>
+              <td>
+                <%= dispatch.district_code.present? ? District.find(dispatch.district_code).name : 'Lilongwe'%>
+                
               </td>
               <td>
                 <%= dispatch.dispatch.count%>

@@ -1029,7 +1029,7 @@
               <span aria-hidden="true">&times;</span>
               <span class="sr-only">Close</span>
             </button>
-            <center><h4 class="modal-title" id="title">Derails of the deceased</h4></center>
+            <center><h4 class="modal-title" id="title">Details of the deceased</h4></center>
           </div>
           <div class="modal-body">
 
@@ -1041,15 +1041,14 @@
                                   <td><%= @person.gender %></td>
                               </tr>
                               <tr>
-                                  <td>Date of Birth</td>
-                                  <td><%= Date.parse(@person.birthdate.to_s).strftime("%d/%b/%Y") %></td>
+                                  <td>Age</td>
+                                  <td><%= Date.parse(@person.date_of_death.to_s).year - Date.parse(@person.birthdate.to_s).year %> year(s) </td>
                               </tr>
-
                               <tr>
-                                  <td>Date of Death</td>
-                                  <td><%= Date.parse(@person.date_of_death.to_s).strftime("%d/%b/%Y") %></td>
-                              </tr>
+                                <td >Place of death</td>
 
+                                <td ><%= @place_of_death %></td>
+                              </tr>
                               <% if @person.died_while_pregnant=="Yes" %>
                               <tr>
                                   <td>Death occured while pregnant</td>
@@ -1139,6 +1138,9 @@
             $("#ok").attr("onclick", "window.location.href='/'");
         }
 
+    }else{
+            $("#shield").show();
+            $("#deceaseddeatails").show();      
     }
 
     var selects = document.getElementsByTagName("select");
@@ -1434,7 +1436,7 @@
         $("#"+id).select2({
                 tags: data,
                 tokenSeparators: []
-        }).select2('val', value);
+        });
     }
     $(document).ready(function(){
 
@@ -1861,7 +1863,6 @@
                   $("#main-content").scrollTop();
              },2000);
 
-            $("#shield").show();
-            $("#deceaseddeatails").show();
+
         });
 </script>

@@ -17,16 +17,36 @@
       color :#344351;
 
   }
+    
+  #shield{
+      position: absolute;
+      width: 100% !important;
+      height: 100% !important;
+      left: 0px;
+      top: 0px;
+      background: rgba(128,128,128,0.35);
+      z-index: 1050;
+      display: none;
+  }
+  .messagebox{
+            position: absolute;
+            top: 15%;
+            left: 35%;
+            display: none;
+
+    }
 </style>
 <div style="background: white">
   <div style="height: 535px; overflow: auto;padding: 0px; margin:0px;">
-
+    <div class="col-md-12"><h2>Dispatch report</h2></div>
+    <span class="danger pull-right" style="margin-right:2%">hint: <i style="color:red">click the counts to list the barcodes</i></span>
     <table id="records_table" class="summary">
         <thead>
           <tr>
             <th>
               #
             </th>
+            <th>District</th>
             <th>
               No. of Records Sent
             </th>
@@ -44,12 +64,15 @@
                 <%= @i%>
               </td>
               <td>
+                <%= dispatch.district_code.present? ? District.find(dispatch.district_code).name : 'Lilongwe'%>
+              </td>
+              <td onclick="loadBarcode('<%= dispatch.id %>','Sent', '<%= dispatch.dispatch %>')">
                 <%= dispatch.dispatch.count%>
               </td>
-              <td>
+              <td onclick ="loadBarcode('<%= dispatch.id %>','Received' ,'<%= dispatch.received %>')">
                 <%= dispatch.received.count%>
               </td>
-              <td>
+              <td onclick ="loadBarcode('<%= dispatch.id %>','Missing', '<%= dispatch.dispatch - dispatch.received %>')">
                 <%= dispatch.dispatch.count - dispatch.received.count%>
               </td>
               <td>
@@ -63,4 +86,47 @@
 <br/>   
 
 <button class="btn btn-primary pull-left" onclick="window.location='/'">Back</button>
+<div id="shield">
+    <div id="barcodes" class="messagebox">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header btn-primary" >
+              <button type="button" class="close"  onclick="$('#shield').css('display','none');$('#number_field').css('display','none')">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span>
+              </button>
+              <center><h4 class="modal-title"><span id="category"></span> Barcodes</h4></center>
+            </div>
+            <div class="modal-body">
 
+              <div class="row">
+                <div class="col-lg-12" id="modal-body" style="text-align:center;height:300px;overflow-y:scroll">
+                    Field is for numbers only
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" onclick="$('#shield').css('display','none');$('#barcodes').css('display', 'none')" > Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+<script type="text/javascript">
+    var sent = "<%= "
+    function loadBarcode(id, category,barcodes){
+         $("#shield").show();
+         $("#barcodes").show();
+         $("#modal-body").empty();
+         var body = $("#modal-body")
+         var barcodes = eval(barcodes);
+         for(var i = 0 ; i < barcodes.length ; i++){
+            var span = document.createElement("span");
+            span.innerHTML = barcodes[i];
+            body.append(span);
+
+            var br = document.createElement("br");
+            body.append(br);
+         }
+    }
+</script>
