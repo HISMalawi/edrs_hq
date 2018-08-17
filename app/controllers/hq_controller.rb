@@ -164,20 +164,38 @@ class HqController < ApplicationController
   end
 
   def cause_of_death_list
-      causes = []
-      condition_a = Person.by_condition_a.keys
-      condition_b = Person.by_condition_b.keys
-      condition_c = Person.by_condition_c.keys
-      condition_d = Person.by_condition_d.keys
-      causes = condition_a + condition_b + condition_c + condition_d
-      render :text => causes.uniq.sort
-      
+      query = "SELECT cause_of_death1 as cause_condition FROM people WHERE cause_of_death1 LIKE '%#{params[:q]}%' 
+               UNION 
+               SELECT cause_of_death2 as cause_condition FROM people WHERE cause_of_death2 LIKE '%#{params[:q]}%'
+               UNION 
+               SELECT cause_of_death3 as cause_condition FROM people WHERE cause_of_death3 LIKE '%#{params[:q]}%'
+               UNION 
+               SELECT cause_of_death4 as cause_condition FROM people WHERE cause_of_death4 LIKE '%#{params[:q]}%'
+               ORDER BY cause_condition  LIMIT 15 OFFSET #{params[:page].to_i * 15}";
+
+      connection = ActiveRecord::Base.connection
+      data = connection.select_all(query).as_json
+      connection = ActiveRecord::Base.connection
+      data = connection.select_all(query).as_json
+      results = []
+      id = 1
+      results << {"id"=> "#{params[:q]}", "text" => "#{params[:q]}"}
+      data.each do |d|
+        results << {"id" => d['cause_condition'], "text" => d['cause_condition']}
+      end
+
+      a = {"results" => results,"pagination" => {"more" => false}}
+      render :text => a.to_json
   end
 
   def cause_of_death
     @title = "Cause of death"
     @person = Person.find(params[:person_id])
     @place_of_death = place_of_death(@person)
+  end
+
+  def search_condition
+    
   end
 
   def save_cause_of_death

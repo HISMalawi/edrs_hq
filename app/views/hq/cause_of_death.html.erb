@@ -714,13 +714,21 @@
               <div class="form-group">
                   <table id="other_significant_cause_field" class="col-md-12">
                     <tr>
-                      <th>Cause</th>
-                      <th>ICD-10 Code</th>
-                      <th>Remove</th>
+                      <th style="color:#000000">Cause</th>
+                      <th style="color:#000000">ICD-10 Code</th>
+                      <th style="color:#000000">Remove</th>
                     </tr>
                     <tr id="other_significant_cause_div_1">
                        <td class="col-md-6">
+
+                        <select name="other_significant_cause[1]" 
+                                id="other_significant_cause_1"
+                                class="form-control select2" style="width:100%">
+                                <option></option>
+                        </select>
+                        <% if false %>
                            <input name="other_significant_cause[1]" id="other_significant_cause_1" class="form-control select2" style="width:100%"/>
+                        <%end%>
                         </td>
                         <td class="col-md-4">
                           <input name="other_significant_cause_icd_code[1]" id="other_significant_cause_icd_code_1" class="form-control select2" style="width:100%" onfocus="activateICDValidate(this)" />
@@ -919,22 +927,27 @@
                 </div>
          </fieldset>
         <div onclick="hit('manner_of_death_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
-                  <div onclick="setUnderlyingCause();causeOfDeathTable();validateCertifier('radio5','icd_10','icd_10_radio'); " class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
+                  <div onclick="setUnderlyingCause();causeOfDeathTable();otherCauseOfDeathTable();validateCertifier('radio5','icd_10','icd_10_radio'); " class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
               </div>
 
            <div id="icd_10" class="container custom" style="display: none;" disabled="true">
                       <table style="width:100%; margin:auto; margin-bottom: 3%" >
                             <thead>
                               <tr>
-                                  <th colspan="2">Person's sex,  other details and cause of death</th>
+                                  <th colspan="2" style="background: #6281a7; color:#FFFFFF;text-align:center">Details of the deceased</th>
                               </tr>
                               <tr>
                                   <td>Sex</td>
                                   <td><%= @person.gender %></td>
                               </tr>
                               <tr>
-                                  <td>Date of Birth</td>
-                                  <td><%= Date.parse(@person.birthdate.to_s).strftime("%d/%b/%Y") %></td>
+                                  <td>Age</td>
+                                  <td><%= Date.parse(@person.date_of_death.to_s).year - Date.parse(@person.birthdate.to_s).year %> years</td>
+                              </tr>
+                              <tr>
+                                <td >Place of death</td>
+
+                                <td ><%= @place_of_death %></td>
                               </tr>
                               <% if @person.died_while_pregnant=="Yes" %>
                               <tr>
@@ -945,9 +958,13 @@
 
                              </thead>
                       </table>
+                      <h5><b>Part I :</b> Causes of Death</h5>
                       <table id="cause_of_death_table" style="width:100%; margin:auto; margin-bottom: 3%">
                         
                       </table>
+                      <h5><b>Part II:</b> Other significant causes of death</h5>
+                      <table id="other_cause_of_death_table" style="width:100%; margin:auto; margin-bottom: 3%"></table>
+
                 <div class="form-group">
                   <label for="icd_10_code">Tentantive starting point ICD Code</label>
                   <input name="icd_10_code" id="icd_10_code" value="<%= @person.icd_10_code%>" class="form-control" type="text"  onkeyup="checkIfCodeIsSame('icd_10_code','reason_tentative_differ_from_underlying')"/>
@@ -1410,8 +1427,8 @@
           document.getElementById('frm').submit()
     }
 
-    $.getJSON("/cause_of_death_list",function(data){
-
+    //$.getJSON("/cause_of_death_list",function(data){
+            var data = []
             for(var i =  1 ; i <=5 ; i++){
                 switch(i){
                      case 1:
@@ -1431,12 +1448,32 @@
                         break;
                 }
             }
-    });
+   // });
     function makeselect2(id , value,data){
-        $("#"+id).select2({
-                tags: data,
+       /* $("#"+id).select2({
+                tags: ["1","2","3"],
                 tokenSeparators: []
-        });
+        });*/
+
+        $("#"+id).select2({
+          allowClear: true,
+          placeholder: 'Enter Condition',
+          ajax: {
+              url: '/cause_of_death_list',
+              dataType: 'json',
+              data: function (params) {
+                var query = {
+                  q: params.term,
+                  page: params.page || 1
+                }
+
+                // Query parameters will be ?search=[term]&type=public
+                return query;
+              }
+              // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+            }
+        })
+
     }
     $(document).ready(function(){
 
@@ -1614,9 +1651,11 @@
         var td =  document.createElement("td");
         tr.appendChild(td);
 
-        var input = document.createElement("input");
+        //var input = document.createElement("input");
+        var input = document.createElement("select");
         input.name = "other_significant_cause["+div_number+"]";
         input.id = "other_significant_cause_"+div_number;
+        input.style.width = "100%";
         input.className ="form-control"
         td.appendChild(input);
 
@@ -1626,7 +1665,7 @@
         var input = document.createElement("input");
         input.name = "other_significant_cause_icd_code["+div_number+"]";
         input.className ="form-control"
-        input.id = "icd_10_"+div_number
+        input.id = "other_significant_cause_icd_code_"+div_number
         input.setAttribute("onfocus","activateICDValidate(this)");
         td.appendChild(input);
 
@@ -1637,6 +1676,8 @@
         i.className ="icon_minus_alt";
         i.setAttribute("onclick","removeElement('other_significant_cause_div_"+div_number+"')");
         td.appendChild(i);
+
+         makeOtherCausesSelect2(div_number)
 
     }
 
@@ -1738,7 +1779,8 @@
                 if (__$('icd_10_'+i)) {
                   var tentantive_code = __$('icd_10_'+i).value
                   if (tentantive_code.length != 0) {
-                     __$("icd_10_code").value  = tentantive_code
+                     __$("icd_10_code").value  = tentantive_code;
+                     __$("final_icd_10_code").value = tentantive_code;
                      tentantive_icd_code = tentantive_code
                   }else if (tentantive_code.length == 0){
                      break;
@@ -1781,18 +1823,26 @@
             table.appendChild(tr);
 
             var td = document.createElement("th");
+            td.style.backgroundColor = "#6281a7"
+            td.style.color = "#FFFFFF";
             td.innerHTML = "#"
             tr.appendChild(td);
 
             var td = document.createElement("th");
+            td.style.backgroundColor = "#6281a7"
+            td.style.color = "#FFFFFF";
             td.innerHTML = "Condition"
             tr.appendChild(td);
 
             var td = document.createElement("th");
+            td.style.backgroundColor = "#6281a7"
+            td.style.color = "#FFFFFF";
             td.innerHTML = "Time interval"
             tr.appendChild(td);
 
             var td = document.createElement("th");
+            td.style.backgroundColor = "#6281a7"
+            td.style.color = "#FFFFFF";
             td.innerHTML = "ICD Code"
             tr.appendChild(td);
 
@@ -1820,6 +1870,50 @@
                 td.innerHTML = __$('icd_10_'+i).value
                 tr.appendChild(td);
               }
+            }
+        }
+
+        function otherCauseOfDeathTable(){
+            var table = __$("other_cause_of_death_table");
+            
+            table.innerHTML = "";
+            var tr = document.createElement("tr");
+            table.appendChild(tr);
+
+            var td = document.createElement("th");
+            td.style.backgroundColor = "#6281a7"
+            td.style.color = "#FFFFFF";
+            td.innerHTML = "#"
+            tr.appendChild(td);
+
+            var td = document.createElement("th");
+            td.style.backgroundColor = "#6281a7"
+            td.style.color = "#FFFFFF";
+            td.innerHTML = "Condition"
+            tr.appendChild(td);
+
+            var td = document.createElement("th");
+            td.style.backgroundColor = "#6281a7"
+            td.style.color = "#FFFFFF";
+            td.innerHTML = "ICD Code"
+            tr.appendChild(td);
+
+            for(var i = 1 ; i <= div_number; i++){
+                var tr = document.createElement("tr");
+                table.appendChild(tr);
+
+                var td = document.createElement("td");
+                td.innerHTML = i;
+                tr.appendChild(td);
+
+                var td = document.createElement("td");
+                td.innerHTML = __$('other_significant_cause_'+i).value
+                tr.appendChild(td);
+
+                var td = document.createElement("td");
+                td.innerHTML = __$('other_significant_cause_icd_code_'+i).value
+                tr.appendChild(td);
+              
             }
         }
 
@@ -1862,7 +1956,29 @@
              setInterval(function(){
                   $("#main-content").scrollTop();
              },2000);
-
+             makeOtherCausesSelect2(1)
 
         });
+
+        function makeOtherCausesSelect2(number){
+          
+            $("#"+"other_significant_cause_"+number).select2({
+                allowClear: true,
+                placeholder: 'Enter Condition',
+                ajax: {
+                    url: '/cause_of_death_list',
+                    dataType: 'json',
+                    data: function (params) {
+                      var query = {
+                        q: params.term,
+                        page: params.page || 1
+                      }
+
+                      // Query parameters will be ?search=[term]&type=public
+                      return query;
+                    }
+                    // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+                  }
+              })
+        }
 </script>
