@@ -1319,9 +1319,11 @@
            }
            hitNext(next_radio,next_div,radio_group);
     }
+
     function setRequired(element,pos){
           cause_of_death_fields[element.name] = true;
     }
+
     function checkIfNumber(element){
         var reg = /^\d+$/;
         var value = element.value;
@@ -1336,6 +1338,7 @@
         }
         element.style.border ="1px solid blue;"
     }
+    
     var interval = setInterval("checkConditions()", 200);
 
     /*Certifier validations*/

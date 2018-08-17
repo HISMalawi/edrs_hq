@@ -73,7 +73,7 @@
       z-index: 4000
   }
 
-  #final_result_modal,#edit_code{
+  #final_result_modal,#edit_code,#icd_code_modal{
       position : absolute;
       left: 30%;
       top: 13.5%;
@@ -273,7 +273,7 @@
                           <td>
                               <input type="radio" name="icd_10_1_decision" id="icd_10_1_correct" onclick="activateCode(this,1);addResult(this,1)">
                           </td>
-                          <td><input type="" name="icd_10_1_review" id="icd_10_1_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(1)"></td>
+                          <td><input type="" name="icd_10_1_review" id="icd_10_1_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(1)" onblur="validateICDCode(this)"></td>
                           <td>
                               <input type="" name="reason_icd_10_1_changed" id="reason_icd_10_1_changed" class="form-control" disabled="true">
                           </td>
@@ -291,7 +291,7 @@
                           <td>
                               <input type="radio" name="icd_10_2_decision" id="icd_10_2_correct" onclick="activateCode(this,2);addResult(this,2)">
                           </td>
-                          <td><input type="" name="icd_10_2_review" id="icd_10_2_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(2)"></td>
+                          <td><input type="" name="icd_10_2_review" id="icd_10_2_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(2)" onblur="validateICDCode(this)"></td>
                           <td>
                               <input type="" name="reason_icd_10_2_changed" id="reason_icd_10_2_changed" class="form-control" disabled="true">
                           </td>
@@ -310,7 +310,7 @@
                           <td>
                               <input type="radio" name="icd_10_3_decision" id="icd_10_3_correct" onclick="activateCode(this,3);addResult(this,3)">
                           </td>
-                          <td><input type="" name="icd_10_3_review" id="icd_10_3_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(3)"></td>
+                          <td><input type="" name="icd_10_3_review" id="icd_10_3_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(3)" onblur="validateICDCode(this)"></td>
                           <td>
                               <input type="" name="reason_icd_10_3_changed" id="reason_icd_10_3_changed" class="form-control" disabled="true">
                           </td>
@@ -329,7 +329,7 @@
                           <td>
                               <input type="radio" name="icd_10_4_decision" id="icd_10_4_correct" onclick="activateCode(this,4);addResult(this,4)">
                           </td>
-                          <td><input type="" name="icd_10_4_review" id="icd_10_4_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(4)"></td>
+                          <td><input type="" name="icd_10_4_review" id="icd_10_4_reviewed" class="form-control" disabled="true" onkeyup="fillFinal(4)" onblur="validateICDCode(this)"></td>
                           <td>
                               <input type="" name="reason_icd_10_4_changed" id="reason_icd_10_4_changed" class="form-control" disabled="true">
                           </td>
@@ -352,7 +352,7 @@
                                   <input type="radio" name="icd_10_<%= key%>i_decision" id="icd_10_<%= key%>i_correct" onclick="activateCode(this,'<%= key%>i');addResult(this,'<%= key%>i')">
                               </td>
                               <td>
-                                  <input type="" name="icd_10_<%= key%>i_review" id="icd_10_<%= key%>i_reviewed" class="form-control" disabled="true" onkeyup="fillFinal('<%= key%>i')">
+                                  <input type="" name="icd_10_<%= key%>i_review" id="icd_10_<%= key%>i_reviewed" class="form-control" disabled="true" onkeyup="fillFinal('<%= key%>i')" onblur="validateICDCode(this)">
                               </td>
                               <td>
                                   <input type="" name="reason_icd_10_<%= key%>i_changed" id="reason_icd_10_<%= key%>i_changed" class="form-control" disabled="true">
@@ -380,7 +380,7 @@
                               <input type="radio" name="tentative_code" id="tentative_code_reviewed_correct" onclick="addFinalResults(this)">
                           </td>
                           <td>
-                              <input type="" name="tentative_code_reviewed" id="tentative_code_reviewed" class="form-control" disabled="true" onkeyup="fillFinalCodes(this,'tentative_code')">
+                              <input type="" name="tentative_code_reviewed" id="tentative_code_reviewed" class="form-control" disabled="true" onkeyup="fillFinalCodes(this,'tentative_code')" onblur="validateICDCode(this)">
                           </td>
                           <td>
                               <input type="" name="reason_tentative_code_changed" id="reason_tentative_code_changed" class="form-control" disabled="true" onkeyup="fillFinalCodes(this)" >
@@ -398,7 +398,7 @@
                               <input type="radio" name="final_code" id="final_code_reviewed_correct" onclick="addFinalResults(this)">
                           </td>
                           <td>
-                              <input type="" name="final_code_reviewed" id="final_code_reviewed" class="form-control" disabled="true" onkeyup="fillFinalCodes(this,'final_code')">                             
+                              <input type="" name="final_code_reviewed" id="final_code_reviewed" class="form-control" disabled="true" onkeyup="fillFinalCodes(this,'final_code')" onblur="validateICDCode(this)">                             
                           </td>
                           <td>
                               <input type="" name="reason_final_code_changed" id="reason_final_code_changed" class="form-control" disabled="true" onkeyup="fillFinalCodes(this)" >
@@ -470,6 +470,30 @@
   </div>
   <%end%>
 </div>
+
+<div class="" id="icd_code_modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header btn-primary">
+          <center>
+              <h4 class="modal-title" id="icd_code_modal_title">Invalid ICD Code</h4>
+          </center>
+        </div>
+        <div class="modal-body">
+
+          <div class="row">
+            <div class="col-lg-12">
+                Please verify the ICD Code
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-sm btn-default pull-left" onclick="__$('icd_code_modal').style.display = 'none'" > Close </button>
+              <button type="button" class="btn btn-sm btn-primary pull-right" id="verify_code" > OK </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 <script type="text/javascript">
 
 	  function __$(id){
@@ -618,5 +642,41 @@
 
   function finalReview(){
      window.location = "/finalizereview/<%= @sample.id %>"
+  }
+
+  function validateICDCode(element){
+      if (!validateICDParts(element.value)) {
+          $("#icd_code_modal").show();
+          $("#verify_code").attr("onclick", "$('#icd_code_modal').hide();$('#"+element.id+"').focus()")
+      }else{
+
+      }
+  }
+
+  function validateICDParts(value){
+            if (value.replace(".","").length > 4) {
+                return false;
+            }
+            if (value.charAt(0).length === 1 && value.charAt(0).match(/[a-z]/i)) {
+
+            }else{
+                return false;
+            }
+            if(/[0-9]{2}/.test(value.substring(1,3))) {
+
+            }else{
+                return false;
+            }
+            if (value.charAt(3).length == 1) {
+              if(value.charAt(3) == "."){
+
+              }else{
+                 return false;
+              }
+            }
+            if (value.substr(4,this.length).length > 0) {
+
+            }
+            return true;
   }
 </script>
