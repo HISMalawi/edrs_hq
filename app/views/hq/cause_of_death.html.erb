@@ -233,6 +233,10 @@
     .icon_minus_alt{
         margin-top: 20%;
     }
+    .select2-selection__clear {
+      font-size: 2.5em;
+      font-weight: normal;
+    }
 </style>
  <link rel="stylesheet" href="/select2/select2.min.css">
 
@@ -1234,8 +1238,8 @@
         if(manner_keys.indexOf("manner_of_death") < 0){
               //console.log( manner_keys);
                 showMessage("Manner of death validatons!",
-              "Please select ("+(manner_fields["manner_of_death"]? manner_fields["manner_of_death"]: "Manner of death" )+")","");
-                return;
+              "Manner of death not selected for ("+(manner_fields["manner_of_death"]? manner_fields["manner_of_death"]: "Manner of death" )+")","");
+                //return;
         }
         hitNext(next_radio,next_div,radio_group)
     }
@@ -1278,6 +1282,8 @@
         element.setAttribute("style",(element.getAttribute("style")? element.getAttribute("style")+";1px solid gray" : "1px solid gray"));
     }
 
+    var check_primary_fields = {}
+
     function checkPrimaryCause(next_radio,next_div,radio_group){
           if(__$("cause_of_death1").value.length == 0){
             showValidationMessage("Field empty !","Please fill the field primary cause of death",__$("cause_of_death1"));
@@ -1296,12 +1302,15 @@
                                     "interval_unit" : "Interval Unit "
                   }
                   var fields = ["cause_of_death","icd_10_","onset_death_interval","interval_unit"];
-
+                  var condition_map = {"1": "a", "2" : "b" , "3": "c" , "4":"d"}
                   for(var j = 0 ; j < fields.length ; j++){
                     if(__$(fields[j]+pos).value.length == 0){
                       var field = __$(fields[j]+pos);
-                      if(field){
-                        showValidationMessage("Field empty !","Please fill the field ("+fields_map[fields[j]]+" "+pos+") ",field);
+                      if(field && !check_primary_fields[fields[j]]){
+                        if (["onset_death_interval","interval_unit"].indexOf(fields[j]) >= 0) {
+                            check_primary_fields[fields[j]] = true
+                        }
+                        showValidationMessage("Field empty !","Please fill the field ("+fields_map[fields[j]]+" "+condition_map[pos]+") ",null);
                         return;
                       }
                       break;
@@ -1925,19 +1934,24 @@
               }
         }
 
+        var time_checked = {}
+
         function checkIfTimeEntered(position){
               var interval = __$("onset_death_interval"+position).value
               var condition_map = {"1": "a", "2" : "b" , "3": "c" , "4":"d"}
-              if (interval.length == 0) {
-                     showValidationMessage("Interval", "Please enter Interval for condition ("+condition_map[position] +")",__$("onset_death_interval"+position))
+              if (interval.length == 0 && !time_checked[position]) {
+                     time_checked[position] = true
+                     showValidationMessage("Interval", "Please enter Interval for condition ("+condition_map[position] +")",null)
               }
         }
 
+        var units_checked = {}
         function checkIfUnitEntered(position){
               var unit = __$("interval_unit"+position).value
               var condition_map = {"1": "a", "2" : "b" , "3": "c" , "4":"d"}
-              if (unit.length == 0) {
-                     showValidationMessage("Interval", "Please enter Unit Interval for condition ("+condition_map[position] +")",__$("interval_unit"+position))
+              if (unit.length == 0 && !units_checked[position]) {
+                     units_checked[position] = true
+                     showValidationMessage("Interval", "Please enter Unit Interval for condition ("+condition_map[position] +")",null);
               }
         }
 
