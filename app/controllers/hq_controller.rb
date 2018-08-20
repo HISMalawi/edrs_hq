@@ -188,6 +188,35 @@ class HqController < ApplicationController
       render :text => a.to_json
   end
 
+  def illdefined
+    # Check if Ill defined
+    code = ICDCode.by_code_and_category.key([params[:code],"Ill defined Codes"]).first
+    if code.present?
+      render :text => {response:true, description: code.description, category: code.category}.to_json and return
+    end  
+
+    #Check unlikely to cause death
+    code = ICDCode.by_code_and_category.key([params[:code],"Unlikely to Cause Death"]).first
+    if code.present?
+      render :text => {response:true, description: code.description, category: code.category}.to_json and return
+    end 
+
+    #Gender Specific
+    gender = params[:gender]
+    if gender == "Male"
+        code = ICDCode.by_code_and_category.key([params[:code],"Codes for female"]).first
+        if code.present?
+          render :text => {response:true, description: code.description, category: "Code occur in female"}.to_json and return
+        end
+    elsif gender == "Female"
+        code = ICDCode.by_code_and_category.key([params[:code],"Codes for male"]).first
+        if code.present?
+          render :text => {response:true, description: code.description, category:"Code occur in male"}.to_json and return
+        end
+    end
+    render :text => {response: false}.to_json and return
+  end
+
   def cause_of_death
     @title = "Cause of death"
     @person = Person.find(params[:person_id])

@@ -966,7 +966,7 @@
                       <table id="cause_of_death_table" style="width:100%; margin:auto; margin-bottom: 3%">
                         
                       </table>
-                      <h5><b>Part II:</b> Other significant causes of death</h5>
+                      <h5 id="part_2"><b>Part II:</b> Other significant causes of death</h5>
                       <table id="other_cause_of_death_table" style="width:100%; margin:auto; margin-bottom: 3%"></table>
 
                 <div class="form-group">
@@ -1157,6 +1157,9 @@
             $("#validationtitle").html("Death occured outside hospital");
             $("#validationmessage").html("The person died out side the hospital");
             $("#ok").attr("onclick", "window.location.href='/'");
+        }else{
+            $("#shield").show();
+            $("#deceaseddeatails").show(); 
         }
 
     }else{
@@ -1720,10 +1723,17 @@
       function validateIDC10(element){
               ///var icd_10_regex = /[A-TV-Z][0-9][A-Z0-9](\.?[A-Z0-9]{0,4})?/
               var value = element.value;
+
+
               if(value.length == 0){
                   return;
               }
               if(validateICDParts(value)){
+                  $.getJSON("/illdefined",{code:value ,gender:"<%=@person.gender%>"},function(data){
+                      if (data.response) {
+                        showValidationMessage(data.category, data.description,null)
+                      }
+                  });
                   element.style.borderColor = "#b6b5b5";
               }else{
                   showValidationMessage("Code Validation", "Invade ICD Code",element)
@@ -1731,6 +1741,7 @@
       }
 
       function validateICDParts(value){
+
             if (value.replace(".","").length > 4) {
                 return false;
             }
@@ -1886,6 +1897,18 @@
         }
 
         function otherCauseOfDeathTable(){
+            if (!__$('other_significant_cause_1')) {
+                $("#part_2").hide();
+                return;
+            }
+
+            if (__$('other_significant_cause_1').value.length == 0) {
+               $("#part_2").hide();
+              return;
+            }
+
+             $("#part_2").show();
+
             var table = __$("other_cause_of_death_table");
             
             table.innerHTML = "";

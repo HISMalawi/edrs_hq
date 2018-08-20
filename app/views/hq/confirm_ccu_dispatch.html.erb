@@ -1,7 +1,7 @@
 
 <div style="background: white">
   <div style="height: 600px; overflow: auto;padding: 0px; margin:0px;">
-  	<div class="col-md-12" style="text-align:center"><h3><%= @ccu_dispatch.district_code.present? ? District.find(dispatch.district_code).name : 'Lilongwe'%> : <%= @ccu_dispatch.created_at %> </h3></div>
+  	<div class="col-md-12" style="text-align:center"><h3>CCU Dispatch for <%= @ccu_dispatch.district_code.present? ? District.find(dispatch.district_code).name : 'Lilongwe'%> : <%= @ccu_dispatch.created_at.to_time.strftime("%Y-%m-%d %H:%M:%S") %> </h3></div>
   	<div style="width:90%; margin:auto;"><h3>Scan Barcorde</h3> <br/><input type="" name="" class="form-control" id="barcode"></div>
   	<div style="width:100%;height: 420px ;overflow-y: scroll">
 	  	<div style="width:45%;float:left;margin-left:2%;background:#ffffff">

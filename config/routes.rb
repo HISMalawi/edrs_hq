@@ -122,6 +122,7 @@ Rails.application.routes.draw do
   get "/hq/sequencing"
   get "/save_cause_of_death" => "hq#save_cause_of_death"
   get "/cause_of_death_list" => "hq#cause_of_death_list"
+  get "/illdefined" => "hq#illdefined"  
   get "/nocause_available/:id" => "hq#nocause_available"
   get "/sampled_cases" => "hq#sampled_cases"
   get "/save_proficiency_comment" => "hq#save_proficiency_comment"
