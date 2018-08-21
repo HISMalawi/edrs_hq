@@ -7,13 +7,6 @@ class Country < CouchRest::Model::Base
 	design do
 	    view :by__id
 	    view :by_name
-	    view :by_country,
-	    	 :map => "function(doc) {
-                  if ((doc['type'] == 'Country')) {
-                    emit(doc['name'], 1);
-                  }
-                }"
-	    view :by_phonecode
 	    view :by_updated_at
 	end
 end

@@ -21,29 +21,18 @@ class PersonRecordStatus < CouchRest::Model::Base
 	design do 
 		view :by_status
 		view :by_distrit_code
-		view :by_voided
 		view :by_creator
 		view :by_created_at
 		view :by_updated_at
 		view :by_person_record_id
-		view :by_prev_status
-		view :by_prev_status_and_status
 		view :by_registration_type_and_status
 		view :by_registration_type_and_district_code_and_status
-		view :by_district_code_and_status_and_created_at
 		view :by_person_record_id_and_status
 	    view :by_person_recent_status,
 				 :map => "function(doc) {
 	                  if (doc['type'] == 'PersonRecordStatus' && doc['voided'] == false) {
 
 	                    	emit(doc['person_record_id'], 1);
-	                  }
-	                }"
-	    view :by_person_record_id_recent_status,
-				 :map => "function(doc) {
-	                  if (doc['type'] == 'PersonRecordStatus' && doc['voided'] == false) {
-
-	                    	emit([doc['person_record_id'],doc['status']], 1);
 	                  }
 	                }"
 
@@ -63,12 +52,6 @@ class PersonRecordStatus < CouchRest::Model::Base
 	                  }
 	                }"
 	                
-	    view :by_marked_for_approval,
-	    		:map =>"function(doc){
-		    			   if (doc['type'] == 'PersonRecordStatus' && doc['voided'] == false && doc['status']=='MARKED APPROVAL'){
-		                    	emit(doc['status'], 1);
-		                  	}
-	    			   }"
 	    view :by_marked_for_hq_approval,
 	    		:map => "function(doc){
 	    					 if (doc['type'] == 'PersonRecordStatus' && doc['voided'] == false && doc['status']=='MARKED HQ APPROVAL'){
@@ -88,12 +71,7 @@ class PersonRecordStatus < CouchRest::Model::Base
 		                    	emit(doc['status'] +'_'+doc['created_at'], 1);
 		                  	}
 	    			   }"
-	    view :by_reprint_date,
-	    	  :map =>"function(doc){
-		    			   if (doc['type'] == 'PersonRecordStatus' && doc['voided'] == false && doc['reprint']==true){
-		                    	emit(doc['created_at'], 1);
-		                  	}
-	    			   }"		               
+		               
 	    filter :district_sync, "function(doc,req) {return req.query.district_code == doc.district_code}"
 	    filter :facility_sync, "function(doc,req) {return req.query.facility_code == doc.facility_code}"
 	    filter :stats_sync, "function(doc,req) {return doc.district_code != null}"

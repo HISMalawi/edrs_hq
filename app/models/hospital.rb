@@ -20,26 +20,6 @@ class Hospital < CouchRest::Model::Base
 
   design do
     view :by_updated_at
-    view :by_district,
-         :map => "function(doc) {
-                  if ((doc['type'] == 'Hospital')) {
-                    emit(doc['district'], 1);
-                  }
-                }"
-
-    view :by_region,
-         :map => "function(doc) {
-                  if ((doc['type'] == 'Hospital')) {
-                    emit(doc['region'], 1);
-                  }
-                }"
-
-    view :by_facility,
-         :map => "function(doc) {
-                  if ((doc['type'] == 'Hospital')) {
-                    emit(doc['_id'], 1);
-                  }
-                }"
   end
 
 end

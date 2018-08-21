@@ -743,7 +743,7 @@ class HqController < ApplicationController
 
   def countries
     countries = Country.all
-    malawi = Country.by_country.key("Malawi").last
+    malawi = Country.by_name.key("Malawi").last
     list = []
     countries.each do |n|
       if n.name =="Unknown"

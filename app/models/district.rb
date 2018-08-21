@@ -18,7 +18,6 @@ class District < CouchRest::Model::Base
   design do
       view :by__id
       view :by_name
-      view :by_region
       view :by_updated_at
   end
 

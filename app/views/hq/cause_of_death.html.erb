@@ -972,7 +972,7 @@
                 <div class="form-group">
                   <label for="icd_10_code">Tentantive starting point ICD Code</label>
                   <input name="icd_10_code" id="icd_10_code" value="<%= @person.icd_10_code%>" class="form-control" type="text"  onkeyup="checkIfCodeIsSame('icd_10_code','reason_tentative_differ_from_underlying')"/>
-                  <label for="reason_tentative_differ_from_underlying">Reason Codes is different</label>
+                  <label for="reason_tentative_differ_from_underlying">Rule used for the tentavive code</label>
                     <input name="reason_tentative_differ_from_underlying" id="reason_tentative_differ_from_underlying" value="<%= @person.icd_10_code%>" class="form-control" type="text" disabled="disabled"/>
               </div>
 

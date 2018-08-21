@@ -6,7 +6,6 @@ class Nationality < CouchRest::Model::Base
   design do
     view :by__id
     view :by_nationality
-    view :by_updated_at
   end
 
 end

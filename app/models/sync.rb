@@ -10,21 +10,8 @@ class Sync < CouchRest::Model::Base
 	design do
 		view :by__id
 		view :by_person_id
-		view :by_sync_status
-		view :by_district_code
-		view :by_facility_code
 		view :by_created_at
 		view :by_updated_at
-		view :by_created_at_and_dc_sync_status
-		view :by_created_at_and_hq_sync_status
-		view :by_district_code_and_hq_sync_status
-		view :by_facility_code_and_dc_sync_status
-		view :by_dc_unsynced,
-			   :map => "function(doc) {
-	                  if (doc['type'] == 'Sync' && doc['dc_sync_status'] == false) {
-	                    	emit(doc['record_id'], 1);
-	                  }
-	                }"
 	    view :by_hq_unsynced,
 			   :map => "function(doc) {
 	                  if (doc['type'] == 'Sync' && doc['hq_sync_status'] == false) {
