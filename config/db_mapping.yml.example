@@ -8,7 +8,7 @@ PersonRecordStatus|person_record_status:
     _id: person_record_status_id
 Village|village:
     _id: village_id
-TradionalAuthority|traditional_authority:
+TraditionalAuthority|traditional_authority:
     _id: traditional_authority_id
 District|district:
     _id: district_id
