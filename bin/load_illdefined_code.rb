@@ -1,4 +1,4 @@
-files = ["List of Ill defined Codes.csv","Unlikely to Cause Death.csv"]
+files = ["List of Ill defined Codes.csv","Unlikely to Cause Death.csv","Codes occur in female.csv","Codes occur in male.csv"]
 files.each do |file|
 	CSV.foreach("#{Rails.root}/db/#{file}", :headers => true) do |row|
 	  next if row[0].blank?

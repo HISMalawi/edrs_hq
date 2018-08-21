@@ -204,12 +204,12 @@ class HqController < ApplicationController
     #Gender Specific
     gender = params[:gender]
     if gender == "Male"
-        code = ICDCode.by_code_and_category.key([params[:code],"Codes for female"]).first
+        code = ICDCode.by_code_and_category.key([params[:code],"Codes occur in female"]).first
         if code.present?
           render :text => {response:true, description: code.description, category: "Code occur in female"}.to_json and return
         end
     elsif gender == "Female"
-        code = ICDCode.by_code_and_category.key([params[:code],"Codes for male"]).first
+        code = ICDCode.by_code_and_category.key([params[:code],"Codes occur in male"]).first
         if code.present?
           render :text => {response:true, description: code.description, category:"Code occur in male"}.to_json and return
         end
