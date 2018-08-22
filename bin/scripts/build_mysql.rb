@@ -192,8 +192,13 @@ EOF
           else 
             sql_statement += "NULL, "
           end
-        elsif statement[:type] == 'Integer' || statement[:type] == 'TrueClass'
+        elsif statement[:type] == 'Integer'
           sql_statement += "'#{statement[:data]}',"
+        elsif  statement[:type] == 'TrueClass'
+          if statement[:data] == true
+            sql_statement += "1,"
+          end
+          
         elsif statement[:type] == 'Date'
           sql_statement += '"' + "#{statement[:data].to_date.strftime('%Y-%m-%d')}" + '",'
         elsif statement[:type] == 'Time'
