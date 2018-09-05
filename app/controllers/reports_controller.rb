@@ -5,8 +5,8 @@ class ReportsController < ApplicationController
       if has_role( "Edit cause of death")
           @tasks << ['Proficiency report','Reports on  the Proficiency of coders','/proficiency','']
       end
-  		@tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
-	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
+  		#@tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
+	    #@tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
   	else
 	    @tasks << ['By District of Registration and Gender','By District of Registration and Gender','/reports/district_and_gender']
 	    @tasks << ['User audit trail','Report for user audit trail','','']
