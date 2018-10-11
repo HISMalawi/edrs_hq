@@ -1,6 +1,8 @@
 start_date = "2018-06-01"
 end_date = "2018-06-31"
 
+statuses = ["DC ACTIVE","DC COMPLETE","DC INCOMPLETE","DC PENDING","HQ ACTIVE", "HQ COMPLETE"]
+
 def write_csv_header(file, header)
     CSV.open(file, 'w' ) do |exporter|
         exporter << header
@@ -25,6 +27,7 @@ header = [  "First name",
 			"Sex",
 			"Registration Type",
 			"Place of Registration",
+			"Died while place_of_death",
 			"Place of death",
 			"Place of death country",
 			'Place of death district',
@@ -75,9 +78,16 @@ write_csv_header("#{Rails.root}/db/data#{start_date}-#{end_date}.csv", header)
 
 connection = ActiveRecord::Base.connection
 
+=begin
+	
 query = "SELECT count(*) as total FROM person_record_status 
-			WHERE status LIKE '%HQ%' 
+			WHERE status IN('#{statuses.join("','")}')
 			AND DATE_FORMAT(person_record_status.created_at,'%Y-%m-%d') BETWEEN '#{start_date}' AND '#{end_date}' AND voided = 0"
+	
+=end
+
+query = "SELECT count(*) as total FROM person_record_status 
+			WHERE  DATE_FORMAT(person_record_status.created_at,'%Y-%m-%d') BETWEEN '#{start_date}' AND '#{end_date}' AND voided = 0"
 count  = connection.select_all(query).as_json.last['total'] rescue 0
 
 puts count
@@ -87,26 +97,45 @@ pages = count / pagesize
 
 page = 1
 
+id = []
+
 while page <= pages
-	query = "SELECT * FROM person_record_status 
-			WHERE status LIKE '%HQ%' 
+
+=begin
+	
+query = "SELECT * FROM person_record_status 
+			WHERE status IN('#{statuses.join("','")}')
 			AND DATE_FORMAT(person_record_status.created_at,'%Y-%m-%d') BETWEEN '#{start_date}' AND '#{end_date}' AND voided = 0
+			ORDER BY person_record_id
+			LIMIT #{pagesize} OFFSET #{pagesize * (page - 1)} "	
+	
+=end
+	query = "SELECT * FROM person_record_status 
+			WHERE  DATE_FORMAT(person_record_status.created_at,'%Y-%m-%d') BETWEEN '#{start_date}' AND '#{end_date}' AND voided = 0
 			ORDER BY person_record_id
 			LIMIT #{pagesize} OFFSET #{pagesize * (page - 1)} "	
 	data = connection.select_all(query).as_json
 	data.each do |status|
+
 		person = Person.find(status['person_record_id'])
+
+		#next if person.place_of_death != 'Health Facility'
+
+		next if id.include?(person.id)
+		
+		id << status['person_record_id']
 
 		row = [	person.first_name,
 				person.middle_name,
 				person.last_name, 
 				person.birthdate,
-				person.den,
-				person.drn,
+				(person.den rescue ""),
+				(person.drn rescue ""),
 				person.date_of_death,
 				person.gender,
 				person.registration_type,
 				person.place_of_registration,
+				person.died_while_pregnant,
 				person.place_of_death,
 				person.place_of_death_country,
 				person.place_of_death_district,
@@ -162,63 +191,3 @@ while page <= pages
 	page = page + 1
 	
 end
-
-=begin
-fields =[	first_name,
-			middle_name,
-			last_name, 
-			birthdate,
-			c.den,
-			c.drn,
-			date_of_death,
-			gender,
-			people.registration_type,
-			place_of_registration,
-			place_of_death,
-			place_of_death_country,
-			place_of_death_district,
-			hospital_of_death,
-			other_place_of_death,
-			place_of_death_ta,
-			other_place_of_death_ta
-			place_of_death_village,
-			other_place_of_death_village,
-			place_of_death_foreign_state,
-			place_of_death_foreign_district,
-			place_of_death_foreign_village,
-			place_of_death_foreign_hospital,
-			current_country,
-			current_district,
-			current_ta,
-			current_village,
-			current_foreign_state,
-			current_foreign_district,
-			current_foreign_village,
-			home_country,
-			home_district,
-			home_ta,
-			home_village,
-			home_foreign_state,
-			home_foreign_district,
-			home_foreign_village,
-			died_while_pregnant,
-			delayed_registration,
-			court_order,
-			court_order_details,
-			police_report,
-			police_report_details,
-			reason_police_report_not_available,
-			proof_of_death_abroad,
-			person_record_status.status,
-			mother_first_name,
-			mother_middle_name,
-			mother_last_name,
-			mother_nationality_id,
-			mother_nationality,
-			father_first_name,
-			father_middle_name,
-			father_last_name,
-			father_nationality_id,
-			father_nationality]
-
-=end

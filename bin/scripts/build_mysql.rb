@@ -1,12 +1,27 @@
- require 'simple_sql'
+require "rails"
+require 'simple_sql'
 
  sql = "SET FOREIGN_KEY_CHECKS = 0;"
  SimpleSQL.query_exec(sql)
+
+create_query = "CREATE TABLE IF NOT EXISTS documents (
+                    id int(11) NOT NULL AUTO_INCREMENT,
+                    couchdb_id varchar(255) NOT NULL UNIQUE,
+                    group_id varchar(255) DEFAULT NULL,
+                    group_id2 varchar(255) DEFAULT NULL,
+                    date_added datetime DEFAULT NULL,
+                    title TEXT,
+                    content TEXT,
+                    created_at datetime NOT NULL,
+                    updated_at datetime NOT NULL,
+                    PRIMARY KEY (id),
+                    FULLTEXT KEY content (content)
+                  ) ENGINE=MyISAM DEFAULT CHARSET=utf8;"
+  SimpleSQL.query_exec(create_query);
+
  PersonIdentifier.can_assign_den = false
- PersonIdentifier.can_assign_drn = false
- #LoadMysql.load_mysql = false
- @@file_path = "#{Rails.root.to_s}/db/MySQL_data/"
- Dir.mkdir(@@file_path) unless Dir.exist?(@@file_path)
+ @file_path = "#{Rails.root.to_s}/db/MySQL_data/"
+ Dir.mkdir(@file_path) unless Dir.exist?(@file_path)
  @couchdb_files = {
       'Person' => {count: Person.count, name: 'Person doc.', id: 'person_doc', 
         doc_primary_key: 'person_id', table_name: 'people'},
@@ -36,14 +51,9 @@
         id: 'role_doc', doc_primary_key: 'role_id', table_name: 'role'},
 
       'Country' => {count: Country.count, name: 'Country doc.', 
-        id: 'country_doc', doc_primary_key: 'country_id', table_name: 'country'},
-
-      'ICDCode' => {count: ICDCode.count, name: 'ICDCode doc.', 
-        id: 'icd_code_doc', doc_primary_key: 'icd_code_id', table_name: 'icd_codes'}
+        id: 'country_doc', doc_primary_key: 'country_id', table_name: 'country'}
 
 }
-
-
 def create_file(doc_primary_key, doc, table_name)
     #Create insert statments for all documets
     #Ducument path: app/assets/data/MySQL_data/
@@ -95,18 +105,17 @@ EOF
       PRIMARY KEY (`#{doc_primary_key}`)
     ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
 EOF
-
-    if !File.exists?(@@file_path + "#{table_name}.sql")
-
-      file = File.new(@@file_path + "#{table_name}.sql", 'w')
+    
+    if !File.exists?(@file_path + "#{table_name}.sql")
+      file = File.new("#{@file_path}#{table_name}.sql", 'w')
     end
 
     #deleting all file contents
-    File.open(@@file_path + "#{table_name}.sql", 'w') do |f|
+    File.open(@file_path + "#{table_name}.sql", 'w') do |f|
       f.truncate(0)
     end
 
-    File.open(@@file_path + "#{table_name}.sql", 'a') do |f|
+    File.open(@file_path + "#{table_name}.sql", 'a') do |f|
       f.puts person_table
     end
 
@@ -152,7 +161,7 @@ def create_mysql_database(model_name ,table_name,records_per_page,page_number,ta
 
 EOF
 
-      sql_statement += "INSERT INTO #{table_name} (#{table_primary_key}, "
+      sql_statement += "INSERT IGNORE  INTO #{table_name} (#{table_primary_key}, "
     else
         return
     end
@@ -175,7 +184,7 @@ EOF
     end
     sql_statement = ("#{sql_statement[0..-3]}) VALUES ")
 
-    File.open(@@file_path + "#{table_name}.sql", 'a') do |f|
+    File.open(@file_path + "#{table_name}.sql", 'a') do |f|
       f.puts sql_statement
     end
 
@@ -187,18 +196,15 @@ EOF
 
       (statements || []).each do |statement|
         if statement[:data].blank?
-          if statement[:type] == 'TrueClass'
-            sql_statement += "0, "
-          else 
-            sql_statement += "NULL, "
-          end
-        elsif statement[:type] == 'Integer'
+            sql_statement += "'', "
+        elsif statement[:type] == 'Integer' 
           sql_statement += "'#{statement[:data]}',"
-        elsif  statement[:type] == 'TrueClass'
-          if statement[:data] == true
-            sql_statement += "1,"
-          end
-          
+        elsif statement[:type] == 'TrueClass'
+          if statement[:data].to_s =="true"
+              sql_statement += "1, "
+            else
+              sql_statement += "0, "            
+            end
         elsif statement[:type] == 'Date'
           sql_statement += '"' + "#{statement[:data].to_date.strftime('%Y-%m-%d')}" + '",'
         elsif statement[:type] == 'Time'
@@ -215,14 +221,15 @@ EOF
     end
     sql_statement = sql_statement[0..-2] + ";"
 
-    File.open(@@file_path + "#{table_name}.sql", 'a') do |f|
+    File.open(@file_path + "#{table_name}.sql", 'a') do |f|
       f.puts sql_statement
     end
 
     return
 end
 
-def generate_files 
+def generate_files
+ 
   (@couchdb_files || []).each do |doc, data|
       count  = eval(doc).count
       puts count
@@ -234,6 +241,7 @@ def generate_files
         create_mysql_database(doc , data[:table_name],records_per_page,page,data[:doc_primary_key])
         page = page + 1
         current_count = page * records_per_page
+        sleep 0.1
       end
   end
 end
@@ -248,11 +256,11 @@ def load_sql_files
     password = mysql_connection['password']
     host = mysql_connection['host']
 
-    file_path =  Rails.root.to_s + '/db/MySQL_data/'
+    @file_path =  Rails.root.to_s + '/db/MySQL_data/'
 
-    @documents = Dir.foreach(file_path) do |file|
+    documents = Dir.foreach(@file_path) do |file|
         if file.match(".sql")
-            `nice mysql -u#{user} #{database} -p#{password} -h #{host} < #{file_path}#{file}`
+            `nice mysql -u#{user} #{database} -p#{password} -h #{host} < #{@file_path}#{file}`
         end
     end
 
@@ -263,48 +271,7 @@ build_mysql_database
 generate_files
 load_sql_files
 
-couch_mysql_path =  "#{Rails.root}/config/couchdb.yml"
-db_settings = YAML.load_file(couch_mysql_path)
-
-couch_db_settings =  db_settings[Rails.env]
-
-couch_protocol = couch_db_settings["protocol"]
-couch_username = couch_db_settings["username"]
-couch_password = couch_db_settings["password"]
-couch_host = couch_db_settings["host"]
-couch_db = couch_db_settings["prefix"] + (couch_db_settings["suffix"] ? "_" + couch_db_settings["suffix"] : "" )
-couch_port = couch_db_settings["port"]
-
-mysql_path = "#{Rails.root}/config/database.yml"
-mysql_db_settings = YAML.load_file(mysql_path)
-mysql_db_settings = mysql_db_settings[Rails.env]
-
-mysql_username = mysql_db_settings["username"]
-mysql_password = mysql_db_settings["password"]
-mysql_host = mysql_db_settings["host"]
-mysql_db = mysql_db_settings["database"]
-mysql_port =  "3306"
-mysql_adapter = mysql_db_settings["adapter"]
-
-
-#reading db_mapping
-db_map_path ="#{Rails.root}/config/db_mapping.yml"
-db_maps = YAML.load_file(db_map_path)
-
-#begin
-seq = CouchdbSequence.last.seq rescue 0 
-
-changes_link = "#{couch_protocol}://#{couch_username}:#{couch_password}@#{couch_host}:#{couch_port}/#{couch_db}/_changes?include_docs=true"
-data = JSON.parse(RestClient.get(changes_link))
-
-last_seq = CouchdbSequence.last
-last_seq = CouchdbSequence.new if last_seq.blank?
-last_seq.seq = data["last_seq"] 
-last_seq.save
-
-
 PersonIdentifier.can_assign_den = true
-PersonIdentifier.can_assign_drn = true
-#LoadMysql.load_mysql = true
+
 sql = "SET FOREIGN_KEY_CHECKS = 1;"
 SimpleSQL.query_exec(sql)
