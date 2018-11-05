@@ -23,6 +23,8 @@ header = [  "First name",
 			"Birthdate",
 			"DEN",
 			"DRN",
+			"Status",
+			"Migrated from old system",
 			"Date of Death",
 			"Sex",
 			"Registration Type",
@@ -63,7 +65,6 @@ header = [  "First name",
 			"Police report details",
 			"Reason police report not available",
 			"Proof of death abroad",
-			"Status",
 			"Mother First name",
 			"Mother Middle name",
 			"Mother Last name",
@@ -84,11 +85,14 @@ query = "SELECT count(*) as total FROM person_record_status
 			WHERE status IN('#{statuses.join("','")}')
 			AND DATE_FORMAT(person_record_status.created_at,'%Y-%m-%d') BETWEEN '#{start_date}' AND '#{end_date}' AND voided = 0"
 	
-=end
+
 
 query = "SELECT count(*) as total FROM person_record_status 
 			WHERE  DATE_FORMAT(person_record_status.created_at,'%Y-%m-%d') BETWEEN '#{start_date}' AND '#{end_date}' AND voided = 0"
 count  = connection.select_all(query).as_json.last['total'] rescue 0
+=end
+count = PersonRecordStatus.by_record_status.count
+
 
 puts count
 
@@ -109,17 +113,24 @@ query = "SELECT * FROM person_record_status
 			ORDER BY person_record_id
 			LIMIT #{pagesize} OFFSET #{pagesize * (page - 1)} "	
 	
-=end
+
 	query = "SELECT * FROM person_record_status 
 			WHERE  DATE_FORMAT(person_record_status.created_at,'%Y-%m-%d') BETWEEN '#{start_date}' AND '#{end_date}' AND voided = 0
 			ORDER BY person_record_id
 			LIMIT #{pagesize} OFFSET #{pagesize * (page - 1)} "	
 	data = connection.select_all(query).as_json
+=end
+
+	data = PersonRecordStatus.by_record_status.page(page).per(pagesize).each
 	data.each do |status|
 
 		person = Person.find(status['person_record_id'])
 
 		#next if person.place_of_death != 'Health Facility'
+		migrated = "No"
+		if person.source_id.present?
+			migrated = "Yes"
+		end
 
 		next if id.include?(person.id)
 		
@@ -131,6 +142,8 @@ query = "SELECT * FROM person_record_status
 				person.birthdate,
 				(person.den rescue ""),
 				(person.drn rescue ""),
+				status['status'],
+				migrated,
 				person.date_of_death,
 				person.gender,
 				person.registration_type,
@@ -171,7 +184,6 @@ query = "SELECT * FROM person_record_status
 				person.police_report_details,
 				person.reason_police_report_not_available,
 				person.proof_of_death_abroad,
-				status['status'],
 				person.mother_first_name,
 				person.mother_middle_name,
 				person.mother_last_name,
