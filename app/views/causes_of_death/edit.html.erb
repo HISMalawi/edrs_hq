@@ -1,0 +1,273 @@
+<style type="text/css">
+  .tab {
+
+      widows: 100%;
+      height: 40px;
+      font-size: 1.1em;
+      font-weight: bold;
+      border-right: 2px solid gray;
+      border-left: 1px solid gray;
+      border-bottom: 1px solid gray;
+      padding: 0.5em;    
+      padding-left: 1em;  
+
+
+  }
+
+  .active_tab{
+     background:  #6281a7;
+     color:#ffffff;
+  }
+
+
+</style>
+<div id="main" >
+  <div style="overflow: auto;padding: 0px; margin:0px;">
+    <h2 style="margin-left: 2%">Edit Causes od Death</h2>
+   <table style="width:100%">
+      <tr>
+        <td style="width:20%; border-top: 2px solid gray;vertical-align:top; ">
+          <div class="tab active_tab">Cuases of death</div>
+          <div class="tab">Autopsy</div>
+          <div class="tab">Manner of death</div>
+          <div class="tab">Certification</div>
+          <div class="tab">Summanry & Final Code </div>
+        </td>
+        <td style="border-top: 2px solid gray;border-left: 2px solid gray;">
+          <div id="cause_of_death" class="container custom" disabled="true">
+            <input name="person_id" value="<%= @person.id%>" type="hidden" type="text" />
+            <fieldset>
+              <legend style="font-size:15px;font-weight:bold"> 1. Causes of death details</legend>
+                <fieldset>
+                  <legend style="font-size:15px">Part I</legend>
+                  <p>Disease or condition directly leading to death <i style='color: red'>*</i></p>
+                   <div class="form-group" style=" padding-bottom:1%">
+                   <div class="col-md-12">
+                        <label for="onset_death_interval1">Condition (a) </label>
+                        <% if false %>
+                         <input name="cause_of_death1" id="cause_of_death1" value="<%= @person.cause_of_death1 rescue (@person.other_cause_of_death1 rescue '')%>" class="form-control select2" style="width:100%" onkeyup="addCauseField(this);checkSpace(this)" />
+                        <%else%>
+                          <select name="cause_of_death1" id="cause_of_death1" 
+                                  class="form-control select2" style="width:100%" 
+                                  onchange="addCauseField(this);checkSpace(this)">
+                              <option></option>
+                          </select>
+                        <%end%>
+                    </div>
+
+
+
+                  <div class="col-md-5">
+                        <label for="onset_death_interval1">Time interval between onset and death </label>
+                        <input name="onset_death_interval1" id="onset_death_interval1"  value="<%= @person.onset_death_interval1%>" onfocus="cheIfConditionIsEntered(1)" class="form-control" type="number" onkeyup="checkIfNumber(this)" min="1" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="interval_unit1">Units</label>
+                        <select name="interval_unit1" id="interval_unit1" load="" class="form-control" onchange="checkIfTimeEntered(1);clearOnset(1)">
+                          <option ></option>
+                          <option >Second(s)</option>
+                          <option>Minute(s)</option>
+                          <option>Hour(s)</option>
+                          <option>Day(s)</option>
+                          <option>Week(s)</option>
+                          <option>Month(s)</option>
+                          <option>Year(s)</option>
+
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="icd_10_1">ICD-10 </label>
+                        <input name="icd_10_1" id="icd_10_1"  value="" onfocus="checkIfUnitEntered(1);checkIfTimeEntered(1);cheIfConditionIsEntered(1);activateICDValidate(this)" class="form-control" type="text" />
+                    </div>
+
+
+                   </div>
+                  <p><b>Antecedent cause : </b> Morbid conditions, if any. giving rise to the above cause , stating the underlying condition last</p>
+
+                  <div class="form-group" style=" padding-bottom:1%">
+                    <div class="col-md-12">
+                        <label for="">Condition (b) </label>
+                        <% if false %>
+                         <input name="cause_of_death2" id="cause_of_death2" value="<%= @person.cause_of_death2 rescue (@person.other_cause_of_death2 rescue '')%>" class="form-control select2" style="width:100%" onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)" />
+                        <% else %>
+                          <select name="cause_of_death2" id="cause_of_death2" 
+                                  value="<%= @person.cause_of_death2 rescue (@person.other_cause_of_death2 rescue '')%>" 
+                                  class="form-control select2" style="width:100%" 
+                                  onchange="addCauseField(this);checkSpace(this)">
+                              <option></option>
+                          </select>
+                        <%end%>
+                    </div>
+
+
+                     <div class="col-md-5">
+                        <label for="">Time interval between onset and death</label>
+                        <input name="onset_death_interval2" 
+                               id="onset_death_interval2"  
+                               value="<%= @person.onset_death_interval2%>" 
+                               class="form-control" 
+                               onfocus="cheIfConditionIsEntered(2)"
+                               type="number" 
+                               onkeyup="checkIfNumber(this)" min="1" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="">Units</label>
+                        <select name="interval_unit2" id="interval_unit2"  load="" class="form-control" onchange="checkIfTimeEntered(2);clearOnset(2)">
+                          <option ></option>
+                          <option >Second(s)</option>
+                          <option>Minute(s)</option>
+                          <option>Hour(s)</option>
+                          <option>Day(s)</option>
+                          <option>Week(s)</option>
+                          <option>Month(s)</option>
+                          <option>Year(s)</option>
+                        </select>
+                    </div>
+
+                        <div class="col-md-3">
+                        <label for="icd_10_2">ICD-10 </label>
+                        <input name="icd_10_2" id="icd_10_2"  value="" class="form-control" type="text" onfocus="checkIfUnitEntered(2);checkIfTimeEntered(2);cheIfConditionIsEntered(2);activateICDValidate(this)" />
+                    </div>
+
+
+                  </div>
+
+                  <div class="form-group">
+                    <div class="col-md-12">
+                    <% if false %>
+                        <label for="">Condition (c)</label>
+                         <input name="cause_of_death3" id="cause_of_death3" 
+                                value="<%= @person.cause_of_death3 rescue (@person.other_cause_of_death3 rescue '')%>" 
+                                class="form-control select2" style="width:100%" 
+                                onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)"/>
+                    <% else%>
+                        <select name="cause_of_death3" 
+                                id="cause_of_death3"
+                                value="<%= @person.cause_of_death3 rescue (@person.other_cause_of_death3 rescue '')%>" 
+                                class="form-control select2" style="width:100%" 
+                                onchange="validatePrev(this);addCauseField(this);checkSpace(this)">
+                                <option></option>
+                        </select>
+                    <% end %>
+                    </div>
+
+
+                    <div class="col-md-5">
+                        <label for="">Time interval between onset and death</label>
+                        <input name="onset_death_interval3" 
+                              id="onset_death_interval3"  
+                              value="<%= @person.onset_death_interval3%>" 
+                              class="form-control" type="number"
+                              onfocus="cheIfConditionIsEntered(3)"
+                              onkeyup="checkIfNumber(this)" min="1"/>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="">Units</label>
+                        <select name="interval_unit3" id="interval_unit3"  load="" class="form-control" onchange="checkIfTimeEntered(3);clearOnset(3)">
+                         <option ></option>
+                         <option >Second(s)</option>
+                          <option>Minute(s)</option>
+                          <option>Hour(s)</option>
+                          <option>Day(s)</option>
+                          <option>Week(s)</option>
+                          <option>Month(s)</option>
+                          <option>Year(s)</option>
+                        </select>
+                    </div>
+
+                       <div class="col-md-3">
+                        <label for="icd_10_3">ICD-10 </label>
+                        <input name="icd_10_3" id="icd_10_3"  value="" class="form-control" type="text" onfocus="checkIfUnitEntered(3);checkIfTimeEntered(3);cheIfConditionIsEntered(3);activateICDValidate(this)" />
+                    </div>
+
+                  </div>
+
+
+                  <div class="form-group">
+                  <div class="col-md-12">
+                      <label for="">Condition (d)</label>
+                  <% if false %>
+                      <input name="cause_of_death4" id="cause_of_death4" value="<%= @person.cause_of_death4%>" class="form-control select2" style="width:100%" onkeyup="validatePrev(this);addCauseField(this);checkSpace(this)" />
+                  <% else %>
+                      <select   name="cause_of_death4" id="cause_of_death4"
+                                value="<%= @person.cause_of_death4%>" 
+                                class="form-control select2" style="width:100%" 
+                                onchange="validatePrev(this);addCauseField(this);checkSpace(this)">
+                            <option></option>
+                      </select>
+                  <% end %>
+                    </div>
+
+                     <div class="col-md-5">
+                        <label for="">Time interval between onset and death</label>
+                        <input name="onset_death_interval4" 
+                          id="onset_death_interval4"  
+                          value="<%= @person.onset_death_interval4%>" 
+                          class="form-control" type="number" 
+                          onfocus="cheIfConditionIsEntered(4)"
+                          onkeyup="checkIfNumber(this)" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="">Units</label>
+                        <select name="interval_unit4" id="interval_unit4"  load="" class="form-control" onchange="checkIfTimeEntered(4);clearOnset(4)">
+                          <option ></option>
+                          <option >Second(s)</option>
+                          <option>Minute(s)</option>
+                          <option>Hour(s)</option>
+                          <option>Day(s)</option>
+                          <option>Week(s)</option>
+                          <option>Month(s)</option>
+                          <option>Year(s)</option>
+                        </select>
+                    </div>
+
+                        <div class="col-md-3">
+                        <label for="icd_10_4">ICD-10 </label>
+                        <input name="icd_10_4" id="icd_10_4"  value="" class="form-control" type="text" onfocus="checkIfUnitEntered(4);checkIfTimeEntered(4);cheIfConditionIsEntered(4);activateICDValidate(this)"/>
+                    </div>
+
+                  </div>
+                </fieldset>
+            </fieldset>
+            <fieldset style="margin-bottom:2%">
+             <legend style="font-size:15px">Part II</legend>
+              <p>Other significant conditions contributing to death , but not related to the disease or condition causing it</p>
+                <table><tr onclick="addEntry()"><td><i class="icon_plus_alt"></i></td><td><span style="font-size:1.2em">Add another entry</span></td></tr></table>
+              <div class="form-group">
+                  <table id="other_significant_cause_field" class="col-md-12">
+                    <tr>
+                      <th style="color:#000000">Cause</th>
+                      <th style="color:#000000">ICD-10 Code</th>
+                      <th style="color:#000000">Remove</th>
+                    </tr>
+                    <tr id="other_significant_cause_div_1">
+                       <td class="col-md-6">
+
+                        <select name="other_significant_cause[1]" 
+                                id="other_significant_cause_1"
+                                class="form-control select2" style="width:100%">
+                                <option></option>
+                        </select>
+                        <% if false %>
+                           <input name="other_significant_cause[1]" id="other_significant_cause_1" class="form-control select2" style="width:100%"/>
+                        <%end%> 
+                        </td>
+                        <td class="col-md-4">
+                          <input name="other_significant_cause_icd_code[1]" id="other_significant_cause_icd_code_1" class="form-control select2" style="width:100%" onfocus="activateICDValidate(this)" />
+                        </td>
+                        <td>
+                            <i class="icon_minus_alt" onclick="removeElement('other_significant_cause_div_1')"></i>
+                        </td>
+                    </tr>
+                  </table>
+                </div>
+              </fieldset>
+              <div onclick="hit('cause_of_death_check_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
+              <div onclick="checkPrimaryCause('radio3','autopsy','autopsy_radio')" class="btn btn-primary pull-right">Next&nbsp;&nbsp;<span class="glyphicon glyphicon-forward" aria-hidden="true"></span></div>
+            </div>
+
+        </td>
+      </tr>
+   </table>
+  </div>
+</div>

@@ -460,6 +460,10 @@ class Person < CouchRest::Model::Base
     sql_record.save
   end
 
+  def cause_of_death
+     return PersonICDCode.by_person_id.key(self.id).first
+  end
+
   #Person properties
   property :source_id, String
   property :first_name, String

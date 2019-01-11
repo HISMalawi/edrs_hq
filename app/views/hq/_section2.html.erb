@@ -361,7 +361,7 @@
                               </label>
                           </td>
                           <td>Specify</td>
-                          <td colspan="4"><%= @person.other_position_of_certifier recsue "" %></td>
+                          <td colspan="4"><%= @person.other_position_of_certifier.present??  @person.other_position_of_certifier  : "" %></td>
                     <%else%>
                           <td>
                               <input type="radio" name="radio1" id="Other" class="css-checkbox" disabled>

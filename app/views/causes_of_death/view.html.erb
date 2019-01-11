@@ -1,0 +1,102 @@
+<script src="/assets/DataTables/jquery.dataTables.min.js"></script>
+<link href="/assets/DataTables/jquery.dataTables.css" rel="stylesheet">
+<link href="/assets/DataTables/demo_table_jui.css" rel="stylesheet">
+<link href="/assets/DataTables/demo_page.css" rel="stylesheet">
+<link href="/assets/DataTables/jquery-ui.css" rel="stylesheet">
+<style type="text/css">
+  #table{
+    border: 1px solid gray;
+    margin-top: 1%;
+    margin-left: 1%;
+    width: 98%;
+  }
+  
+  #table th {
+      background-color: #6281a7;
+      color:#ffffff;
+      border: 1px solid gray;
+      text-align: center;
+  } 
+  #table td {
+      border: 1px solid gray;
+      text-align: center;
+  } 
+</style>
+<div id="main" >
+  <div style="overflow: auto;padding: 0px; margin:0px;">
+      <h2 style="margin-left: 2%">View Causes of Death</h2>
+      <table id="table">
+          <thead>
+            <tr>
+              <th style="width: 8%">Barcode #</th>
+              <th style="width: 8%">DEN #</th>
+              <th style="width: 5%">Sex</th>
+              <th style="width: 10%" >DOD</th>
+              <th >Condition (a) </th>
+              <th >Condition (b) </th>
+              <th >Condition (c) </th>
+              <th >Condition (d) </th>
+              <th style="width: 7%">Coder's code</th>
+              <th style="width: 8%">Supervisor's code</th>
+              <th style="width: 5%">Operation</th>                
+            </tr>
+          </thead>
+          <tbody id="tablebody">
+            
+          </tbody>
+      </table>
+  </div>
+</div>
+<script type="text/javascript">
+  let dataTable = $("#table").dataTable();
+  var fetchData = (page) =>{
+      $.getJSON("/search_causes/"+page, (data)=>{
+            var  body = $("#tablebody");
+
+            for (var i = 0; i < data.length; i++) {
+              
+
+              let  a = ""
+              if (data[i].cause_of_death1 && data[i].cause_of_death1.length != 0) {
+                a = data[i].cause_of_death1 + " ("+ data[i].icd_10_1 + ")" ;             
+              }
+
+              let b = ""
+              if (data[i].cause_of_death2 && data[i].cause_of_death2.length != 0) {
+                b = data[i].cause_of_death2 + " ("+ data[i].icd_10_2 + ")" ;             
+              }
+
+
+              let c = ""
+              if (data[i].cause_of_death3 && data[i].cause_of_death3.length != 0) {
+                c = data[i].cause_of_death3 + " ("+ data[i].icd_10_3 + ")" ;             
+              }
+
+              let d = ""
+              if (data[i].cause_of_death4 && data[i].cause_of_death4.length != 0) {
+                d = data[i].cause_of_death4 + " ("+ data[i].icd_10_4 + ")" ;             
+              }
+
+
+              let final_code = data[i].final_code ?  data[i].final_code : "";
+
+
+
+              let button = "<button class='btn btn-primary' onclick='viewCause(\""+data[i]['_id']+"\")'>View</button>"
+
+              dataTable.api().row.add([ data[i].barcode, data[i].den, data[i].gender, data[i].date_of_death,a,b,c,d,final_code,"", button]).draw();
+              
+            }
+            
+            
+      })
+  }
+
+  let viewCause = (person_id)=>{
+    window.location = "/cause_of_death_preview?person_id="+person_id
+  }
+
+
+  fetchData(1);
+  
+</script>

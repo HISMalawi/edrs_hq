@@ -209,6 +209,11 @@ Rails.application.routes.draw do
   get "/reports/district_and_gender"
   get "/reports/by_district_registered_and_gender"
 
+  ######### Causes of Death ##############
+  get "/causes_of_death/view"
+  get "/search_causes/:page" => "causes_of_death#search_causes"
+  get "/causes_of_death/:id/edit" =>"causes_of_death#edit"
+
 
 
   # The priority is based upoindexation: first created -> highest priority.

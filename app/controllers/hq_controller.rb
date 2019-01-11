@@ -230,28 +230,19 @@ class HqController < ApplicationController
   def save_cause_of_death
     @person = Person.find(params[:person_id])
     
+    metric = {}
+    metric["Second(s)"] = 1 
+    metric["Minute(s)"] = 60
+    metric["Hour(s)"]   = 360
+    metric["Day(s)"]    = 60 * 60 * 24
+    metric["Week(s)"]   = 60 * 60 * 24 * 7 
+    metric["Month(s)"]  = 60 * 60 * 24 * 30
 
-
-    i = 1
-    while i <= 4  do
-       interval_unit = params["interval_unit#{i}"]
-       case interval_unit
-       when "Second(s)"
-          params["onset_death_interval#{i}"] = params["onset_death_interval#{i}"]
-       when "Minute(s)"
-          params["onset_death_interval#{i}"] = params["onset_death_interval#{i}"].to_i * 60
-       when "Hour(s)"
-          params["onset_death_interval#{i}"] = params["onset_death_interval#{i}"].to_i * 60 * 60
-       when "Day(s)"
-          params["onset_death_interval#{i}"] = params["onset_death_interval#{i}"].to_i * 60 * 60 * 24
-       when "Week(s)"  
-          params["onset_death_interval#{i}"] = params["onset_death_interval#{i}"].to_i * 60 * 60 * 24 * 7 
-       when "Month(s)"  
-          params["onset_death_interval#{i}"] = params["onset_death_interval#{i}"].to_i * 60 * 60 * 24 * 30
-       else  
-       end
-       i +=1
-    end
+    params["onset_death_interval1"] = params["onset_death_interval1"].to_i * metric[params["interval_unit1"]]
+    params["onset_death_interval2"] = params["onset_death_interval2"].to_i * metric[params["interval_unit2"]]
+    params["onset_death_interval3"] = params["onset_death_interval3"].to_i * metric[params["interval_unit3"]]
+    params["onset_death_interval4"] = params["onset_death_interval4"].to_i * metric[params["interval_unit4"]]
+    
     #tobe revised
     params[:cause_of_death_conditions] = {}
 
