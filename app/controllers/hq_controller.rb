@@ -12,7 +12,7 @@ class HqController < ApplicationController
     @user = User.find_by_username(session[:current_user_id])
 
     @districts = {}
-    District.all.each do |d| 
+    DistrictRecord.all.each do |d| 
       next if d.name.blank?
       @districts[d.name.downcase.gsub(/\-|\_|\s+/, '_').strip] = d.id   unless d.name.include?("City")
     end
@@ -52,7 +52,7 @@ class HqController < ApplicationController
     @title = "Search Results"
     @statuses = []
     @districts = []
-    District.all.each do |d| 
+    DistrictRecord.all.each do |d| 
       next if d.name.blank?
       next if d.name.include?("City")
       @districts << d.name 
@@ -448,7 +448,19 @@ class HqController < ApplicationController
       end
     end
    
-    @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
+    if SETTINGS['print_qrcode']
+        if !File.exist?("#{SETTINGS['qrcodes_path']}QR#{@person.id}.png")
+            create_qr_barcode(@person)
+            sleep(2)
+            redirect_to request.fullpath and return
+        end
+    else
+        if !File.exist?("#{SETTINGS['barcodes_path']}#{@person.id}.png")
+            create_barcode(@person)
+            sleep(2)
+            redirect_to request.fullpath and return
+        end         
+    end
 
     render :layout => false, :template => 'hq/death_certificate'
 
@@ -460,7 +472,19 @@ class HqController < ApplicationController
     @place_of_death = place_of_death(@person)
     @drn = @person.drn
     @den = @person.den
-    @barcode = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png") rescue nil
+    if SETTINGS['print_qrcode']
+        if !File.exist?("#{SETTINGS['qrcodes_path']}QR#{@person.id}.png")
+            create_qr_barcode(@person)
+            sleep(2)
+            redirect_to request.fullpath and return
+        end
+    else
+        if !File.exist?("#{SETTINGS['barcodes_path']}#{@person.id}.png")
+            create_barcode(@person)
+            sleep(2)
+            redirect_to request.fullpath and return
+        end         
+    end
 
     @date_registered = @person.created_at
     PersonRecordStatus.by_person_record_id.key(@person.id).each.sort_by{|s| s.created_at}.each do |state|
@@ -470,9 +494,9 @@ class HqController < ApplicationController
       end
     end
     
-    if CONFIG['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A4"
+    if SETTINGS['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A4"
        render :layout => false, :template => 'hq/death_certificate_print'
-    elsif CONFIG['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A5"
+    elsif SETTINGS['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A5"
        render :layout => false, :template => 'hq/death_certificate_print_a5'
     else
        render :layout => false
@@ -496,23 +520,34 @@ class HqController < ApplicationController
 
       person = Person.find(key.strip)
 
-      if !File.exist?("#{CONFIG['barcodes_path']}#{person.id}.png")
-              create_barcode(person)
-      end
+      next if person.den.blank?
 
+      next if person.drn.blank?
+
+      if SETTINGS['print_qrcode']
+            if !File.exist?("#{SETTINGS['qrcodes_path']}QR#{person.id}.png")
+            create_qr_barcode(person)
+            sleep(1)
+            end
+      else
+          if !File.exist?("#{SETTINGS['barcodes_path']}#{person.id}.png")
+            create_barcode(@person)
+            sleep(1)
+          end         
+      end
 
       next if person.blank?
       PersonRecordStatus.change_status(person,"HQ PRINTED")
       id = person.id
       
-      output_file = "#{CONFIG['certificates_path']}#{id}.pdf"
+      output_file = "#{SETTINGS['certificates_path']}#{id}.pdf"
 
       input_url = "#{CONFIG["protocol"]}://#{request.env["SERVER_NAME"]}:#{request.env["SERVER_PORT"]}/death_certificate/#{id}"
 
       #raise "wkhtmltopdf --zoom #{zoom} --page-size #{paper_size} #{input_url} #{output_file}"
 
       t4 = Thread.new {
-        Kernel.system "wkhtmltopdf --zoom #{zoom} --page-size #{paper_size} #{input_url} #{output_file}"
+        Kernel.system "#{SETTINGS['wkhtmltopdf']} --zoom #{zoom} --page-size #{paper_size} #{input_url} #{output_file}"
         #PDFKit.new(input_url, :page_size => paper_size, :zoom => zoom).to_file(output_file)
 
         sleep(4)
@@ -542,7 +577,7 @@ class HqController < ApplicationController
 
     print_url ="/dispatch_preview"
 
-    output_file = "#{CONFIG['dispatch_path']}Dispatched_#{Time.now.to_s.gsub(' ','_')}.pdf"
+    output_file = "#{SETTINGS['dispatch_path']}Dispatched_#{Time.now.to_s.gsub(' ','_')}.pdf"
 
    
 

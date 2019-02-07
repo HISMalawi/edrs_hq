@@ -43,9 +43,14 @@
 </head>
 <body style="color: #000;">
     <% @long_cert = false %>
-    <% raw = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
-
-       @data = Base64.encode64(raw)
+    <% 
+        if SETTINGS['print_qrcode']
+              raw = File.read("#{SETTINGS['qrcodes_path']}QR#{@person.id}.png")
+              @data = Base64.encode64(raw)
+        else
+              raw = File.read("#{SETTINGS['barcodes_path']}#{@person.id}.png")
+              @data = Base64.encode64(raw)
+        end
 
     %>
     
@@ -57,7 +62,11 @@
 <div id="mainc">             
   <div id="barcode">
     <p style="text-align: center !important;font-size: 12px;"> <img src ="data:image/png;base64,<%= @data%>" />
-    <br/><%= @person.npid %></p>
+    <% if SETTINGS['print_qrcode'] %>
+        <br/></p>
+    <% else%>
+        <br/><%=  @person.npid %></p>    
+    <%end%>
   </div>
 
   <div id="childdata">
@@ -208,8 +217,10 @@
     </div>
     	
     <div id="signature">
-
-      <img src ="data:image/png;base64,<%= @sig %>" width="120" height="50" align="right" style="padding-right: 40px;margin-right: 40px;" />
+      <table  align="right" style="padding-right: 40px;margin-right: 40px;">
+          <tr><td><img src ="data:image/png;base64,<%= @sig %>" width="120" height="50" /></td></tr>
+          <tr><td><i style="float: right;">Chief Director</i></td></tr>
+      </table> 
    </div>
  </div>  
 </body>

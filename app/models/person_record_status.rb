@@ -1,8 +1,8 @@
 class PersonRecordStatus < CouchRest::Model::Base
 
 	before_save :set_district_code,:set_facility_code,:set_registration_type
-	#after_create :insert_update_into_mysql
-	#after_save :insert_update_into_mysql
+	after_create :insert_update_into_mysql
+	after_save :insert_update_into_mysql
 	cattr_accessor :nextstatus
 
 	property :person_record_id, String
@@ -149,6 +149,13 @@ class PersonRecordStatus < CouchRest::Model::Base
 	      next if field == "_rev"
 	      if field =="_id"
 	          sql_record["person_record_status_id"] = self[field]
+
+	      elsif field =="voided"
+	      		if self[field] == true
+	      			sql_record[field] = 1
+	      		else
+	      			sql_record[field] = 0
+	      		end
 	      else
 	          sql_record[field] = self[field]
 	      end

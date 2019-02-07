@@ -1,8 +1,8 @@
 class PersonIdentifier < CouchRest::Model::Base
 
   before_save :set_site_code,:set_distict_code,:set_check_digit
-  #after_create :insert_update_into_mysql
-  #after_save :insert_update_into_mysql
+  after_create :insert_update_into_mysql
+  after_save :insert_update_into_mysql
   cattr_accessor :can_assign_den
   cattr_accessor :can_assign_drn
 
@@ -133,7 +133,17 @@ class PersonIdentifier < CouchRest::Model::Base
  
     sleep(0.1)
     if drn_record.present?
-         create_barcode(person)
+         if SETTINGS['print_qrcode']
+            if !File.exist?("#{SETTINGS['qrcodes_path']}QR#{person.id}.png")
+              self.create_qr_barcode(person)
+            sleep(1)
+            end
+         else
+          if !File.exist?("#{SETTINGS['barcodes_path']}#{person.id}.png")
+              self.create_barcode(person)
+            sleep(1)
+          end         
+         end
          status = PersonRecordStatus.by_person_recent_status.key(person.id.to_s).last
 
          if status.present?
@@ -188,10 +198,16 @@ class PersonIdentifier < CouchRest::Model::Base
        npid = Npid.by_assigned.keys([false]).first
        person.npid = npid.national_id
        person.save
-       npid.assigned = true
-       npid.save
     end
-    process = Process.fork{`bin/generate_barcode #{person.npid} #{person.id} #{CONFIG['barcodes_path']}`}
-    Process.detach(process)
+    `bundle exec rails r bin/generate_barcode #{person.npid.present?? person.npid : '123456'} #{person.id} #{SETTINGS['barcodes_path']}`
+  end
+
+  def self.create_qr_barcode(person)
+    if person.npid.blank?
+       npid = Npid.by_assigned.keys([false]).first
+       person.npid = npid.national_id
+       person.save
+    end
+    `bundle exec rails r bin/generate_qr_code #{person.id} #{SETTINGS['qrcodes_path']}`    
   end
 end

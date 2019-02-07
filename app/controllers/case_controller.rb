@@ -269,7 +269,7 @@ class CaseController < ApplicationController
       drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([params[:person_id], "DEATH REGISTRATION NUMBER"]).last
       if drn.blank?
         last_run_time = File.mtime("#{Rails.root}/public/sentinel").to_time
-        job_interval = CONFIG['ben_assignment_interval']
+        job_interval = SETTINGS['ben_assignment_interval']
         job_interval = 1.5 if job_interval.blank?
         job_interval = job_interval.to_f
         now = Time.now
@@ -287,8 +287,18 @@ class CaseController < ApplicationController
         PersonRecordStatus.change_status(Person.find(params[:person_id]),"MARKED HQ APPROVAL",(params[:comment].present? ? params[:comment] : nil))
         render :text => "ok" and return
       else
-          if !File.exist?("#{CONFIG['barcodes_path']}#{params[:person_id]}.png")
-              create_barcode(person)
+          if SETTINGS['print_qrcode']
+              if !File.exist?("#{SETTINGS['qrcodes_path']}QR#{person.id}.png")
+                  create_qr_barcode(person)
+                  sleep(2)
+                  redirect_to request.fullpath and return
+              end
+          else
+              if !File.exist?("#{SETTINGS['barcodes_path']}#{@person.id}.png")
+                  create_barcode(person)
+                  sleep(2)
+                  redirect_to request.fullpath and return
+              end         
           end
       end
     end
@@ -488,9 +498,33 @@ class CaseController < ApplicationController
   end
 
   def more_open_cases
+    cases = []
+    offset = params[:page_number].to_i * 40
+    district_code_query = (params[:district].present? ? "AND district_code ='#{DistrictRecord.where(name:params[:district]).first.id}'" : "")
+
+    sql = "SELECT person_record_id, status FROM person_record_status WHERE voided = 0 AND status 
+          IN ('#{params[:statuses].split("|").collect{|status| status.gsub(/\_/, " ").upcase}.join("','")}') #{district_code_query}
+           LIMIT 40 OFFSET #{offset}"
+
+    connection = ActiveRecord::Base.connection
+    data = connection.select_all(sql).as_json
 
     cases = []
-    
+
+    #raise data.inspect
+    data.each do |row|
+          person = Person.find(row["person_record_id"])
+          next unless params[:statuses].split("|").collect{|status| status.gsub(/\_/, " ").upcase}.join("','").include?(person.status)
+          cases << fields_for_data_table(person)
+    end
+
+    render text: cases.to_json and return
+
+=begin
+    RecordStatus.where("voided = 0 AND status IN ('#{params[:statuses].split("|").collect{|status| status.gsub(/\_/, " ").upcase}.join("','")}') #{district_code_query}" ).offset(offset).limit(40).each do |status|
+            person = status.person
+            cases << fields_for_data_table(person)
+    end
     if params[:district].present?
         district_code = District.by_name.key(params[:district]).first.id
         keys = []
@@ -515,7 +549,9 @@ class CaseController < ApplicationController
             cases << fields_for_data_table(person)
         end 
     end
-    render text: cases.to_json and return
+     render text: cases.to_json and return
+=end
+   
   end
 
   def more_open_cases_with_prev_status
@@ -574,16 +610,11 @@ class CaseController < ApplicationController
 
   def more_special_cases
     cases = []
-    if params[:district].present?
-        district_code = District.by_name.key(params[:district]).first.id
-        (Person.by_registration_type_and_district_code.key([params[:registration_type],district_code]).page(params[:page_number]).per(10) || []).each do |person|
+    offset = params[:page_number].to_i * 40
+    district_code_query = (params[:district].present? ? "AND district_code ='#{DistrictRecord.where(name:params[:district]).first.id}'" : "")
+    (Record.where("registration_type = '#{params[:registration_type]}' #{district_code_query}").offset(offset).limit(40) || []).each do |person|
           cases << fields_for_data_table(person) if person.den.present?
         end 
-    else
-      (Person.by_registration_type.key(params[:registration_type]).page(params[:page_number]).per(10) || []).each do |person|
-        cases << fields_for_data_table(person) if person.den.present?
-      end 
-    end
     render text: cases.to_json and return
   end
 
@@ -804,7 +835,7 @@ class CaseController < ApplicationController
   end
 
   def pdf_certificate
-      pdf_filename = "#{CONFIG['certificates_path']}#{params[:id]}.pdf"
+      pdf_filename = "#{SETTINGS['certificates_path']}#{params[:id]}.pdf"
       send_file(pdf_filename, :filename => "#{params[:id]}.pdf", :disposition => 'inline', :type => "application/pdf")
   end
   def find

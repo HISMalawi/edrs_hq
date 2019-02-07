@@ -2,17 +2,21 @@ LoadMysql.load_mysql = false
 
 puts "Creating Barcode / Certificate and Dispatch paths"
 
-Dir.mkdir(CONFIG['barcodes_path']) unless Dir.exist?(CONFIG['barcodes_path'])
-File.chmod(0777, CONFIG['barcodes_path'])
-puts File.stat(CONFIG['barcodes_path']).mode.to_s(8)
+Dir.mkdir(SETTINGS['barcodes_path']) unless Dir.exist?(SETTINGS['barcodes_path'])
+File.chmod(0777, SETTINGS['barcodes_path'])
+puts File.stat(SETTINGS['barcodes_path']).mode.to_s(8)
 
-Dir.mkdir(CONFIG['certificates_path']) unless Dir.exist?(CONFIG['certificates_path'])
-File.chmod(0777, CONFIG['certificates_path'])
-puts File.stat(CONFIG['certificates_path']).mode.to_s(8)
+Dir.mkdir(SETTINGS['qrcodes_path']) unless Dir.exist?(SETTINGS['qrcodes_path'])
+File.chmod(0777, SETTINGS['qrcodes_path'])
+puts File.stat(SETTINGS['qrcodes_path']).mode.to_s(8)
 
-Dir.mkdir(CONFIG['dispatch_path']) unless Dir.exist?(CONFIG['dispatch_path'])
-File.chmod(0777, CONFIG['dispatch_path'])
-puts File.stat(CONFIG['dispatch_path']).mode.to_s(8)
+Dir.mkdir(SETTINGS['certificates_path']) unless Dir.exist?(SETTINGS['certificates_path'])
+File.chmod(0777, SETTINGS['certificates_path'])
+puts File.stat(SETTINGS['certificates_path']).mode.to_s(8)
+
+Dir.mkdir(SETTINGS['dispatch_path']) unless Dir.exist?(SETTINGS['dispatch_path'])
+File.chmod(0777, SETTINGS['dispatch_path'])
+puts File.stat(SETTINGS['dispatch_path']).mode.to_s(8)
 
 
 puts "Clearing Elasticsearch"

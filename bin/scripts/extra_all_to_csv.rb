@@ -1,5 +1,25 @@
-start_date = ""
-end_date = ""
+start_date = "Start"
+end_date = "End"
+
+file = "#{Rails.root}/log/migrate.log"
+
+if !File.exist?(file)
+	File.open(file, "w+") do |f|
+		  f.write("Log for #{Time.now}")
+	end
+else
+	File.open(file, "a+") do |f|
+	  f.write("\nLog for #{Time.now}")
+	end	
+end
+
+def add_to_file(content)
+    file = "#{Rails.root}/log/migrate.log"
+
+	File.open(file, "a+") do |f|
+	  f.write("\n#{content}")
+	end
+end
 
 statuses = ["DC ACTIVE","DC COMPLETE","DC INCOMPLETE","DC PENDING","HQ ACTIVE", "HQ COMPLETE"]
 
@@ -25,6 +45,8 @@ header = [  "First name",
 			"DRN",
 			"Status",
 			"Migrated from old system",
+			"Date Migrated",
+			"Date Reported",
 			"Date of Death",
 			"Sex",
 			"Registration Type",
@@ -74,7 +96,22 @@ header = [  "First name",
 			"Father middle name",
 			"Father Last name",
 			"Father nationality ID",
-			"Father nationality"]
+			"Father nationality",
+			"Informant First name",
+			"Informant Middle name",
+			"Informant Last name",
+			"Informant Country",
+			"Informant District",
+			"Informant TA",
+			"Informant Village",
+			"Informant Postal Address",
+			"Informant Foreign State",
+			"Informant Foreign District",
+			"Informant Foreign Town/Village",
+			"Informant Foreign Postal Address",
+			"Informant phone Number",
+			"Informant Signed",
+			"Date Informant Signed"]
 write_csv_header("#{Rails.root}/db/data#{start_date}-#{end_date}.csv", header)
 
 
@@ -111,67 +148,96 @@ while page <= pages
 		
 		id << person.id
 
-		row = [	person.first_name,
-				person.middle_name,
-				person.last_name, 
-				person.birthdate,
-				(person.den rescue ""),
-				(person.drn rescue ""),
-				status,
-				migrated,
-				person.date_of_death,
-				person.gender,
-				person.registration_type,
-				person.place_of_registration,
-				person.died_while_pregnant,
-				person.place_of_death,
-				person.place_of_death_country,
-				person.place_of_death_district,
-				person.hospital_of_death,
-				person.other_place_of_death,
-				person.place_of_death_ta,
-				person.other_place_of_death_ta,
-				person.place_of_death_village,
-				person.other_place_of_death_village,
-				person.place_of_death_foreign_state,
-				person.place_of_death_foreign_district,
-				person.place_of_death_foreign_village,
-				person.place_of_death_foreign_hospital,
-				person.current_country,
-				person.current_district,
-				person.current_ta,
-				person.current_village,
-				person.current_foreign_state,
-				person.current_foreign_district,
-				person.current_foreign_village,
-				person.home_country,
-				person.home_district,
-				person.home_ta,
-				person.home_village,
-				person.home_foreign_state,
-				person.home_foreign_district,
-				person.home_foreign_village,
-				person.died_while_pregnant,
-				person.delayed_registration,
-				person.court_order,
-				person.court_order_details,
-				person.police_report,
-				person.police_report_details,
-				person.reason_police_report_not_available,
-				person.proof_of_death_abroad,
-				person.mother_first_name,
-				person.mother_middle_name,
-				person.mother_last_name,
-				person.mother_nationality_id,
-				person.mother_nationality,
-				person.father_first_name,
-				person.father_middle_name,
-				person.father_last_name,
-				person.father_nationality_id,
-				person.father_nationality]
+		begin
+			
+			if person.informant_phone_number.innclude?("+")
+				phone_number  = "#{person.informant_phone_number}"
+			else
+				phone_number = "+#{person.informant_phone_number}"
+			end
 
-			write_csv_content("#{Rails.root}/db/data#{start_date}-#{end_date}.csv", row)
-		puts person.id
+			row = [	person.first_name,
+					person.middle_name,
+					person.last_name, 
+					person.birthdate.to_time.strftime("%Y-%m-%d"),
+					(person.den rescue ""),
+					(person.drn rescue ""),
+					status,
+					migrated,
+					(migrated=="Yes"? person.created_at.to_time.strftime("%Y-%m-%d") : 'N/A'),
+					person.created_at.to_time.strftime("%Y-%m-%d  %H:%M:%S"),
+					person.date_of_death,
+					person.gender,
+					person.registration_type,
+					person.place_of_registration,
+					person.died_while_pregnant,
+					person.place_of_death,
+					person.place_of_death_country,
+					person.place_of_death_district,
+					person.hospital_of_death,
+					person.other_place_of_death,
+					person.place_of_death_ta,
+					person.other_place_of_death_ta,
+					person.place_of_death_village,
+					person.other_place_of_death_village,
+					person.place_of_death_foreign_state,
+					person.place_of_death_foreign_district,
+					person.place_of_death_foreign_village,
+					person.place_of_death_foreign_hospital,
+					person.current_country,
+					person.current_district,
+					person.current_ta,
+					person.current_village,
+					person.current_foreign_state,
+					person.current_foreign_district,
+					person.current_foreign_village,
+					person.home_country,
+					person.home_district,
+					person.home_ta,
+					person.home_village,
+					person.home_foreign_state,
+					person.home_foreign_district,
+					person.home_foreign_village,
+					person.died_while_pregnant,
+					person.delayed_registration,
+					person.court_order,
+					person.court_order_details,
+					person.police_report,
+					person.police_report_details,
+					person.reason_police_report_not_available,
+					person.proof_of_death_abroad,
+					person.mother_first_name,
+					person.mother_middle_name,
+					person.mother_last_name,
+					person.mother_nationality_id,
+					person.mother_nationality,
+					person.father_first_name,
+					person.father_middle_name,
+					person.father_last_name,
+					person.father_nationality_id,
+					person.father_nationality,
+					person.informant_first_name,
+					person.informant_middle_name,
+					person.informant_last_name,
+					person.informant_current_country,
+					person.informant_current_district,
+					person.informant_current_ta,
+					person.informant_current_village,
+					person.informant_addressline1,
+					person.informant_foreign_state,
+					person.informant_foreign_district,
+					person.informant_foreign_village,
+					person.informant_foreign_address,
+					phone_number,
+					person.informant_signed,
+					person.informant_signature_date.present?? person.informant_signature_date.to_time.strftime("%Y-%m-%d") : 'N/A']
+
+				write_csv_content("#{Rails.root}/db/data#{start_date}-#{end_date}.csv", row)
+			puts person.id
+		rescue Exception => e
+				error = "#{person.id} : #{e.to_s}"
+				add_to_file(error)
+		end
 
 	end
 	

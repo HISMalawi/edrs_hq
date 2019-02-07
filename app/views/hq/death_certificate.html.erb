@@ -50,14 +50,23 @@
   
   <td align="right" style="width:200px; vertical-align: top;">
     <% @long_cert = false %>
-    <% raw = File.read("#{CONFIG['barcodes_path']}#{@person.id}.png")
-
-       @data = Base64.encode64(raw)
+    <% 
+        if SETTINGS['print_qrcode']
+              raw = File.read("#{SETTINGS['qrcodes_path']}QR#{@person.id}.png")
+              @data = Base64.encode64(raw)
+        else
+              raw = File.read("#{SETTINGS['barcodes_path']}#{@person.id}.png")
+              @data = Base64.encode64(raw)
+        end
 
     %>
     <img src ="data:image/png;base64,<%= @data%>" />
     <br/>
-    <div style="text-align: center !important;margin-top: -15px;font-size: 12px;"><%= @person.npid rescue nil %></div>
+    <div style="text-align: center !important;margin-top: -15px;font-size: 12px;">    <% if SETTINGS['print_qrcode'] %>
+        <br/></p>
+    <% else%>
+        <%=  @person.npid %>    
+    <%end%></div>
 
   </td>
   
@@ -259,7 +268,7 @@
             </tr>
             <tr>
               <th>
-                <i>Signatures Officer(NRB)</i>
+                <i>Chief Director</i>
               </th>
             </tr>
           </table>

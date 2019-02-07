@@ -8,3 +8,6 @@ sampling_frequency: Daily #Weekly|Monthly
 sample_percentage: 5
 site_type: hq
 app_jobs_url: 'http://localhost:3321'
+wkhtmltopdf: /usr/bin/wkhtmltopdf
+print_qrcode: true
+qrcodes_path: /home/cranberry/barcodes/
