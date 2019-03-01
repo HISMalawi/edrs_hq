@@ -35,6 +35,39 @@ def write_csv_content(file, content)
     end
 end
 
+def phone_number_format(number)
+	if number == "Unknown"
+		return number
+	else
+		digits = []
+		i = 0
+		number.gsub("+","").split("").each do |d|
+			if i == 3 && d == "0"		
+				next
+			end
+			digits << d
+			i = i + 1
+		end
+
+		#raise digits.inspect
+
+		phone_number = "+"
+		length = digits.length
+		i = 0;
+
+		while i < length
+			if i % 3 == 0 && i != 0 
+				phone_number = "#{phone_number} #{digits[i]}"
+			else
+				phone_number = "#{phone_number}#{digits[i]}"
+			end
+			i = i + 1
+		end
+		return phone_number
+	end
+
+	return number
+end
 #`bundle exec rake edrs:build_mysql`
 
 header = [  "First name",
@@ -52,6 +85,8 @@ header = [  "First name",
 			"Registration Type",
 			"Place of Registration",
 			"Died while place_of_death",
+			"Printed",
+			"Date Printed",
 			"Place of death",
 			"Place of death country",
 			'Place of death district',
@@ -140,21 +175,44 @@ while page <= pages
 
 		record_status = PersonRecordStatus.by_person_recent_status.key(person.id).first
 		if record_status.blank?
-			status = "LOST STATUS"
+			statuses = PersonRecordStatus.by_person_record_id.key(person.id).each.sort_by{|s| s.created_at}
+	 		last_status = statuses.last
+	 		if last_status.blank?
+	 			record_status = PersonRecordStatus.create({
+                                  :person_record_id => person.id.to_s,
+                                  :status => "DC ACTIVE",
+                                  :prev_status => nil,
+                                  :reprint => false,
+                                  :comment => "Status Corrected",
+                                  :district_code => person.district_code,
+                                  :creator => (person.creator rescue User.first.id)})
+	 		else
+	 			last_status.voided = false
+	 			last_status.save
+	 			record_status = last_status	
+	 		end
+			status = record_status.status
 		else
 			status = record_status.status
 		end
+
+
+		date_printed = ""
+		printed = ""
+		if ["HQ PRINTED", "HQ DISPATCHED"].include?(status)
+			printed = "Yes"
+		end
+
+		if migrated =="No" && ["HQ PRINTED", "HQ DISPATCHED"].include?(status)
+			date_printed = record_status.created_at.to_time.strftime("%Y-%m-%d  %H:%M:%S")
+		end
+
 		next if id.include?(person.id)
 		
 		id << person.id
 
 		begin
-			
-			if person.informant_phone_number.innclude?("+")
-				phone_number  = "#{person.informant_phone_number}"
-			else
-				phone_number = "+#{person.informant_phone_number}"
-			end
+		
 
 			row = [	person.first_name,
 					person.middle_name,
@@ -171,6 +229,8 @@ while page <= pages
 					person.registration_type,
 					person.place_of_registration,
 					person.died_while_pregnant,
+					printed,
+					date_printed,
 					person.place_of_death,
 					person.place_of_death_country,
 					person.place_of_death_district,
@@ -228,7 +288,7 @@ while page <= pages
 					person.informant_foreign_district,
 					person.informant_foreign_village,
 					person.informant_foreign_address,
-					phone_number,
+					phone_number_format(person.informant_phone_number),
 					person.informant_signed,
 					person.informant_signature_date.present?? person.informant_signature_date.to_time.strftime("%Y-%m-%d") : 'N/A']
 
@@ -243,4 +303,5 @@ while page <= pages
 	
 	page = page + 1
 	
+
 end

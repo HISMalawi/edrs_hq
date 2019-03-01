@@ -4,6 +4,7 @@ var prev_statuses = "<%=@prev_statuses.join('|') rescue ''%>";
 var registration_type ="<%= params[:registration_type] rescue '' %>"
 var registration_type_and_status = "<%= @registration_types rescue ''%>"
 var amendment = "<%=@amendment rescue ''%>";
+var ids = []
 
 function __$(id){
         return document.getElementById(id);
@@ -20,6 +21,7 @@ function addRows(data, skip_parse) {
       people = JSON.parse(data);
   }
   for (var i = 0; i < people.length; i++) {
+
     den = people[i]['den'],
     drn = people[i]['drn'],
     name = people[i]['name'];
@@ -29,6 +31,16 @@ function addRows(data, skip_parse) {
     place_of_death = people[i]['place_of_death'];
     physical_address = people[i]["physical_address"];
     person_id = people[i]["person_id"];
+    if (ids.indexOf(person_id) >= 0) {
+        continue;
+    }else{
+      ids.push(person_id);
+    }
+
+    if (den.length == 0) {
+        continue;
+    }
+    
     spam = document.createElement("spam");
 
     var btn = document.createElement("input");

@@ -772,7 +772,16 @@ class CaseController < ApplicationController
         redirect_to request.fullpath and return
     end
    
+
     @status = PersonRecordStatus.by_person_recent_status.key(@person.id).last rescue nil
+    if params[:status].present?
+        if @status.status.to_s.squish != params[:status].squish
+          (RecordStatus.where(person_record_id: @person.id, status: params[:status]) rescue [] ).each do |state|
+              state.voided = 1
+              state.save
+          end
+        end
+    end
     @statuses = [(@status.status rescue nil)]
 
     if @status ="HQ PRINTED"

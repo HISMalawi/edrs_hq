@@ -20,9 +20,13 @@ class HqController < ApplicationController
 
   def dashbord_data
 
-    data = RestClient.get("#{SETTINGS['app_jobs_url']}/application/get_stats")
+    #data = RestClient.get("#{SETTINGS['app_jobs_url']}/application/get_stats")
 
-    render :text => data
+    #render :text => data
+
+    file_name = Rails.root.join('db', 'dashboard.json')
+    fileinput = JSON.parse(File.read(file_name))
+    render :text => fileinput.to_json
     
   end
   def search
@@ -325,7 +329,7 @@ class HqController < ApplicationController
   end
 
   def view_ccu_dispatch
-    @ccu_dispatch = CauseOfDeathDispatch.by_reviewed.key(false).each
+    @ccu_dispatch = CauseOfDeathDispatch.all.each
   end
 
   def view_ccu__confirmed_dispatch

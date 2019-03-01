@@ -4,6 +4,7 @@ var prev_statuses = "<%=@prev_statuses.join('|') rescue ''%>"
 var registration_type ="<%= params[:registration_type] rescue '' %>"
 var district = "<%= params[:district].present? ? params[:district] : '' %>"
 var amendment = "<%=@amendment rescue ''%>";
+var ids =[]
 function __$(id){
         return document.getElementById(id);
 }
@@ -100,6 +101,7 @@ function loadPopup(id){
         $("#shield").show()
         __$(id).style.display = "block";
 }
+
 function addRows(data, skip_parse) {
   if (skip_parse == true){
       people = data;
@@ -117,6 +119,15 @@ function addRows(data, skip_parse) {
     place_of_death = people[i]['place_of_death'];
     physical_address = people[i]["physical_address"];
     person_id = people[i]["person_id"];
+    if (ids.indexOf(person_id) >= 0) {
+        continue;
+    }else{
+      ids.push(person_id);
+    }
+
+    if (den.length == 0) {
+        continue;
+    }
     spam = document.createElement("spam");
     select = "<input type = 'checkbox' id='"+person_id+"' onclick='checkRecord(this)'/>";
     var btn = document.createElement("input");

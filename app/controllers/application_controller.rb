@@ -159,11 +159,15 @@ class ApplicationController < ActionController::Base
     place_of_death = ""
     case person.place_of_death
       when "Home"
-          if person.place_of_death_village.present? && person.place_of_death_village.to_s.length > 0
+          if person.place_of_death_village.present? && person.place_of_death_village.to_s.length > 0 && person.place_of_death_village != "Other"
               place_of_death = person.place_of_death_village
+          elsif person.other_place_of_death_village.present?
+              place_of_death = person.other_place_of_death_village
           end
-          if person.place_of_death_ta.present? && person.place_of_death_ta.to_s.length > 0
+          if person.place_of_death_ta.present? && person.place_of_death_ta.to_s.length > 0 && person.place_of_death_ta != "Other"
               place_of_death = "#{place_of_death}, #{person.place_of_death_ta}"
+          elsif person.other_place_of_death_ta.present?
+              place_of_death = "#{place_of_death}, #{person.other_place_of_death_ta}"
           end
           if person.place_of_death_district.present? && person.place_of_death_district.to_s.length > 0
               place_of_death = "#{place_of_death}, #{person.place_of_death_district}"
@@ -244,26 +248,6 @@ class ApplicationController < ActionController::Base
                 if person.place_of_death_district.present?
                     place_of_death = "#{place_of_death}, #{person.place_of_death_district}"
                 end
-      elsif person.place_of_death  && person.place_of_death =="Home"
-          if person.place_of_death_village.present? && person.place_of_death_village.to_s.length > 0
-            if person.place_of_death_village == "Other"
-               place_of_death = person.other_place_of_death_village
-            else
-               place_of_death = person.place_of_death_village
-            end
-             
-          end
-          if person.place_of_death_ta.present? && person.place_of_death_ta.to_s.length > 0
-            if person.place_of_death_ta == "Other"
-                place_of_death = "#{place_of_death}, #{person.other_place_of_death_ta}"
-            else
-                place_of_death = "#{place_of_death}, #{person.place_of_death_ta}"
-            end
-              
-          end
-          if person.place_of_death_district.present? && person.place_of_death_district.to_s.length > 0
-              place_of_death = "#{place_of_death}, #{person.place_of_death_district}"
-          end
 
     end
     return place_of_death 

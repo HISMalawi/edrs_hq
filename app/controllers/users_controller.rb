@@ -12,7 +12,8 @@ class UsersController < ApplicationController
 		reset_session
 
     if request.post?
-      user = User.by_username.key(params["users"]["username"]).last
+      #user = User.by_username.key(params["users"]["username"]).last
+      user = UserModel.where(username: params["users"]["username"]).first
 
       if user and user.password_matches?(params["users"]["password"])
         session[:user_id] = user.id
