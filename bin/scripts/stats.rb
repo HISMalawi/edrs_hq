@@ -28,9 +28,9 @@ connection = ActiveRecord::Base.connection
         #                                                WHERE status IN('HQ ACTIVE') AND
         #                                                DATE_FORMAT(created_at,'%Y-%m-%d') >= '#{start_date}' AND DATE_FORMAT(created_at,'%Y-%m-%d') <= '#{end_date}'").as_json.last['total'] rescue 0
         
-        printed << connection.select_all("SELECT count(*) as total FROM person_record_status 
+        printed << connection.select_all("SELECT count(a.person_record_id) as total FROM  (SELECT DISTINCT person_record_id FROM person_record_status 
                                                         WHERE status IN('HQ PRINTED') AND 
-                                                        DATE_FORMAT(created_at,'%Y-%m-%d') >= '#{start_date}' AND DATE_FORMAT(created_at,'%Y-%m-%d') <= '#{end_date}'").as_json.last['total'] rescue 0  
+                                                        DATE_FORMAT(created_at,'%Y-%m-%d') >= '#{start_date}' AND DATE_FORMAT(created_at,'%Y-%m-%d') <= '#{end_date}') a").as_json.last['total'] rescue 0  
 
         beginning = beginning + 1.months
         
@@ -57,7 +57,8 @@ cummulatives_keys["Dispatched"] =  ["HQ DISPATCHED"]
 cummulatives = {}
 cummulatives_keys.keys.each do |key|
 
-    query =  "SELECT count(*) as total FROM person_record_status WHERE status IN('#{cummulatives_keys[key].join("','")}') AND voided = 0"
+    query =  "SELECT count(a.person_record_id) as total FROM  (SELECT DISTINCT person_record_id FROM person_record_status WHERE status IN('#{cummulatives_keys[key].join("','")}') AND voided = 0) a"
+    
     cummulatives[key] = connection.select_all(query).as_json.last['total'] rescue 0
     #cummulatives[key] = PersonRecordStatus.by_record_status.keys(cummulatives_keys[key]).each.count
 end
@@ -86,16 +87,16 @@ District.all.each do |district|
 
           
 
-            district_approved << connection.select_all("SELECT count(*) as total FROM person_record_status 
+            district_approved << connection.select_all("SELECT count(a.person_record_id) as total FROM  (SELECT DISTINCT person_record_id FROM person_record_status 
                                                         WHERE status IN('HQ ACTIVE') AND
                                                         DATE_FORMAT(created_at,'%Y-%m-%d') >= '#{start_date}' AND DATE_FORMAT(created_at,'%Y-%m-%d') <= '#{end_date}'
-                                                        AND district_code ='#{district.id}'").as_json.last['total'] rescue 0
+                                                        AND district_code ='#{district.id}') a").as_json.last['total'] rescue 0
       
             
-            district_printed  = connection.select_all("SELECT count(*) as total FROM person_record_status 
+            district_printed  = connection.select_all("SELECT count(a.person_record_id) as total FROM  (SELECT DISTINCT person_record_id FROM person_record_status 
                                                         WHERE status IN('HQ PRINTED') AND 
                                                         DATE_FORMAT(created_at,'%Y-%m-%d') >= '#{start_date}' AND DATE_FORMAT(created_at,'%Y-%m-%d') <= '#{end_date}'
-                                                        AND district_code ='#{district.id}'").as_json.last['total'] rescue 0      
+                                                        AND district_code ='#{district.id}') a").as_json.last['total'] rescue 0      
             district_printed << district_printed
             beginning = beginning + 1.months
             

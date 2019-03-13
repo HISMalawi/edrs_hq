@@ -541,7 +541,7 @@ class HqController < ApplicationController
       end
 
       next if person.blank?
-      PersonRecordStatus.change_status(person,"HQ PRINTED")
+      PersonRecordStatus.change_status(person,"HQ PRINTED", "Printed at HQ")
       id = person.id
       
       output_file = "#{SETTINGS['certificates_path']}#{id}.pdf"
@@ -556,7 +556,7 @@ class HqController < ApplicationController
 
         sleep(4)
 
-        Kernel.system "lp -d #{params[:printer_name]} #{CONFIG['certificates_path']}#{id}.pdf\n"
+        Kernel.system "lp -d #{params[:printer_name]} #{SETTINGS['certificates_path']}#{id}.pdf\n"
 
         sleep(5)
         
@@ -633,7 +633,7 @@ class HqController < ApplicationController
             'place_of_death'      => place_of_death(person),
             'date_registered'     => (date_registered.to_date.strftime('%d/%b/%Y') rescue nil)
         }
-        PersonRecordStatus.change_status(person,"HQ DISPATCHED")
+        PersonRecordStatus.change_status(person,"HQ DISPATCHED", "Dispatched at HQ")
       end
 
       render :layout => false

@@ -12,7 +12,7 @@ app_root = Rails.root
 entries_to_add = [		
 					"*/2 * * * * bash -l -c 'cd #{app_root}/bin/sync && ./sync.sh'",
 					"*/1 * * * * bash -l -c 'cd #{app_root} && bundle exec rails r bin/scripts/couch-mysql.rb'",
-					"0 2 * * * bash -l -c 'cd #{app_root} && bundle exec rails  r bin/scripts/save_mysql.rb'",
+					"0 3 * * * bash -l -c 'cd #{app_root} && bundle exec rails  r bin/scripts/save_mysql.rb'",
 					"0 0 * * * bash -l -c 'cd #{app_root} && bundle exec rails  r bin/scripts/compact.rb'",
 					"0 1 * * * bash -l -c 'cd #{app_root} && bundle exec rails r bin/scripts/index_couchdb.rb'",
 					"*/15 * * * * bash -l -c 'cd #{app_root} && bundle exec rails r bin/scripts/stats.rb'"

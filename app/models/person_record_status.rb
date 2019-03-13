@@ -103,41 +103,40 @@ class PersonRecordStatus < CouchRest::Model::Base
 	end
 
 	def self.change_status(person,currentstatus,comment=nil)
-		statuses = PersonRecordStatus.by_person_recent_status.key(person.id).each
-		
-		if statuses.present?
-			reprint = false
-			statuses.each do |s|
-				if reprint
-				else
-					reprint = true if ["HQ PRINT AMEND","HQ REPRINT REQUEST"].include?(s.status)
-				end
-				s.voided = true
-				s.save
-			end
-			
-			PersonRecordStatus.create({
+
+		new_status = PersonRecordStatus.create({
                                   :person_record_id => person.id.to_s,
                                   :status => currentstatus,
-                                  :prev_status => (statuses.last.status rescue nil),
-                                  :reprint => reprint,
                                   :comment => comment,
                                   :district_code => person.district_code,
-                                  :creator => (User.current_user.id rescue (@current_user.id rescue nil))})
-		else
-			PersonRecordStatus.create({
-                                  :person_record_id => person.id.to_s,
-                                  :status => currentstatus,
-                                  :prev_status => nil,
-                                  :district_code => person.district_code,
-                                  :comment => comment,
-                                  :creator => (User.current_user.id rescue (@current_user.id rescue nil))})
-		end
+                                  :creator => (User.current_user.id rescue nil)})
+
+      	PersonRecordStatus.by_person_recent_status.key(person.id).each.sort_by{|d| d.created_at}.each do |s|
+	        next if s === new_status
+	        s.voided = true
+	        s.save
+      	end
 
 		lock = MyLock.by_person_id.key(person.id).last
 		if lock.present? 
 			lock.destroy
 		end
+	end
+
+	def self.change_status(person,currentstatus,comment=nil)
+
+		new_status = PersonRecordStatus.create({
+                                  :person_record_id => person.id.to_s,
+                                  :status => currentstatus,
+                                  :comment => comment,
+                                  :district_code => person.district_code,
+                                  :creator => (User.current_user.id rescue nil)})
+
+      PersonRecordStatus.by_person_recent_status.key(person.id).each.sort_by{|d| d.created_at}.each do |s|
+        next if s === new_status
+        s.voided = true
+        s.save
+      end	
 	end
 
 	def insert_update_into_mysql

@@ -17,7 +17,7 @@ class CaseController < ApplicationController
   def open
     @title = "Open Cases"
     @statuses = ["HQ ACTIVE"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
     @drn_available = true
     render :template => "case/default"
@@ -26,7 +26,7 @@ class CaseController < ApplicationController
   def closed
     @title = "Closed Cases"
     @statuses = ["HQ PRINTED"]
-    @page = 1
+    @page = 0
     @drn = true
     @dispatch = true
 
@@ -46,7 +46,7 @@ class CaseController < ApplicationController
     @title = "Dispatched Certificates"
     @statuses = ["HQ DISPATCHED"]
     @drn = true
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -55,7 +55,7 @@ class CaseController < ApplicationController
   def conflict
     @title = "Conflict Cases"
     @statuses = ["HQ CONFLICT"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -64,7 +64,7 @@ class CaseController < ApplicationController
   def hq_incomplete
     @title = "Reject Incomplete Cases"
     @statuses = ["HQ INCOMPLETE"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -73,7 +73,7 @@ class CaseController < ApplicationController
   def approve_for_reprinting
     @title = "Approve for Reprinting"
     @statuses = ["DC REAPPROVED", "DC AMENDED", "DC REPRINT"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -82,7 +82,7 @@ class CaseController < ApplicationController
   def edited_from_dc
     @title = "Corrected from DC"
     @statuses = ["DC REAPPROVED"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
     render :template => "case/default"
   end
@@ -90,7 +90,7 @@ class CaseController < ApplicationController
   def approve_potential_duplicates
     @title = "Approve Potential Duplicates"
     @statuses = ["HQ DUPLICATE"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -99,7 +99,7 @@ class CaseController < ApplicationController
   def resolve_duplicates
     @title = "Resolve duplicate cases"
     @statuses = ["HQ POTENTIAL DUPLICATE","HQ NOT DUPLICATE"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -108,7 +108,7 @@ class CaseController < ApplicationController
   def approved_duplicate
     @title = "Approved duplicates"
     @prev_statuses = ["HQ POTENTIAL DUPLICATE TBA","HQ NOT DUPLICATE TBA","HQ POTENTIAL DUPLICATE","HQ DUPLICATE"]
-    @page = 1
+    @page = 0
     @statuses = ["HQ CAN PRINT"]
     session[:return_url] = request.path
     render :template => "case/default"
@@ -117,7 +117,7 @@ class CaseController < ApplicationController
   def local_cases
     @title = "Local Cases"
     @statuses = ["-"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -126,7 +126,7 @@ class CaseController < ApplicationController
   def remote_cases
     @title = "Remote Cases"
     @statuses = ["HQ REJECTED"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -135,7 +135,7 @@ class CaseController < ApplicationController
   def re_open_cases
     @title = "Re-open Cases"
     @statuses = ["HQ PRINTED", "HQ DISPATCHED"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -144,7 +144,7 @@ class CaseController < ApplicationController
   def re_approved_cases
     @title = "Re-Approved Cases"
     @statuses = ["HQ REAPPROVED"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -153,7 +153,7 @@ class CaseController < ApplicationController
   def rejected_and_approved_cases
     @title = "Re-Approved Cases"
     @statuses = ["HQ"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -168,7 +168,7 @@ class CaseController < ApplicationController
       next if d.name.include?("City")
       @districts << d.name 
     end
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -177,7 +177,7 @@ class CaseController < ApplicationController
   def approve_reprint
     @title = "Approve for Re-printing"
     @statuses = ["HQ RE PRINT"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -186,7 +186,7 @@ class CaseController < ApplicationController
   def incomplete_cases
     @title = "Incomplete Cases"
     @statuses = ["HQ INCOMPLETE TBA"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -195,7 +195,7 @@ class CaseController < ApplicationController
   def rejected_cases
     @title = "Rejected Cases"
     @statuses = ["HQ CONFIRMED INCOMPLETE", "HQ REOPENED","HQ CAN REJECT"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -211,7 +211,7 @@ class CaseController < ApplicationController
       next if d.name.include?("City")
       @districts << d.name 
     end
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
     @available_printers = SETTINGS["printer_name"].split(',')
     render :template => "case/default_batch"
@@ -220,7 +220,7 @@ class CaseController < ApplicationController
   def re_print
     @title = "Re-print Certificates"
     @statuses = ["HQ CAN RE PRINT"]
-    @page = 1
+    @page = 0
     @drn = true
     session[:return_url] = request.path
     @available_printers = SETTINGS["printer_name"].split(',')
@@ -240,7 +240,7 @@ class CaseController < ApplicationController
       @districts << d.name 
     end
 
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -251,7 +251,7 @@ class CaseController < ApplicationController
     @prev_statuses = ["HQ CAN RE PRINT"]
     @status = "HQ PRINTED"
     @statuses = ["HQ PRINTED","HQ DISPATCHED"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -294,7 +294,7 @@ class CaseController < ApplicationController
                   redirect_to request.fullpath and return
               end
           else
-              if !File.exist?("#{SETTINGS['barcodes_path']}#{@person.id}.png")
+              if !File.exist?("#{SETTINGS['barcodes_path']}#{person.id}.png")
                   create_barcode(person)
                   sleep(2)
                   redirect_to request.fullpath and return
@@ -335,7 +335,7 @@ class CaseController < ApplicationController
     @statuses = ["HQ DISPATCHED"]
     session[:return_url] = request.path
 
-    @page = 1
+    @page = 0
 
     render :template => "case/default"
   end
@@ -346,7 +346,7 @@ class CaseController < ApplicationController
     @statuses = ["HQ PRINTED","HQ DISPATCHED"]
     session[:return_url] = request.path
 
-    @page = 1
+    @page = 0
 
     render :template => "case/default"      
   end
@@ -370,7 +370,7 @@ class CaseController < ApplicationController
   def void_cases
     @title = "Void Cases"
     @statuses = ["HQ CONFIRMED DUPLICATE"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -379,7 +379,7 @@ class CaseController < ApplicationController
   def voided_cases
     @title = "Voided Cases"
     @statuses = ["HQ VOIDED"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -388,7 +388,7 @@ class CaseController < ApplicationController
   def verify_cerfitificates
     @title = "Verify Certificates"
     @statuses = ["HQ PRINTED", "HQ DISPATCHED"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -397,7 +397,7 @@ class CaseController < ApplicationController
   def potential
     @title = "Potential Duplicates"
     @statuses = ["HQ POTENTIAL DUPLICATE TBA"]
-    @page = 1 
+    @page = 0 
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -407,7 +407,7 @@ class CaseController < ApplicationController
   def can_confirm
     @title = "Duplicates"
     @statuses = ["HQ DUPLICATE"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -416,7 +416,7 @@ class CaseController < ApplicationController
   def confirmed
     @title = "Confirmed duplicates"
     @statuses = ["HQ CONFIRMED DUPLICATE"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -426,7 +426,7 @@ class CaseController < ApplicationController
   def rejected_requests
     @title = "Rejected "
     @statuses = ["HQ AMEND REJECTED","HQ LOST REJECTED","HQ DAMAGED REJECTED"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -442,7 +442,7 @@ class CaseController < ApplicationController
       @statuses = ["HQ AMEND","HQ AMEND GRANTED"]
     end
     
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -466,7 +466,7 @@ class CaseController < ApplicationController
     cummulatives_keys["Dispatched"] =  ["HQ DISPATCHED"]
 
     @statuses = cummulatives_keys[@title]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -481,7 +481,7 @@ class CaseController < ApplicationController
     else
         @statuses = ["HQ LOST","HQ DAMAGED","HQ LOST GRANTED","HQ DAMAGED REJECTED TBA"]
     end
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -491,7 +491,7 @@ class CaseController < ApplicationController
     @title = "Reprinted and amended Certificates"
     @prev_statuses = ["HQ AMEND","HQ DAMAGED","HQ LOST"]
     @statuses = ["HQ CAN PRINT","HQ DISPATCHED"]
-    @page = 1
+    @page = 0
     session[:return_url] = request.path
 
     render :template => "case/default"
@@ -514,7 +514,13 @@ class CaseController < ApplicationController
     #raise data.inspect
     data.each do |row|
           person = Person.find(row["person_record_id"])
-          next unless params[:statuses].split("|").collect{|status| status.gsub(/\_/, " ").upcase}.join("','").include?(person.status)
+          unless params[:statuses].split("|").collect{|status| status.gsub(/\_/, " ").upcase}.include?(person.status)
+             RecordStatus.where("person_record_id= '#{row['person_record_id']}' AND status IN('#{params[:statuses].split('|').collect{|status| status.gsub(/\_/, ' ').upcase}.join("','")}')").each do |s|
+                s.voided = 1 
+                s.save
+             end
+             next
+          end
           cases << fields_for_data_table(person)
     end
 
@@ -556,10 +562,10 @@ class CaseController < ApplicationController
 
   def more_open_cases_with_prev_status
 
-
+      offset = params[:page_number].to_i * 40
       sql = "SELECT c.person_record_id FROM person_record_status c INNER JOIN person_record_status p ON p.person_record_id = c.person_record_id
              WHERE c.status IN ('#{params[:statuses].split('|').join("','")}') AND p.status IN ('#{params[:prev_statuses].split('|').join("','")}') AND p.voided = 1 
-             LIMIT 40 OFFSET #{(params[:page_number].to_i - 1) * 40}"
+             LIMIT 40 OFFSET #{offset}"
 
       connection = ActiveRecord::Base.connection
       data = connection.select_all(sql).as_json
@@ -602,7 +608,7 @@ class CaseController < ApplicationController
   def special_cases
       @title = params[:registration_type].humanize
       @statuses = []
-      @page = 1
+      @page = 0
       session[:return_url] = request.path
       render :template => "case/default"
   end
@@ -622,7 +628,7 @@ class CaseController < ApplicationController
      @title = "Printed Special Cases"
      @statuses = ["HQ PRINTED"]
      @registration_types = ["Abnormal Deaths","Dead on Arrival","Unclaimed bodies","Missing Person","Deaths Abroad"]
-     @page = 1
+     @page = 0
      session[:return_url] = request.path
      render :template => "case/default"
   end
@@ -631,7 +637,7 @@ class CaseController < ApplicationController
      @title = "Printed Special Cases"
      @statuses = ["HQ REJECTED"]
      @registration_types = ["Abnormal Deaths","Dead on Arrival","Unclaimed bodies","Missing Person","Deaths Abroad"]
-     @page = 1
+     @page = 0
      session[:return_url] = request.path
      render :template => "case/default"
   end
