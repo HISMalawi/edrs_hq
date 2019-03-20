@@ -1024,7 +1024,7 @@ class HqController < ApplicationController
     end
 
     if has_role("View closed cases")
-      @tasks << ['View printed records','Print records',"/closed_cases?next_url=#{request.fullpath}",'lock.png']
+      @tasks << ['Printed records','Print records',"/hq/printed_tasks?next_url=#{request.fullpath}",'lock.png']
       @tasks << ['Dispatched records','Dispatched records with an option of viewing a copy of printed certificate','/dispatched','dispatch.png']
     end
 
@@ -1113,6 +1113,13 @@ class HqController < ApplicationController
     end 
     @section ="Print out"
     render :template => "/hq/tasks"
+  end
+
+  def printed_tasks
+      @tasks = []
+      @tasks << ['All Printed','All Printed',"/closed_cases?next_url=#{request.fullpath}",'']
+      @tasks << ['Printed at DC','Printed at DC',"/case/dc_printed?next_url=#{request.fullpath}",'']
+      @tasks << ['Printed at HQ','Printed at HQ',"/case/hq_printed?next_url=#{request.fullpath}",'']      
   end
 
   def keep

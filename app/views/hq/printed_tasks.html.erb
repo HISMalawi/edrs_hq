@@ -1,0 +1,101 @@
+<style>
+/*
+.task-btn  {
+  width: 100%;
+}
+
+.btn-title {
+  font-size: 25px !important;
+  font-weight: bold;
+}
+
+.btn-desc {
+  font-size: 15px !important;
+}
+
+*/
+
+</style>
+<div id="main" >
+  <h3 style="padding-left: 15px;"><%= @section rescue 'Case management' %></h3>
+  <div id="button-container">
+        <%(@tasks || []).each do |title, desc, link, icon|%>
+
+              <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" onclick="window.location='<%= link%>'">
+                <div class="divbtn">
+                    <span class="icons">
+                        <img class="icon-attr" src="/assets/folder3.png">
+                        <p><%=title%></p>
+                    </span>
+                </div>
+                
+              </div>
+         <%end%>
+  </div>
+</div> 
+<br/>   
+<% if params[:next_url].present? %>
+  <button class="btn btn-primary pull-left" onclick="window.location='<%=params[:next_url] %>'">Back</button>
+<%end%>
+
+
+<script>
+var button_container = document.getElementById("button-container");
+
+function buildUI() {
+  var row = document.createElement('div');
+
+  button_container.appendChild(row);
+  counter = 0;
+  
+  <%(@tasks || []).each do |title, desc, link, icon|%>
+/*
+*/
+
+      <%if icon.blank? %>
+        var icon_path = '/assets/folder.png'
+      <%else%>
+        var icon_path = '/assets/manage-cases-icons/<%=icon%>'
+      <%end%>
+      first_div = document.createElement('div');
+      first_div.setAttribute('class','col-xs-6 col-sm-4 col-md-3 col-lg-2');
+      row.appendChild(first_div);
+      row.setAttribute("onclick", "window.location = '<%=link%>'");
+
+      second_div = document.createElement('div');
+      first_div.appendChild(second_div);
+      second_div.setAttribute('class','divbtn');
+
+      span = document.createElement('span');
+      span.setAttribute('class','icons');
+
+      img = document.createElement('img');
+      img.setAttribute('class','icon-attr');
+      img.setAttribute('src', icon_path);
+      span.appendChild(img);
+
+      p = document.createElement('p');
+      p.setAttribute('style','color: black; font-weight: bold;');
+      p.innerHTML = "<%=title%>";
+      span.appendChild(p);
+
+      second_div.appendChild(span);
+      
+      counter++;
+
+      if(counter == 2){
+        /*row = document.createElement('div');
+        row.innerHTML = "&nbsp;";
+        button_container.appendChild(row);
+        row = document.createElement('div');
+        button_container.appendChild(row);
+        counter = 0;*/
+      }
+  <%end%>
+
+
+}
+
+//buildUI();
+
+</script>

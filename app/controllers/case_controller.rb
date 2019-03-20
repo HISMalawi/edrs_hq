@@ -24,8 +24,8 @@ class CaseController < ApplicationController
   end
 
   def closed
-    @title = "Closed Cases"
-    @statuses = ["HQ PRINTED"]
+    @title = "Printed Cases"
+    @statuses = ["HQ PRINTED", "DC PRINTED"]
     @page = 0
     @drn = true
     @dispatch = true
@@ -40,6 +40,44 @@ class CaseController < ApplicationController
     session[:return_url] = request.path
     @available_printers = SETTINGS["printer_name"].split(',')
     render :template => "case/default_batch"
+  end
+
+  def dc_printed
+    @title = "Printed Cases"
+    @statuses = ["DC PRINTED"]
+    @page = 0
+    @drn = true
+    @dispatch = true
+
+    @districts = []
+    District.all.each do |d| 
+      next if d.name.blank?
+      next if d.name.include?("City")
+      @districts << d.name 
+    end
+   
+    session[:return_url] = request.path
+    @available_printers = SETTINGS["printer_name"].split(',')
+    render :template => "case/default"    
+  end
+
+  def hq_printed
+    @title = "Printed Cases"
+    @statuses = ["HQ PRINTED"]
+    @page = 0
+    @drn = true
+    @dispatch = true
+
+    @districts = []
+    District.all.each do |d| 
+      next if d.name.blank?
+      next if d.name.include?("City")
+      @districts << d.name 
+    end
+   
+    session[:return_url] = request.path
+    @available_printers = SETTINGS["printer_name"].split(',')
+    render :template => "case/default"    
   end
 
   def dispatched
@@ -851,8 +889,29 @@ class CaseController < ApplicationController
 
   def pdf_certificate
       pdf_filename = "#{SETTINGS['certificates_path']}#{params[:id]}.pdf"
+
+      if !File.exist?(pdf_filename)
+          paper_size = GlobalProperty.find("paper_size").value rescue "A4"
+    
+          if paper_size == "A4"
+             zoom = 0.83
+          elsif paper_size == "A5"
+             zoom = 0.6
+          end
+
+          output_file = "#{SETTINGS['certificates_path']}#{params[:id]}.pdf"
+
+          input_url = "#{CONFIG["protocol"]}://#{request.env["SERVER_NAME"]}:#{request.env["SERVER_PORT"]}/death_certificate/#{params[:id]}"
+
+          Kernel.system "#{SETTINGS['wkhtmltopdf']} --zoom #{zoom} --page-size #{paper_size} #{input_url} #{output_file}"
+          #PDFKit.new(input_url, :page_size => paper_size, :zoom => zoom).to_file(output_file)
+
+          sleep(2)
+          redirect_to request.fullpath and return
+      end
       send_file(pdf_filename, :filename => "#{params[:id]}.pdf", :disposition => 'inline', :type => "application/pdf")
   end
+  
   def find
       person = Person.find(params[:id])
       person["status"] = PersonRecordStatus.by_person_recent_status.key(params[:id]).last.status

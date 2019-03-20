@@ -37,7 +37,7 @@ function addRows(data, skip_parse) {
       ids.push(person_id);
     }
 
-    if (den.length == 0) {
+    if (!den) {
         continue;
     }
     
@@ -61,7 +61,7 @@ function addRows(data, skip_parse) {
     <%end%>
 
   }
-
+  
   if(people.length > 0) {
     current_page ++;
     getCases();

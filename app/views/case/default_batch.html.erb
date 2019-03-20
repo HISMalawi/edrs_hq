@@ -48,6 +48,31 @@ function checkRecord(element){
       }
 }
 
+function checkAll(element){
+
+    for(var i = 0 ; i < ids.length ; i++){
+        if(eval(element.checked)){
+          if ( __$(ids[i])) {
+              __$(ids[i]).setAttribute("checked", true) 
+          }
+            selected[ids[i]] = true
+        }else{
+          delete selected[ids[i]]
+          if ( __$(ids[i])) {
+            __$(ids[i]).removeAttribute("checked");
+          }
+        }     
+
+    }
+    if(eval(element.checked)){
+
+       $("#print_btn").removeClass("hidden")
+    }else{
+       $("#print_btn").addClass("hidden")
+    }
+
+}
+
 function setPrinter(printer_name){
       printer = printer_name;
 }
@@ -125,9 +150,10 @@ function addRows(data, skip_parse) {
       ids.push(person_id);
     }
 
-    if (den.length == 0) {
+    if (!den) {
         continue;
     }
+
     spam = document.createElement("spam");
     select = "<input type = 'checkbox' id='"+person_id+"' onclick='checkRecord(this)'/>";
     var btn = document.createElement("input");
@@ -313,7 +339,7 @@ function getCases() {
         <th><i class=""></i> DOD</th>
         <th><i class=""></i> Place of Death</th>
         <th>&nbsp;</th>
-        <th>Select</th>
+        <th>Select <input type = 'checkbox' id='select_all' onclick='checkAll(this)'/></th>
       </tr>
     </thead>
 

@@ -214,6 +214,11 @@ Rails.application.routes.draw do
   get "/search_causes/:page" => "causes_of_death#search_causes"
   get "/causes_of_death/:id/edit" =>"causes_of_death#edit"
 
+  ########## Decentralized printing #######################
+  get "/hq/printed_tasks"
+  get "/case/dc_printed"
+  get "/case/hq_printed"
+
 
 
   # The priority is based upoindexation: first created -> highest priority.
