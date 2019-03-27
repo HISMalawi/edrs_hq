@@ -724,35 +724,76 @@
   </div>
 </div>
 <div class="" id="duplicate_modal">
-  <div class="modal-dialog">
-    <div class="modal-content">
+  <div class="modal-dialog" style="width: 100%">
+    <div class="modal-content" style="width: 100%">
       <div class="modal-header btn-primary">
-        <h4 class="modal-title" id="duplicate_modal_title">Record is potential duplicate</h4>
+          <center> <h4 class="modal-title" id="duplicate_modal_title">Record is potential duplicate</h4> </center>
       </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-lg-12">
-            <div class=" form-group">
-              <div class="container">
-                  <div class="row" style="width: 550px;">
-                    <div id="action_comments_list">
-                    <table>
-                      <% @results.each do |result|%>
-                          <tr>
-                            <td><%= Person.find(result["_id"]).den rescue ''%></td>
-                            <td style="text-align: left; padding-left:50px;"><%=result["_source"]["content"] %></td>
-                          </tr>
-                      <%end%>
-                    </table>
-                    </div>
-                  </div>
-              </div>
-            </div>
-          </div>
+      <div class="modal-body" style="width: 100%">
+                      <table style="width: 100%">
+                        <tr>
+                          <th colspan="9" style="color: red; text-align: center; background: lightgray">
+                              <h4>New Record</h4>
+                          </th>
+                        </tr>
+                        <tr>
+                            <th>DEN</th>
+                            <th>Name</th>
+                            <th>Gender</th>
+                            <th>BOB</th>
+                            <th>DOD</th>
+                            <th>District of Death</th>
+                            <th>Mother's Name</th>
+                            <th>Father's Name</th>
+                            <th>Status</th>
+
+                        </tr>
+                        <tr>
+                            <td><%= @person.den %></td>
+                            <td><%= @person.person_name %></td>
+                            <td><%= @person.gender %></td>
+                            <td><%= @person.birthdate.to_date.strftime("%d/%b/%Y") %></td>
+                            <td><%= @person.date_of_death.strftime("%d/%b/%Y") %></td>
+                            <td><%= @person.place_of_death_district %></td>
+                            <td><%= @person.mothers_name %></td>
+                            <td><%= @person.fathers_name %></td>
+                             <td><%= @person.status %></td>
+                        </tr>
+                        <tr>
+                          <th colspan="9" style="color: darkgreen; text-align: center; background: lightgray">
+                              <h4>Existing  Record(s)</h4>
+                          </th>
+                        </tr>
+                        <tr>
+                            <th>DEN</th>
+                            <th>Name</th>
+                            <th>Gender</th>
+                            <th>BOB</th>
+                            <th>DOD</th>
+                            <th>District of Death</th>
+                            <th>Mother's Name</th>
+                            <th>Father's Name</th>
+                            <th>Status</th>
+
+                        </tr>
+                        <% @results.each do |result|%>
+                            <tr>
+                              <% @duplicate = Person.find(result["_id"]) %>
+                              <td><%= @duplicate.den rescue ''%></td>
+                              <td><%= @duplicate.person_name %></td>
+                              <td><%= @duplicate.gender %></td>
+                              <td><%= @duplicate.birthdate.to_date.strftime("%d/%b/%Y") %></td>
+                              <td><%= @duplicate.date_of_death.to_date.strftime("%d/%b/%Y") %></td>
+                              <td><%= @duplicate.place_of_death_district %></td>
+                              <td><%= @duplicate.mothers_name %></td>
+                              <td><%= @duplicate.fathers_name %></td>
+                              <td><%= @duplicate.status %></td>
+                            </tr>
+                        <%end%>
+                      </table>
           <div class="modal-footer">
             <button id="duplicate_proceed" type="button" class="btn btn-sm btn-success" onclick="window.location='/open_cases'" > Proceed </button>
           </div>
-        </div>
       </div>
     </div>
   </div>
@@ -1188,6 +1229,16 @@
       top: 13.5%;
       display: none;
       z-index: 4000
+  }
+
+  #duplicate_modal{
+      width: 70%;
+      left: 15%;
+  }
+
+  #duplicate_modal th, td{
+      border-collapse: collapse;
+      border: 1px solid gray;
   }
 
   .user_name{

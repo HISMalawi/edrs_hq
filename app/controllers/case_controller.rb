@@ -552,6 +552,7 @@ class CaseController < ApplicationController
     #raise data.inspect
     data.each do |row|
           person = Person.find(row["person_record_id"])
+          next if person.first_name.blank?  && person.last_name.blank?
           unless params[:statuses].split("|").collect{|status| status.gsub(/\_/, " ").upcase}.include?(person.status)
              RecordStatus.where("person_record_id= '#{row['person_record_id']}' AND status IN('#{params[:statuses].split('|').collect{|status| status.gsub(/\_/, ' ').upcase}.join("','")}')").each do |s|
                 s.voided = 1 
@@ -620,7 +621,9 @@ class CaseController < ApplicationController
 
   def fields_for_data_table(person)
 
-      return {
+    begin
+
+        a = {
           drn: (person.drn rescue nil),
           den: (person.den rescue nil),
           name: "#{person.first_name} #{person.middle_name rescue ''} #{person.last_name}",
@@ -629,7 +632,12 @@ class CaseController < ApplicationController
           dod:        person.date_of_death.strftime("%d/%b/%Y"),
           place_of_death: place_of_death(person),
           person_id:  person.id
-        }
+        }     
+    rescue Exception => e
+       raise person.id
+    end
+
+    return a
   end
 
   def more_amended_or_reprinted_cases   

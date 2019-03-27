@@ -10,7 +10,8 @@ site_type: hq
 app_jobs_url: 'http://localhost:3321'
 pre_printed_paper: true
 wkhtmltopdf: /usr/bin/wkhtmltopdf
+barcodes_path: /home/cranberry/hqbarcodes/ 
+certificates_path: /home/cranberry/certificates/
 dispatch_path: /home/usr/dispatch/
-wkhtmltopdf: /usr/bin/wkhtmltopdf
 print_qrcode: true
 qrcodes_path: /home/cranberry/barcodes/
