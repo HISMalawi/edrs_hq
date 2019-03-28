@@ -30,7 +30,7 @@ class PersonIdentifier < CouchRest::Model::Base
     view :by_site_code
     view :by_den_sort_value,
          :map => "function(doc) {
-                  if (doc['type'] == 'PersonIdentifier' && doc['district_code'] == '#{CONFIG['district_code']}') {
+                  if (doc['type'] == 'PersonIdentifier' && doc['district_code'] == '#{SETTINGS['district_code']}') {
                     emit(doc['den_sort_value']);
                   }
                 }"
@@ -127,7 +127,7 @@ class PersonIdentifier < CouchRest::Model::Base
                     :identifier => drn,
                     :creator => creator,
                     :drn_sort_value => drn_sort_value,
-                    :district_code => (person.district_code rescue CONFIG['district_code'])
+                    :district_code => (person.district_code rescue SETTINGS['district_code'])
                 }) 
     end
  
