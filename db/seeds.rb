@@ -1,5 +1,5 @@
-LoadMysql.load_mysql = false
 
+`cd #{Rails.root} && rails r bin/script/load_metadata_to_sql.rb`
 puts "Creating Barcode / Certificate and Dispatch paths"
 
 Dir.mkdir(SETTINGS['barcodes_path']) unless Dir.exist?(SETTINGS['barcodes_path'])
@@ -401,8 +401,6 @@ SimpleSQL.load_dump("#{Rails.root}/db/directory.sql");
 couch_sequence = "CREATE TABLE couchdb_sequence (couchdb_sequence_id int(11) NOT NULL AUTO_INCREMENT,seq bigint(20) NOT NULL, PRIMARY KEY (couchdb_sequence_id));"
 SimpleSQL.query_exec(couch_sequence)
 
-`rake edrs:build_mysql`
 
-LoadMysql.load_mysql = true
 puts "Application setup succesfully!!!"
 puts "Login details username: #{user.username} password: p@ssw0rd"
