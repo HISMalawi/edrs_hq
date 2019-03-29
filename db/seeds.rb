@@ -1,5 +1,6 @@
 
-`cd #{Rails.root} && rails r bin/script/load_metadata_to_sql.rb`
+`cd #{Rails.root} && rails r bin/scripts/load_metadata_to_sql.rb`
+
 puts "Creating Barcode / Certificate and Dispatch paths"
 
 Dir.mkdir(SETTINGS['barcodes_path']) unless Dir.exist?(SETTINGS['barcodes_path'])
