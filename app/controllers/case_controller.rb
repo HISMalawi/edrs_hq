@@ -552,6 +552,7 @@ class CaseController < ApplicationController
     #raise data.inspect
     data.each do |row|
           person = Person.find(row["person_record_id"])
+          next if person.blank?
           next if person.first_name.blank?  && person.last_name.blank?
           unless params[:statuses].split("|").collect{|status| status.gsub(/\_/, " ").upcase}.include?(person.status)
              RecordStatus.where("person_record_id= '#{row['person_record_id']}' AND status IN('#{params[:statuses].split('|').collect{|status| status.gsub(/\_/, ' ').upcase}.join("','")}')").each do |s|

@@ -107,6 +107,31 @@ District.all.each do |district|
           stats["districts"][district.id][:year_registered] = district_registered
           stats["districts"][district.id][:year_approved] = district_approved
           stats["districts"][district.id][:year_printed] = district_printed
+
+          cummulatives_keys = {}
+          cummulatives_keys["Newly Received"] = ["HQ ACTIVE"]
+          cummulatives_keys["Verified by DV"] = ["HQ COMPLETE"]
+          cummulatives_keys["Marked incomplete by DV"] = ["HQ INCOMPLETE TBA"]
+          cummulatives_keys["Incomplete Records"]  = ["HQ INCOMPLETE"]
+          cummulatives_keys["Conflict cases"] = ["HQ CONFLICT"]
+          cummulatives_keys["Can reject to DC"] = ["HQ CAN REJECT"]
+          cummulatives_keys["Print Queue"] = ["HQ CAN PRINT"]
+          cummulatives_keys["Re pritnt- Queue"] = ["HQ REPRINT","HQ REPRINT REQUEST"]
+          cummulatives_keys["Suspected duplicates"] = ["HQ POTENTIAL DUPLICATE","HQ DUPLICATE"]
+          cummulatives_keys["Printed"] = ["HQ PRINTED"]
+          cummulatives_keys["Dispatched"] =  ["HQ DISPATCHED"]
+
+          cummulatives = {}
+          cummulatives_keys.keys.each do |key|
+
+              query =  "SELECT count(a.person_record_id) as total FROM  (SELECT DISTINCT person_record_id FROM person_record_status 
+                        WHERE status IN('#{cummulatives_keys[key].join("','")}') AND voided = 0 AND district_code ='#{district.id}') a"
+              
+              cummulatives[key] = connection.select_all(query).as_json.last['total'] rescue 0
+              #cummulatives[key] = PersonRecordStatus.by_record_status.keys(cummulatives_keys[key]).each.count
+          end
+
+          stats["districts"][district.id]["cummulative"] = cummulatives
 end
 
 stats["age_group"] = {}
@@ -163,3 +188,4 @@ if newfile
 else
         puts "Unable to open file"  
 end
+

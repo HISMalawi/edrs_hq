@@ -7,6 +7,7 @@ printer_name: ME,Printer2
 sampling_frequency: Daily #Weekly|Monthly
 sample_percentage: 5
 site_type: hq
+remote_exclude: Chitipa,Lilongwe,Ntcheu,Blantyre
 app_jobs_url: 'http://localhost:3321'
 pre_printed_paper: true
 wkhtmltopdf: /usr/bin/wkhtmltopdf

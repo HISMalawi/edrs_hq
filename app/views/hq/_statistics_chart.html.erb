@@ -18,10 +18,12 @@
     var title = ""
     function loadChart(){
           $.getJSON('/dashbord_data',function(data){
-                  loadTable(data);
                   if (district.length > 0) {
                     data = data["districts"][district]
                   }
+
+                  loadTable(data);
+
                   $(function () {
                     $('#chart-container').highcharts({
                         title: {
@@ -80,7 +82,7 @@
          loadChart();
          setInterval(function(){
                  loadChart();
-         },5000)
+         },20000)
         
     });
 </script>
