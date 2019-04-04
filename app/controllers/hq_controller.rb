@@ -252,6 +252,23 @@ class HqController < ApplicationController
     @title = "Cause of death"
     @person = Person.find(params[:person_id])
     @place_of_death = place_of_death(@person)
+    if @person.status.blank?
+        last_status = PersonRecordStatus.by_person_record_id.key(@person.id).each.sort_by{|d| d.created_at}.last
+        
+        states = {
+                    "HQ ACTIVE" =>"HQ COMPLETE",
+                    "HQ COMPLETE" => "MARKED HQ APPROVAL",
+                    "HQ PRINTED" => "HQ DISPATCHED"
+                 }
+        if states[last_status.status].blank?
+          PersonRecordStatus.change_status(@person, "HQ COMPLETE")
+        else  
+          PersonRecordStatus.change_status(@person, states[last_status.status])
+        end
+        
+        
+        redirect_to request.fullpath and return
+    end
   end
 
   def search_condition
