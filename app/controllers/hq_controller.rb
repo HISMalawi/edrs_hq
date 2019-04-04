@@ -258,6 +258,8 @@ class HqController < ApplicationController
         states = {
                     "HQ ACTIVE" =>"HQ COMPLETE",
                     "HQ COMPLETE" => "MARKED HQ APPROVAL",
+                    "MARKED HQ APPROVAL" => "MARKED HQ APPROVAL",
+                    "HQ CAN PRINT" => "HQ PRINTED",
                     "HQ PRINTED" => "HQ DISPATCHED"
                  }
         if states[last_status.status].blank?
