@@ -2,7 +2,7 @@ require 'couchrest_model'
 
 class User < CouchRest::Model::Base
 
-  after_save :check_random_number
+  after_save :check_random_number, :insert_update_into_mysql
   def username
     self['username']
   end
