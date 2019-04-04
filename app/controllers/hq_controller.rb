@@ -269,10 +269,10 @@ class HqController < ApplicationController
     metric["Week(s)"]   = 60 * 60 * 24 * 7 
     metric["Month(s)"]  = 60 * 60 * 24 * 30
 
-    params["onset_death_interval1"] = params["onset_death_interval1"].to_i * metric[params["interval_unit1"]]
-    params["onset_death_interval2"] = params["onset_death_interval2"].to_i * metric[params["interval_unit2"]]
-    params["onset_death_interval3"] = params["onset_death_interval3"].to_i * metric[params["interval_unit3"]]
-    params["onset_death_interval4"] = params["onset_death_interval4"].to_i * metric[params["interval_unit4"]]
+    params["onset_death_interval1"] = (params["onset_death_interval1"].to_i * metric[params["interval_unit1"].to_i] rescue nil)
+    params["onset_death_interval2"] = (params["onset_death_interval2"].to_i * metric[params["interval_unit2"].to_i] rescue nil)
+    params["onset_death_interval3"] = (params["onset_death_interval3"].to_i * metric[params["interval_unit3"].to_i] rescue nil)
+    params["onset_death_interval4"] = (params["onset_death_interval4"].to_i * metric[params["interval_unit4"].to_i] rescue nil)
     
     #tobe revised
     params[:cause_of_death_conditions] = {}
