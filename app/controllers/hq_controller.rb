@@ -14,8 +14,35 @@ class HqController < ApplicationController
     @districts = {}
     DistrictRecord.all.each do |d| 
       next if d.name.blank?
-      @districts[d.name.downcase.gsub(/\-|\_|\s+/, '_').strip] = d.id   unless d.name.include?("City")
+      unless d.name.include?("City")
+        online = Online.find("#{d.id}SYNC")
+
+        if SETTINGS['remote_exclude'].split(",").include?(d.name)
+
+            time_seen = nil
+
+            if online.present?
+              time_seen = online.created_at
+              time_seen = online.time_seen if online.time_seen.present?              
+            end
+
+            ago = ""
+            if time_seen.present?
+              if (time_seen.to_date == Date.today)
+                ago = "today"
+              else
+                ago = (Date.today - time_seen.to_date).to_i
+                ago = ago.to_s + (ago.to_i == 1 ? " day ago" : " days ago")
+              end              
+            end
+          @districts[d.name.downcase.gsub(/\-|\_|\s+/, '_').strip] = {code: d.id,online: (online.online rescue false) ,time_seen: ago}
+        else
+          @districts[d.name.downcase.gsub(/\-|\_|\s+/, '_').strip] = {code: d.id,online: true ,time_seen: nil}
+        end
+      end
     end
+
+    #raise @districts.inspect
   end
 
   def dashbord_data

@@ -9,6 +9,11 @@
     <button class="btn btn-success pull-right" style="border-radius:0px" onmousedown="reset()">Reset</button>
     <div id="map" style="height: 95%; width: 95%;"></div>
   </div>
+  <div>
+        District  : <span id ="district_online"></span><br/>
+        Status    : <span id="district_online_status"></span><br/>
+        Last seen : <span id="district_online_last_seen"></span>
+  </div>
 </div>
 
       
@@ -31,32 +36,57 @@
 
 </div>
 <script type="text/javascript">
-    var zoomlevel = 1;
-    var currentSite = "";
-    var alerts = {};
-    var sitesErrors = {};
-    var loader = d3.xml("/assets/Malawi.svg", function(xml) {
-          document.getElementById("map").appendChild(xml.documentElement);
-          <% @districts.keys.each do |district|%>
-                var color = "#4cd964";
-                d3.select("#<%=district%>")
-                  .style("stroke", 'white')
-                  .style("fill", color)
-                  .attr("code", "<%= @districts[district]%>")
-                  .on('mouseover', function(){
 
-                  })
-                  .on("mousedown", function(){
-                      district = this.getAttribute("code")
-                      title = "Statistics for <%=district.humanize%>"
-                      loadChart()
-                  });
-          <%end%>
-    });
+
+    function loadMap(){
+      var zoomlevel = 1;
+      var currentSite = "";
+      var alerts = {};
+      var sitesErrors = {};
+      var loader = d3.xml("/assets/Malawi.svg", function(xml) {
+            document.getElementById("map").appendChild(xml.documentElement);
+            <% @districts.keys.each do |district|%>
+                  <% if @districts[district][:online] == true %>
+                    var color = "#4cd964";
+                  <%else%>
+                    var color = "red";
+                  <%end%>
+                  d3.select("#<%=district%>")
+                    .style("stroke", 'white')
+                    .style("fill", color)
+                    .attr("code", "<%= @districts[district][:code]%>")
+                    .attr("online","<%= @districts[district][:online]%>")
+                    .attr("time_seen", "<%= @districts[district][:time_seen]%>")
+                    .on('mouseover', function(){
+
+                    })
+                    .on("mousedown", function(){
+                        district = this.getAttribute("code");
+                        title = "Statistics for <%=district.humanize%>";
+                        $("#district_online").html("<%=district.humanize%>");
+                        if (eval(this.getAttribute("online"))) {
+                          $("#district_online_status").css({"color":"green"})
+                          $("#district_online_status").html("Online")
+                        }else{
+                          $("#district_online_status").css({"color":"red"});
+                          $("#district_online_status").html("Offline")
+                        }
+                        $("#district_online_last_seen").html(this.getAttribute("time_seen"));
+
+                        loadChart();
+                    });
+            <%end%>
+      });        
+    }
+
+    loadMap();
 
     function reset(){
         district = "";
         title = ""
+        $("#district_online").html("");
+        $("#district_online_status").html("")
+        $("#district_online_last_seen").html("");
         loadChart();
     }
 </script>
