@@ -49,6 +49,7 @@
 </div>
 <script type="text/javascript">
   let dataTable = $("#table").dataTable();
+  var page = 1
   var fetchData = (page) =>{
       $.getJSON("/search_causes/"+page, (data)=>{
             var  body = $("#tablebody");
@@ -87,6 +88,11 @@
               dataTable.api().row.add([ data[i].barcode, data[i].den, data[i].gender, data[i].date_of_death,a,b,c,d,final_code,"", button]).draw();
               
             }
+
+            if (data.length > 0) {
+                page = page + 1;
+                fetchData(page);  
+            }
             
             
       })
@@ -97,6 +103,6 @@
   }
 
 
-  fetchData(1);
+  fetchData(page);
   
 </script>
