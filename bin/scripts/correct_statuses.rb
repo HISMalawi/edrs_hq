@@ -6,6 +6,45 @@ sql = "SELECT person_record_id, count(person_record_id) as count
 	   AND voided = 0 GROUP BY person_record_id ORDER BY count DESC LIMIT 50";
 =end
 
+#check statuses that have been lost
+
+def correct_status(person)
+    if person.status.blank?
+        last_status = PersonRecordStatus.by_person_record_id.key(person.id).each.sort_by{|d| d.created_at}.last
+        
+        states = {
+                    "HQ ACTIVE" =>"HQ COMPLETE",
+                    "HQ COMPLETE" => "MARKED HQ APPROVAL",
+                    "MARKED HQ APPROVAL" => "MARKED HQ APPROVAL",
+                    "HQ CAN PRINT" => "HQ PRINTED",
+                    "HQ PRINTED" => "HQ DISPATCHED"
+                 }
+        if states[last_status.status].blank?
+          PersonRecordStatus.change_status(person, "HQ COMPLETE")
+        else  
+          PersonRecordStatus.change_status(person, states[last_status.status])
+        end
+    end	
+end
+
+count = Person.count
+pagesize = 200
+pages = (count / pagesize) + 1
+
+page = 1
+
+id = []
+
+while page <= pages
+	Person.all.page(page).per(pagesize).each do |person|
+		correct_status(person)
+	end
+
+	puts page
+	page = page + 1
+end
+
+
 sql = "SELECT person_record_id, count(person_record_id) as id_count FROM person_record_status 
 	   WHERE voided = 0 group by person_record_id order by id_count desc limit 1000;"
 
@@ -46,15 +85,14 @@ data.each do |row|
 	 		d.destroy	 		
 	 	end
 	 end
-
-=begin
-	 statuses = PersonRecordStatus.by_person_record_id.key(row['person_record_id']).each.sort_by{|s| s.created_at}
-	 status_to_skip = statuses.last.status
-	 statuses.each do |s|
-	 	next if s.status == status_to_skip
-	 	s.voided = true
-	 	s.save
-	 end
-=end
 	 puts row['person_record_id']
 end
+
+sql ="SELECT distinct status FROM person_record_status;"
+
+data = connection.select_all(sql);
+
+data.each do |row|
+
+end
+
