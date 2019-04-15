@@ -76,6 +76,10 @@ header = 		[  "First name",
 					"Birthdate",
 					"Date of Death",
 					"Sex",
+					"Place of Death",
+					"Place of Death District",
+					"Hospital of Death",
+					"Place of Registration",
 					"DEN",
 					"DRN",
 					"Status",
@@ -93,9 +97,9 @@ header = 		[  "First name",
 					"Manner of Death",
 					"Manner of Injury/ Accident",
 					"Tentantive Code",
-					"Reason Different from Underlying",
+					"Reason Differnt from Undelying",
 					"Final Code",
-					"Reason Different from Tentative"]
+					"Reason Differnt from Tentantive"]
 
 write_csv_header("#{Rails.root}/db/cause_of_death.csv", header)
 
@@ -173,6 +177,10 @@ while page <= pages
 					person.birthdate.to_time.strftime("%Y-%m-%d"),
 					person.date_of_death,
 					person.gender,
+					person.place_of_death,
+					person.place_of_death_district,
+					person.hospital_of_death,
+					person.place_of_registration,
 					(person.den rescue ""),
 					(person.drn rescue ""),
 					status,

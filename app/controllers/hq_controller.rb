@@ -252,6 +252,25 @@ class HqController < ApplicationController
     @title = "Cause of death"
     @person = Person.find(params[:person_id])
     @place_of_death = place_of_death(@person)
+    if @person.status.blank?
+        last_status = PersonRecordStatus.by_person_record_id.key(@person.id).each.sort_by{|d| d.created_at}.last
+        
+        states = {
+                    "HQ ACTIVE" =>"HQ COMPLETE",
+                    "HQ COMPLETE" => "MARKED HQ APPROVAL",
+                    "MARKED HQ APPROVAL" => "MARKED HQ APPROVAL",
+                    "HQ CAN PRINT" => "HQ PRINTED",
+                    "HQ PRINTED" => "HQ DISPATCHED"
+                 }
+        if states[last_status.status].blank?
+          PersonRecordStatus.change_status(@person, "HQ COMPLETE")
+        else  
+          PersonRecordStatus.change_status(@person, states[last_status.status])
+        end
+        
+        
+        redirect_to request.fullpath and return
+    end
   end
 
   def search_condition
@@ -269,10 +288,10 @@ class HqController < ApplicationController
     metric["Week(s)"]   = 60 * 60 * 24 * 7 
     metric["Month(s)"]  = 60 * 60 * 24 * 30
 
-    params["onset_death_interval1"] = params["onset_death_interval1"].to_i * metric[params["interval_unit1"]]
-    params["onset_death_interval2"] = params["onset_death_interval2"].to_i * metric[params["interval_unit2"]]
-    params["onset_death_interval3"] = params["onset_death_interval3"].to_i * metric[params["interval_unit3"]]
-    params["onset_death_interval4"] = params["onset_death_interval4"].to_i * metric[params["interval_unit4"]]
+    params["onset_death_interval1"] = (params["onset_death_interval1"].to_i * metric[params["interval_unit1"].to_i] rescue nil)
+    params["onset_death_interval2"] = (params["onset_death_interval2"].to_i * metric[params["interval_unit2"].to_i] rescue nil)
+    params["onset_death_interval3"] = (params["onset_death_interval3"].to_i * metric[params["interval_unit3"].to_i] rescue nil)
+    params["onset_death_interval4"] = (params["onset_death_interval4"].to_i * metric[params["interval_unit4"].to_i] rescue nil)
     
     #tobe revised
     params[:cause_of_death_conditions] = {}
