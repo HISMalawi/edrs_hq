@@ -16,3 +16,4 @@ certificates_path: /home/cranberry/certificates/
 dispatch_path: /home/usr/dispatch/
 print_qrcode: true
 qrcodes_path: /home/cranberry/barcodes/
+data_path: /home/nrb-admin/hq_data/

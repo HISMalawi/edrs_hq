@@ -177,12 +177,13 @@ function getCases() {
             <th style="text-align:right;width:12%">Number of entries :</th>
             <td style="text-align:left">
                 <select id="entries" class="form-control" onchange="changeEntryLength(this)">
-                        <option>5</option>
                         <option>10</option>
                         <option>20</option>
-                        <option>30</option>
-                        <option>40</option>
                         <option>50</option>
+                        <option>100</option>
+                        <option>200</option>
+                        <option>400</option>
+                        <option>1000</option>
                 </select>
             </td>
             <th style="text-align:right">
@@ -234,7 +235,7 @@ function getCases() {
 function initDataTable(){        
   try {  
       dataTable = $('#cases').dataTable({
-                  "pageLength": 7,
+                  "pageLength": 10,
                   "autoWidth": true,
                   "lengthChange": true,
                   "order": [[ 0, "asc" ]]
