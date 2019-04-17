@@ -379,18 +379,12 @@ class UsersController < ApplicationController
   
 
   def change_password
-   
-    #redirect_to "/" and return if !(User.current_user.activities_by_level(@facility_type).include?("Change own password"))
 
     @section = "Change Password"
 
     @targeturl = "/change_password"
 
-    @user = User.current_user
-
-
-
-  
+    @user = User.find(params[:id])
 
   end
 
@@ -406,9 +400,9 @@ class UsersController < ApplicationController
         
   end
 
-def update_password
+  def update_password
      
-    user = User.current_user
+    user = User.find(params[:user_id])
     user.plain_password = params[:user][:new_password]
     
     user.password_attempt = 0
@@ -418,7 +412,7 @@ def update_password
     flash["notice"] = "Your new password has been changed succesfully" 
     Audit.create(record_id: user.id, audit_type: "Audit", level: "User", reason: "Updated user password")
     
-    redirect_to '/my_account'
+    redirect_to "/users/show/#{params[:user_id]}"
 
   end
 

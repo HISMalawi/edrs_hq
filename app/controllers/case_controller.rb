@@ -507,7 +507,16 @@ class CaseController < ApplicationController
     @page = 0
     session[:return_url] = request.path
 
-    render :template => "case/default"
+    @available_printers = SETTINGS["printer_name"].split(',')
+
+    if @title == "Print Queue" || @title == "Printed"
+        if @title == "Printed"
+            @dispatch = true
+        end
+        render :template => "case/default_batch"
+    else
+        render :template => "case/default"     
+    end
   end
 
   def reprint_requests

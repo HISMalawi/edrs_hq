@@ -352,11 +352,6 @@ function getCases() {
     
 </div>
 <button class="btn btn-primary pull-left" onclick="window.location='<%= params[:next_url].present? ? params[:next_url] : '/' %> '">Back</button>
-<% if @dispatch.present? && @dispatch %>
-    <button id="print_btn" class="btn btn-success pull-right hidden " onclick="loadPopup('printers')">Dispatch Selected</button>
-<%else%>
-  <button id="print_btn" class="btn btn-success pull-right hidden " onclick="loadPopup('printers')">Print Selected</button>
-<%end%>
 
 <div id="shield">
   <div class="" id="printers">
@@ -386,7 +381,7 @@ function getCases() {
             </div>
             <div class="modal-footer">
             <% if @dispatch.present? && @dispatch %>
-              <button type="button" class="btn btn-primary" onclick="dispatchSelected()" >Dispatch</button>
+              <button type="button" class="btn btn-primary"  onclick="dispatchSelected()" >Dispatch</button>
             <%else%>
               <button type="button" class="btn btn-primary" onclick="printSelected()" > Print </button>
             <%end%>
@@ -422,6 +417,14 @@ function getCases() {
         </div>
       </div>
     </div>
+</div>
+
+<div style="position: fixed; top: 45%; left: 50%; background: #ffffff" >
+  <% if @dispatch.present? && @dispatch %>
+      <button id="print_btn" class="btn btn-success pull-right hidden " onclick="loadPopup('printers')">Dispatch Selected</button>
+  <%else%>
+    <button id="print_btn" class="btn btn-success pull-right hidden"  onclick="loadPopup('printers')">Print Selected</button>
+  <%end%> 
 </div>
 <script>
 
