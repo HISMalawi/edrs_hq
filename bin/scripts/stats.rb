@@ -24,9 +24,9 @@ connection = ActiveRecord::Base.connection
         registered << connection.select_all("SELECT count(*) as total FROM people WHERE 
                                              DATE_FORMAT(created_at,'%Y-%m-%d') >= '#{start_date}' AND DATE_FORMAT(created_at,'%Y-%m-%d') <= '#{end_date}'").as_json.last['total'] rescue 0
 
-        #approved << connection.select_all("SELECT count(*) as total FROM person_record_status 
-        #                                                WHERE status IN('HQ ACTIVE') AND
-        #                                                DATE_FORMAT(created_at,'%Y-%m-%d') >= '#{start_date}' AND DATE_FORMAT(created_at,'%Y-%m-%d') <= '#{end_date}'").as_json.last['total'] rescue 0
+        approved << connection.select_all("SELECT count(a.person_record_id) as total FROM  (SELECT DISTINCT person_record_id FROM person_record_status 
+                                                        WHERE status IN('HQ ACTIVE') AND 
+                                                        DATE_FORMAT(created_at,'%Y-%m-%d') >= '#{start_date}' AND DATE_FORMAT(created_at,'%Y-%m-%d') <= '#{end_date}') a").as_json.last['total'] rescue 0
         
         printed << connection.select_all("SELECT count(a.person_record_id) as total FROM  (SELECT DISTINCT person_record_id FROM person_record_status 
                                                         WHERE status IN('HQ PRINTED') AND 
@@ -39,6 +39,7 @@ connection = ActiveRecord::Base.connection
 end
 
 stats[:year_registered] = registered
+stats[:year_approved]  = approved
 stats[:year_printed] = printed
 
 cummulatives_keys = {}
@@ -93,11 +94,11 @@ District.all.each do |district|
                                                         AND district_code ='#{district.id}') a").as_json.last['total'] rescue 0
       
             
-            district_printed  = connection.select_all("SELECT count(a.person_record_id) as total FROM  (SELECT DISTINCT person_record_id FROM person_record_status 
+            district_printed  << connection.select_all("SELECT count(a.person_record_id) as total FROM  (SELECT DISTINCT person_record_id FROM person_record_status 
                                                         WHERE status IN('HQ PRINTED') AND 
                                                         DATE_FORMAT(created_at,'%Y-%m-%d') >= '#{start_date}' AND DATE_FORMAT(created_at,'%Y-%m-%d') <= '#{end_date}'
                                                         AND district_code ='#{district.id}') a").as_json.last['total'] rescue 0      
-            district_printed << district_printed
+           
             beginning = beginning + 1.months
             
             #puts "Iterator #{start_date} : #{end_date}"
