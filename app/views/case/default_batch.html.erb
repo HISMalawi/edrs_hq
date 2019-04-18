@@ -1,3 +1,8 @@
+<form id="dispatch_form" method="post" class="hidden">
+      <input type="hidden" name="printer_name" id="printer_name">
+      <input type="hidden" name="next_url" value="<%=request.path%>">
+
+</form>
 <script>
 var dataTable = null;
 var prev_statuses = "<%=@prev_statuses.join('|') rescue ''%>"
@@ -81,6 +86,26 @@ function printSelected(){
     if(printer.length > 0){
       var ids = Object.keys(selected);
       var param_selected = "";
+
+        __$("printer_name").value = printer;
+
+        var form = __$("dispatch_form");
+        form.setAttribute("method","post");
+        form.setAttribute("action","hq/do_print_these");
+
+        for(var i = 0; i < ids.length; i++){
+          var input = document.createElement("input");
+          input.setAttribute("type", "hidden");
+          input.setAttribute("name", "selected[]");
+          input.value = ids[i];
+          form.appendChild(input);
+
+        }
+
+        form.submit();
+
+
+/*
       for(var i = 0 ; i <ids.length ; i++){
         if (param_selected.length == 0) {
               param_selected = ids[i];
@@ -90,6 +115,7 @@ function printSelected(){
       }
 
       window.location.href = "hq/do_print_these?printer_name="+printer+"&selected="+param_selected;
+*/
     }else{
 
         loadPopup('printers');
@@ -100,20 +126,26 @@ function printSelected(){
 
 function dispatchSelected(){
       if(printer.length > 0){
-        var dispatch_url =  "hq/do_dispatch_these?printer_name="+printer
+        var dispatch_url =  "hq/do_dispatch_these"
         var ids = Object.keys(selected);
-        $.ajax({
-              url: dispatch_url,
-              data: {
-                    ids: ids,
-                    district: district
-              },
-              success: function(result){
-                  if(result){
-                     location.reload();
-                  }
-              }
-        })
+
+        __$("printer_name").value = printer
+
+        var form = __$("dispatch_form");
+        form.setAttribute("method","post");
+        form.setAttribute("action",dispatch_url);
+
+        for(var i = 0; i < ids.length; i++){
+          var input = document.createElement("input");
+          input.setAttribute("type", "hidden");
+          input.setAttribute("name", "ids[]");
+          input.value = ids[i];
+          form.appendChild(input);
+
+        }
+
+        form.submit();
+
       }else{
 
           loadPopup('printers');

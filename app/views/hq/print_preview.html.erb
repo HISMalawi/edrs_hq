@@ -344,7 +344,8 @@
     </table>
     
     <%= form_tag("/hq/do_print_these", "method" => "post", "id" => "frm") do %>
-      <input type="hidden" id="selected" name="selected" value="<%=  @person.id%>"/>
+      <input type="hidden" id="selected" name="selected[]" value="<%=  @person.id%>"/>
+      <input type="hidden" name="next_url" value="/print_out_tasks">
       <input type="hidden" id="printer_name" name="printer_name" value=""/>
     <% end %>
    </div>

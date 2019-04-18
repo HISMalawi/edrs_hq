@@ -806,6 +806,12 @@
   </div>
 </div>
 
+<form id="dispatch_form" method="post" class="hidden">
+      <input type="hidden" name="printer_name">
+      <input type="hidden" name="next_url" value="<%=request.path%>">
+
+</form>
+
 <%= form_tag("/do_print_these", "method" => "post", "id" => "frm") do %>
     <input type="hidden" id="selected" name="selected" value="<%= params[:person_id]%>"/>
     <input type="hidden" id="printer_name" name="printer_name" value=""/>
@@ -1201,26 +1207,30 @@
 
     function dispatchSelected(){
         if(printer.length > 0){
-          var dispatch_url =  "/hq/do_dispatch_these?printer_name="+printer
+          var dispatch_url =  "/hq/do_dispatch_these"
           var ids = ["<%= @person.id%>"];
-          $.ajax({
-                url: dispatch_url,
-                data: {
-                      ids: ids,
-                      district: district
-                },
-                success: function(result){
-                    if(result){
-                       location.reload();
-                    }
-                }
-          })
+          __$("printer_name"),value = printer
+
+          var form = __$("dispatch_form");
+          form.setAttribute("method","post");
+          form.setAttribute("action",dispatch_url);
+
+          for(var i = 0; i < ids.length; i++){
+            var input = document.createElement("input");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "ids[]");
+            input.value = ids[i];
+            form.appendChild(input);
+
+          }
+
+          form.submit();
         }else{
 
             loadPopup('printers');
 
         }
-  }
+    }
 </script>
 <style>
   #completeness, #printers, #comments,#action_modal,#duplicate_modal,#approve_modal,#wait{

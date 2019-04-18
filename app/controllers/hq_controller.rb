@@ -556,7 +556,7 @@ class HqController < ApplicationController
   
   def do_print_these
     
-    selected = params[:selected].split("|")
+    selected = params[:selected]
 
     paper_size = GlobalProperty.find("paper_size").value rescue "A4"
     
@@ -596,23 +596,15 @@ class HqController < ApplicationController
 
       #raise "wkhtmltopdf --zoom #{zoom} --page-size #{paper_size} #{input_url} #{output_file}"
 
-      t4 = Thread.new {
-        Kernel.system "#{SETTINGS['wkhtmltopdf']} --zoom #{zoom} --page-size #{paper_size} #{input_url} #{output_file}"
+      Kernel.system "#{SETTINGS['wkhtmltopdf']} --zoom #{zoom} --page-size #{paper_size} #{input_url} #{output_file}"
         #PDFKit.new(input_url, :page_size => paper_size, :zoom => zoom).to_file(output_file)
 
-        sleep(4)
 
-        Kernel.system "lp -d #{params[:printer_name]} #{SETTINGS['certificates_path']}#{id}.pdf\n"
+      Kernel.system "lp -d #{params[:printer_name]} #{SETTINGS['certificates_path']}#{id}.pdf\n"
 
-        sleep(5)
-        
-      }
-
-      sleep(1)
-  
    end
     
-   redirect_to "/print" and return
+   redirect_to params[:next_url] and return
   
   end
 
@@ -621,7 +613,6 @@ class HqController < ApplicationController
   end
 
   def do_dispatch_these
-
 
     write_file("#{Rails.root}/tmp/dispatch.txt", params[:ids].join(",").to_s)
 
@@ -647,7 +638,7 @@ class HqController < ApplicationController
 
     sleep(1)
     
-    render :text =>"print"
+    redirect_to params[:next_url]
   end
 
   def dispatch_preview
