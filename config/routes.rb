@@ -208,6 +208,8 @@ Rails.application.routes.draw do
   get "/death_reports" => "reports#death_reports"
   get "/reports/district_and_gender"
   get "/reports/by_district_registered_and_gender"
+  get "/reports/place_of_death"
+  get "/reports/by_place_of_death"
 
   ######### Causes of Death ##############
   get "/causes_of_death/view"

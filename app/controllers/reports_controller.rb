@@ -10,7 +10,7 @@ class ReportsController < ApplicationController
   	else
 	    @tasks << ['By District of Registration and Gender','By District of Registration and Gender','/reports/district_and_gender']
 	    @tasks << ['User audit trail','Report for user audit trail','','']
-      @tasks << ['Cummulative and  gender','Report for cummulative','','']
+      @tasks << ['By Place of Death','By Place of Death','/reports/place_of_death','']
       @tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
 	  end
@@ -62,5 +62,14 @@ class ReportsController < ApplicationController
 
   def cummulative
     
+  end
+
+  def place_of_death
+      @districts = District.all.each
+
+  end
+  def by_place_of_death
+      @data = Report.by_place_of_death(params)
+      render :text => @data.to_json
   end
 end

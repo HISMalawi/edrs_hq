@@ -75,7 +75,7 @@ statuses.each do |status|
 										             AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >='#{start_date}' 
 										             AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{end_date}' ORDER BY d.name) t  GROUP BY  name;"
 
-		non_pilot_count = connection.select_all(sql).as_json.last['total'] rescue 0 rescue 0;
+		non_pilot_count = connection.select_all(sql).as_json.last['total'] rescue 0;
 
 	    sql = "SELECT count(*) as total  FROM  (SELECT DISTINCT person_record_id, a.district_code, d.name  
 							FROM people a inner join person_record_status p on a.person_id = p.person_record_id 
@@ -86,7 +86,7 @@ statuses.each do |status|
 										             AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >='#{start_date}' 
 										             AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{end_date}' ORDER BY d.name) t  GROUP BY  name;"
 
-		home_count = connection.select_all(sql).as_json.last['total'] rescue 0 rescue 0
+		home_count = connection.select_all(sql).as_json.last['total'] rescue 0
 
 	    sql = "SELECT count(*) as total  FROM  (SELECT DISTINCT person_record_id, a.district_code, d.name  
 							FROM people a inner join person_record_status p on a.person_id = p.person_record_id 
