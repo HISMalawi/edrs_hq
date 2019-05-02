@@ -41,9 +41,11 @@
                         <td>Date died</td>
                         <td></td>
                         <td style="text-align: right;">Start date</td>
-                        <td><input type="" class="form-control" name="start_date" id="start_date" disabled></td>
+                        <td><input type="" class="form-control" name="start_date" id="start_date" 
+                                  value="<%= params[:start_date].present?? Time.parse(params[:start_date]).strftime('%Y-%m-%d') : ''%> " disabled></td>
                         <td style="text-align: right;">End date</td>
-                        <td><input type="" class="form-control" name="end_date" id="end_date" disabled></td>
+                        <td><input type="" class="form-control" name="end_date" id="end_date" 
+                              value="<%= params[:end_date].present?? Time.parse(params[:end_date]).strftime('%Y-%m-%d') : ''%> " disabled></td>
                     </tr>
                     <tr>
                         <td><input type="checkbox" name="" onclick="enable(this,['age_operator','start_age','end_age'])"></td>
@@ -95,15 +97,17 @@
     </form>
 
 <div style="background: white">
-  <div style="height: 535px; overflow: auto;padding: 0px; margin:0px;">
 
-<table>
-  <tr style="background-color: rgb(98, 129, 167)">
-    <th style="color: rgb(238, 238, 238)">Final ICD Code</th>
-    <th style="color: rgb(238, 238, 238)">Male</th>
-    <th style="color: rgb(238, 238, 238)">Female</th>
-    <th style="color: rgb(238, 238, 238)">Total</th>
-  </tr>
+<table id="report">
+  <thead>
+    <tr style="background-color: rgb(98, 129, 167)">
+      <th style="color: rgb(238, 238, 238)">Final ICD Code</th>
+      <th style="color: rgb(238, 238, 238)">Male</th>
+      <th style="color: rgb(238, 238, 238)">Female</th>
+      <th style="color: rgb(238, 238, 238)">Total</th>
+    </tr>
+  </thead>
+  <tbody>
   <% @data_codes.each do |code| %>
       <tr>
           <td><%= code %></td>
@@ -112,16 +116,26 @@
           <td><%= (@data[code]['Male'] + @data[code]['Female']) %></td>
       </tr>
   <%end%>
-  
+  </tbody>
 </table>
 </div>
+<div style="position: fixed; bottom: 2%; right: 2%; background: #ffffff" >
+    <button id="print_btn" class="btn btn-success pull-right"  onclick="downloadCSV()">DownLoad CSV</button> 
 </div>
 <script src="assets/jquery-ui/jquery-ui.min.js"></script>
 <script src="/select2/select2.full.min.js"></script>
 <script type="text/javascript">
+  var dataTable = null;
   $(document).ready(function(){
       $('#start_date').datepicker({ dateFormat: 'yy-mm-dd', maxDate: $.datepicker.formatDate('yy-mm-dd',new Date())});
       $('#end_date').datepicker({ dateFormat: 'yy-mm-dd', maxDate: $.datepicker.formatDate('yy-mm-dd',new Date())});
+
+       dataTable = $('#report').dataTable({
+                  "pageLength": 10,
+                  "autoWidth": true,
+                  "lengthChange": true,
+                  "order": [[ 3, "desc" ]]
+                });
   })
   function enable(element, elements){
 

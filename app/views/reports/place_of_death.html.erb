@@ -5,6 +5,7 @@
 </script>
 <link href="/assets/jquery-ui/jquery-ui.min.css" rel="stylesheet">
 <script src="/assets/jquery-ui/jquery-ui.min.js"></script>
+<script src="/select2/select2.full.min.js"></script>
 <style type="text/css">
     table{
         color: darkslategray;
@@ -212,23 +213,44 @@
 
 						  		<tr>
 						  					<td>Districts Total</td>
-						  					<td id="All_died_and_registered_at_pilot" style="text-align:right;margin-right:5%">loading...</td>
-						  					<td id="All_died_in_pilot_and_registered_at_dro" style="text-align:right;margin-right:5%">loading...</td>
-						  					<td id="All_non_pilot" style="text-align:right;margin-right:5%">loading...</td>
-						  					<td id="All_home" style="text-align:right;margin-right:5%">loading...</td>
-						  					<td id="All_other" style="text-align:right;margin-right:5%">loading...</td>
-						  					<td id="All_Total" style="text-align:right;margin-right:5%">loading... </td>
+						  					<td id="died_and_registered_at_pilot" style="text-align:right;margin-right:5%">loading...</td>
+						  					<td id="died_in_pilot_and_registered_at_dro" style="text-align:right;margin-right:5%">loading...</td>
+						  					<td id="non_pilot" style="text-align:right;margin-right:5%">loading...</td>
+						  					<td id="home" style="text-align:right;margin-right:5%">loading...</td>
+						  					<td id="other" style="text-align:right;margin-right:5%">loading...</td>
+						  					<td id="Total" style="text-align:right;margin-right:5%">loading... </td>
 						  		</tr>
 						  </tbody>
 						</table>
 	</div>
 </div>
+<div style="position: fixed; bottom: 2%; right: 2%; background: #ffffff" >
+    <button id="print_btn" class="btn btn-success pull-right"  onclick="downloadCSV()">DownLoad CSV</button> 
+</div>
+<form method="post" id="district_data" action="/reports/download_place_of_death">
+	<input type="hidden" name="died_and_registered_at_pilot" id="input_died_and_registered_at_pilot">
+	<input type="hidden" name="died_in_pilot_and_registered_at_dro" id="input_died_in_pilot_and_registered_at_dro">
+	<input type="hidden" name="non_pilot" id="input_non_pilot">
+	<input type="hidden" name="home" id="input_home">
+	<input type="hidden" name="other" id="input_other">
+	<input type="hidden" name="Total" id="input_Total">
+</form>
 <script type="text/javascript">
-			
-
+	function __$(id){
+		return document.getElementById(id)
+	}
+	var district_data = {}
+	var district_data = {}
+	var died_and_registered_at_pilot = 0
+	var died_in_pilot_and_registered_at_dro = 0
+	var non_pilot = 0
+	var home = 0
+	var other = 0
+	var Total = 0
 	function fetchData(start_date,end_date,status){
 			<% @districts.each do |district| %>
 					<% next if district.name.include?("City") %>
+					district_data["<%=district.name%>"] = {}
 					var categories = ["died_and_registered_at_pilot","died_in_pilot_and_registered_at_dro","non_pilot","home","other","Total"]
 					for(var i = 0 ; i < categories.length; i++){
 						var url = "/reports/by_place_of_death"
@@ -236,8 +258,41 @@
 						url = url + "&gender="+ $('#gender').val();
 						url = url + "&start_date="+start_date+"&end_date="+end_date;
 						url = url + "&status="+status;
+						if (!__$( "<%=district.name%>_input_"+ categories[i])) {
+							var input = document.createElement("input");
+							input.id = "<%=district.name%>_input_"+ categories[i];
+							input.name = "<%=district.name%>_input_"+ categories[i];
+							input.type ="hidden";
+							input.value = 0;
+							$("#district_data").append(input);
+						}
 						$.getJSON(url,function(data){
-								$("#"+data.district+"_"+data.category).html(data.count)
+								$("#"+data.district+"_"+data.category).html(data.count);
+								$("#"+data.district+"_input_"+data.category).val(data.count);
+								switch(data.category) {
+								  case "died_and_registered_at_pilot":
+								    died_and_registered_at_pilot = died_and_registered_at_pilot +  data.count
+								    break;
+								  case "died_in_pilot_and_registered_at_dro":
+								    died_in_pilot_and_registered_at_dro = died_in_pilot_and_registered_at_dro +  data.count
+								    break;
+								  case "non_pilot":
+								    non_pilot = non_pilot +  data.count
+								    break;
+								  case "home":
+								    home = home + data.count
+								    break;
+								  case "other":
+								    other = other + data.count
+								    break;
+								  case "Total":
+								    Total = Total +  data.count
+								    break;
+								  default:
+								    // code block
+								}
+								$("#input_"+data.category).val(eval(data.category));
+								$("#"+data.category).html(eval(data.category));
 						})
 					}
 					
@@ -280,10 +335,6 @@
 	var end  ="<%= Date.today.to_time.strftime('%Y-%m-%d 23:59:59') %>"
 	fetchData(start,end,'DC ACTIVE');
 
-</script>
-<script src="assets/jquery-ui/jquery-ui.min.js"></script>
-<script src="/select2/select2.full.min.js"></script>
-<script type="text/javascript">
   $(document).ready(function(){
       $('#start_date').datepicker({ dateFormat: 'yy-mm-dd', maxDate: $.datepicker.formatDate('yy-mm-dd',new Date())});
       $('#end_date').datepicker({ dateFormat: 'yy-mm-dd', maxDate: $.datepicker.formatDate('yy-mm-dd',new Date())});
@@ -310,4 +361,10 @@
       $("#end_age").css({"visibility":"hidden"})
     }
   }
+
+  function downloadCSV(){
+  	 var form = $("#district_data");
+  	 form.submit();
+  }
+
 </script>

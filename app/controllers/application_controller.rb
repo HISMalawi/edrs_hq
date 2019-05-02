@@ -286,6 +286,17 @@ class ApplicationController < ActionController::Base
     end
     `bundle exec rails r bin/generate_qr_code #{person.id} #{SETTINGS['qrcodes_path']}`    
   end
+  def write_csv_header(file, header)
+    CSV.open(file, 'w' ) do |exporter|
+        exporter << header
+    end
+  end
+
+  def write_csv_content(file, content)
+    CSV.open(file, 'a+' ) do |exporter|
+        exporter << content
+    end
+  end
   protected
   def check_user
 

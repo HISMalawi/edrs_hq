@@ -26,7 +26,7 @@ class Report < ActiveRecord::Base
 		end
 
 		connection = ActiveRecord::Base.connection
-		codes_query = "SELECT distinct icd_10_code FROM people WHERE icd_10_code IS NOT NULL LIMIT 20"
+		codes_query = "SELECT distinct icd_10_code FROM people WHERE icd_10_code IS NOT NULL LIMIT 500"
 		codes = connection.select_all(codes_query).as_json
 		data  = {}
 		codes.each do |code|
@@ -34,7 +34,7 @@ class Report < ActiveRecord::Base
 			data[code["icd_10_code"]] = {}
 			gender = ['Male','Female']
 			gender.each do |g|
-				query = "SELECT count(*) as total FROM people WHERE  gender='#{g}' AND icd_10_code = '#{code['icd_10_code']}' #{district_query} #{date_query} #{age_query} #{autopsy_query}"
+				query = "SELECT count(*) as total FROM people p INNER JOIN person_icd_codes c ON p.person_id = c.person_id WHERE  gender='#{g}' AND c.final_code = '#{code['icd_10_code']}' #{district_query} #{date_query} #{age_query} #{autopsy_query}"
 				data[code["icd_10_code"]][g] = connection.select_all(query).as_json.last['total'] rescue 0
 			end			
 		end
@@ -259,7 +259,8 @@ class Report < ActiveRecord::Base
 				    AND a.hospital_of_death = '#{pilot[params[:district]]}'
 					AND a.place_of_registration = '#{pilot[params[:district]]}'
 					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >='#{params[:start_date].to_time.strftime("%Y-%m-%d")}' 
-					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{params[:end_date].to_time.strftime("%Y-%m-%d")}' ORDER BY d.name) t  GROUP BY  name;"
+					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{params[:end_date].to_time.strftime("%Y-%m-%d")}' AND name = '#{district.name}'
+					ORDER BY d.name) t  GROUP BY  name;"
 
 				count = self.connection.select_all(sql).as_json.last['total'] rescue 0;
 			end
@@ -275,7 +276,8 @@ class Report < ActiveRecord::Base
 					AND a.hospital_of_death = '#{pilot[params[:district]]}'
 					AND a.place_of_registration != '#{pilot[params[:district]]}'
 					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >='#{params[:start_date].to_time.strftime("%Y-%m-%d")}' 
-					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{params[:end_date].to_time.strftime("%Y-%m-%d")}' ORDER BY d.name) t  GROUP BY  name;"
+					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{params[:end_date].to_time.strftime("%Y-%m-%d")}' AND name = '#{district.name}'
+					ORDER BY d.name) t  GROUP BY  name;"
 				count = self.connection.select_all(sql).as_json.last['total'] rescue 0;
 			end			
 		when "non_pilot"
@@ -286,7 +288,8 @@ class Report < ActiveRecord::Base
 					AND a.district_code = '#{district.id}' AND a.place_of_death='Health Facility'
 					AND a.hospital_of_death !='#{pilot[params[:district]]}'
 					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >='#{params[:start_date].to_time.strftime("%Y-%m-%d")}' 
-					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{params[:end_date].to_time.strftime("%Y-%m-%d")}' ORDER BY d.name) t  GROUP BY  name;"
+					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{params[:end_date].to_time.strftime("%Y-%m-%d")}' AND name = '#{district.name}'
+					ORDER BY d.name) t  GROUP BY  name;"
 			count = self.connection.select_all(sql).as_json.last['total'] rescue 0;
 		when "home"
 	    	sql = "SELECT count(*) as total  FROM  (SELECT DISTINCT person_record_id, a.district_code, d.name  
@@ -296,7 +299,8 @@ class Report < ActiveRecord::Base
 					AND a.district_code = '#{district.id}' 
 					AND a.place_of_death = 'Home' 
 					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >='#{params[:start_date].to_time.strftime("%Y-%m-%d")}' 
-					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{params[:end_date].to_time.strftime("%Y-%m-%d")}' ORDER BY d.name) t  GROUP BY  name;"
+					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{params[:end_date].to_time.strftime("%Y-%m-%d")}' AND name = '#{district.name}'
+					 ORDER BY d.name) t  GROUP BY  name;"
 
 			count = connection.select_all(sql).as_json.last['total'] rescue 0
 		when "other"
@@ -305,10 +309,19 @@ class Report < ActiveRecord::Base
 					inner join district d on p.district_code = d.district_id  
 					WHERE status IN ('#{params[:status]}') AND a.district_code = '#{district.id}' AND a.place_of_death = 'Other' 
 					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >='#{params[:start_date].to_time.strftime("%Y-%m-%d")}' 
-					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{params[:end_date].to_time.strftime("%Y-%m-%d")}' ORDER BY d.name) t  GROUP BY  name;"
+					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{params[:end_date].to_time.strftime("%Y-%m-%d")}' AND name = '#{district.name}'
+					 ORDER BY d.name) t  GROUP BY  name;"
 
 			count = connection.select_all(sql).as_json.last['total'] rescue 0
-		when  "Total"					
+		when  "Total"
+	    	sql = "SELECT name, count(*) as total  FROM  (SELECT DISTINCT person_record_id, a.district_code, d.name  
+					FROM people a inner join person_record_status p on a.person_id = p.person_record_id 
+					inner join district d on p.district_code = d.district_id  
+					WHERE status IN ('#{params[:status]}') AND a.district_code = '#{district.id}' AND a.place_of_death IN('Health Facility','Home','Other')
+					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >='#{params[:start_date].to_time.strftime("%Y-%m-%d")}' 
+					AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{params[:end_date].to_time.strftime("%Y-%m-%d")}' AND name = '#{district.name}'
+					ORDER BY d.name) t  GROUP BY  name;"
+			count = connection.select_all(sql).as_json.last['total'] rescue 0					
 		end
 		return {:count => count , :category =>params[:category], :district => params[:district]}
 	end

@@ -1,4 +1,5 @@
 class PersonICDCode < CouchRest::Model::Base
+	after_save :insert_update_into_mysql
 	property :person_id, String
 
 	property :tentative_code, String
@@ -33,5 +34,23 @@ class PersonICDCode < CouchRest::Model::Base
 	design do
 		view :by__id
 		view :by_person_id
+	end
+
+	def insert_update_into_mysql
+	    fields  = self.keys.sort
+	    sql_record = RecordICDCode.where(person_id: self.id).first
+	    sql_record = RecordICDCode.new if sql_record.blank?
+	    fields.each do |field|
+	      next if field == "type"
+	      next if field == "_rev"
+	      next if field == "source_id"
+	      if field =="_id"
+	          sql_record["person_icd_code_id"] = self[field]
+	      else
+	          sql_record[field] = self[field]
+	      end
+
+	    end
+	    sql_record.save
 	end
 end

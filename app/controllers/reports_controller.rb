@@ -8,9 +8,9 @@ class ReportsController < ApplicationController
   		@tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
   	else
-	    @tasks << ['By District of Registration and Gender','By District of Registration and Gender','/reports/district_and_gender']
+	    @tasks << ['Registration district and Gender','Registration district and Gender','/reports/district_and_gender']
 	    @tasks << ['User audit trail','Report for user audit trail','','']
-      @tasks << ['By Place of Death','By Place of Death','/reports/place_of_death','']
+      @tasks << ['By Place of Death','Place of Death','/reports/place_of_death','']
       @tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
 	  end
@@ -71,5 +71,16 @@ class ReportsController < ApplicationController
   def by_place_of_death
       @data = Report.by_place_of_death(params)
       render :text => @data.to_json
+  end
+
+  def download_place_of_death
+    districts = District.all.each
+    file = "#{Rails.root}/tmp/PlaceOfDeath.csv"
+    write_csv_header(file, ["District","Died and Registered in Pilot Facility","Died in Pilot Facility but registered at DR0","Non Pilot Health Facility","Home","Other", "Total"])
+    districts.each do |district|
+      next if district.name.include?("City")
+      write_csv_content(file, [district.name,params["#{district.name}_input_died_and_registered_at_pilot"],params["#{district.name}_input_died_and_registered_at_pilot"],params["#{district.name}_input_non_pilot"],params["#{district.name}_input_home"],params["#{district.name}_input_other"],params["#{district.name}_input_Total"]])
+    end
+    send_file(file, :filename => "By Place of Death.csv", :disposition => 'inline', :type => "text/csv")
   end
 end
