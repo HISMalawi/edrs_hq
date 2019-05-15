@@ -11,6 +11,10 @@ if ARGV.length > 2
   # 0 Content
   # 1 filename
   # 2 directory_name
+  require 'barby'
+  require 'barby/barcode'
+  require 'barby/barcode/qr_code'
+  require 'barby/outputter/png_outputter'
 
   barcode = Barby::Code128B.new(ARGV[0])
 
