@@ -42,11 +42,21 @@ while page <= pages
 		cause_of_death = person.cause_of_death
 
 		if cause_of_death.blank?
-      		person_icd_code = PersonICDCode.create({
+			sql_record = RecordICDCode.where(person_id: person.id).first
+			if sql_record.present?
+				person_icd_code = PersonICDCode.create({
+				  :_id => sql_record.person_icd_code_id,
                   :person_id => person.id,
                   :tentative_code => person.icd_10_code,
                   :final_code =>person.icd_10_code
-        	})			
+        		})
+        	else	
+	      		person_icd_code = PersonICDCode.create({
+	                  :person_id => person.id,
+	                  :tentative_code => person.icd_10_code,
+	                  :final_code =>person.icd_10_code
+	        	})				
+			end			
 		else
 			fields  = cause_of_death.keys.sort
 		    sql_record = RecordICDCode.where(person_id: person.id).first

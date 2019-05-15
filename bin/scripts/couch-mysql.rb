@@ -30,6 +30,9 @@ def save_to_mysql(record,map_key,db_maps)
 			next if field == "_id"
 			next if field == "type"
 
+			next if table == "barcodes" && field == "created_at"
+			next if table == "barcodes" && field == "updated_at"
+
 			#value = record["doc"][field].to_s.gsub("'","''")
 			value = record["doc"][field]
 			date_field = ["created_at","updated_at","last_password_date","birthdate","date_of_death"]
@@ -62,6 +65,9 @@ def save_to_mysql(record,map_key,db_maps)
 				field = primary_key
 			end
 			
+			next if table == "barcodes" && field == "created_at"
+			next if table == "barcodes" && field == "updated_at"
+
 			#value = record["doc"][field].to_s.gsub("'","''")
 			date_field = ["created_at","updated_at","last_password_date","birthdate","date_of_death"]
 			if date_field.include?(field)
