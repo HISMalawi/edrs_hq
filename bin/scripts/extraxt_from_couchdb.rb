@@ -125,7 +125,7 @@ while page <= pages
 
 		cause_of_death = person.cause_of_death
 
-		created_at = (cause_of_death.created_at.to_time.strftime("%Y-%m-%d") rescue "")
+		created_at = (person.date_of_death.to_time.strftime("%Y-%m-%d") rescue "")
 
 		if created_at >= start_date && created_at <= end_date
 				total = district_data[person.district_code].to_i + 1
