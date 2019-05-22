@@ -45,6 +45,11 @@ class Audit < CouchRest::Model::Base
 
   end
 
+  class << self
+      attr_accessor :ip_address_accessor
+      attr_accessor :mac_address_accessor
+  end
+
   def person
     person = Person.find(self.record_id)
     return person

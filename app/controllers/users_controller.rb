@@ -18,6 +18,14 @@ class UsersController < ApplicationController
       if user and user.password_matches?(params["users"]["password"])
         session[:user_id] = user.id
         User.current_user = user
+
+        Audit.ip_address_accessor = request.remote_ip
+        Audit.mac_address_accessor = ` arp #{request.remote_ip}`.split(/\n/).last.split(/\s+/)[2]
+        Audit.create({
+                                    :record_id  => session[:user_id],
+                                    :audit_type => "User Access",
+                                    :reason     => "Log in"
+        })          
         redirect_to "/" and return
       else
         flash[:error] = "Incorrect login details!!"

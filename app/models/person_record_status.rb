@@ -1,8 +1,8 @@
 class PersonRecordStatus < CouchRest::Model::Base
 
 	before_save :set_district_code,:set_facility_code,:set_registration_type
-	after_create :insert_update_into_mysql
-	after_save :insert_update_into_mysql
+	after_create :insert_update_into_mysql,:create_audit
+	after_save :insert_update_into_mysql,:create_audit
 	cattr_accessor :nextstatus
 
 	property :person_record_id, String
@@ -161,5 +161,18 @@ class PersonRecordStatus < CouchRest::Model::Base
 
 	    end
 	    sql_record.save
+	end
+
+	def create_audit
+              Audit.ip_address_accessor = request.remote_ip
+              Audit.mac_address_accessor = ` arp #{request.remote_ip}`.split(/\n/).last.split(/\s+/)[2]
+              Audit.create({
+                                    :record_id  => self.person_record_id,
+                                    :audit_type => "Status Change",
+                                    :reason     => self.comment,
+                                    :previous_value => self.prev_status,
+                                    :current_value => self.status
+              })		
+		
 	end
 end

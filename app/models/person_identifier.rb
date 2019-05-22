@@ -160,12 +160,6 @@ class PersonIdentifier < CouchRest::Model::Base
         PersonRecordStatus.nextstatus.delete(person.id) if PersonRecordStatus.nextstatus.present?
         
         person.update_attributes({:approved =>"Yes",:approved_at=> (drn_record.created_at.to_time rescue Time.now)})
-
-        Audit.create(record_id: person.id,
-                       audit_type: "Audit",
-                       user_id: creator,
-                       level: "Person",
-                       reason: "Approved record at HQ")
     else
     end
   end

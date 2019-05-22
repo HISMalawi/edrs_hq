@@ -9,7 +9,7 @@ class ReportsController < ApplicationController
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
   	else
 	    @tasks << ['Registration district and Gender','Registration district and Gender','/reports/district_and_gender']
-	    @tasks << ['User audit trail','Report for user audit trail','/reports/user_audits','']
+	    @tasks << ['User audit trail','Report for user audit trail','/reports/user_audits?timeline=Today&next_url=/reports?next_url=/','']
       @tasks << ['By Place of Death','Place of Death','/reports/place_of_death','']
       @tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
@@ -88,27 +88,28 @@ class ReportsController < ApplicationController
     @section ="User Audit"
     case params[:timeline]
     when "Today"
-        @start_date = Time.now.strftime("%d/%b/%Y")
-        @end_date = Date.today.to_time.strftime("%d/%b/%Y")
+        @start_date = Time.now.strftime("%Y-%m-%d")
+        @end_date = Date.today.to_time.strftime("%Y-%m-%d")
         @period = "Today (#{@start_date})"
     when "Current week"
-        @start_date = Time.now.beginning_of_week.strftime("%d/%b/%Y")
-        @end_date = Date.today.strftime("%d/%b/%Y")
+        @start_date = Time.now.beginning_of_week.strftime("%Y-%m-%d")
+        @end_date = Date.today.strftime("%Y-%m-%d")
         @period = "Current week (From #{@start_date} to #{@end_date})"
     when "Current month"
-        @start_date = Time.now.beginning_of_month.strftime("%d/%b/%Y")
-        @end_date = Date.today.to_time.strftime("%d/%b/%Y")
+        @start_date = Time.now.beginning_of_month.strftime("%Y-%m-%d")
+        @end_date = Date.today.to_time.strftime("%Y-%m-%d")
         @period = "Current month (From #{@start_date} to #{@end_date})"
     when "Current year"
-        @start_date = Time.now.beginning_of_year.strftime("%d/%b/%Y")
-        @end_date = Date.today.to_time.strftime("%d/%b/%Y")
+        @start_date = Time.now.beginning_of_year.strftime("%Y-%m-%d")
+        @end_date = Date.today.to_time.strftime("%Y-%m-%d")
         @period = "Current year (From #{@start_date} to #{@end_date})"
-    when "Date range"
-        @start_date = DateTime.parse(params[:start_date]).strftime("%d/%b/%Y")
-        @end_date = DateTime.parse(params[:end_date]).to_time.strftime("%d/%b/%Y")
+    else
+        @start_date = DateTime.parse(params[:start_date]).strftime("%Y-%m-%d")
+        @end_date = DateTime.parse(params[:end_date]).to_time.strftime("%Y-%m-%d")
         @period = "From #{@start_date} to #{@end_date}"
     end
    
+    
   end
 
   def get_audits
