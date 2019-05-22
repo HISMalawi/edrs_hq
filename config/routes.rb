@@ -203,14 +203,27 @@ Rails.application.routes.draw do
 
   ########Report Tasks starts here #######
   get '/causes_of_death' => "reports#causes_of_death"
+  
   get '/manner_of_death' => "reports#manner_of_death"
+
   get "/proficiency" => "reports#proficiency"
+
   get "/death_reports" => "reports#death_reports"
+
   get "/reports/district_and_gender"
+
   get "/reports/by_district_registered_and_gender"
+
   get "/reports/place_of_death"
+
   get "/reports/by_place_of_death"
+
   post "/reports/download_place_of_death"
+
+  get "/reports/user_audits"
+
+  get "/reports/get_audits"
+
 
   ######### Causes of Death ##############
   get "/causes_of_death/view"

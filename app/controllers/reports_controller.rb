@@ -9,7 +9,7 @@ class ReportsController < ApplicationController
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
   	else
 	    @tasks << ['Registration district and Gender','Registration district and Gender','/reports/district_and_gender']
-	    @tasks << ['User audit trail','Report for user audit trail','','']
+	    @tasks << ['User audit trail','Report for user audit trail','/reports/user_audits','']
       @tasks << ['By Place of Death','Place of Death','/reports/place_of_death','']
       @tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
 	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
@@ -82,5 +82,37 @@ class ReportsController < ApplicationController
       write_csv_content(file, [district.name,params["#{district.name}_input_died_and_registered_at_pilot"],params["#{district.name}_input_died_and_registered_at_pilot"],params["#{district.name}_input_non_pilot"],params["#{district.name}_input_home"],params["#{district.name}_input_other"],params["#{district.name}_input_Total"]])
     end
     send_file(file, :filename => "By Place of Death.csv", :disposition => 'inline', :type => "text/csv")
+  end
+
+  def user_audits
+    @section ="User Audit"
+    case params[:timeline]
+    when "Today"
+        @start_date = Time.now.strftime("%d/%b/%Y")
+        @end_date = Date.today.to_time.strftime("%d/%b/%Y")
+        @period = "Today (#{@start_date})"
+    when "Current week"
+        @start_date = Time.now.beginning_of_week.strftime("%d/%b/%Y")
+        @end_date = Date.today.strftime("%d/%b/%Y")
+        @period = "Current week (From #{@start_date} to #{@end_date})"
+    when "Current month"
+        @start_date = Time.now.beginning_of_month.strftime("%d/%b/%Y")
+        @end_date = Date.today.to_time.strftime("%d/%b/%Y")
+        @period = "Current month (From #{@start_date} to #{@end_date})"
+    when "Current year"
+        @start_date = Time.now.beginning_of_year.strftime("%d/%b/%Y")
+        @end_date = Date.today.to_time.strftime("%d/%b/%Y")
+        @period = "Current year (From #{@start_date} to #{@end_date})"
+    when "Date range"
+        @start_date = DateTime.parse(params[:start_date]).strftime("%d/%b/%Y")
+        @end_date = DateTime.parse(params[:end_date]).to_time.strftime("%d/%b/%Y")
+        @period = "From #{@start_date} to #{@end_date}"
+    end
+   
+  end
+
+  def get_audits
+    data = Report.audits(params)
+    render :text => data.to_json
   end
 end
