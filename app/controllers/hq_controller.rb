@@ -374,14 +374,6 @@ class HqController < ApplicationController
      render :text => "ok"
   end
 
-  def view_ccu_dispatch
-    @ccu_dispatch = CauseOfDeathDispatch.all.each
-  end
-
-  def view_ccu__confirmed_dispatch
-     @ccu_dispatch = CauseOfDeathDispatch.by_reviewed.key(true).each
-  end
-
   def nocause_available
     person = Person.find(params[:id])
     person.cause_of_death_available = "No"

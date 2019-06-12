@@ -53,4 +53,12 @@ class CausesOfDeathController < ApplicationController
 		@person = Person.find(params[:id])
 		
 	end
+
+	def view_ccu_dispatch
+	    @ccu_dispatch = (CauseOfDeathDispatch.all || [])
+	end
+
+	def view_ccu_confirmed_dispatch
+     @ccu_dispatch = (CauseOfDeathDispatch.by_reviewed.key(true) || [])
+    end
 end

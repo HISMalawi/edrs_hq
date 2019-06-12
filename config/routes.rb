@@ -127,11 +127,9 @@ Rails.application.routes.draw do
   get "/sampled_cases" => "hq#sampled_cases"
   get "/save_proficiency_comment" => "hq#save_proficiency_comment"
   get "/manage_ccu_dispatch" => "hq#manage_ccu_dispatch"
-  get "/view_ccu_dispatch" => "hq#view_ccu_dispatch"
   get "/confirm_ccu_dispatch" => "hq#confirm_ccu_dispatch"
   post "/confirm_dispatch/:dispatch" => "hq#confirm_dispatch"
   get "/confirm_dispatch/:dispatch" => "hq#confirm_dispatch"
-  get "/view_ccu__confirmed_dispatch" => "hq#view_ccu__confirmed_dispatch"
   get "/edit_icd_code" => "hq#edit_icd_code"
   get "/review/:id" => "hq#review"
   get "/save_mark" =>"hq#save_mark"
@@ -229,6 +227,8 @@ Rails.application.routes.draw do
   get "/causes_of_death/view"
   get "/search_causes/:page" => "causes_of_death#search_causes"
   get "/causes_of_death/:id/edit" =>"causes_of_death#edit"
+  get "/view_ccu__confirmed_dispatch" => "causes_of_death#view_ccu_confirmed_dispatch"
+  get "/view_ccu_dispatch" => "causes_of_death#view_ccu_dispatch"
 
   ########## Decentralized printing #######################
   get "/hq/printed_tasks"
