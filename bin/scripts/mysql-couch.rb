@@ -22,9 +22,6 @@ while page <= pages
 
 		couch_record = Person.find(person.id);
 		if couch_record.blank?
-			barcode = BarcodeRecord.where(person_record_id: person.id).first
-			next if barcode.blank?
-
 			json = person.attributes
 			person.attributes.keys.each do |key|
 				json[key] = "" if json[key].blank?
