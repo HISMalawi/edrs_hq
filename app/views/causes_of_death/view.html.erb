@@ -85,7 +85,7 @@
 
               let button = "<button class='btn btn-primary' onclick='viewCause(\""+data[i]['_id']+"\")'>View</button>"
 
-              dataTable.api().row.add([ data[i].barcode, data[i].den, data[i].gender, data[i].date_of_death,a,b,c,d,final_code,"", button]).draw();
+              dataTable.api().row.add([ data[i].barcode, data[i].den, data[i].gender, data[i].date_of_death,a,b,c,d,final_code,data[i].final_code_reviewed, button]).draw();
               
             }
 

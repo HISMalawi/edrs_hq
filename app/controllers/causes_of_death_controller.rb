@@ -5,35 +5,46 @@ class CausesOfDeathController < ApplicationController
 
 	def search_causes
 		data = []
+		offset = (params[:page].to_i rescue 0) * 40
+		(RecordICDCode.all.order(:created_at).offset(offset).limit(40) || []).each do |icd_code|
+			person = Person.find(icd_code.person_id)
+			cause_of_death = icd_code
+			next if person.blank?
+			row = {
+					"den" => (person.den rescue nil),
+					"barcode" => (person.barcode rescue nil),
+					"gender" => person.gender,
+					"date_of_death" => person.date_of_death,
+					"cause_of_death1" => person.cause_of_death1,
+					"icd_10_1" => person.icd_10_1,
+					"cause_of_death2" => person.cause_of_death2,
+					"icd_10_2" => person.icd_10_2,
+					"cause_of_death3" => person.cause_of_death3,
+					"icd_10_3" => person.icd_10_3,
+					"cause_of_death4" => person.cause_of_death4,
+					"icd_10_4" => person.icd_10_4,
+					"_id" => person.id
 
-		Person.by_coder_and_coded_at.page(params[:page]).per(50).each do |variable|
-			variable["den"] = variable.den
-			variable["barcode"] = variable.barcode
+			}
 
-			variable["date_of_death"] = variable["date_of_death"].to_time. strftime("%d/%b/%Y")
-			if variable.cause_of_death.present?
-				cause_of_death = variable.cause_of_death
-				if cause_of_death.icd_10_1_reviewed.present?
-					variable["icd_10_1"] = cause_of_death.icd_10_1_reviewed
-				end
-
-				if cause_of_death.icd_10_2_reviewed.present?
-					variable["icd_10_2"] = cause_of_death.icd_10_2_reviewed
-				end	
-
-				if cause_of_death.icd_10_3_reviewed.present?
-					variable["icd_10_3"] = cause_of_death.icd_10_3_reviewed
-				end
-
-				variable["final_code"] = cause_of_death.final_code
-				if cause_of_death.final_code_reviewed.present?
-					variable["final_code"] = cause_of_death.final_code_reviewed
-				end
-
+			if cause_of_death.icd_10_1_reviewed.present?
+				row["icd_10_1"] = cause_of_death.icd_10_1_reviewed
 			end
-			person_icd_codes = PersonICDCode.by_person_id.key(variable.id).first
-			variable["supervisors_code"] = person_icd_codes.final_code_reviewed
-			data << variable
+
+		    if cause_of_death.icd_10_2_reviewed.present?
+				row["icd_10_2"] = cause_of_death.icd_10_2_reviewed
+		    end	
+
+		    if cause_of_death.icd_10_3_reviewed.present?
+				row["icd_10_3"] = cause_of_death.icd_10_3_reviewed
+			end
+
+			row["final_code"] = cause_of_death.final_code
+			
+			row["final_code_reviewed"] = (cause_of_death.final_code_reviewed rescue "")
+	
+
+			data << row
 		end
 		render :text => data.to_json
 	end
