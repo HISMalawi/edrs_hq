@@ -60,6 +60,7 @@
         <tbody id="table_body">
             <% @i = 1 %>
             <% @ccu_dispatch.each do |dispatch| %>
+            <tr>
               <td>
                 <%= @i%>
               </td>
@@ -78,6 +79,7 @@
               <td>
                  <%= dispatch.created_at %>
               </td>
+            </tr>
             <%end%>
         </tbody>
     </table>

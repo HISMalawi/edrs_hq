@@ -44,6 +44,7 @@
         <tbody id="table_body">
             <% @i = 1 %>
             <% @ccu_dispatch.each do |dispatch| %>
+              <tr>
               <td>
                 <%= @i%>
               </td>
@@ -60,6 +61,7 @@
               <td>
                  <button class="btn btn-success" onclick="window.location='/confirm_ccu_dispatch?dispatch=<%=dispatch.id%>'">View</button>
               </td>
+            </tr>
             <%end%>
         </tbody>
     </table>
