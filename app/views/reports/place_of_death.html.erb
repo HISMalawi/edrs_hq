@@ -248,6 +248,8 @@
 	var other = 0
 	var Total = 0
 	function fetchData(start_date,end_date,status){
+			Total = 0;
+			$("Total").html(Total)
 			<% @districts.each do |district| %>
 					<% next if district.name.include?("City") %>
 					district_data["<%=district.name%>"] = {}

@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   @@file_path = "#{Rails.root.to_s}/app/assets/data/MySQL_data/"
 
 	def login 
-    if User.current_user.present?
+    if UserModel.current_user.present?
         MyLock.by_user_id.key(User.current_user.id).each do |lock|
           lock.destroy
         end
@@ -17,7 +17,7 @@ class UsersController < ApplicationController
 
       if user and user.password_matches?(params["users"]["password"])
         session[:user_id] = user.id
-        User.current_user = user
+        UserModel.current_user = user
 
         Audit.ip_address_accessor = request.remote_ip
         Audit.mac_address_accessor = ` arp #{request.remote_ip}`.split(/\n/).last.split(/\s+/)[2]
