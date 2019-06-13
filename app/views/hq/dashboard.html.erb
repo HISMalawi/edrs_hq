@@ -19,7 +19,7 @@
       
 <div class="col-lg-8">
 
-<% if ["Coder","Coding Unit Supervisor"].include?(User.current_user.role) %>
+<% if ["Coder","Coding Unit Supervisor"].include?(UserModel.current_user.role) %>
   <div class="row" >
       <%= render :partial => 'age_group_chart'%>
   </div>

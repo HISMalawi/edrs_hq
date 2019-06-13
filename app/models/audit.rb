@@ -59,7 +59,7 @@ class Audit < CouchRest::Model::Base
     if Audit.user.present?
       self.user_id = Audit.user
     else
-     self.user_id = User.current_user.id rescue (User.by_role.key('System Administrator').first.id)
+     self.user_id = UserModel.current_user.id rescue (User.by_role.key('System Administrator').first.id)
     end
   end
   
@@ -79,7 +79,7 @@ class Audit < CouchRest::Model::Base
     end
   end 
   def set_creator
-    self.creator = (User.current_user.id rescue User.by_created_at.each.first)
+    self.creator = (UserModel.current_user.id rescue User.by_created_at.each.first)
   end
   def insert_update_into_mysql
       fields  = self.keys.sort

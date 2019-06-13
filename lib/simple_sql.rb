@@ -29,7 +29,7 @@ class SimpleSQL
     ids.each do |id|
       person = Person.find(id)
       if SETTINGS['site_type'] == "remote"
-              next if (User.current_user.district_code != person.district_code ) && (user.role !="System Administrator") && (user.site_code != "HQ")
+              next if (UserModel.current_user.district_code != person.district_code ) && (user.role !="System Administrator") && (user.site_code != "HQ")
           end
       people << person
     end

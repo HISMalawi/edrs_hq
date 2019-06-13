@@ -338,7 +338,7 @@ class ApplicationController < ActionController::Base
 
     if !session[:user_id].blank?
       @current_user = current_user
-      User.current_user = @current_user
+      UserModel.current_user = @current_user
       if @current_user.blank?
         reset_session
         redirect_to "/login"
@@ -350,6 +350,10 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    User.find(session[:user_id])
+    user = UserModel.find(session[:user_id])
+    if user.blank?
+        user = UserModel.current_user
+    end
+    return user
   end
 end

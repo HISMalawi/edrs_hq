@@ -9,7 +9,7 @@ class HqController < ApplicationController
 
     @targettext = "Logout"
 
-    @user = User.find_by_username(session[:current_user_id])
+    @user = UserModel.find(session[:user_id])
 
     @districts = {}
     DistrictRecord.all.each do |d| 
@@ -90,7 +90,7 @@ class HqController < ApplicationController
     end
     case params[:search_type]
       when "barcode"
-          if ["Quality Supervisor"].include?(User.current_user.role)
+          if ["Quality Supervisor"].include?(UserModel.current_user.role)
               Person.by_npid.key(params[:barcode]).each do |person|
                 results << person
               end
@@ -302,7 +302,7 @@ class HqController < ApplicationController
       params[:cause_of_death_conditions][key][:cause] = params[:other_significant_cause][key]
       params[:cause_of_death_conditions][key][:icd_code] = params[:other_significant_cause_icd_code][key]
     end
-    params["coder"] = User.current_user.id
+    params["coder"] = UserModel.current_user.id
 
     params["coded_at"] = Time.now
     person_icd_code = PersonICDCode.by_person_id.key(@person.id).first
@@ -324,10 +324,10 @@ class HqController < ApplicationController
     end
     @person.update_attributes(params)
 
-    coder_stat = CoderStat.by_coder_id.key(User.current_user.id).first
+    coder_stat = CoderStat.by_coder_id.key(UserModel.current_user.id).first
     if coder_stat.blank?
       CoderStat.create({
-              coder_id: User.current_user.id, 
+              coder_id: UserModel.current_user.id, 
               number_of_records_coded: 1, 
               random_number: Random.rand(1..20),
               sampled: 0,
@@ -337,10 +337,10 @@ class HqController < ApplicationController
       random_number = coder_stat.random_number
       number_of_records_coded = coder_stat.number_of_records_coded.to_i + 1
       if (number_of_records_coded - random_number) % 20 == 0
-          sample = ProficiencySample.by_coder_id.key(User.current_user.id).first
+          sample = ProficiencySample.by_coder_id.key(UserModel.current_user.id).first
           if sample.blank?
             sample = ProficiencySample.new
-            sample.coder_id = User.current_user.id
+            sample.coder_id = UserModel.current_user.id
             sample.sample = [@person.id]
             sample.reviewed = []
             sample.save
@@ -920,11 +920,11 @@ class HqController < ApplicationController
         end
     elsif admin_password.present? && signatory_password.present? && signatory_username.present?
          
-        user = User.current_user
+        user = UserModel.current_user
         
         if user.role.downcase == "system administrator" && user.password_matches?(admin_password)
        
-          signatory = User.by_username.key(signatory_username).first rescue nil
+          signatory = UserModel.whare(username: signatory_username).first rescue nil
           if signatory.present?
         
            if signatory.role.downcase == "certificate signatory" && signatory.password_matches?(signatory_password)
@@ -1277,7 +1277,7 @@ class HqController < ApplicationController
 
         sample.final_result = (i.to_f  / sample.sample.count) * 100
         sample.reviewed = true
-        sample.supervisor = User.current_user.id
+        sample.supervisor = UserModel.current_user.id
     end
 
     sample.save

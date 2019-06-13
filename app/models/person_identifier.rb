@@ -49,7 +49,7 @@ class PersonIdentifier < CouchRest::Model::Base
   end
 
   def set_creator
-    self.creator =  User.current_user.id
+    self.creator =  UserModel.current_user.id
   end
 
   def set_check_digit

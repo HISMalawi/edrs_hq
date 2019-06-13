@@ -34,7 +34,7 @@ class User < CouchRest::Model::Base
   cattr_accessor :current_user
 
   def has_role?(role_name)
-    self.current_user.role == role_name ? true : false
+    UserModel.current_user.role == role_name ? true : false
   end
 
   def activities_by_level(level)
@@ -65,19 +65,6 @@ class User < CouchRest::Model::Base
 
   design do
     view :by__id
-    view :by_active
-    view :by_role
-    view :by_updated_at
-    view :active_users,
-         :map => "function(doc){
-            if (doc['type'] == 'User' && doc['active'] == true){
-              emit(doc._id, {username: doc.username ,first_name: doc.first_name,
-              last_name: doc.last_name, email: doc.email,role: doc.role,
-              creator: doc.creator, notify: doc.notify, updated_at: doc.updated_at});
-            }
-          }"
-
-
   end
 
   design do

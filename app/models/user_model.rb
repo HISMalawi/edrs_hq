@@ -17,4 +17,7 @@ class UserModel < ActiveRecord::Base
     	@password = BCrypt::Password.create(new_password)
     	self.password_hash = @password
   end
+  def activities_by_level(level)
+    return RoleRecord.where("role ='#{self.role}' AND level = '#{level}'").first.activities.split(",")
+  end
 end

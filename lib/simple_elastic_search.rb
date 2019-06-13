@@ -111,7 +111,7 @@ class SimpleElasticSearch
      end
      elastic_search_index = "curl -XPUT 'http://#{SETTING['host']}:#{SETTING['port']}/#{SETTING['index']}/documents/#{person.id}'  -d '
               {
-                \"user\" : \"#{User.current_user.id}\",
+                \"user\" : \"#{UserModel.current_user.id}\",
                 \"first_name\": \"#{self.escape_single_quotes(person.first_name)}\",
                 \"last_name\": \"#{self.escape_single_quotes(person.last_name)}\",
                 \"middle_name\": \"#{self.escape_single_quotes(person.middle_name) rescue ''}\",

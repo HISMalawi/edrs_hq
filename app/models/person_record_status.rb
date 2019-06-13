@@ -109,7 +109,7 @@ class PersonRecordStatus < CouchRest::Model::Base
                                   :status => currentstatus,
                                   :comment => comment,
                                   :district_code => person.district_code,
-                                  :creator => (User.current_user.id rescue nil)})
+                                  :creator => (UserModel.current_user.id rescue nil)})
 
       	PersonRecordStatus.by_person_recent_status.key(person.id).each.sort_by{|d| d.created_at}.each do |s|
 	        next if s === new_status
@@ -130,7 +130,7 @@ class PersonRecordStatus < CouchRest::Model::Base
                                   :status => currentstatus,
                                   :comment => comment,
                                   :district_code => person.district_code,
-                                  :creator => (User.current_user.id rescue nil)})
+                                  :creator => (UserModel.current_user.id rescue nil)})
 
       PersonRecordStatus.by_person_recent_status.key(person.id).each.sort_by{|d| d.created_at}.each do |s|
         next if s === new_status

@@ -83,7 +83,7 @@ class Person < CouchRest::Model::Base
                                   :person_record_id => self.id.to_s,
                                   :status => "NEW",
                                   :district_code => CONFIG['district_code'],
-                                  :created_by => User.current_user.id})
+                                  :created_by => UserModel.current_user.id})
     else
       
       change_log = [{:duplicates => self.duplicate.to_s}]
@@ -98,7 +98,7 @@ class Person < CouchRest::Model::Base
                                   :person_record_id => self.id.to_s,
                                   :status => "DC POTENTIAL DUPLICATE",
                                   :district_code => CONFIG['district_code'],
-                                  :created_by => User.current_user.id})
+                                  :created_by => UserModel.current_user.id})
 
       self.duplicate = nil
 
@@ -162,7 +162,7 @@ class Person < CouchRest::Model::Base
                         :person_record_id => self.id.to_s,
                         :status => nextstatus,
                         :district_code =>(self.district_code rescue CONFIG['district_code']),
-                        :creator => User.current_user.id})
+                        :creator => UserModel.current_user.id})
   end
 
   def self.create_person(parameters)

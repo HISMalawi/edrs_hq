@@ -6,7 +6,7 @@ class CaseController < ApplicationController
     barcode.person_record_id = person.id
     barcode.identifier = params[:barcode]
     barcode.identifier_type = "Form Barcode"
-    barcode.creator = (User.current_user.id rescue (@current_user.id rescue nil))
+    barcode.creator = (UserModel.current_user.id rescue (@current_user.id rescue nil))
     barcode.district_code = (person.district_code rescue CONFIG['district_code'])
     if barcode.save
         render :text => "saved"
@@ -472,9 +472,9 @@ class CaseController < ApplicationController
 
   def amendment_requests
     @title = "Amendment request"
-    if User.current_user.role =="Data Manager"
+    if UserModel.current_user.role =="Data Manager"
       @statuses = ["HQ AMEND GRANTED","HQ AMEND REJECTED TBA"]
-    elsif  User.current_user.role =="Data Supervisor"
+    elsif  UserModel.current_user.role =="Data Supervisor"
       @statuses = ["HQ AMEND"]
     else
       @statuses = ["HQ AMEND","HQ AMEND GRANTED"]
@@ -521,9 +521,9 @@ class CaseController < ApplicationController
 
   def reprint_requests
     @title = "Reprint request"
-    if User.current_user.role =="Data Manager"
+    if UserModel.current_user.role =="Data Manager"
         @statuses = ["HQ LOST GRANTED","HQ DAMAGED REJECTED TBA"]
-    elsif User.current_user.role =="Data Supervisor"
+    elsif UserModel.current_user.role =="Data Supervisor"
         @statuses = ["HQ LOST","HQ DAMAGED"]
     else
         @statuses = ["HQ LOST","HQ DAMAGED","HQ LOST GRANTED","HQ DAMAGED REJECTED TBA"]
@@ -731,7 +731,7 @@ class CaseController < ApplicationController
       lock = MyLock.find(params[:lock_id]) rescue nil
  
       if lock.present?
-        if lock.user_id == User.current_user.id
+        if lock.user_id == UserModel.current_user.id
           lock.destroy
         end
       end
@@ -757,10 +757,10 @@ class CaseController < ApplicationController
 
     @lock = MyLock.by_person_id.key(params[:person_id]).last
     if @lock.blank?
-        @lock = MyLock.create(:person_id => params[:person_id],:user_id => User.current_user.id)
+        @lock = MyLock.create(:person_id => params[:person_id],:user_id => UserModel.current_user.id)
     end
 
-    if User.current_user.id != @lock.user_id
+    if UserModel.current_user.id != @lock.user_id
         @locked = true
     else
         @locked = false

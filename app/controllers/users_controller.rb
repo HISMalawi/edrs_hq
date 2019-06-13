@@ -4,7 +4,7 @@ class UsersController < ApplicationController
 
 	def login 
     if UserModel.current_user.present?
-        MyLock.by_user_id.key(User.current_user.id).each do |lock|
+        MyLock.by_user_id.key(UserModel.current_user.id).each do |lock|
           lock.destroy
         end
     end
@@ -55,7 +55,7 @@ class UsersController < ApplicationController
    
       username = params[:username]
 
-       user = User.by_username.key(username).last
+       user = UserModel.where(username: username).last
           
       if user
           render :text => {:response => true}.to_json
@@ -64,7 +64,6 @@ class UsersController < ApplicationController
       end
        
   end
-
   def create
 
     redirect_to "/" and return if !has_role("Create User")
@@ -168,7 +167,7 @@ class UsersController < ApplicationController
 
     users.each do |user|
 
-      next if user.username.strip.downcase == User.current_user.username.strip.downcase
+      next if user.username.strip.downcase == UserModel.current_user.username.strip.downcase
 
       record = {
           "username" => "#{user.username}",
@@ -273,7 +272,7 @@ class UsersController < ApplicationController
 
     @targeturl = "/logout"
 
-    @user = User.current_user
+    @user = UserModel.current_user
 
 
   end
@@ -373,7 +372,7 @@ class UsersController < ApplicationController
         @user.save
 
         
-           if User.current_user.role=="System Administrator"
+           if UserModel.current_user.role=="System Administrator"
             redirect_to "/view_users"
            else
             redirect_to "/my_account"
@@ -397,7 +396,7 @@ class UsersController < ApplicationController
   end
 
    def confirm_password
-      user = User.current_user rescue User.find(params[:user_id])
+      user = UserModel.current_user rescue User.find(params[:user_id])
       password = params[:old_password]
 
       if user.password_matches?(password)
@@ -437,7 +436,7 @@ class UsersController < ApplicationController
 
     @section = "My Account"
 
-    @user = User.current_user
+    @user = UserModel.current_user
 
    # render :layout => "landing"
   end
