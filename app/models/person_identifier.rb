@@ -110,19 +110,10 @@ class PersonIdentifier < CouchRest::Model::Base
 
   def self.assign_drn(person, creator)
 
-    drn_record = PersonIdentifier.by_person_record_id_and_identifier_type.key([person.id, "DEATH REGISTRATION NUMBER"]).first
+    drn_record = DeathRegistrationNumber.where(person_record_id: person.id).first
+
     if drn_record.blank?
-       drn_values = self.generate_drn(person)
-       drn = drn_values[0]
-       drn_sort_value = drn_values[1].to_i
-       drn_record = self.create({
-                    :person_record_id=>person.id.to_s,
-                    :identifier_type =>"DEATH REGISTRATION NUMBER",
-                    :identifier => drn,
-                    :creator => creator,
-                    :drn_sort_value => drn_sort_value,
-                    :district_code => (person.district_code rescue SETTINGS['district_code'])
-                }) 
+       drn_record = DeathRegistrationNumber.generate_drn(person)
     end
  
     sleep(0.1)

@@ -20,7 +20,7 @@ SimpleSQL.query_exec(create_facility_table);
 
 create_barcode_table = "CREATE TABLE IF NOT EXISTS barcodes (
 							barcode_id varchar(255) NOT NULL,
-							person_record_id varchar(225) NOT NULL,
+							person_record_id varchar(255) NOT NULL,
 							barcode varchar(255) NOT NULL,
 							assigned INT(1),
 							district_code varchar(5) NOT NULL,
