@@ -113,27 +113,24 @@ class PersonIdentifier < CouchRest::Model::Base
     drn_record = DeathRegistrationNumber.where(person_record_id: person.id).first
 
     if drn_record.blank?
-       drn_record = DeathRegistrationNumber.generate_drn(person)
-    end
- 
-    sleep(0.1)
-    if drn_record.present?
-         if SETTINGS['print_qrcode']
+      begin
+        drn_record = DeathRegistrationNumber.generate_drn(person)
+        if SETTINGS['print_qrcode']
             if !File.exist?("#{SETTINGS['qrcodes_path']}QR#{person.id}.png")
               self.create_qr_barcode(person)
             sleep(1)
             end
-         else
+        else
           if !File.exist?("#{SETTINGS['barcodes_path']}#{person.id}.png")
               self.create_barcode(person)
             sleep(1)
           end         
-         end
-         status = PersonRecordStatus.by_person_recent_status.key(person.id.to_s).last
+        end
+        status = PersonRecordStatus.by_person_recent_status.key(person.id.to_s).last
 
-         if status.present?
+        if status.present?
            status.update_attributes({:voided => true})
-         end
+        end
         
         if PersonRecordStatus.nextstatus.present? && PersonRecordStatus.nextstatus[person.id].present?
           record_status = PersonRecordStatus.nextstatus[person.id]
@@ -151,7 +148,37 @@ class PersonIdentifier < CouchRest::Model::Base
         PersonRecordStatus.nextstatus.delete(person.id) if PersonRecordStatus.nextstatus.present?
         
         person.update_attributes({:approved =>"Yes",:approved_at=> (drn_record.created_at.to_time rescue Time.now)})
+      rescue Exception => e
+        PersonRecordStatus.create({
+                                  :person_record_id => person.id.to_s,
+                                  :status => "FAIL TO APPROVED", 
+                                  :district_code => person.district_code,
+                                  :creator => creator,
+                                  :comment => "Tail to approve record at HQ"})        
+      end
     else
+        status = PersonRecordStatus.by_person_recent_status.key(person.id.to_s).last
+
+        if status.present?
+           status.update_attributes({:voided => true})
+        end
+        
+        if PersonRecordStatus.nextstatus.present? && PersonRecordStatus.nextstatus[person.id].present?
+          record_status = PersonRecordStatus.nextstatus[person.id]
+        end
+        
+        record_status = "HQ CAN PRINT" if record_status.blank?
+        PersonRecordStatus.create({
+                                  :person_record_id => person.id.to_s,
+                                  :status => record_status,
+                                  :prev_status => status.status,
+                                  :district_code => person.district_code,
+                                  :creator => creator,
+                                  :comment => "Approved record at HQ"})
+
+        PersonRecordStatus.nextstatus.delete(person.id) if PersonRecordStatus.nextstatus.present?
+        
+        person.update_attributes({:approved =>"Yes",:approved_at=> (drn_record.created_at.to_time rescue Time.now)})
     end
   end
 
