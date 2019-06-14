@@ -38,7 +38,7 @@
                     </tr>
                     <tr>
                         <td><input type="checkbox" name="" onclick="enable(this,['start_date','end_date'])"></td>
-                        <td>Date died</td>
+                        <td>Date coded</td>
                         <td></td>
                         <td style="text-align: right;">Start date</td>
                         <td><input type="" class="form-control" name="start_date" id="start_date" 
@@ -119,6 +119,15 @@
   </tbody>
 </table>
 </div>
+
+<form method="post" id="district_data" action="/reports/download_cause_of_death">
+    <% @data_codes.each do |code| %>
+        <input type="hidden" name="<%= code %>[MALE]" id="<%= code %>MALE" value="<%= @data[code]['Male']%>">
+        <input type="hidden" name="<%= code %>[FEMALE]" id= "<%= code %>FEMALE" value="<%= @data[code]['Female']%>">
+        <input type="hidden" name="<%= code %>[TOTAL]"  value="<%= (@data[code]['Male'].to_i + @data[code]['Female'].to_i) %>" id="<%= code %>TOTAL">
+    <%end%>
+</form>
+
 <div style="position: fixed; bottom: 2%; right: 2%; background: #ffffff" >
     <button id="print_btn" class="btn btn-success pull-right"  onclick="downloadCSV()">DownLoad CSV</button> 
 </div>
@@ -158,5 +167,10 @@
       $("#end_age_label").css({"visibility":"hidden"})
       $("#end_age").css({"visibility":"hidden"})
     }
+  }
+
+  function downloadCSV(){
+     var form = $("#district_data");
+     form.submit();
   }
 </script>

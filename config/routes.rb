@@ -218,6 +218,8 @@ Rails.application.routes.draw do
 
   post "/reports/download_place_of_death"
 
+  post "/reports/download_cause_of_death"
+
   get "/reports/user_audits"
 
   get "/reports/get_audits"

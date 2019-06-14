@@ -81,7 +81,19 @@ class ReportsController < ApplicationController
       next if district.name.include?("City")
       write_csv_content(file, [district.name,params["#{district.name}_input_died_and_registered_at_pilot"],params["#{district.name}_input_died_and_registered_at_pilot"],params["#{district.name}_input_non_pilot"],params["#{district.name}_input_home"],params["#{district.name}_input_other"],params["#{district.name}_input_Total"]])
     end
-    send_file(file, :filename => "By Place of Death.csv", :disposition => 'inline', :type => "text/csv")
+    send_file(file, :filename => "By Place of Death #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}.csv", :disposition => 'inline', :type => "text/csv")
+  end
+
+  def download_cause_of_death
+
+    file = "#{Rails.root}/tmp/CauseOfDeath.csv"
+    write_csv_header(file, ["Code","Male","Female", "Total"])
+
+    params.keys.each do |code|
+      next if params[code]["TOTAL"].to_i == 0
+      write_csv_content(file, [code,params[code]["MALE"],params[code]["FEMALE"],params[code]["TOTAL"]])
+    end
+    send_file(file, :filename => "Cause of Death #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}.csv", :disposition => 'inline', :type => "text/csv")
   end
 
   def user_audits

@@ -7,7 +7,7 @@ class Report < ActiveRecord::Base
 
 		date_query = ''
 		if start_date.present?
-			date_query = " AND date_of_death >=Date('#{start_date}') AND date_of_death <=Date('#{end_date}')"
+			date_query = " AND c.created_at >=Date('#{start_date}') AND c.created_at <=Date('#{end_date}')"
 		end
 
 		autopsy_query = ''
