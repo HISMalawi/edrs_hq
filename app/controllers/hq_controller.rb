@@ -16,29 +16,23 @@ class HqController < ApplicationController
       next if d.name.blank?
       unless d.name.include?("City")
         online = Online.find("#{d.id}SYNC")
+        time_seen = nil
 
-        if SETTINGS['remote_exclude'].split(",").include?(d.name)
-
-            time_seen = nil
-
-            if online.present?
+        if online.present?
               time_seen = online.created_at
               time_seen = online.time_seen if online.time_seen.present?              
-            end
+        end
 
-            ago = ""
-            if time_seen.present?
+        ago = ""
+        if time_seen.present?
               if (time_seen.to_date == Date.today)
                 ago = "today"
               else
                 ago = (Date.today - time_seen.to_date).to_i
                 ago = ago.to_s + (ago.to_i == 1 ? " day ago" : " days ago")
               end              
-            end
-          @districts[d.name.downcase.gsub(/\-|\_|\s+/, '_').strip] = {code: d.id,online: (online.online rescue false) ,time_seen: ago}
-        else
-          @districts[d.name.downcase.gsub(/\-|\_|\s+/, '_').strip] = {code: d.id,online: true ,time_seen: nil}
         end
+        @districts[d.name.downcase.gsub(/\-|\_|\s+/, '_').strip] = {code: d.id,online: (online.online rescue false) ,time_seen: ago}
       end
     end
 
