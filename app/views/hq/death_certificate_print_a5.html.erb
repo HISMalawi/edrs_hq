@@ -24,7 +24,13 @@
         margin-right: 0px;
         padding-right: 0px;
         padding-top: 0px;
+
+    <% if SETTINGS['print_qrcode'] == true %>
+        margin-top: -15px;
+        padding: 0px;
+    <% else %>
         margin-top: 30px;
+    <% end %>
         float: right !important;
         
       }
@@ -36,25 +42,31 @@
        padding-top: 6cm;
        margin-left: auto;
        margin-right: auto;
-       height: 18.5cm;  
+      <% if SETTINGS['print_qrcode'] == true %>
+              height: 18cm;
+      <% else %>
+              height: 19cm;
+      <% end %> 
        }}
    
   </style>
 </head>
+
 <body style="color: #000;">
     <% @long_cert = false %>
     <% 
-        if SETTINGS['print_qrcode']
+
+      if SETTINGS['print_qrcode']
               raw = File.read("#{SETTINGS['qrcodes_path']}QR#{@person.id}.png")
               @data = Base64.encode64(raw)
-        else
+      else
               raw = File.read("#{SETTINGS['barcodes_path']}#{@person.id}.png")
               @data = Base64.encode64(raw)
-        end
+      end
 
     %>
     
-    <% raw_sig = File.read(Rails.root.join("public","uploads",User.by_username.key(GlobalProperty.find("signatory").value).last.signature)) rescue nil %>        
+    <% raw_sig = File.read(Rails.root.join("public","uploads",User.by_username.key(GlobalProperty.find("signatory").value).last.signature)) rescue nil %>         
     <% if raw_sig
       @sig = Base64.encode64(raw_sig)
      end %>
@@ -62,6 +74,7 @@
 <div id="mainc">             
   <div id="barcode">
     <p style="text-align: center !important;font-size: 12px;"> <img src ="data:image/png;base64,<%= @data%>" />
+
     <% if SETTINGS['print_qrcode'] %>
         <br/></p>
     <% else%>
@@ -214,13 +227,24 @@
               
           </p></td></tr>  
         </table>
-    </div>  
-    <div id="signature" >
-      <table  align="right" style="padding-right: 40px;margin-right: 40px;">
-          <tr><td><img src ="data:image/png;base64,<%= @sig %>" width="120" height="50" /></td></tr>
-          <tr><td><i style="float: right;font-size: 15px">Chief Director</i></td></tr>
-      </table> 
-   </div>
+    </div>
+
+   <div id="signature">
+    <table style="width: 100%;">
+      <tr>
+        <td>
+              <img src ="data:image/png;base64,<%= @sig %>" width="120" height="50" align="right" style="padding-right: 40px;margin-right: 40px;" />
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 0px;padding-right: 95px;">
+          <div style="width: 100%;text-align: right;font-size: 16px !important;margin:0px;">
+            Chief Director
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
  </div>  
 </body>
 </html>
