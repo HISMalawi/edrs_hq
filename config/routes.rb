@@ -231,6 +231,7 @@ Rails.application.routes.draw do
   get "/causes_of_death/:id/edit" =>"causes_of_death#edit"
   get "/view_ccu__confirmed_dispatch" => "causes_of_death#view_ccu_confirmed_dispatch"
   get "/view_ccu_dispatch" => "causes_of_death#view_ccu_dispatch"
+  post "/causes_of_death/save_review"
 
   ########## Decentralized printing #######################
   get "/hq/printed_tasks"

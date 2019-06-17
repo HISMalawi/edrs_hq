@@ -149,12 +149,11 @@ class PersonIdentifier < CouchRest::Model::Base
         
         person.update_attributes({:approved =>"Yes",:approved_at=> (drn_record.created_at.to_time rescue Time.now)})
       rescue Exception => e
-        PersonRecordStatus.create({
-                                  :person_record_id => person.id.to_s,
-                                  :status => "FAIL TO APPROVED", 
-                                  :district_code => person.district_code,
-                                  :creator => creator,
-                                  :comment => "Tail to approve record at HQ"})        
+        log = "#{Rails.root}/log/approval_failure.txt"
+        `echo "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" >> #{log}`
+        `echo "#{person.id.to_s} => #{e.message}" >> #{log}`
+        `echo "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" >> #{log}`
+        PersonRecordStatus.change_status(person,"FAIL TO APPROVE")     
       end
     else
         status = PersonRecordStatus.by_person_recent_status.key(person.id.to_s).last
