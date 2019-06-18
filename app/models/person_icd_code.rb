@@ -38,7 +38,7 @@ class PersonICDCode < CouchRest::Model::Base
 
 	def insert_update_into_mysql
 	    fields  = self.keys.sort
-	    sql_record = RecordICDCode.where(person_id: self.id).first
+	    sql_record = RecordICDCode.where(person_icd_code_id: self.id).first
 	    sql_record = RecordICDCode.new if sql_record.blank?
 	    fields.each do |field|
 	      next if field == "type"

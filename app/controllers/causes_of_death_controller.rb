@@ -60,9 +60,9 @@ class CausesOfDeathController < ApplicationController
 
 	def view_ccu_confirmed_dispatch
      @ccu_dispatch = (CauseOfDeathDispatch.by_reviewed.key(true) || [])
-    end
-  	def save_review
-  	  raise params.inspect
+  end
+
+  def save_review
       person_icd_code = PersonICDCode.by_person_id.key(params[:id]).first
       total = 0
       score = 0
@@ -70,24 +70,22 @@ class CausesOfDeathController < ApplicationController
 
       causes_of_death = {}
       while i < 5
-
          break if params["icd_10_#{i}_reviewed"].blank?
-         if params["icd_10_#{i}_reviewed"]["result"].to_i == 1
-
-            causes_of_death["icd_10_#{i}_reviewed"] = params["icd_10_#{i}_reviewed"]["code"] 
+         if params["icd_10_#{i}_decision"].to_i == 1
+            causes_of_death["icd_10_#{i}_reviewed"] = params["icd_10_#{i}_reviewed"] 
             causes_of_death["reason_icd_10_#{i}_changed"] = nil
             score = score + 1
          else
-            causes_of_death["icd_10_#{i}_reviewed"] = params["icd_10_#{i}_reviewed"]["code"] 
+            causes_of_death["icd_10_#{i}_reviewed"] = params["icd_10_#{i}_reviewed"]
             causes_of_death["reason_icd_10_#{i}_changed"] = params["reason_icd_10_#{i}_changed"]          
          end
          total = total + 1
          i = i + 1
       end
 
+
       person_icd_code.update_attributes(causes_of_death)
       other_significant_causes = {}
-
       j = 1
 
       while j < 10
@@ -121,6 +119,12 @@ class CausesOfDeathController < ApplicationController
 
       sample.update_attributes({reviewed: reviewed.uniq})
 
-      render :text => "ok"
+      if (sample.sample.sort - sample.reviewed).count <= 0
+        redirect_to "/sampled_cases"
+      else
+        redirect_to "/review/#{params[:sample_id]}?index=0"
+      end
+
+      
   end
 end
