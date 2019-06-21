@@ -150,10 +150,10 @@ class PersonIdentifier < CouchRest::Model::Base
         person.update_attributes({:approved =>"Yes",:approved_at=> (drn_record.created_at.to_time rescue Time.now)})
       rescue Exception => e
         log = "#{Rails.root}/log/approval_failure.txt"
-        `echo "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" >> #{log}`
+        `echo "\n" >> #{log}`
         `echo "#{person.id.to_s} => #{e.message}" >> #{log}`
-        `echo "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" >> #{log}`
-        PersonRecordStatus.change_status(person,"FAIL TO APPROVE")     
+        `echo "\n" >> #{log}`
+        PersonRecordStatus.change_status(person,"MARKED HQ APPROVAL")     
       end
     else
         status = PersonRecordStatus.by_person_recent_status.key(person.id.to_s).last
