@@ -18,3 +18,5 @@ Nationality|nationality:
     _id: nationality_id
 Barcode|barcodes:
     _id: barcode_id
+PersonICDCode|person_icd_codes:
+    _id: person_icd_code_id
