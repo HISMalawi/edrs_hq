@@ -296,10 +296,15 @@ class HqController < ApplicationController
       params[:cause_of_death_conditions][key][:cause] = params[:other_significant_cause][key]
       params[:cause_of_death_conditions][key][:icd_code] = params[:other_significant_cause_icd_code][key]
     end
-    params["coder"] = User.current_user.id
+    if params[:record_action].blank? || params[:record_action] != "EDIT"
+        params["coder"] = User.current_user.id
+    end
+    
 
     params["coded_at"] = Time.now
     person_icd_code = PersonICDCode.by_person_id.key(@person.id).first
+
+
     if person_icd_code.blank?
       person_icd_code = PersonICDCode.create({
                   :person_id => @person.id,
@@ -309,6 +314,7 @@ class HqController < ApplicationController
                   :reason_final_differ_from_tentative => params[:reason_final_differ_from_tentative]
         })
     else
+      #raise person_icd_code.inspect
       person_icd_code.update_attributes({
                   :tentative_code => params[:icd_10_code]  ,
                   :reason_tentative_differ_from_underlying => params[:reason_tentative_differ_from_underlying],

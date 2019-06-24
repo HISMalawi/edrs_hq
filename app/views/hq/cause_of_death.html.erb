@@ -502,11 +502,12 @@
               <div class="col-lg-12 col-md-12">
                       <label for="cause_of_death_available">Has section 2 of the form been completed? </label>
                       <div id="form_completed_yes_radio" class="radio radio-primary" onmousedown="">
-                          <input type="radio" name="cause_of_death_available" id="radioY">
+                          <input type="radio" name="cause_of_death_available" id="radioY" <%= params[:record_action].present? && params[:record_action] =='EDIT' ? 'checked=true disabled' : '' %>>
                           <label for="radioY">Yes</label>
                       </div>
                       <div id="form_completed_no_radio" class="radio radio-primary" onmousedown="">
-                          <input type="radio" name="cause_of_death_available" id="radioN">
+                          <input type="radio" name="cause_of_death_available" id="radioN"
+                          <%= params[:record_action].present? && params[:record_action] == 'EDIT' ? 'disabled' : '' %>>
                           <label for="radioN">No</label>
                       </div>
 
@@ -986,6 +987,7 @@
               <div onclick="hit('certification_radio')" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-backward" aria-hidden="true">&nbsp;Back</span></div>
             <div onclick="validateICD10Field()" class="btn btn-success pull-right">Save&nbsp;&nbsp;<span class="glyphicon" aria-hidden="true"></span></div>
           </div>
+          <input type="hidden" name="do" value="<%= params[:record_action].present? ?  params[:record_action] :  'NEW' %>">
       </form>
   </div>
 

@@ -37,6 +37,8 @@ class Barcode < CouchRest::Model::Base
         next if field == "updated_at"
         if field =="_id"
             sql_record["barcode_id"] = self[field]
+        elsif field == "barcode"
+            sql_record[field] = sql_record[field].to_s.strip
         else
             sql_record[field] = self[field]
         end
