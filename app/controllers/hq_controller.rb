@@ -155,15 +155,7 @@ class HqController < ApplicationController
     end
 
     if (has_role( "Add cause of death") || has_role("Edit cause of death"))&& results.length > 0
-      cause_available = ['cause_of_death1',     'cause_of_death2',
-      'cause_of_death3',                        'cause_of_death4',
-      'onset_death_interval1',            'onset_death_interval2',
-      'onset_death_interval3',            'onset_death_interval4',
-      'cause_of_death_conditions',              'manner_of_death',
-      'other_manner_of_death',                 'death_by_accident',
-      'other_death_by_accident', 'icd_10_code'].collect{|key| eval("results.last.#{key}")}.compact.length > 0 rescue false
-
-      if cause_available
+      if results.last.cause_of_death1.present?
         redirect_to "/cause_of_death_preview?person_id=#{results.last.id}" and return
       else
         redirect_to "/cause_of_death?person_id=#{results.last.id}" and return
@@ -314,7 +306,6 @@ class HqController < ApplicationController
                   :reason_final_differ_from_tentative => params[:reason_final_differ_from_tentative]
         })
     else
-      #raise person_icd_code.inspect
       person_icd_code.update_attributes({
                   :tentative_code => params[:icd_10_code]  ,
                   :reason_tentative_differ_from_underlying => params[:reason_tentative_differ_from_underlying],
