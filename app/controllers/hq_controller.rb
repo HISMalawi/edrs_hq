@@ -154,7 +154,7 @@ class HqController < ApplicationController
         results = SimpleSQL.query(map, params)
     end
 
-    if (has_role( "Add cause of death") || has_role("Edit cause of death"))&& results.length > 0
+    if (has_role( "Add cause of death") || has_role("Edit cause of death")) && results.length > 0
       if results.last.cause_of_death1.present?
         redirect_to "/cause_of_death_preview?person_id=#{results.last.id}" and return
       else
