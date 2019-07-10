@@ -282,7 +282,10 @@ class HqController < ApplicationController
     #tobe revised
     params[:cause_of_death_conditions] = {}
 
-    params[:other_significant_cause] = params[:other_significant_cause].delete_if { |key, value| value.to_s.strip == '' }
+   params[:other_significant_cause] = {} if params[:other_significant_cause].blank?
+
+    params[:other_significant_cause] = (params[:other_significant_cause] rescue {}).delete_if { |key, value| value.to_s.strip == '' }
+
     params[:other_significant_cause].keys.each do |key|
       params[:cause_of_death_conditions][key] = {}
       params[:cause_of_death_conditions][key][:cause] = params[:other_significant_cause][key]
