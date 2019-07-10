@@ -36,7 +36,7 @@ class Report < ActiveRecord::Base
 			data[code] = {}
 			gender = ['Male','Female']
 			gender.each do |g|
-				query = "SELECT count(*) as total FROM people p INNER JOIN person_icd_codes c ON p.person_id = c.person_id WHERE  gender='#{g}' AND c.final_code = '#{code['icd_10_code']}' #{district_query} #{date_query} #{age_query} #{autopsy_query}"
+				query = "SELECT count(*) as total FROM people p INNER JOIN person_icd_codes c ON p.person_id = c.person_id WHERE  gender='#{g}' AND c.final_code = '#{code}' #{district_query} #{date_query} #{age_query} #{autopsy_query}"
 				data[code][g] = connection.select_all(query).as_json.last['total'] rescue 0
 			end			
 		end
