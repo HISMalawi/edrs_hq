@@ -26,12 +26,14 @@ class Report < ActiveRecord::Base
 		end
 
 		connection = ActiveRecord::Base.connection
-		codes_query = "SELECT distinct icd_10_code FROM people WHERE icd_10_code IS NOT NULL LIMIT 500"
-		codes = connection.select_all(codes_query).as_json
+		codes_query = "SELECT distinct icd_10_code FROM people WHERE icd_10_code IS NOT NULL LIMIT 1000"
+		final_code_query = "SELECT distinct final_code FROM person_icd_codes WHERE final_code IS NOT NULL LIMIT 1000"
+		codes = (connection.select_all(codes_query).as_json.collect{|code| code['icd_10_code']} + connection.select_all(final_code_query).as_json.collect{|code| code['final_code']}).uniq
 		data  = {}
+
 		codes.each do |code|
 
-			data[code["icd_10_code"]] = {}
+			data[code] = {}
 			gender = ['Male','Female']
 			gender.each do |g|
 				query = "SELECT count(*) as total FROM people p INNER JOIN person_icd_codes c ON p.person_id = c.person_id WHERE  gender='#{g}' AND c.final_code = '#{code['icd_10_code']}' #{district_query} #{date_query} #{age_query} #{autopsy_query}"
@@ -211,7 +213,7 @@ class Report < ActiveRecord::Base
 	def self.district_registered_and_gender(params)
 		district_query = ""
 		if params[:district].present? && params[:district] != "All"
-			district_query = "AND person_record_status.district_code = '#{District.by_name.key(params[:district]).first.id}'"
+			district_query = "AND a.district_code = '#{District.by_name.key(params[:district]).first.id}'"
 		end
 		gender_query =""
 		if params[:gender].present? && params[:gender] != "Total"
@@ -227,10 +229,12 @@ class Report < ActiveRecord::Base
 
 		connection = ActiveRecord::Base.connection
 
-		query = "SELECT count(*) as total, gender , status, person_record_status.created_at , person_record_status.updated_at 
-	    		 FROM people INNER JOIN person_record_status ON people.person_id  = person_record_status.person_record_id
-				 WHERE status = '#{status}' #{gender_query} #{district_query} AND person_record_status.voided = 0
-				 AND DATE_FORMAT(person_record_status.created_at,'%Y-%m-%d') BETWEEN '#{start_date}' AND '#{end_date}'"
+		query = "SELECT count(*) as total  FROM  (SELECT DISTINCT person_record_id, a.district_code, d.name  
+				 FROM people a inner join person_record_status p on a.person_id = p.person_record_id 
+				 inner join district d on p.district_code = d.district_id  
+				 WHERE status IN ('#{params[:status]}') #{district_query}  #{gender_query}
+				 AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >= '#{start_date}' 
+				 AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <= '#{end_date}') t"
 		
 		return {:count => (connection.select_all(query).as_json.last['total'] rescue 0) , :gender =>params[:gender], :district => params[:district]}
 	end

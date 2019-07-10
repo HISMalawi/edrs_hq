@@ -25,19 +25,23 @@
 <form method="get" action="/causes_of_death">
 <table>
                 <tr>
-                  <td><input type="checkbox" name="" onclick="enable(this,['district'])"></td>
+                  <td><input type="checkbox" name="" onclick="enable(this,['district'])" 
+                    <%= params[:district].present? ? 'checked=true' : '' %>>
+                  </td>
                   <td>Select District: </td>
                   <td>
-                      <select class="form-control" id="district" name = "district" style="border-radius: 0px; " required="true" disabled>
+                      <select class="form-control" id="district" name = "district"  style="border-radius: 0px; " required="true"
+                       <%= params[:district].present? ? '' : 'disabled' %>>
                                             <option></option>
-                                          <% District.all.collect{|d| d.name}.sort.each do |name| %>
-                                            <option><%= name%></option>
+                                          <% @districts.each do |name| %>
+
+                                            <option <%= params[:district] == name ? 'selected' : '' %>><%= name%></option>
                                           <%end%>                                               
                                           </select>
                                     </td>
                     </tr>
                     <tr>
-                        <td><input type="checkbox" name="" onclick="enable(this,['start_date','end_date'])"></td>
+                        <td><input type="checkbox" name="" onclick="enable(this,['start_date','end_date'])" <%= params[:start_date].present?? 'checked=true' : '' %>></td>
                         <td>Date coded</td>
                         <td></td>
                         <td style="text-align: right;">Start date</td>

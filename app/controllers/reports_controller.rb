@@ -18,12 +18,13 @@ class ReportsController < ApplicationController
     render :template => "/hq/tasks"
   end
   def causes_of_death
-
+    @districts = DistrictRecord.where("name NOT LIKE '%City'").order(:name)
   	@data = Report.causes_of_death(params[:district],params[:start_date],params[:end_date], params[:age_operator],params[:start_age],params[:end_age],params[:autopsy_requested])
   	@data_codes = @data.keys
   	@section ="Causes of death Reports"
   end
   def manner_of_death
+    @districts = DistrictRecord.where("name NOT LIKE '%City'").order(:name)
   	@data = Report.manner_of_death(params[:district],params[:start_date],params[:end_date], params[:age_operator],params[:start_age],params[:end_age],params[:autopsy_requested])
   	
   	@data_manners = @data.keys
@@ -46,12 +47,12 @@ class ReportsController < ApplicationController
 
   def death_reports
     @section = "Death report"
-    @districts = District.all.each
+    @districts = DistrictRecord.where("name NOT LIKE '%City'").order(:name)
     @data = Report.general(params)
   end
 
   def district_and_gender
-      @districts = District.all.each
+      @districts = DistrictRecord.where("name NOT LIKE '%City'").order(:name)
   end
 
   def by_district_registered_and_gender
@@ -65,7 +66,7 @@ class ReportsController < ApplicationController
   end
 
   def place_of_death
-      @districts = District.all.each
+      @districts = DistrictRecord.where("name NOT LIKE '%City'").order(:name)
 
   end
   def by_place_of_death
@@ -74,7 +75,7 @@ class ReportsController < ApplicationController
   end
 
   def download_place_of_death
-    districts = District.all.each
+    districts = DistrictRecord.where("name NOT LIKE '%City'").order(:name)
     file = "#{Rails.root}/tmp/PlaceOfDeath.csv"
     write_csv_header(file, ["District","Died and Registered in Pilot Facility","Died in Pilot Facility but registered at DR0","Non Pilot Health Facility","Home","Other", "Total"])
     districts.each do |district|
