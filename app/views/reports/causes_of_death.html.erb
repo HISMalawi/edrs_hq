@@ -33,9 +33,9 @@
                       <select class="form-control" id="district" name = "district"  style="border-radius: 0px; " required="true"
                        <%= params[:district].present? ? '' : 'disabled' %>>
                                             <option></option>
-                                          <% @districts.each do |name| %>
+                                          <% @districts.each do |district| %>
 
-                                            <option <%= params[:district] == name ? 'selected' : '' %>><%= name%></option>
+                                            <option <%= params[:district] == district.name ? 'selected' : '' %>><%= district.name %></option>
                                           <%end%>                                               
                                           </select>
                                     </td>
