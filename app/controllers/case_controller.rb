@@ -791,7 +791,7 @@ class CaseController < ApplicationController
          
           if @person.status == "HQ ACTIVE"
                         
-            duplicates = SimpleElasticSearch.query_duplicate_coded(record,SETTINGS['duplicate_precision'])
+            duplicates = SimpleElasticSearch.query_duplicate_coded(record,SETTINGS['duplicate_precision']) rescue []
             
             @results = duplicates
 
