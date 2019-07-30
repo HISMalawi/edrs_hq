@@ -304,8 +304,8 @@
                       <td colspan="2" style="color:#4775a1;border-left:none"><%= @person.status%></td>
                       <td style="border-right:none" class="clickable" ><b>DEN : </b></td>
                       <td style="color:#4775a1;border-left:none"><%= @person.den%></td>
-                      <td style="border-right:none" class="clickable"><b>DRN : </b></td>
-                      <td style="color:#4775a1;border-left:none"><%= @person.drn rescue ''%></td>
+                      <td style="border-right:none" class="clickable"><b>Barcode : </b></td>
+                      <td style="color:#4775a1;border-left:none"><%= @person.barcode rescue ''%></td>
                     </tr>
                     <tr>
                     <tr>
@@ -942,12 +942,17 @@
                                   <th colspan="2" style="background: #6281a7; color:#FFFFFF;text-align:center">Details of the deceased</th>
                               </tr>
                               <tr>
+                                  <td>Barcode</td>
+                                  <td><%= @person.barcode %></td>
+                              </tr>
+                              <tr>
                                   <td>Sex</td>
                                   <td><%= @person.gender %></td>
                               </tr>
                               <tr>
                                   <td>Age</td>
-                                  <td><%= Date.parse(@person.date_of_death.to_s).year - Date.parse(@person.birthdate.to_s).year %> years</td>
+                                  
+                                  <td><%= ApplicationController.new.calculate_age_to_death(@person.birthdate.to_s, @person.date_of_death.to_s) %></td>
                               </tr>
                               <tr>
                                 <td >Place of death</td>
@@ -1059,13 +1064,17 @@
             <div class="row">
               <div class="col-lg-12" id="message" style="text-align:center;padding:0">
                   <table class="detailstable">
+                               <tr>
+                                  <td>Barcode</td>
+                                  <td><%= @person.barcode %></td>
+                              </tr>
                               <tr>
                                   <td>Sex</td>
                                   <td><%= @person.gender %></td>
                               </tr>
                               <tr>
                                   <td>Age</td>
-                                  <td><%= Date.parse(@person.date_of_death.to_s).year - Date.parse(@person.birthdate.to_s).year %> year(s) </td>
+                                  <td><%= ApplicationController.new.calculate_age_to_death(@person.birthdate.to_s, @person.date_of_death.to_s) %> </td>
                               </tr>
                               <tr>
                                 <td >Place of death</td>

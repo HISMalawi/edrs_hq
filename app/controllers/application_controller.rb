@@ -333,6 +333,23 @@ class ApplicationController < ActionController::Base
         exporter << content
     end
   end
+
+  def calculate_age_to_death(birthdate, date_of_death=Time.now)
+    birthdate = birthdate.to_time
+    date_of_death = date_of_death.to_time
+    different = date_of_death - birthdate
+    if (different / 1.year).round(1).to_i >= 1
+        return "#{(different / 1.year).round(1).to_i} years(s)" 
+    elsif (different / 1.month).round(1) >= 1
+        return "#{(different / 1.month).round(1).to_i} month(s)"
+    elsif (different / 1.week).round(1) >= 1
+        return "#{(different / 1.week).round(1).to_s} week(s)"
+    elsif (different / 1.day).round(1) >= 1
+        return "#{(different / 1.day).round(1).to_i} day(s)"
+    else
+        return "0 day"
+    end
+  end
   protected
   def check_user
 
