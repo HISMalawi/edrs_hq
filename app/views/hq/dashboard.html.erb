@@ -1,6 +1,7 @@
 <script src="/assets/d3.js" charset="utf-8"></script>
 <script type="text/javascript">
 	var dashboard_data = {};
+  var district_name = ""
 </script>
 <div class="row">     
       
@@ -18,7 +19,7 @@
 
       
 <div class="col-lg-8">
-
+<div style="background: #ffffff; width: 100%;margin: 0 auto; border: 1px solid #cccfff; padding: 0.5em; margin-bottom: 1%;"><h3 style="text-align: center" id="statistics_title">National Statistics</h3></div>
 <% if ["Coder","Coding Unit Supervisor"].include?(User.current_user.role) %>
   <div class="row" >
       <%= render :partial => 'age_group_chart'%>
@@ -63,6 +64,7 @@
                     .on("mousedown", function(){
                         district = this.getAttribute("code");
                         title = "Statistics for <%=district.humanize%>";
+                        $("#statistics_title").html(title)
                         $("#district_online").html("<%=district.humanize%>");
                         if (eval(this.getAttribute("online"))) {
                           $("#district_online_status").css({"color":"green"})
@@ -83,7 +85,8 @@
 
     function reset(){
         district = "";
-        title = ""
+        title = "National Statistics"
+        $("#statistics_title").html(title)
         $("#district_online").html("");
         $("#district_online_status").html("")
         $("#district_online_last_seen").html("");
