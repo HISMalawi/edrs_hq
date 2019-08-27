@@ -350,6 +350,78 @@ class ApplicationController < ActionController::Base
         return "0 day"
     end
   end
+  def to_readable(person)
+    (1..4).each do |i|
+      if person["cause_of_death#{i}"].blank?
+        person["cause_of_death#{i}"] = (person["other_cause_of_death#{i}"] rescue "")
+      end
+      secs = person["onset_death_interval#{i}"].to_i
+      time_to_string = [[60, :second], [60, :minute], [24, :hour], [365, :day],[1000, :year]].map{ |count, name|
+        if secs > 0
+          secs, n = secs.divmod(count)
+          if n > 0 
+            if n == 1
+              "#{n.to_i} #{name}"
+            elsif n > 1
+              "#{n.to_i} #{name}s"
+            end
+          end
+        end
+      }.compact.reverse.join(' ')
+      person["onset_death_interval#{i}"] = time_to_string
+    end
+    return person
+  end
+
+  def time_to_divmod(seconds)
+      t = seconds.to_i
+      ss = t.divmod(60)[1]           
+      mm = t.divmod(60)[0].divmod(60)[1]          
+      hh = t.divmod(60)[0].divmod(60)[0].divmod(24)[1]
+      dd = t.divmod(60)[0].divmod(60)[0].divmod(24)[0].divmod(7)[1]
+      ww = t.divmod(60)[0].divmod(60)[0].divmod(24)[0].divmod(7)[0].divmod(4)[1]
+      mm = t.divmod(60)[0].divmod(60)[0].divmod(24)[0].divmod(7)[0].divmod(4)[0].divmod(12)[1]
+      yy = t.divmod(60)[0].divmod(60)[0].divmod(24)[0].divmod(7)[0].divmod(4)[0].divmod(12)[0]
+      return [yy,mm,ww,dd, hh, mm, ss]
+  end
+
+  def read_onset_death_interval(person)
+      i = 1
+      while i < 5
+         interval = time_to_divmod(person["onset_death_interval#{i}"])
+         if interval[0] > 0 && person["onset_death_interval#{i}"].present?
+            person["onset_death_interval#{i}"] = interval[0]
+            person["interval_unit#{i}"] = "Second(s)"
+         end 
+         if interval[1] > 0 && person["onset_death_interval#{i}"].present?
+            person["onset_death_interval#{i}"] = interval[1]
+            person["interval_unit#{i}"] = "Minute(s)(s)"
+         end 
+         if interval[2] > 0 && person["onset_death_interval#{i}"].present?
+            person["onset_death_interval#{i}"] = interval[2]
+            person["interval_unit#{i}"] = "Hour(s)"
+         end
+         if interval[3] > 0 && person["onset_death_interval#{i}"].present?
+            person["onset_death_interval#{i}"] = interval[3]
+            person["interval_unit#{i}"] = "Day(s)"
+         end 
+         if interval[4] > 0 && person["onset_death_interval#{i}"].present?
+            person["onset_death_interval#{i}"] = interval[4]
+            person["interval_unit#{i}"] = "Week(s)"
+         end
+         if interval[5] > 0 && person["onset_death_interval#{i}"].present?
+            person["onset_death_interval#{i}"] = interval[5]
+            person["interval_unit#{i}"] = "Month(s)"
+         end
+         if interval[6] > 0 && person["onset_death_interval#{i}"].present?
+            person["onset_death_interval#{i}"] = interval[6]
+            person["interval_unit#{i}"] = "Year(s)"
+         end          
+        i = i + 1
+      end
+      return person
+  end
+
   protected
   def check_user
 
