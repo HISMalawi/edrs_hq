@@ -20,28 +20,28 @@ class SimpleElasticSearch
         search_content = search_content + registration_district + " " 
       end    
 
-      if person["mother_first_name"].present?
-        search_content = search_content + (person["mother_first_name"] rescue '') + " " 
+      if person["mother_first_name"].to_s.squish.present?
+        search_content = search_content + (person["mother_first_name"].to_s.squish rescue '') + " " 
       end
 
-      if person["mother_middle_name"].present?
-         search_content = search_content + (person["mother_middle_name"] rescue '') + " " 
+      if person["mother_middle_name"].to_s.squish.present?
+         search_content = search_content + (person["mother_middle_name"].to_s.squish rescue '') + " " 
       end   
 
-      if person["mother_last_name"].present?
-         search_content = search_content + (person["mother_last_name"] rescue '') + " " 
+      if person["mother_last_name"].to_s.squish.present?
+         search_content = search_content + (person["mother_last_name"].to_s.squish rescue '') + " " 
       end  
 
-      if person["father_first_name"].present?
-         search_content = search_content + (person["father_first_name"] rescue '') + " " 
+      if person["father_first_name"].to_s.squish.present?
+         search_content = search_content + (person["father_first_name"].to_s.squish rescue '') + " " 
       end 
 
-      if person["father_middle_name"].present?
-         search_content = search_content + (person["father_middle_name"] rescue '') + " " 
+      if person["father_middle_name"].to_s.squish.present?
+         search_content = search_content + (person["father_middle_name"].to_s.squish rescue '') + " " 
       end  
 
-      if person["father_last_name"].present?
-         search_content = search_content + (person["father_last_name"] rescue '') + " " 
+      if person["father_last_name"].to_s.squish.present?
+         search_content = search_content + (person["father_last_name"].to_s.squish rescue '') + " " 
       end  
 
       return search_content.squish
@@ -68,28 +68,20 @@ class SimpleElasticSearch
         search_content = search_content + registration_district + " " 
       end    
 
-      if person["mother_first_name"].present?
-        search_content = search_content + (person["mother_first_name"].soundex rescue '') + " " 
-      end
-
-      if person["mother_middle_name"].present?
-         search_content = search_content + (person["mother_middle_name"].soundex rescue '') + " " 
-      end   
-
-      if person["mother_last_name"].present?
-         search_content = search_content + (person["mother_last_name"].soundex rescue '') + " " 
-      end  
-
-      if person["father_first_name"].present?
-         search_content = search_content + (person["father_first_name"].soundex rescue '') + " " 
+      if person["mother_first_name"].to_s.squish.present?
+        search_content = search_content + (person["mother_first_name"].to_s.squish.soundex rescue '') + " " 
       end 
 
-      if person["father_middle_name"].present?
-         search_content = search_content + (person["father_middle_name"].soundex rescue '') + " " 
+      if person["mother_last_name"].to_s.squish.present?
+         search_content = search_content + (person["mother_last_name"].to_s.squish.soundex rescue '') + " " 
       end  
 
-      if person["father_last_name"].present?
-         search_content = search_content + (person["father_last_name"].soundex rescue '') + " " 
+      if person["father_first_name"].to_s.squish.present?
+         search_content = search_content + (person["father_first_name"].to_s.squish.soundex rescue '') + " " 
+      end   
+
+      if person["father_last_name"].to_s.squish.present?
+         search_content = search_content + (person["father_last_name"].to_s.squish.soundex rescue '') + " " 
       end  
 
       return search_content.squish
