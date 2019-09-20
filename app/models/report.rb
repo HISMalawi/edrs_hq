@@ -1,33 +1,35 @@
 class Report < ActiveRecord::Base
-	def self.causes_of_death(district= nil,start_date = nil,end_date = nil, age_operator = nil, start_age= nil, end_age =nil, autopsy =nil )
+	def self.causes_of_death(params)
 		district_query = ''
-		if district.present?
-			district_query = " AND district_code = '#{District.by_name.key(district).first.id}'" 
+		if params[:district].present?
+			district_query = " AND district_code = '#{District.by_name.key(params[:district]).first.id}'" 
 		end
 
 		date_query = ''
-		if start_date.present?
-			date_query = " AND c.created_at >=Date('#{start_date}') AND c.created_at <=Date('#{end_date}')"
+		if params[:start_date].present?
+
+			date_query = " AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >= '#{params[:start_date].to_time.strftime("%Y-%m-%d")}' 
+				           AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <= '#{params[:end_date].to_time.strftime("%Y-%m-%d")}' "
 		end
 
 		autopsy_query = ''
-		if autopsy.present?
-			autopsy_query = "AND autopsy_requested = '#{autopsy}'"
+		if params[:autopsy_requested].present?
+			autopsy_query = "AND autopsy_requested = '#{params[:autopsy_requested]}'"
 		end
 
         age_query = ''
 
-		if age_operator.present?
-	        if age_operator ==  "=> Age <="
-	            age_query = " AND (DATEDIFF(date_of_death,birthdate)/365) >= #{start_age} AND (DATEDIFF(date_of_death,birthdate)/365) <= #{end_age} "
+		if params[:age_operator].present?
+	        if params[:age_operator] ==  "=> Age <="
+	            age_query = " AND (DATEDIFF(date_of_death,birthdate)/365) >= #{params[:start_age]} AND (DATEDIFF(date_of_death,birthdate)/365) <= #{params[:end_age]} "
 	        else
-	            age_query = " AND (DATEDIFF(date_of_death,birthdate)/365) #{age_operator} #{start_age} "
+	            age_query = " AND (DATEDIFF(date_of_death,birthdate)/365) #{params[:age_operator]} #{params[:start_age]} "
 	        end
 		end
 
 		connection = ActiveRecord::Base.connection
-		codes_query = "SELECT distinct icd_10_code FROM people WHERE icd_10_code IS NOT NULL LIMIT 1000"
-		final_code_query = "SELECT distinct final_code FROM person_icd_codes WHERE final_code IS NOT NULL LIMIT 1000"
+		codes_query = "SELECT distinct icd_10_code FROM people WHERE icd_10_code IS NOT NULL LIMIT 5000"
+		final_code_query = "SELECT distinct final_code FROM person_icd_codes WHERE final_code IS NOT NULL LIMIT 5000"
 		codes = (connection.select_all(codes_query).as_json.collect{|code| code['icd_10_code']} + connection.select_all(final_code_query).as_json.collect{|code| code['final_code']}).uniq
 		data  = {}
 

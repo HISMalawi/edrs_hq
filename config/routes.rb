@@ -115,12 +115,10 @@ Rails.application.routes.draw do
   ############################################################
   get "/search" => "hq#search"
   get "/do_search" => "hq#do_search"
-  get "/cause_of_death_preview" => "hq#cause_of_death_preview"
-  get "/cause_of_death" => "hq#cause_of_death"
+
   get "/generate_cases" => "hq#generate_cases"
   get "/hq/generate_sample"
   get "/hq/sequencing"
-  get "/save_cause_of_death" => "hq#save_cause_of_death"
   get "/cause_of_death_list" => "hq#cause_of_death_list"
   get "/illdefined" => "hq#illdefined"  
   get "/nocause_available/:id" => "hq#nocause_available"
@@ -226,6 +224,9 @@ Rails.application.routes.draw do
 
 
   ######### Causes of Death ##############
+  get "/cause_of_death_preview" => "causes_of_death#cause_of_death_preview"
+  get "/cause_of_death" => "causes_of_death#cause_of_death"
+  get "/save_cause_of_death" => "causes_of_death#save_cause_of_death"
   get "/causes_of_death/view"
   get "/search_causes/:page" => "causes_of_death#search_causes"
   get "/causes_of_death/:id/edit" =>"causes_of_death#edit"

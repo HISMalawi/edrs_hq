@@ -46,31 +46,47 @@
                         <td></td>
                         <td style="text-align: right;">Start date</td>
                         <td><input type="" class="form-control" name="start_date" id="start_date" 
-                                  value="<%= params[:start_date].present?? Time.parse(params[:start_date]).strftime('%Y-%m-%d') : ''%> " disabled></td>
+                                  value="<%= params[:start_date].present?? Time.parse(params[:start_date]).strftime('%Y-%m-%d') : ''%> " 
+                                  <%= params[:start_date].present?? '' : 'disabled' %>></td>
                         <td style="text-align: right;">End date</td>
                         <td><input type="" class="form-control" name="end_date" id="end_date" 
-                              value="<%= params[:end_date].present?? Time.parse(params[:end_date]).strftime('%Y-%m-%d') : ''%> " disabled></td>
+                              value="<%= params[:end_date].present?? Time.parse(params[:end_date]).strftime('%Y-%m-%d') : ''%> "  
+                              <%= params[:start_date].present?? '' : 'disabled' %>>
+                        </td>
                     </tr>
                     <tr>
-                        <td><input type="checkbox" name="" onclick="enable(this,['age_operator','start_age','end_age'])"></td>
+                        <td><input type="checkbox" name="" 
+                              onclick="enable(this,['age_operator','start_age','end_age'])" 
+                              <%= params[:age_operator].present?? 'checked=true' : '' %>>
+                        </td>
                         <td >Select age</td>
                         <td>
-                            <select class="form-control" name="age_operator" id="age_operator" style="border-radius: 0px; " onchange="enableAge(this)" disabled>
-                              <option>=</option>
-                              <option><</option>
-                              <option><=</option>
-                              <option>></option>
-                              <option>=></option>
-                              <option>=> Age <=</option>
+                            <select class="form-control" name="age_operator" id="age_operator" style="border-radius: 0px; " onchange="enableAge(this)" 
+                            <%= params[:age_operator].present?? '' : 'disabled' %>>
+                              <option <%= params[:age_operator]=='='? 'selected' : '' %>>=</option>
+                              <option <%= params[:age_operator]=='<'? 'selected' : '' %>><</option>
+                              <option <%= params[:age_operator]=='<='? 'selected' : '' %>><=</option>
+                              <option <%= params[:age_operator]=='>'? 'selected' : '' %>>></option>
+                              <option <%= params[:age_operator]=='=>'? 'selected' : '' %>>=></option>
+                              <option <%= params[:age_operator]=='=> Age <='? 'selected' : '' %>>=> Age <=</option>
                             </select>
                         </td>
                         <td style="text-align: right;" id="start_age_label">Age</td>
-                        <td><input type="number" id="start_age" name="start_age" class="form-control" min=0 max=130  disabled></td>
-                        <td style="text-align: right; visibility: hidden;" id="end_age_label">End Age</td>
-                        <td style="text-align: right; visibility: hidden;" ><input type="number" name="end_age" id="end_age" min= 0 class="form-control" max=130 disabled></td>
+                        <td><input type="number" id="start_age" name="start_age" class="form-control" min=0 max=130  
+                           value = "<%= params[:start_age] %>"
+                            <%= params[:start_age].present?? '' : 'disabled' %>>
+                        </td>
+                        <td style="text-align: right; <%= params[:start_age].present?? '' : 'visibility: hidden;' %>" id="end_age_label">End Age</td>
+                        <td style="text-align: right; <%= params[:start_age].present?? '' : 'visibility: hidden;' %>" >
+                          <input type="number" name="end_age" id="end_age" min= 0 class="form-control" max=130  value = "<%= params[:end_age] %>"
+                          >
+                        </td>
                     </tr>
-                    <tr>
-                      <td><input type="checkbox" name="" onclick="enable(this,['autopsy_yes','autopsy_no'])"></td>
+                    <tr style="visibility: hidden;">
+                      <td><input type="checkbox" name="" 
+                            onclick="enable(this,['autopsy_yes','autopsy_no'])"
+                            <%= params[:autopsy_requested].present?? 'checked=true' : '' %>
+                            ></td>
                       <td>Autopsy Requested</td>
                       <td>
                           <div class="radio radio-primary" onmousedown="">

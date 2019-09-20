@@ -234,124 +234,8 @@ class HqController < ApplicationController
     render :text => {response: false}.to_json and return
   end
 
-  def cause_of_death
-    @title = "Cause of death"
-    @person = Person.find(params[:person_id])
-    @place_of_death = place_of_death(@person)
-    if @person.status.blank?
-        last_status = PersonRecordStatus.by_person_record_id.key(@person.id).each.sort_by{|d| d.created_at}.last
-        
-        states = {
-                    "HQ ACTIVE" =>"HQ COMPLETE",
-                    "HQ COMPLETE" => "MARKED HQ APPROVAL",
-                    "MARKED HQ APPROVAL" => "MARKED HQ APPROVAL",
-                    "HQ CAN PRINT" => "HQ PRINTED",
-                    "HQ PRINTED" => "HQ DISPATCHED"
-                 }
-        if states[last_status.status].blank?
-          PersonRecordStatus.change_status(@person, "HQ COMPLETE")
-        else  
-          PersonRecordStatus.change_status(@person, states[last_status.status])
-        end
-        
-        
-        redirect_to request.fullpath and return
-    end
-  end
-
   def search_condition
     
-  end
-
-  def save_cause_of_death
-    @person = Person.find(params[:person_id])
-    
-    metric = {}
-    metric["Second(s)"] = 1 
-    metric["Minute(s)"] = 60
-    metric["Hour(s)"]   = 360
-    metric["Day(s)"]    = 60 * 60 * 24
-    metric["Week(s)"]   = 60 * 60 * 24 * 7 
-    metric["Month(s)"]  = 60 * 60 * 24 * 30
-
-    params["onset_death_interval1"] = (params["onset_death_interval1"].to_i * metric[params["interval_unit1"].to_i] rescue nil)
-    params["onset_death_interval2"] = (params["onset_death_interval2"].to_i * metric[params["interval_unit2"].to_i] rescue nil)
-    params["onset_death_interval3"] = (params["onset_death_interval3"].to_i * metric[params["interval_unit3"].to_i] rescue nil)
-    params["onset_death_interval4"] = (params["onset_death_interval4"].to_i * metric[params["interval_unit4"].to_i] rescue nil)
-    
-    #tobe revised
-    params[:cause_of_death_conditions] = {}
-
-   params[:other_significant_cause] = {} if params[:other_significant_cause].blank?
-
-    params[:other_significant_cause] = (params[:other_significant_cause] rescue {}).delete_if { |key, value| value.to_s.strip == '' }
-
-    params[:other_significant_cause].keys.each do |key|
-      params[:cause_of_death_conditions][key] = {}
-      params[:cause_of_death_conditions][key][:cause] = params[:other_significant_cause][key]
-      params[:cause_of_death_conditions][key][:icd_code] = params[:other_significant_cause_icd_code][key]
-    end
-    if params[:record_action].blank? || params[:record_action] != "EDIT"
-        params["coder"] = User.current_user.id
-    end
-    
-
-    params["coded_at"] = Time.now
-    person_icd_code = PersonICDCode.by_person_id.key(@person.id).first
-
-
-    if person_icd_code.blank?
-      person_icd_code = PersonICDCode.create({
-                  :person_id => @person.id,
-                  :tentative_code => params[:icd_10_code]  ,
-                  :reason_tentative_differ_from_underlying => params[:reason_tentative_differ_from_underlying],
-                  :final_code =>params[:final_icd_10_code],
-                  :reason_final_differ_from_tentative => params[:reason_final_differ_from_tentative]
-        })
-    else
-      person_icd_code.update_attributes({
-                  :tentative_code => params[:icd_10_code]  ,
-                  :reason_tentative_differ_from_underlying => params[:reason_tentative_differ_from_underlying],
-                  :final_code =>params[:final_icd_10_code],
-                  :reason_final_differ_from_tentative => params[:reason_final_differ_from_tentative]
-        })
-    end
-    @person.update_attributes(params)
-
-    coder_stat = CoderStat.by_coder_id.key(User.current_user.id).first
-    if coder_stat.blank?
-      CoderStat.create({
-              coder_id: User.current_user.id, 
-              number_of_records_coded: 1, 
-              random_number: Random.rand(1..20),
-              sampled: 0,
-              reviewed: 0
-      })    
-    else
-      random_number = coder_stat.random_number
-      number_of_records_coded = coder_stat.number_of_records_coded.to_i + 1
-      if (number_of_records_coded - random_number) % 20 == 0
-          sample = ProficiencySample.by_coder_id.key(User.current_user.id).first
-          if sample.blank?
-            sample = ProficiencySample.new
-            sample.coder_id = User.current_user.id
-            sample.sample = [@person.id]
-            sample.reviewed = []
-            sample.save
-          else
-            sampled  = sample.sample
-            sampled << @person.id
-            sample.update_attributes({sample: sampled})          
-          end
-      end
-      coder_stat.update_attributes({
-                              number_of_records_coded: number_of_records_coded,
-                              sampled: (coder_stat.sampled.to_i + 1)
-                              })
-    end
-
-    flash[:success] = "Record updated successfully"
-    redirect_to "/search?person_id=#{params[:person_id]}"
   end
 
   def manage_ccu_dispatch
@@ -375,12 +259,6 @@ class HqController < ApplicationController
     redirect_to "/search"
   end
 
-
-  def cause_of_death_preview
-    @person = Person.find(params[:person_id])
-    @person_icd_code = PersonICDCode.by_person_id.key(@person.id).first
-    @person = to_readable(@person)
-  end
 
   def generate_cases
     @section = "Generate Sample"
@@ -1348,28 +1226,6 @@ class HqController < ApplicationController
       end
   end
 
-  def to_readable(person)
-    (1..4).each do |i|
-      if person["cause_of_death#{i}"].blank?
-        person["cause_of_death#{i}"] = (person["other_cause_of_death#{i}"] rescue "")
-      end
-      secs = person["onset_death_interval#{i}"].to_i
-      time_to_string = [[60, :second], [60, :minute], [24, :hour], [365, :day],[1000, :year]].map{ |count, name|
-        if secs > 0
-          secs, n = secs.divmod(count)
-          if n > 0 
-            if n == 1
-              "#{n.to_i} #{name}"
-            elsif n > 1
-              "#{n.to_i} #{name}s"
-            end
-          end
-        end
-      }.compact.reverse.join(' ')
-      person["onset_death_interval#{i}"] = time_to_string
-    end
-    return person
-  end
   def find
     
   end

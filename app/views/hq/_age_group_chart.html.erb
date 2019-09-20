@@ -11,27 +11,36 @@
 <script src="/assets/highCharts/highcharts.js"></script>
 <script src="/assets/highCharts/exporting.js"></script>
 
-<div id="chart-container" style="width: 98%; height: 600px; margin: 0 auto"></div>
+<div id="chart-container" style="width: 98%; height: 300px; margin: 0 auto"></div>
+<div style="width: 98%; height:300px; margin: 0 auto; margin-top: 2%">
+    <div id="leading_causes" style="width: 49%; min-height: 400px; margin: 0 auto;float: left; ">
+        
+    </div>
+    <div id="manner" style="width: 49%; min-height: 400px; margin: 0 auto; float: right;">
+        
+    </div>    
+</div>
 <script type="text/javascript">
 
     var district = ""
     var title = ""
     function loadChart(){
             $.getJSON('/dashbord_data',function(data){
-                  console.log(data)
+                  dashboard_data = data
                   if (district.length > 0) {
                     data = data["age_group"]["districts"][district]
                   }else{
                     data = data["age_group"]
                   }
+
                   $(function () {
                     $('#chart-container').highcharts({
                         title: {
-                            text: (title.length > 0 ? title : 'Reported deaths by age Group <%= Date.today.year %>'),
+                            text: ' Cummulative Reported deaths by age Group',
                             x: -20 //center
                         },
                         chart: {
-                            type: 'bar'
+                            type: 'column'
                         },
                         subtitle: {
                             text: '',
@@ -63,7 +72,7 @@
                             valueSuffix: ''
                         },
                         exporting: {
-                          enabled: false
+                          enabled: true
                         },
                         legend: {
                           enabled: true
@@ -79,6 +88,110 @@
                         }]
                     });
                 }); 
+
+                if (district.length > 0) {
+                    data = dashboard_data["manner_of_death"]["districts"][district]
+                    console.log(data);
+                }else{
+                    data = JSON.parse(dashboard_data["manner_of_death"]["total"])
+                }
+
+                $(function(){
+                    $('#manner').highcharts({
+                          chart: {
+                            plotBackgroundColor: null,
+                            plotBorderWidth: null,
+                            plotShadow: false,
+                            type: 'pie'
+                          },
+                          title: {
+                            text: 'Cummulative deaths by Manner of death'
+                          },
+                          tooltip: {
+                            pointFormat: '{series.name}: <br>{point.percentage:.1f} %<br>total: {point.total}'
+                          },
+                          plotOptions: {
+                            pie: {
+                              allowPointSelect: true,
+                              cursor: 'pointer',
+                              dataLabels: {
+                                enabled: true,
+                                format: '{point.percentage:.1f} % of {point.total}',
+                              },
+                              showInLegend: true
+                            }
+                          },
+                          credits: {
+                              enabled: false
+                          },
+                          series: [{
+                            name: 'Manner of Death',
+                            colorByPoint: true,
+                            data: data
+                        }]
+                    });                
+                });
+
+                if (district.length > 0) {
+                    data = dashboard_data["leading_causes"]["districts"][district]
+                }else{
+                    data = JSON.parse(dashboard_data["leading_causes"]["total"])
+                }
+
+                $(function () {
+                    $('#leading_causes').highcharts({
+                          chart: {
+                            type: 'bar'
+                          },
+                          title: {
+                            text: 'Cummulative Top 10 Leading Causes of Death'
+                          },
+                          xAxis: {
+                            type: 'category'
+                          },
+                          yAxis: {
+                            min: 0,
+                            title: {
+                              text: 'Number of reported Cases',
+                              align: 'high'
+                            },
+                            labels: {
+                              overflow: 'justify'
+                            }
+                          },
+                          tooltip: {
+                            valueSuffix: ' cases'
+                          },
+                          plotOptions: {
+                            bar: {
+                              dataLabels: {
+                                enabled: true
+                              }
+                            }
+                          },
+                          legend: {
+                            layout: 'vertical',
+                            align: 'right',
+                            verticalAlign: 'top',
+                            x: -40,
+                            y: 80,
+                            floating: true,
+                            borderWidth: 1,
+                            backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                            shadow: true
+                          },
+                          credits: {
+                            enabled: false
+                          },
+                          series: [
+                               {
+                                  name: "ICD Codes",
+                                  colorByPoint: true,
+                                  data: data
+                                }
+                          ]
+                        });// body...
+                });
         });
     }
     $(document).ready(function(){

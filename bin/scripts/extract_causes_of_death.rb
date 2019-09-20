@@ -70,7 +70,7 @@ def phone_number_format(number)
 end
 #`bundle exec rake edrs:build_mysql`
 
-header = 		[  "First name",
+header = 		[   "First name",
 					"Middle name",
 					"Last name", 
 					"Birthdate",
@@ -98,8 +98,10 @@ header = 		[  "First name",
 					"Manner of Injury/ Accident",
 					"Tentantive Code",
 					"Reason Differnt from Undelying",
-					"Final Code",
-					"Reason Differnt from Tentantive"]
+					"Coder's Final Code",
+					"Reason Differnt from Tentantive",
+					"Supervisors's Final Code",
+					"Reason Supervisor's code is different"]
 
 write_csv_header("#{Rails.root}/db/cause_of_death.csv", header)
 
@@ -167,15 +169,19 @@ while page <= pages
 
 		icd = PersonICDCode.by_person_id.key(person.id).first
 
-		next if person.cause_of_death1.blank?
 		
+
+		next if person.cause_of_death1.blank?
+		next person.icd_10_1.blank?
+		
+
 		id << person.id
 
-			row = [	person.first_name,
-					person.middle_name,
-					person.last_name, 
+			row = [	"###########",
+					"###########",
+					"###########", 
 					person.birthdate.to_time.strftime("%Y-%m-%d"),
-					person.date_of_death,
+					person.date_of_death.to_time.strftime("%Y-%m-%d"),
 					person.gender,
 					person.place_of_death,
 					person.place_of_death_district,
@@ -197,10 +203,12 @@ while page <= pages
 					person.autopsy_used_for_certification,
 					person.manner_of_death,
 					person.death_by_accident,
-					icd.tentative_code,
-					icd.reason_tentative_differ_from_underlying,
-					icd.final_code,
-					icd.reason_final_differ_from_tentative]
+					(icd.tentative_code rescue ""),
+					(icd.reason_tentative_differ_from_underlying rescue ""),
+					(icd.final_code.present? ? icd.final_code : person.icd_10_code),
+					(icd.reason_final_differ_from_tentative rescue ""),
+					(icd.final_code_reviewed rescue ""),
+					(icd.reason_final_code_changed rescue "")]
 
 				write_csv_content("#{Rails.root}/db/cause_of_death.csv", row)
 			puts person.id

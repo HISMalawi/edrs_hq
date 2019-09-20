@@ -19,7 +19,8 @@ class ReportsController < ApplicationController
   end
   def causes_of_death
     @districts = DistrictRecord.where("name NOT LIKE '%City'").order(:name)
-  	@data = Report.causes_of_death(params[:district],params[:start_date],params[:end_date], params[:age_operator],params[:start_age],params[:end_age],params[:autopsy_requested])
+    @data = Report.causes_of_death(params)
+  	#@data = Report.causes_of_death(params[:district],params[:start_date],params[:end_date], params[:age_operator],params[:start_age],params[:end_age],params[:autopsy_requested])
   	@data_codes = @data.keys
   	@section ="Causes of death Reports"
   end

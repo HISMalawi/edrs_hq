@@ -149,8 +149,7 @@ gender.each do |sex|
         age = group
     end
     sql = "SELECT count(*) as total FROM people
-           WHERE date_of_death BETWEEN '2018-01-01' AND '2018-12-31' 
-           AND gender='#{sex}' AND  
+           WHERE  gender='#{sex}' AND  
            DATEDIFF(date_of_death, birthdate)/365 #{age}"
     group_stats << connection.select_all(sql).as_json.last['total'] rescue 0
   end
@@ -173,8 +172,7 @@ District.all.each do |district|
                       age = group
                   end
                   sql = "SELECT count(*) as total FROM people
-                         WHERE district_code ='#{district.id}' AND date_of_death BETWEEN '2018-01-01' AND '2018-12-31' 
-                         AND gender='#{sex}' AND  
+                         WHERE district_code ='#{district.id}' AND gender='#{sex}' AND  
                          DATEDIFF(date_of_death, birthdate)/365 #{age}"
 
                   group_stats << connection.select_all(sql).as_json.last['total'] rescue 0
@@ -183,6 +181,50 @@ District.all.each do |district|
         end
 end
 
+# Top 10 Leading Causes of death
+leading_causes_sql = "SELECT final_code as name ,count(*) as y FROM people p INNER JOIN person_icd_codes c 
+                        ON p.person_id = c.person_id 
+                        GROUP BY final_code 
+                        ORDER BY y DESC 
+                        LIMIT 10;"
+leading_causes = connection.select_all(leading_causes_sql).as_json
+stats["leading_causes"] = {}
+stats["leading_causes"]["total"] = leading_causes.to_json
+
+stats["leading_causes"]["districts"] = {}
+District.all.each do |district|
+          next if district.name.include?("City")
+          leading_causes_sql = "SELECT final_code as name ,count(*) as y FROM people p INNER JOIN person_icd_codes c 
+                                ON p.person_id = c.person_id 
+                                WHERE p.district_code = '#{district.id}'
+                                GROUP BY final_code 
+                                ORDER BY y DESC 
+                                LIMIT 10;"
+          stats["leading_causes"]["districts"][district.id] = connection.select_all(leading_causes_sql).as_json rescue []
+end
+
+# manner_of_death
+manner_of_death_sql = "SELECT manner_of_death as name ,count(*) as y FROM people 
+                        WHERE manner_of_death IS NOT NULL AND manner_of_death !='' 
+                        GROUP BY manner_of_death
+                        ORDER BY y DESC 
+                        LIMIT 10;"
+manner_of_death = connection.select_all(manner_of_death_sql).as_json
+
+stats["manner_of_death"] = {}
+stats["manner_of_death"]["total"] = manner_of_death.to_json
+
+stats["manner_of_death"]["districts"] = {}
+District.all.each do |district|
+          next if district.name.include?("City")
+          manner_of_death_sql = "SELECT manner_of_death as name ,count(*) as y FROM people 
+                                  WHERE manner_of_death IS NOT NULL AND manner_of_death !='' 
+                                  AND district_code = '#{district.id}'
+                                  GROUP BY manner_of_death
+                                  ORDER BY y DESC 
+                                  LIMIT 10;"
+          stats["manner_of_death"]["districts"][district.id] = connection.select_all(manner_of_death_sql).as_json rescue []
+end
 
 if newfile
          newfile.syswrite(stats.to_json)
