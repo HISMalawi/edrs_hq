@@ -35,6 +35,17 @@ def write_csv_content(file, content)
     end
 end
 
+def format_conditions(conditions)
+        keys = conditions.keys
+        cause_and_code = []
+        keys.each do |key|
+                cause_and_code << "#{conditions[key]['cause']}(#{conditions[key]['icd_code']})"
+        end
+        puts cause_and_code.join(",")
+        return (cause_and_code.join(",") rescue "")
+end
+
+
 def phone_number_format(number)
 	if number == "Unknown"
 		return number
@@ -68,19 +79,39 @@ def phone_number_format(number)
 
 	return number
 end
+
+def calculate_age_to_death(birthdate, date_of_death=Time.now)
+    birthdate = birthdate.to_time
+    date_of_death = date_of_death.to_time
+    different = date_of_death - birthdate
+    if (different / 1.year).round(1).to_i >= 1
+        return "#{(different / 1.year).round(1).to_i} Y" 
+    elsif (different / 1.month).round(1) >= 1
+        return "#{(different / 1.month).round(1).to_i} M"
+    elsif (different / 1.week).round(1) >= 1
+        return "#{(different / 1.week).round(1).to_s} W"
+    elsif (different / 1.day).round(1) >= 1
+        return "#{(different / 1.day).round(1).to_i} D"
+    else
+        return "0 D"
+    end
+  end
 #`bundle exec rake edrs:build_mysql`
 
 header = [  "First name",
 			"Middle name",
 			"Last name", 
 			"Birthdate",
+			"Barcode",
 			"DEN",
 			"DRN",
 			"Status",
 			"Migrated from old system",
 			"Date Migrated",
-			"Date Reported",
 			"Date of Death",
+			"Age",
+			"Date Reported",
+			"Date Entered in EDRS",
 			"Sex",
 			"Registration Type",
 			"Place of Registration",
@@ -146,8 +177,45 @@ header = [  "First name",
 			"Informant Foreign Postal Address",
 			"Informant phone Number",
 			"Informant Signed",
-			"Date Informant Signed"]
-write_csv_header("#{Rails.root}/db/data#{start_date}-#{end_date}.csv", header)
+			"Date Informant Signed",
+
+			"Date Coded",
+			"Condition (a)",
+			"Code (a)",			
+			"Condition (b)",
+			"Code (b)",
+			"Condition (c)",
+			"Code (c)",
+			"Condition (d)",
+			"Code (d)",
+			"Other significant Cause (1)",
+			"Other significant Code (1)",
+			"Other significant Cause (2)",
+			"Other significant Code (2)",
+			"Other significant Cause (3)",
+			"Other significant Code (3)",
+			"Autopsy requested",
+			"Autopsy used",
+			"Manner of Death",
+		    "Other manner of death specify",
+			"How did it occur(If accidental death)",
+			"Other accidental death specify",
+			"Certifier's Name",
+			"Certifier's MCM Number",
+			"Certifier signed?",
+			"Date certifier signed",
+			"Certifier's Designation",
+			"Other certifier's designation specify",
+			"Name of Coder",
+			"Tentantive Code",
+			"Reason Differnt from Undelying",
+			"Coder's Final Code",
+			"Reason Differnt from Tentantive",
+			"Supervisors's Final Code",
+			"Reason Supervisor's code is different",
+			"Final Code"
+			]
+write_csv_header("#{Rails.root}/db/causes#{start_date}-#{end_date}.csv", header)
 
 
 count = Person.count
@@ -174,6 +242,7 @@ while page <= pages
 		end
 
 		record_status = PersonRecordStatus.by_person_recent_status.key(person.id).first
+=begin
 		if record_status.blank?
 			statuses = PersonRecordStatus.by_person_record_id.key(person.id).each.sort_by{|s| s.created_at}
 	 		last_status = statuses.last
@@ -182,7 +251,7 @@ while page <= pages
                                   :person_record_id => person.id.to_s,
                                   :status => "DC ACTIVE",
                                   :prev_status => nil,
-                                  :reprint => false,
+                                  :reprint => 0,
                                   :comment => "Status Corrected",
                                   :district_code => person.district_code,
                                   :creator => (person.creator rescue User.first.id)})
@@ -195,7 +264,9 @@ while page <= pages
 		else
 			status = record_status.status
 		end
+=end
 
+		status = record_status.status rescue nil
 
 		date_printed = ""
 		printed = ""
@@ -208,8 +279,15 @@ while page <= pages
 		end
 
 		next if id.include?(person.id)
+
+        icd = PersonICDCode.by_person_id.key(person.id).first
 		
 		id << person.id
+
+		coder = User.find(person.coder)
+		age =  calculate_age_to_death(person.birthdate,person.date_of_death)
+
+		final_code = icd.final_code_reviewed.present? icd.final_code_reviewed : (icd.final_code.present? ? icd.final_code : person.icd_10_code)
 
 		begin
 		
@@ -218,13 +296,16 @@ while page <= pages
 					person.middle_name,
 					person.last_name, 
 					person.birthdate.to_time.strftime("%Y-%m-%d"),
+					(person.barcode rescue ""),
 					(person.den rescue ""),
 					(person.drn rescue ""),
 					status,
 					migrated,
 					(migrated=="Yes"? person.created_at.to_time.strftime("%Y-%m-%d") : 'N/A'),
-					person.created_at.to_time.strftime("%Y-%m-%d  %H:%M:%S"),
 					person.date_of_death,
+					age,
+					person.informant_signature_date,
+					person.created_at.to_time.strftime("%Y-%m-%d  %H:%M:%S"),
 					person.gender,
 					person.registration_type,
 					person.place_of_registration,
@@ -290,10 +371,48 @@ while page <= pages
 					person.informant_foreign_address,
 					phone_number_format(person.informant_phone_number),
 					person.informant_signed,
-					person.informant_signature_date.present?? person.informant_signature_date.to_time.strftime("%Y-%m-%d") : 'N/A']
+					person.informant_signature_date.present?? person.informant_signature_date.to_time.strftime("%Y-%m-%d") : 'N/A',
+					person.coded_at.to_time.strftime("%Y-%m-%d"),
+					(person.cause_of_death1 rescue ""),
+					(person.icd_10_1 rescue " "),
+					(person.cause_of_death2 rescue ""),
+					(person.icd_10_2 rescue " "),
+					(person.cause_of_death3 rescue ""),
+					(person.icd_10_3 rescue " "),
+					(person.cause_of_death4 rescue ""),
+					(person.icd_10_4 rescue " "),
+					(person.cause_of_death_conditions["1"]["cause"] rescue ""),
+					(person.cause_of_death_conditions["1"]["icd_code"] rescue ""),
+					(person.cause_of_death_conditions["2"]["cause"] rescue ""),
+					(person.cause_of_death_conditions["2"]["icd_code"] rescue ""),
+					(person.cause_of_death_conditions["3"]["cause"] rescue ""),
+					(person.cause_of_death_conditions["3"]["icd_code"] rescue ""),
+					person.autopsy_requested,
+					person.autopsy_used_for_certification,
+					person.manner_of_death,
+					person.other_manner_of_death,
+					person.death_by_accident,
+					person.other_death_by_accident,
+					person.certifier_name,
+					person.certifier_license_number,
+					person.certifier_signed,
+					person.date_certifier_signed,
+					person.position_of_certifier,
+					person.other_position_of_certifier,
+					("#{coder.first_name} #{coder.last_name}" ),
+					(icd.tentative_code rescue ""),
+					(icd.reason_tentative_differ_from_underlying rescue ""),
+					(icd.final_code.present? ? icd.final_code : person.icd_10_code),
+					(icd.reason_final_differ_from_tentative rescue ""),
+					(icd.final_code_reviewed rescue ""),
+					(icd.reason_final_code_changed rescue ""),
+					final_code
+					]
 
-				write_csv_content("#{Rails.root}/db/data#{start_date}-#{end_date}.csv", row)
-			puts person.id
+
+
+				write_csv_content("#{Rails.root}/db/causes#{start_date}-#{end_date}.csv", row)
+			puts "#{person.id}: #{format_conditions(person.cause_of_death_conditions)}"
 		rescue Exception => e
 				error = "#{person.id} : #{e.to_s}"
 				add_to_file(error)
