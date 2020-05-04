@@ -870,6 +870,7 @@ class CaseController < ApplicationController
     @available_printers = SETTINGS["printer_name"].split(',') rescue []
     
     @tasks = ActionMatrix.read(@current_user.role, @statuses)
+    @covid = Covid.by_person_record_id.key(params[:person_id]).first
   end
 
   def show_duplicate

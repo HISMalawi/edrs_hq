@@ -80,8 +80,12 @@ def phone_number_format(number)
 	return number
 end
 
-def calculate_age_to_death(birthdate, date_of_death=Time.now)
-    birthdate = birthdate.to_time
+def calculate_age_to_death(birthdate, date_of_death=Time.now, person_id=nil)
+	if birthdate.blank?
+		return "N/A"
+	end
+	birthdate = birthdate.to_time
+	
     date_of_death = date_of_death.to_time
     different = date_of_death - birthdate
     if (different / 1.year).round(1).to_i >= 1
@@ -215,7 +219,7 @@ header = [  "First name",
 			"Reason Supervisor's code is different",
 			"Final Code"
 			]
-write_csv_header("#{Rails.root}/db/causes#{start_date}-#{end_date}.csv", header)
+write_csv_header("#{Rails.root}/db/data-with-causes#{start_date}-#{end_date}.csv", header)
 
 
 count = Person.count
@@ -235,6 +239,8 @@ while page <= pages
 
 	data = Person.all.page(page).per(pagesize).each
 	data.each do |person|
+
+		next if person.first_name.blank? && person.last_name.blank?
 
 		migrated = "No"
 		if person.source_id.present?
@@ -285,17 +291,68 @@ while page <= pages
 		id << person.id
 
 		coder = User.find(person.coder)
-		age =  calculate_age_to_death(person.birthdate,person.date_of_death)
+		if coder.present?
+			coders_name = "#{coder.first_name} #{coder.last_name}"
+		else
+			coders_name = ""
+		end
+		age =  calculate_age_to_death(person.birthdate,person.date_of_death, person.id)
 
-		final_code = icd.final_code_reviewed.present? icd.final_code_reviewed : (icd.final_code.present? ? icd.final_code : person.icd_10_code)
 
-		begin
+		final_code = ""
+		tentative_code = ""
+		reason_tentative_differ_from_underlying = ""
+		coders_final_code = ""
+		reason_final_differ_from_tentative = ""
+		final_code_reviewed = ""
+		reason_final_code_changed = ""
+		autopsy_requested = ""
+		autopsy_used_for_certification = ""
+		if icd.present?
+			final_code = person.icd_10_code
+			if icd.final_code.present?
+				final_code = icd.final_code
+			end
+			if icd.final_code_reviewed.present? 
+			 	final_code = icd.final_code_reviewed 
+			end
+
+			if icd.tentative_code.present?
+				tentative_code = icd.tentative_code
+			end
+			if icd.reason_tentative_differ_from_underlying.present?
+				reason_tentative_differ_from_underlying = icd.reason_tentative_differ_from_underlying
+			end
+			if icd.final_code.present?
+				coders_final_code = icd.final_code
+			elsif person.icd_10_code
+				coders_final_code = person.icd_10_code
+			end
+			if icd.reason_final_differ_from_tentative.present?
+				reason_final_differ_from_tentative = icd.reason_final_differ_from_tentative 
+			end
+			if icd.final_code_reviewed.present?
+				final_code_reviewed = icd.final_code_reviewed
+			end
+			if icd.reason_final_code_changed.present?
+				reason_final_code_changed = icd.reason_final_code_changed
+			end
+			autopsy_requested = person.autopsy_requested
+			autopsy_used_for_certification = person.autopsy_used_for_certification
+		end
+		
+		birthdate = ""
+		if person.birthdate.present?
+			birthdate = person.birthdate.to_time.strftime("%Y-%m-%d")
+		end
+		
+		
 		
 
-			row = [	person.first_name,
+		row = [	person.first_name,
 					person.middle_name,
 					person.last_name, 
-					person.birthdate.to_time.strftime("%Y-%m-%d"),
+					(birthdate rescue ""),
 					(person.barcode rescue ""),
 					(person.den rescue ""),
 					(person.drn rescue ""),
@@ -372,7 +429,7 @@ while page <= pages
 					phone_number_format(person.informant_phone_number),
 					person.informant_signed,
 					person.informant_signature_date.present?? person.informant_signature_date.to_time.strftime("%Y-%m-%d") : 'N/A',
-					person.coded_at.to_time.strftime("%Y-%m-%d"),
+					(person.coded_at.to_time.strftime("%Y-%m-%d") rescue ""),
 					(person.cause_of_death1 rescue ""),
 					(person.icd_10_1 rescue " "),
 					(person.cause_of_death2 rescue ""),
@@ -387,8 +444,8 @@ while page <= pages
 					(person.cause_of_death_conditions["2"]["icd_code"] rescue ""),
 					(person.cause_of_death_conditions["3"]["cause"] rescue ""),
 					(person.cause_of_death_conditions["3"]["icd_code"] rescue ""),
-					person.autopsy_requested,
-					person.autopsy_used_for_certification,
+					autopsy_requested,
+					autopsy_used_for_certification,
 					person.manner_of_death,
 					person.other_manner_of_death,
 					person.death_by_accident,
@@ -399,27 +456,20 @@ while page <= pages
 					person.date_certifier_signed,
 					person.position_of_certifier,
 					person.other_position_of_certifier,
-					("#{coder.first_name} #{coder.last_name}" ),
-					(icd.tentative_code rescue ""),
-					(icd.reason_tentative_differ_from_underlying rescue ""),
-					(icd.final_code.present? ? icd.final_code : person.icd_10_code),
-					(icd.reason_final_differ_from_tentative rescue ""),
-					(icd.final_code_reviewed rescue ""),
-					(icd.reason_final_code_changed rescue ""),
-					final_code
+					coders_name,
+					(tentative_code rescue ""),
+					(reason_tentative_differ_from_underlying rescue ""),
+					(coders_final_code rescue ""),
+					(reason_final_differ_from_tentative rescue ""),
+					(final_code_reviewed rescue ""),
+					(reason_final_code_changed rescue ""),
+					(final_code rescue "")
 					]
 
-
-
-				write_csv_content("#{Rails.root}/db/causes#{start_date}-#{end_date}.csv", row)
-			puts "#{person.id}: #{format_conditions(person.cause_of_death_conditions)}"
-		rescue Exception => e
-				error = "#{person.id} : #{e.to_s}"
-				add_to_file(error)
-		end
+				write_csv_content("#{Rails.root}/db/data-with-causes#{start_date}-#{end_date}.csv", row)
 
 	end
-	
+	puts page
 	page = page + 1
 	
 

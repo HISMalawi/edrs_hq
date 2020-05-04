@@ -563,6 +563,13 @@
 
               <div onclick= "<%= onclick %>" class="dynamic-button btn btn-small btn-primary pull-right <%= task['class'].downcase rescue ''%>"><span><%= task['button_name']%></span></div>
           <% end %>
+
+          <% if @covid.blank? %>
+            <div onclick= "covidPop()" class="dynamic-button btn btn-small btn-warning pull-right"><span>Record COVID-19 Related? </span></div>
+          <%end%>
+          <% if @covid.present? %>
+            <div onclick= "covidInfoPop()" class="dynamic-button btn btn-small btn-primary pull-right"><span>View COVID-19 Info </span></div>
+          <%end%>
           <% if comment == true && false%>
             <div onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary"><span>View Trail</span></div>
           <% end %>
@@ -866,6 +873,61 @@
     </div>
   </div>
 </div>
+
+<div class="" id="covid">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header btn-primary">
+        <center><h4 class="modal-title" >COVID-19 Case details</h4></center>
+        <button type="button" class="close" aria-label="Close">
+      </div>
+      <div class="modal-body">
+      <form id="covidForm" method="post" action="/covid/new">
+           <input type="hidden" name="id"  value="<%=@person.id%>" />
+           <input type="hidden" name="next_url" value="<%= params[:next_url] %>" />
+           <div class="form-group">
+              <label for="test_results">Covid-19 Result:</label>
+              <select class="form-control" name="test_result" id="test_result" required>
+                  <option value='Positive'>Positive</option>
+                  <option value='Negative'>Negative</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="comment">Comment:</label>
+              <textarea class="form-control" id="comment" name="comment" ></textarea>
+            </div>
+            <div class="modal-footer">
+              <div class="form-group">
+                <button class="btn btn-danger pull-left" onclick="cancelCovid()">Cancel</button> <button class="btn btn-primary pull-right"onclick="saveCovidRecord()" >Save</button>
+              </div>   
+            </div>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+<% if @covid.present? %>
+<div class="" id="covid-info">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header btn-primary">
+        <center><h4 class="modal-title" id="action_modal_title">COVID 19 Info</h4></center>
+      </div>
+      <div class="modal-body" style="text-align:center">
+          <h4><b>COVID 19 Result</b></h4>
+          <h4 style="color: <%= @covid.test_result == 'Positive'? style='red' : 'green'  %>" ><%= @covid.test_result %></h4>
+          <h4><b>Comment</b></h4>
+          <h4><%= @covid.comment %></h4>
+          <div class="modal-footer">
+            <div class="form-group">
+              <button class="btn btn-danger pull-left" onclick="cancelInfoCovid()">Cancel</button> <button class="btn btn-primary pull-right"onclick="editCovid()" >Edit</button>
+            </div> 
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%end%>
 <div class="" id="duplicate_modal">
   <div class="modal-dialog" style="width: 100%">
     <div class="modal-content" style="width: 100%">
@@ -1045,6 +1107,56 @@
             }
         })
     }
+
+    function covidPop(){
+      jQuery("#shield").show();
+      jQuery("#covid").show()      
+    }
+    
+    function cancelCovid(){
+      jQuery("#covidForm").submit(function(e){
+        e.preventDefault();
+        jQuery("#covid").hide();
+        jQuery("#shield").hide();
+      })
+    }
+    function saveCovidRecord(){
+      jQuery("#covidForm").submit(function(e){
+        e.preventDefault();
+        var comment = jQuery("#comment").val()
+        if(comment.length > 0){
+          jQuery("#covidForm").unbind(e);
+          jQuery("#covidForm").submit();
+        }else{
+          jQuery("#comment").css("border", "1px solid red");
+          jQuery("#comment").focus();
+        }
+      })
+
+    }
+
+
+    function covidInfoPop(){
+      jQuery("#shield").show();
+      jQuery("#covid-info").show()      
+    }
+
+    function cancelInfoCovid(){
+     
+      jQuery("#covid-info").hide();
+      jQuery("#shield").hide();
+    
+    }
+
+  <% if @covid.present? %>
+    function editCovid(){
+      jQuery("#covid-info").hide();
+      jQuery("#shield").show();
+      jQuery("#covid").show();
+      jQuery("#comment").val("<%= @covid.comment%>");
+      jQuery("#test_result").val("<%= @covid.test_result%>").change();
+    }
+<%end%>
 
     function ajaxPullComments(link){
         jQuery("#comment-list").html("");
@@ -1376,7 +1488,7 @@
     }
 </script>
 <style>
-  #completeness, #printers, #comments,#action_modal,#duplicate_modal,#approve_modal,#wait{
+  #completeness, #printers, #comments,#action_modal,#duplicate_modal,#approve_modal,#wait,#covid,#covid-info{
       position : absolute;
       left: 30%;
       top: 13.5%;
