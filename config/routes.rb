@@ -222,6 +222,8 @@ Rails.application.routes.draw do
 
   get "/reports/get_audits"
 
+  get "/reports/covid"
+
 
   ######### Causes of Death ##############
   get "/cause_of_death_preview" => "causes_of_death#cause_of_death_preview"

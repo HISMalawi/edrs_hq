@@ -6,13 +6,15 @@ class ReportsController < ApplicationController
           @tasks << ['Proficiency report','Reports on  the Proficiency of coders','/proficiency','']
       end
   		@tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
-	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
+      @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
+      @tasks << ['COVID-19 Cases','COVID-19 Case','/reports/covid','']
   	else
 	    @tasks << ['Registration district and Gender','Registration district and Gender','/reports/district_and_gender']
 	    @tasks << ['User audit trail','Report for user audit trail','/reports/user_audits?timeline=Today&next_url=/reports?next_url=/','']
       @tasks << ['By Place of Death','Place of Death','/reports/place_of_death','']
       @tasks << ['Cause of death','Reports on all cause of death ','/causes_of_death','']
-	    @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
+      @tasks << ['Maner of death','Reports on maner of deaths ','/manner_of_death','']
+      @tasks << ['COVID-19 Cases','COVID-19 Case','/reports/covid','']
 	  end
     @section ="Reports"
     render :template => "/hq/tasks"
@@ -129,5 +131,10 @@ class ReportsController < ApplicationController
   def get_audits
     data = Report.audits(params)
     render :text => data.to_json
+  end
+
+  def covid
+    @districts = DistrictRecord.where("name NOT LIKE '%City'").order(:name)
+    @section ="COVID-19 Cases"
   end
 end

@@ -564,10 +564,10 @@
               <div onclick= "<%= onclick %>" class="dynamic-button btn btn-small btn-primary pull-right <%= task['class'].downcase rescue ''%>"><span><%= task['button_name']%></span></div>
           <% end %>
 
-          <% if @covid.blank? %>
+          <% if (has_role("Authorise printing") &&  @covid.blank? || has_role("Assess certificate quality") &&  @covid.blank?) && ["HQ CAN PRINT", "HQ PRINTED","DC PRINTED","HQ DISPATCHED"].include?(@person.status) %>
             <div onclick= "covidPop()" class="dynamic-button btn btn-small btn-warning pull-right"><span>Record COVID-19 Related? </span></div>
           <%end%>
-          <% if @covid.present? %>
+          <% if ( has_role("Add cause of death") || has_role("Authorise printing") || has_role("Assess certificate quality")) && @covid.present? %>
             <div onclick= "covidInfoPop()" class="dynamic-button btn btn-small btn-primary pull-right"><span>View COVID-19 Info </span></div>
           <%end%>
           <% if comment == true && false%>
@@ -885,6 +885,8 @@
       <form id="covidForm" method="post" action="/covid/new">
            <input type="hidden" name="id"  value="<%=@person.id%>" />
            <input type="hidden" name="next_url" value="<%= params[:next_url] %>" />
+           <input type="hidden" name="test_result" id="test_result" value="Positive"/>
+        <% if false %>
            <div class="form-group">
               <label for="test_results">Covid-19 Result:</label>
               <select class="form-control" name="test_result" id="test_result" required>
@@ -892,6 +894,7 @@
                   <option value='Negative'>Negative</option>
               </select>
             </div>
+        <%end%>
             <div class="form-group">
               <label for="comment">Comment:</label>
               <textarea class="form-control" id="comment" name="comment" ></textarea>
@@ -914,13 +917,19 @@
         <center><h4 class="modal-title" id="action_modal_title">COVID 19 Info</h4></center>
       </div>
       <div class="modal-body" style="text-align:center">
+        <% if false %>
           <h4><b>COVID 19 Result</b></h4>
           <h4 style="color: <%= @covid.test_result == 'Positive'? style='red' : 'green'  %>" ><%= @covid.test_result %></h4>
+        <%end%>  
           <h4><b>Comment</b></h4>
           <h4><%= @covid.comment %></h4>
           <div class="modal-footer">
             <div class="form-group">
-              <button class="btn btn-danger pull-left" onclick="cancelInfoCovid()">Cancel</button> <button class="btn btn-primary pull-right"onclick="editCovid()" >Edit</button>
+                <button class="btn btn-danger pull-left" onclick="cancelInfoCovid()">Cancel</button> 
+                <% if (has_role("Authorise printing") || has_role("Assess certificate quality")) && ((Time.now - @covid.created_at)/ 86400) < 2 %>
+                <button class="btn btn-primary pull-right"onclick="editCovid()" >Edit</button>
+                <%end%>
+              
             </div> 
           </div>
       </div>
