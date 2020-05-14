@@ -135,6 +135,11 @@ class ReportsController < ApplicationController
 
   def covid
     @districts = DistrictRecord.where("name NOT LIKE '%City'").order(:name)
+    @start_date = "2019-12-01"
+    @end_date = Time.now.strftime("%Y-%m-%d")
     @section ="COVID-19 Cases"
+  end
+  def covid_count
+    render :text => Report.covid(params).to_json
   end
 end

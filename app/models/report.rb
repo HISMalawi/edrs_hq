@@ -354,4 +354,29 @@ class Report < ActiveRecord::Base
 		end
 		return data
 	end	
+
+	def self.covid(params)
+		connection = ActiveRecord::Base.connection
+		district_query =""
+		gender_query =""
+
+		if params[:district].present? && params[:district] != "All"
+			district_query = "AND d.name = '#{params[:district]}'"
+		end
+
+		if params[:gender].present? && params[:gender] != "Total"
+			gender_query = "AND gender='#{params[:gender]}'"
+		end
+
+		sql = "SELECT COUNT(*) as total FROM  people p INNER JOIN covid_record c ON p.person_id = c.person_record_id
+				INNER JOIN district d on p.district_code = d.district_id 
+				WHERE
+				DATE_FORMAT(c.created_at,'%Y-%m-%d') >='#{params[:start_date].to_time.strftime("%Y-%m-%d")}' 
+				AND DATE_FORMAT(c.created_at,'%Y-%m-%d') <='#{params[:end_date].to_time.strftime("%Y-%m-%d")}'
+				#{gender_query}
+				#{district_query};"
+		
+		count = connection.select_all(sql).as_json.last['total'] rescue 0
+		return {:count => count , :gender =>params[:gender], :district => params[:district]}
+	end
 end

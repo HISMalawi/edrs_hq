@@ -222,7 +222,6 @@ Rails.application.routes.draw do
 
   get "/reports/get_audits"
 
-  get "/reports/covid"
 
 
   ######### Causes of Death ##############
@@ -246,6 +245,8 @@ Rails.application.routes.draw do
 
   post "/covid/new" => "causes_of_death#save_covid_record"
   get "/covid/:id" => "causes_of_death#show_covid_record"
+  get "/reports/covid"
+  get "/reports/covid/count" => "reports#covid_count"
 
   # The priority is based upoindexation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

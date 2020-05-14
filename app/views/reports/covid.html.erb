@@ -123,6 +123,23 @@
 <div style="background-color: rgb(98, 129, 167); color: rgb(238, 238, 238); padding: 1px; margin-bottom:2%"><h4 align="center">  Flagged COVID-19 Cases By District <br/>
 </h4>
 </div>
+
+<table style="width:95%">
+                    <tr>
+                        <td>Date</td>
+                        <td></td>
+                        <td style="text-align: right;">Start date</td>
+                        <td><input type="" class="form-control" name="start_date" id="start_date" value="<%=@start_date%>"></td>
+                        <td style="text-align: right;">End date</td>
+						<td><input type="" class="form-control" name="end_date" id="end_date" value="<%=@end_date%>"></td>
+						<td style="text-align: right;">
+							<button class="btn btn-success" onclick="fetchNewData()">Load Data</button>
+						</td>
+                    </tr>
+
+</table>
+<br/>
+
 <div style="background-color: #ffffff; color: rgb(238, 238, 238); padding: 1px;">
 	<div style="width: 100%;border:1px solid gray;" >
 					
@@ -157,3 +174,57 @@
 						</table>
 	</div>
 </div>
+<script src="assets/jquery-ui/jquery-ui.min.js"></script>
+<script>
+	$(document).ready(function(){
+		$('#start_date').datepicker({ dateFormat: 'yy-mm-dd', minDate: $.datepicker.formatDate('yy-mm-dd',new Date("<%=@start_date%>"))});
+		$('#end_date').datepicker({ dateFormat: 'yy-mm-dd', maxDate: $.datepicker.formatDate('yy-mm-dd',new Date())});
+	})			
+	function fetchData(start_date,end_date){
+		<% @districts.each do |district| %>
+			<% next if district.name.include?("City") %>
+			var gender = ["Female","Male","Total"]
+			var total_female = 0;
+			var total_male = 0;
+			for(var i = 0 ; i < gender.length; i++){
+				var url = "/reports/covid/count"
+				url = url + "?district=<%=district.name%>&gender="+gender[i];
+				url = url + "&start_date="+start_date+"&end_date="+end_date;
+				$.getJSON(url,function(data){
+						$("#"+data.district+"_"+data.gender).html(data.count)
+				})
+			}
+			
+		<%end%>
+
+		var gender = ["Female","Male","Total"]
+		var total_female = 0;
+		var total_male = 0;
+		for(var i = 0 ; i < gender.length; i++){
+					var url = "/reports/covid/count"
+					url = url + "?district=All&gender="+gender[i];
+					url = url + "&start_date="+start_date+"&end_date="+end_date;
+					console.log(url)
+					$.getJSON(url,function(data){
+							$("#"+data.district+"_"+data.gender).html(data.count)
+					})
+		}
+	}
+	function fetchNewData(){
+
+		<% @districts.each do |district| %>
+					<% next if district.name.include?("City") %>
+					var gender = ["Female","Male","Total"]
+					for(var i = 0 ; i < gender.length; i++){
+						$("#<%=district.name%>_"+gender[i]).html("loading...")
+					}
+		<%end%>
+		
+
+		var start = $("#start_date").val();
+		var end = $("#end_date").val();
+		var status = $("#status").val();
+		fetchData(start,end)
+	}
+	fetchData("<%=@start_date%>","<%=@end_date%>");
+</script>
