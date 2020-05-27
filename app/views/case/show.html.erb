@@ -564,10 +564,10 @@
               <div onclick= "<%= onclick %>" class="dynamic-button btn btn-small btn-primary pull-right <%= task['class'].downcase rescue ''%>"><span><%= task['button_name']%></span></div>
           <% end %>
 
-          <% if (has_role("Authorise printing") &&  @covid.blank? || has_role("Assess certificate quality") &&  @covid.blank?) && ["HQ CAN PRINT", "HQ PRINTED","DC PRINTED","HQ DISPATCHED"].include?(@person.status) %>
+          <% if (has_role("Authorise printing") &&  @covid.blank? || has_role("Manage incomplete records") &&  @covid.blank?) && ["HQ CAN PRINT", "HQ PRINTED","DC PRINTED","HQ DISPATCHED","HQ CAN RE PRINT"].include?(@person.status) %>
             <div onclick= "covidPop()" class="dynamic-button btn btn-small btn-warning pull-right"><span>Record COVID-19 Related? </span></div>
           <%end%>
-          <% if ( has_role("Add cause of death") || has_role("Authorise printing") || has_role("Assess certificate quality")) && @covid.present? %>
+          <% if ( has_role("Add cause of death") || has_role("Authorise printing") || has_role("Manage incomplete records")) && @covid.present? %>
             <div onclick= "covidInfoPop()" class="dynamic-button btn btn-small btn-primary pull-right"><span>View COVID-19 Info </span></div>
           <%end%>
           <% if comment == true && false%>
@@ -896,8 +896,8 @@
             </div>
         <%end%>
             <div class="form-group">
-              <label for="comment">Comment:</label>
-              <textarea class="form-control" id="comment" name="comment" ></textarea>
+              <label for="comment">Comment :</label>
+              <textarea class="form-control" id="covidcomment" name="comment" ></textarea>
             </div>
             <div class="modal-footer">
               <div class="form-group">
@@ -926,7 +926,7 @@
           <div class="modal-footer">
             <div class="form-group">
                 <button class="btn btn-danger pull-left" onclick="cancelInfoCovid()">Cancel</button> 
-                <% if (has_role("Authorise printing") || has_role("Assess certificate quality")) && ((Time.now - @covid.created_at)/ 86400) < 2 %>
+                <% if (has_role("Authorise printing") || has_role("Manage incomplete records")) && ((Time.now - @covid.created_at)/ 86400) < 2 %>
                 <button class="btn btn-primary pull-right"onclick="editCovid()" >Edit</button>
                 <%end%>
               
@@ -1130,6 +1130,9 @@
       })
     }
     function saveCovidRecord(){
+      jQuery("#covidForm").submit();
+
+      /***
       jQuery("#covidForm").submit(function(e){
         e.preventDefault();
         var comment = jQuery("#comment").val()
@@ -1140,7 +1143,7 @@
           jQuery("#comment").css("border", "1px solid red");
           jQuery("#comment").focus();
         }
-      })
+      })***/s
 
     }
 
