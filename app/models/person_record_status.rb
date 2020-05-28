@@ -3,6 +3,7 @@ class PersonRecordStatus < CouchRest::Model::Base
 	before_save :set_district_code,:set_facility_code,:set_registration_type
 	after_create :insert_update_into_mysql,:create_audit
 	after_save :insert_update_into_mysql
+	after_destroy :delete_from_mysql
 	cattr_accessor :nextstatus
 
 	property :person_record_id, String
@@ -154,13 +155,29 @@ class PersonRecordStatus < CouchRest::Model::Base
 	      			sql_record[field] = 1
 	      		else
 	      			sql_record[field] = 0
-	      		end
+				end
+		  elsif field == "reprint"
+			if self[field] == true
+				sql_record[field] = 1
+			else
+				sql_record[field] = 0
+			end
 	      else
 	          sql_record[field] = self[field]
 	      end
-
-	    end
+		end
+		if self["reprint"].blank?
+			sql_record["reprint"] = 0
+		end
 	    sql_record.save
+	end
+
+
+	def delete_from_mysql
+		sql_record = RecordStatus.where(person_record_status_id: self.id).first
+		if sql_record.present?
+			sql_record.destroy
+		end
 	end
 
 	def create_audit

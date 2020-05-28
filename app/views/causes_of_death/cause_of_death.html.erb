@@ -1001,6 +1001,18 @@
                               </tr>
                               <%end%>
 
+                              <% if @covid.present? %>
+                              <tr>
+                                  <td>COVID 19</td>
+                                  <td style='color:red'>Confirmed</td>
+                              
+                              </tr>
+                              <tr>
+                                <td>COVID-19 Comment</td>
+                                <td ><%= @covid.comment %></td>
+                          
+                              </tr>
+                            <%end%>
                              </thead>
                       </table>
                       <h5><b>Part I :</b> Causes of Death</h5>
@@ -1122,6 +1134,18 @@
                                   <td><%= @person.died_while_pregnant rescue "No" %></td>
                               </tr>
                               <%end%>
+                            <% if @covid.present? %>
+                              <tr>
+                                  <td>COVID 19</td>
+                                  <td style='color:red'>Confirmed</td>
+                              
+                              </tr>
+                              <tr>
+                                <td>COVID-19 Comment</td>
+                                <td ><%= @covid.comment %></td>
+                          
+                              </tr>
+                            <%end%>
                   </table>
               </div>
               <div class="modal-footer">

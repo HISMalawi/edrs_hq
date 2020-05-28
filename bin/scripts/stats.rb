@@ -192,15 +192,18 @@ stats["leading_causes"] = {}
 stats["leading_causes"]["total"] = leading_causes.to_json
 
 stats["leading_causes"]["districts"] = {}
-District.all.each do |district|
-          next if district.name.include?("City")
-          leading_causes_sql = "SELECT final_code as name ,count(*) as y FROM people p INNER JOIN person_icd_codes c 
-                                ON p.person_id = c.person_id 
-                                WHERE p.district_code = '#{district.id}'
-                                GROUP BY final_code 
-                                ORDER BY y DESC 
-                                LIMIT 10;"
-          stats["leading_causes"]["districts"][district.id] = connection.select_all(leading_causes_sql).as_json rescue []
+begin
+  District.all.each do |district|
+            next if district.name.include?("City")
+            leading_causes_sql = "SELECT final_code as name ,count(*) as y FROM people p INNER JOIN person_icd_codes c 
+                                  ON p.person_id = c.person_id 
+                                  WHERE p.district_code = '#{district.id}'
+                                  GROUP BY final_code 
+                                  ORDER BY y DESC 
+                                  LIMIT 10;"
+            stats["leading_causes"]["districts"][district.id] = connection.select_all(leading_causes_sql).as_json rescue []
+  end
+rescue
 end
 
 # manner_of_death

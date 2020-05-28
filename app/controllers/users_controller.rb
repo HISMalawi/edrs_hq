@@ -4,8 +4,12 @@ class UsersController < ApplicationController
 
 	def login 
     if UserModel.current_user.present?
-        MyLock.by_user_id.key(User.current_user.id).each do |lock|
-          lock.destroy
+        begin
+          locks = MyLock.by_user_id.key(UserModel.current_user.id).each rescue []
+          locks  do |lock|
+            lock.destroy
+          end
+        rescue
         end
     end
 

@@ -223,7 +223,7 @@ class CausesOfDeathController < ApplicationController
     @title = "Cause of death"
     @person = Person.find(params[:person_id])
     @place_of_death = place_of_death(@person)
-
+    @covid = Covid.by_person_record_id.key(params[:person_id]).first
     @person =  read_onset_death_interval(@person)
     if @person.status.blank?
         last_status = PersonRecordStatus.by_person_record_id.key(@person.id).each.sort_by{|d| d.created_at}.last
@@ -250,5 +250,19 @@ class CausesOfDeathController < ApplicationController
     @person = Person.find(params[:person_id])
     @person_icd_code = PersonICDCode.by_person_id.key(@person.id).first
     @person = to_readable(@person)
+  end
+
+  def save_covid_record
+    a = Covid.by_person_record_id.key(params[:id]).first
+    a = Covid.new if a.blank?
+    a.person_record_id = params[:id]
+    a.test_result = params[:test_result]
+    a.comment = params[:comment]
+    a.other_data = {}
+    a.save
+    flash[:notice] = "COVID 19 Record saved"
+    redirect_to "/show/#{params[:id]}?next_url=#{params[:next_url]}"
+  end
+  def show_covid_record
   end
 end
