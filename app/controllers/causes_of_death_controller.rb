@@ -225,6 +225,7 @@ class CausesOfDeathController < ApplicationController
     @place_of_death = place_of_death(@person)
     @covid = Covid.by_person_record_id.key(params[:person_id]).first
     @person =  read_onset_death_interval(@person)
+=begin
     if @person.status.blank?
         last_status = PersonRecordStatus.by_person_record_id.key(@person.id).each.sort_by{|d| d.created_at}.last
         
@@ -244,6 +245,7 @@ class CausesOfDeathController < ApplicationController
         
         redirect_to request.fullpath and return
     end
+=end
   end
 
   def cause_of_death_preview

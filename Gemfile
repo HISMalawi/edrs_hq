@@ -65,3 +65,5 @@ gem 'render_anywhere'
 gem "wkhtmltopdf-binary"
 
 gem "whitesimilarity"
+
+gem 'rack-cors', require: 'rack/cors'
