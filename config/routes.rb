@@ -251,8 +251,12 @@ Rails.application.routes.draw do
   ################### Dashboard Routes #########################
   get "/deaths" => "reports#deaths"
   get "/api/v1/deaths" => "reports#deaths"
+  get "/death_aggregates" => "reports#death_aggregates"
+  get "/api/v1/death_aggregates" => "reports#death_aggregates"
   get "/deaths_by_cause" => "reports#deaths_by_cause"
   get "/api/v1/deaths_by_cause" => "reports#deaths_by_cause"
+  get "/causes_aggregates" => "report#causes_aggregates"
+  get "/api/v1/causes_aggregates" => "reports#causes_aggregates"
   get "/covid_cases" => "reports#covid_cases"
   get "/api/v1/covid_cases" => "reports#covid_cases"
 

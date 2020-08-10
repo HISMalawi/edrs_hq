@@ -217,6 +217,8 @@ class ReportsController < ApplicationController
       status_query = "status = 'DC ACTIVE'"
     when "registered"
       status_query = "status = 'HQ ACTIVE'"
+    when "approved"
+      status_query = "status = 'HQ CAN PRINT'"
     when "printed"
       status_query = "status IN ('DC PRINTED','HQ PRINTED')"
     when  "dispatched"
@@ -283,6 +285,40 @@ class ReportsController < ApplicationController
       render :text => data.to_json
     end
 
+    def causes_aggregates
+        district_query = ''
+        if params[:district].present?
+          district_query = " AND district_code = '#{District.by_name.key(params[:district]).first.id}'" 
+        end
+
+        date_query = ''
+        if params[:start_date].present?
+            date_query = " AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >= '#{params[:start_date].to_time.strftime("%Y-%m-%d")}'"
+        else
+          date_query = " AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >= '#{Date.today.beginning_of_month.strftime("%Y-%m-%d")}'"
+        end
+        if params[:end_date].present?
+            date_query = "#{date_query} AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <= '#{params[:end_date].to_time.strftime("%Y-%m-%d")}'"
+        else
+          date_query = "#{date_query} AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <= '#{Date.today.strftime("%Y-%m-%d")}'"
+        end
+        data = {}
+
+        limit = ""
+        if params[:limit].present?
+          limit ="LIMIT #{params[:limit]}"
+        end
+        
+        query = "SELECT c.final_code as FinalCode, count(*) as Total FROM people p INNER JOIN person_icd_codes c ON p.person_id = c.person_id
+                  WHERE  gender IN('Male','Female') #{district_query} #{date_query} GROUP BY c.final_code ORDER BY Total DESC #{limit}"
+        
+          ActiveRecord::Base.connection.select_all(query).as_json.each do |row|
+            data[row['FinalCode']] = {} if data[row['FinalCode']].blank?
+            data[row['FinalCode']] = row['Total']
+          end
+        render :text => data.to_json
+    end
+
     def covid_cases
       if params[:start_date].present?
           start_date = params[:start_date].to_time.strftime("%Y-%m-%d")
@@ -309,6 +345,52 @@ class ReportsController < ApplicationController
             end 
       end
 
+      render :text => data.to_json
+    end
+
+    def death_aggregates
+      #status
+      status_query = "status = 'DC ACTIVE'"
+      case params[:status]
+      when "reported"
+        status_query = "status = 'DC ACTIVE'"
+      when "registered"
+        status_query = "status = 'HQ ACTIVE'"
+      when "approved"
+        status_query = "status = 'HQ CAN PRINT'"
+      when "printed"
+        status_query = "status IN ('DC PRINTED','HQ PRINTED')"
+      when  "dispatched"
+        status_query = "status IN ('DC DISPATCHED','HQ DISPATCHED')"
+      end
+
+      if params[:start_date].present?
+          start_date = params[:start_date].to_time.strftime("%Y-%m-%d")
+      else
+          start_age =Date.today.beginning_of_month.strftime("%Y-%m-%d")
+      end
+
+      if params[:end_date].present?
+          end_date = params[:end_date].to_time.strftime("%Y-%m-%d")
+      else
+          end_date =Date.today.strftime("%Y-%m-%d")
+      end
+
+      data = {}
+      ["Male","Female"].each do |g|
+          query = "SELECT count(*) as Total  FROM  (SELECT DISTINCT person_record_id, a.district_code, d.name  
+                      FROM people a inner join person_record_status p on a.person_id = p.person_record_id 
+                      inner join district d on p.district_code = d.district_id  
+                      WHERE #{status_query} AND gender='#{g}'
+                  AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >='#{start_date}' 
+                  AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{end_date}'
+                  ORDER BY d.name) t"
+          ActiveRecord::Base.connection.select_all(query).as_json.each do |row|
+                    
+                    data[g] = row['Total']
+          end 
+      end
+      
       render :text => data.to_json
     end
 end
