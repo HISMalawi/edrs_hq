@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   #protect_from_forgery	
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
 
-  before_filter :check_user, :check_cron_jobs,:check_databases, :except => ['login', 'logout', 'death_certificate','dispatch_preview',"deaths","deaths_by_cause","covid_cases", "death_aggregates","causes_aggregates"]
+  before_filter :check_user, :check_cron_jobs,:check_databases, :except => ['login', 'logout', 'death_certificate','dispatch_preview',"deaths","deaths_by_cause","covid_cases", "death_aggregates","causes_aggregates","by_district_registered_and_gender","manner_of_death"]
   
   def has_role(role)
     current_user.activities_by_level("HQ").include?(role.strip)

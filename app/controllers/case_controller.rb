@@ -560,7 +560,7 @@ class CaseController < ApplicationController
 
     #raise data.inspect
     data.each do |row|
-          person = Person.find(row["person_record_id"])
+          person = Record.find(row["person_record_id"])
           next if person.blank?
           next if person.first_name.blank?  && person.last_name.blank?
           unless params[:statuses].split("|").collect{|status| status.gsub(/\_/, " ").upcase}.include?(person.status)
@@ -822,6 +822,7 @@ class CaseController < ApplicationController
         states = {
                     "HQ ACTIVE" =>"HQ COMPLETE",
                     "HQ COMPLETE" => "MARKED HQ APPROVAL",
+                    "MARKED HQ APPROVAL" => "HQ CAN PRINT",
                     "HQ PRINTED" => "HQ DISPATCHED"
                  }
         if states[last_status.status].blank?
@@ -829,7 +830,6 @@ class CaseController < ApplicationController
         else  
           PersonRecordStatus.change_status(@person, states[last_status.status])
         end
-        
         
         redirect_to request.fullpath and return
     end

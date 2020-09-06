@@ -259,6 +259,8 @@ Rails.application.routes.draw do
   get "/api/v1/causes_aggregates" => "reports#causes_aggregates"
   get "/covid_cases" => "reports#covid_cases"
   get "/api/v1/covid_cases" => "reports#covid_cases"
+  get "/api/v1/by_district_registered_and_gender" => "reports#by_district_registered_and_gender"
+  get "/api/v1/manner_of_death" =>"reports#manner_of_death"
 
   # The priority is based upoindexation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

@@ -378,19 +378,48 @@ class ReportsController < ApplicationController
 
       data = {}
       ["Male","Female"].each do |g|
-          query = "SELECT count(*) as Total  FROM  (SELECT DISTINCT person_record_id, a.district_code, d.name  
-                      FROM people a inner join person_record_status p on a.person_id = p.person_record_id 
-                      inner join district d on p.district_code = d.district_id  
-                      WHERE #{status_query} AND gender='#{g}'
-                  AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >='#{start_date}' 
-                  AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{end_date}'
-                  ORDER BY d.name) t"
+          if params[:status] == "reported"
+            query = "SELECT count(*) Total FROM people p WHERE gender='#{g}'
+                      AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >='#{start_date}' 
+                      AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{end_date}' "
+          else
+            query = "SELECT count(*) as Total  FROM  (SELECT DISTINCT person_record_id, a.district_code, d.name  
+                          FROM people a inner join person_record_status p on a.person_id = p.person_record_id 
+                          inner join district d on p.district_code = d.district_id  
+                          WHERE #{status_query} AND gender='#{g}'
+                      AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >='#{start_date}' 
+                      AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{end_date}'
+                      ORDER BY d.name) t"
+          end
           ActiveRecord::Base.connection.select_all(query).as_json.each do |row|
                     
                     data[g] = row['Total']
           end 
       end
       
+      render :text => data.to_json
+    end
+
+    def manner_of_death
+      district_query = ""
+      if params[:district].present?
+        district_query = "AND district_code IN(SELECT district_id FROM district WHERE name ='#{params[:district]}')"
+      end
+
+      date_query = ""
+      
+      connection = ActiveRecord::Base.connection
+      manner_of_death = ['Natural','Accident','Homicide','Suicide','Pending Investigation','Could not be determined','Other']
+      data  = {}
+      manner_of_death.each do |manner|
+        data[manner] = {}
+        gender = ['Male','Female']
+        gender.each do |g|
+          query = "SELECT count(*) as total FROM people WHERE  gender='#{g}' AND manner_of_death = '#{manner}' #{district_query} #{date_query} "
+          data[manner][g] = connection.select_all(query).as_json.last['total'] rescue 0
+        end
+      end
+
       render :text => data.to_json
     end
 end

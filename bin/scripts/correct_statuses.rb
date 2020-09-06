@@ -15,7 +15,7 @@ def correct_status(person)
         states = {
                     "HQ ACTIVE" =>"HQ COMPLETE",
                     "HQ COMPLETE" => "MARKED HQ APPROVAL",
-                    "MARKED HQ APPROVAL" => "MARKED HQ APPROVAL",
+                    "MARKED HQ APPROVAL" => "HQ CAN PRINT",
                     "HQ CAN PRINT" => "HQ PRINTED",
                     "HQ PRINTED" => "HQ DISPATCHED"
                  }

@@ -213,6 +213,7 @@ class Report < ActiveRecord::Base
 	end
 
 	def self.district_registered_and_gender(params)
+		
 		district_query = ""
 		if params[:district].present? && params[:district] != "All"
 			district_query = "AND a.district_code = '#{District.by_name.key(params[:district]).first.id}'"
@@ -221,8 +222,10 @@ class Report < ActiveRecord::Base
 		if params[:gender].present? && params[:gender] != "Total"
 			gender_query = "AND gender='#{params[:gender]}'"
 		end
-		
-		status = params[:status].present? ? params[:status] : 'DC ACTIVE'
+		status_query = ""
+		if params[:status].present?
+			status_query = "status IN ('#{params[:status]}')"
+		end
 
 	
 		start_date = params[:start_date].to_time.strftime("%Y-%m-%d")
@@ -234,10 +237,10 @@ class Report < ActiveRecord::Base
 		query = "SELECT count(*) as total  FROM  (SELECT DISTINCT person_record_id, a.district_code, d.name  
 				 FROM people a inner join person_record_status p on a.person_id = p.person_record_id 
 				 inner join district d on p.district_code = d.district_id  
-				 WHERE status IN ('#{params[:status]}') #{district_query}  #{gender_query}
-				 AND DATE_FORMAT(p.created_at,'%Y-%m-%d') >= '#{start_date}' 
-				 AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <= '#{end_date}') t"
-		
+				 WHERE  DATE_FORMAT(p.created_at,'%Y-%m-%d') >= '#{start_date}' 
+				 AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <= '#{end_date}' 
+				 #{district_query}  #{gender_query} #{status_query}) t"
+				 
 		return {:count => (connection.select_all(query).as_json.last['total'] rescue 0) , :gender =>params[:gender], :district => params[:district]}
 	end
 
