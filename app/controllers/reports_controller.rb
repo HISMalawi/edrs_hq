@@ -258,7 +258,7 @@ class ReportsController < ApplicationController
 
   def deaths_by_cause
       district_query = ''
-      if params[:district].present?
+      if params[:district].present? && params[:district] != "All"
         district_query = " AND district_code = '#{District.by_name.key(params[:district]).first.id}'" 
       end
 
@@ -402,7 +402,7 @@ class ReportsController < ApplicationController
 
     def manner_of_death
       district_query = ""
-      if params[:district].present?
+      if params[:district].present? && params[:district] != "All"
         district_query = "AND district_code IN(SELECT district_id FROM district WHERE name ='#{params[:district]}')"
       end
 
