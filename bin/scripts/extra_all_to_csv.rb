@@ -1,3 +1,4 @@
+
 start_date = "Start"
 end_date = "End"
 
@@ -80,6 +81,59 @@ def phone_number_format(number)
 	return number
 end
 
+def remove_redu_states(person_id)
+    puts person_id
+    statuses = PersonRecordStatus.by_person_record_id.key(person_id).each.sort_by{|s| s.created_at}
+    uniqstatus = statuses.collect{|d| d.status}.uniq
+
+    uniqstatus.each do |us|
+        redundantstatuses = PersonRecordStatus.by_person_record_id_and_status.key([person_id, us]).each.sort_by{|s| s.created_at}
+        #puts us 
+        redundantstatuses.each_with_index do |red, i|
+                if i != 0
+                    begin
+                        redundantstatuses[i].destroy
+                    rescue
+                        puts "Error : #{redundantstatuses[i].id}"
+                        puts "Retry"
+                        begin
+                            PersonRecordStatus.find(redundantstatuses[i].id).destroy
+                        rescue
+                            puts "Fail"
+                        end
+                    end
+                end
+        end
+    end
+
+    puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
+
+    PersonRecordStatus.by_person_record_id.key(person_id).each do |s|
+        if s.status.blank?
+            s.destroy
+        end
+    end
+	
+    last = nil
+    RecordStatus.where(person_record_id: person_id).order(:created_at).each do |d|
+	couch_status = PersonRecordStatus.find(d.person_record_status_id)
+	if couch_status.blank?
+		d.destroy
+	else 
+		last = d
+	end
+    end
+    begin
+	    last = PersonRecordStatus.find(last.person_record_status_id)
+	    last.voided = false
+	    last.save
+    rescue
+	   puts "Error #{person_id}"
+    end
+
+
+end
+
 def calculate_age_to_death(birthdate, date_of_death=Time.now, person_id=nil)
 	if birthdate.blank?
 		return "N/A"
@@ -99,7 +153,7 @@ def calculate_age_to_death(birthdate, date_of_death=Time.now, person_id=nil)
     else
         return "0 D"
     end
-  end
+end
 #`bundle exec rake edrs:build_mysql`
 
 header = [  "First name",
@@ -182,7 +236,6 @@ header = [  "First name",
 			"Informant phone Number",
 			"Informant Signed",
 			"Date Informant Signed",
-
 			"Date Coded",
 			"Condition (a)",
 			"Code (a)",			
@@ -242,38 +295,46 @@ while page <= pages
 
 		next if person.first_name.blank? && person.last_name.blank?
 
+		date_reported = (person.informant_signature_date.present?? person.informant_signature_date.to_time.strftime("%Y-%m-%d") : 'N/A')
+
+		date_entered_in_system = person.created_at.to_time.strftime("%Y-%m-%d  %H:%M:%S")
+
 		migrated = "No"
 		if person.source_id.present?
 			migrated = "Yes"
+			old_record = JSON.parse(RestClient.get "http://admin:password@192.168.48.131:5900/edrs_hq/#{person.source_id}")
+			date_entered_in_system = old_record["created_at"].to_time.strftime("%Y-%m-%d  %H:%M:%S")
 		end
 
 		record_status = PersonRecordStatus.by_person_recent_status.key(person.id).first
-=begin
-		if record_status.blank?
-			statuses = PersonRecordStatus.by_person_record_id.key(person.id).each.sort_by{|s| s.created_at}
-	 		last_status = statuses.last
-	 		if last_status.blank?
-	 			record_status = PersonRecordStatus.create({
-                                  :person_record_id => person.id.to_s,
-                                  :status => "DC ACTIVE",
-                                  :prev_status => nil,
-                                  :reprint => 0,
-                                  :comment => "Status Corrected",
-                                  :district_code => person.district_code,
-                                  :creator => (person.creator rescue User.first.id)})
-	 		else
-	 			last_status.voided = false
-	 			last_status.save
-	 			record_status = last_status	
-	 		end
-			status = record_status.status
-		else
-			status = record_status.status
-		end
-=end
+
 
 		status = record_status.status rescue nil
 
+		if status.blank?
+			last_status = PersonRecordStatus.by_person_record_id.key(person.id).each.sort_by{|d| d.created_at}.last
+			
+			states = {
+						"DC ACTIVE" => "DC COMPLETE",
+						"DC COMPLETE" => "DC COMPLETE",
+						"HQ ACTIVE" =>"HQ COMPLETE",
+						"HQ COMPLETE" => "MARKED HQ APPROVAL",
+						"MARKED HQ APPROVAL" => "HQ CAN PRINT",
+						"HQ PRINTED" => "HQ DISPATCHED"
+					 }
+			if states[last_status.status].blank?
+			  PersonRecordStatus.change_status(person, "HQ COMPLETE")
+			else  
+			  PersonRecordStatus.change_status(person, states[last_status.status])
+			end
+
+			remove_redu_states(person.id)
+		end
+
+		record_status = PersonRecordStatus.by_person_recent_status.key(person.id).first
+
+		status = record_status.status rescue nil
+		
 		date_printed = ""
 		printed = ""
 		if ["HQ PRINTED", "HQ DISPATCHED"].include?(status)
@@ -347,7 +408,6 @@ while page <= pages
 		end
 		
 		
-		
 
 		row = [	person.first_name,
 					person.middle_name,
@@ -361,8 +421,8 @@ while page <= pages
 					(migrated=="Yes"? person.created_at.to_time.strftime("%Y-%m-%d") : 'N/A'),
 					person.date_of_death,
 					age,
-					person.informant_signature_date,
-					person.created_at.to_time.strftime("%Y-%m-%d  %H:%M:%S"),
+					date_reported,
+					date_entered_in_system,
 					person.gender,
 					person.registration_type,
 					person.place_of_registration,
@@ -428,7 +488,7 @@ while page <= pages
 					person.informant_foreign_address,
 					phone_number_format(person.informant_phone_number),
 					person.informant_signed,
-					person.informant_signature_date.present?? person.informant_signature_date.to_time.strftime("%Y-%m-%d") : 'N/A',
+					date_reported,
 					(person.coded_at.to_time.strftime("%Y-%m-%d") rescue ""),
 					(person.cause_of_death1 rescue ""),
 					(person.icd_10_1 rescue " "),
