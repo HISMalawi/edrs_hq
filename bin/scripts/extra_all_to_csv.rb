@@ -310,7 +310,7 @@ while page <= pages
 
 
 		status = record_status.status rescue nil
-
+=begin
 		if status.blank?
 			last_status = PersonRecordStatus.by_person_record_id.key(person.id).each.sort_by{|d| d.created_at}.last
 			
@@ -322,19 +322,23 @@ while page <= pages
 						"MARKED HQ APPROVAL" => "HQ CAN PRINT",
 						"HQ PRINTED" => "HQ DISPATCHED"
 					 }
-			if states[last_status.status].blank?
-			  PersonRecordStatus.change_status(person, "HQ COMPLETE")
-			else  
-			  PersonRecordStatus.change_status(person, states[last_status.status])
-			end
+			begin
+				if states[last_status.status].blank?
+				PersonRecordStatus.change_status(person, "HQ COMPLETE")
+				else  
+				PersonRecordStatus.change_status(person, states[last_status.status])
+				end
 
-			remove_redu_states(person.id)
+				remove_redu_states(person.id)
+			rescue
+				puts "Fail to generate status"
+			end
 		end
 
 		record_status = PersonRecordStatus.by_person_recent_status.key(person.id).first
 
 		status = record_status.status rescue nil
-		
+=end	
 		date_printed = ""
 		printed = ""
 		if ["HQ PRINTED", "HQ DISPATCHED"].include?(status)
