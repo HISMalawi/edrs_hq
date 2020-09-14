@@ -422,4 +422,39 @@ class ReportsController < ApplicationController
 
       render :text => data.to_json
     end
+
+    def age_disag_by_gender
+      district_query = ""
+      if params[:district].present? && params[:district] != "All"
+        district_query = "AND district_code IN(SELECT district_id FROM district WHERE name ='#{params[:district]}')"
+      end
+      data = {"ageGroup" => URI.decode(params[:group])}
+      gender = ["Female","Male"]
+  
+      gender.each do |sex|
+        if params[:start_date].present?
+            start_date = params[:start_date].to_time.strftime("%Y-%m-%d")
+        else
+            start_age =Date.today.beginning_of_month.strftime("%Y-%m-%d")
+        end
+
+        if params[:end_date].present?
+            end_date = params[:end_date].to_time.strftime("%Y-%m-%d")
+        else
+            end_date =Date.today.strftime("%Y-%m-%d")
+        end
+        if params[:group].include?("-")
+          age = "BETWEEN #{params[:group].gsub("-"," AND ")}"
+        else
+          age = params[:group]
+        end
+        sql = "SELECT count(*) as total FROM people p
+          WHERE DATE_FORMAT(p.created_at,'%Y-%m-%d') >='#{start_date}' 
+          AND DATE_FORMAT(p.created_at,'%Y-%m-%d') <='#{end_date}' AND DATEDIFF(date_of_death, birthdate)/365 #{age} AND gender='#{sex}'  #{district_query}"
+       
+        data[sex] = ActiveRecord::Base.connection.select_all(sql).as_json.last['total'] rescue 0
+      end
+  
+      render :text => data.to_json
+    end
 end

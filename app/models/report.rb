@@ -382,4 +382,6 @@ class Report < ActiveRecord::Base
 		count = connection.select_all(sql).as_json.last['total'] rescue 0
 		return {:count => count , :gender =>params[:gender], :district => params[:district]}
 	end
+
+
 end
