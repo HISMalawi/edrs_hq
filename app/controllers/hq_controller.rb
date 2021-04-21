@@ -1,4 +1,5 @@
 class HqController < ApplicationController
+  require 'rqrcode'
   def dashboard
 
     @icoFolder = nil
@@ -362,43 +363,48 @@ class HqController < ApplicationController
       end
     end
    
-    if SETTINGS['print_qrcode']
-        if !File.exist?("#{SETTINGS['qrcodes_path']}QR#{@person.id}.png")
-            create_qr_barcode(@person)
-            sleep(2)
-            redirect_to request.fullpath and return
-        end
-    else
-        if !File.exist?("#{SETTINGS['barcodes_path']}#{@person.id}.png")
-            create_barcode(@person)
-            sleep(2)
-            redirect_to request.fullpath and return
-        end         
-    end
+    # if SETTINGS['print_qrcode']
+    #     if !File.exist?("#{SETTINGS['qrcodes_path']}QR#{@person.id}.png")
+    #         create_qr_barcode(@person)
+    #         sleep(2)
+    #         redirect_to request.fullpath and return
+    #     end
+    # else
+    #     if !File.exist?("#{SETTINGS['barcodes_path']}#{@person.id}.png")
+    #         create_barcode(@person)
+    #         sleep(2)
+    #         redirect_to request.fullpath and return
+    #     end         
+    # end
 
-    render :layout => false, :template => 'hq/death_certificate'
+    render :layout => false, :template => 'hq/death_certificate_print_a5'
 
   end
   
   def death_certificate
     
-    @person = Person.find(params[:id])
+    @person = Record.find(params[:id])
     @place_of_death = place_of_death(@person)
     @drn = @person.drn
     @den = @person.den
-    if SETTINGS['print_qrcode']
-        if !File.exist?("#{SETTINGS['qrcodes_path']}QR#{@person.id}.png")
-            create_qr_barcode(@person)
-            sleep(2)
-            redirect_to request.fullpath and return
-        end
-    else
-        if !File.exist?("#{SETTINGS['barcodes_path']}#{@person.id}.png")
-            create_barcode(@person)
-            sleep(2)
-            redirect_to request.fullpath and return
-        end         
-    end
+
+
+    #raise @svg.inspect
+
+
+    # if SETTINGS['print_qrcode']
+    #     if !File.exist?("#{SETTINGS['qrcodes_path']}QR#{@person.id}.png")
+    #         create_qr_barcode(@person)
+    #         sleep(2)
+    #         redirect_to request.fullpath and return
+    #     end
+    # else
+    #     if !File.exist?("#{SETTINGS['barcodes_path']}#{@person.id}.png")
+    #         create_barcode(@person)
+    #         sleep(2)
+    #         redirect_to request.fullpath and return
+    #     end         
+    # end
 
     @date_registered = @person.created_at
     PersonRecordStatus.by_person_record_id.key(@person.id).each.sort_by{|s| s.created_at}.each do |state|
@@ -407,14 +413,15 @@ class HqController < ApplicationController
           break;
       end
     end
-    
-    if SETTINGS['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A4"
-       render :layout => false, :template => 'hq/death_certificate_print'
-    elsif SETTINGS['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A5"
-       render :layout => false, :template => 'hq/death_certificate_print_a5'
-    else
-       render :layout => false
-    end
+    render :layout => false, :template => 'hq/death_certificate_print_a5'
+
+    # if SETTINGS['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A4"
+    #    render :layout => false, :template => 'hq/death_certificate_print'
+    # elsif SETTINGS['pre_printed_paper'] == true &&  GlobalProperty.find("paper_size").value == "A5"
+    #    render :layout => false, :template => 'hq/death_certificate_print_a5'
+    # else
+    #    render :layout => false
+    # end
     
   end
   

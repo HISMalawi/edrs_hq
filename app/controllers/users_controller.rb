@@ -24,7 +24,7 @@ class UsersController < ApplicationController
         UserModel.current_user = user
 
         Audit.ip_address_accessor = request.remote_ip
-        Audit.mac_address_accessor = ` arp #{request.remote_ip}`.split(/\n/).last.split(/\s+/)[2]
+        Audit.mac_address_accessor = ` arp #{request.remote_ip}`.split(/\n/).last.split(/\s+/)[2] rescue nil
         Audit.create({
                                     :record_id  => session[:user_id],
                                     :audit_type => "User Access",

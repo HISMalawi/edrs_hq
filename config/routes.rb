@@ -263,6 +263,9 @@ Rails.application.routes.draw do
   get "/api/v1/manner_of_death" =>"reports#manner_of_death"
   get "/api/v1/age_disag_by_gender" => "reports#age_disag_by_gender"
 
+  ################## External Verification #############################
+  post "/api/v1/verify_certificate" => "api#verify_certificate"
+
   # The priority is based upoindexation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

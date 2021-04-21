@@ -4,7 +4,7 @@ class DeathRegistrationNumber< ActiveRecord::Base
 	def push_to_couch
 		begin
 			puts "Pushing records to couch"
-			identifier_record = PersonIdentifier.new
+			identifier_record = RecordIdentifier.new
 	        identifier_record.person_record_id = self.person_record_id.to_s
 	        identifier_record.identifier_type = "DEATH REGISTRATION NUMBER"
 	        identifier_record.identifier =  self.identifier
@@ -46,7 +46,7 @@ class DeathRegistrationNumber< ActiveRecord::Base
 	def self.create_barcode(person)
 	    if person.npid.blank?
 	       npid = Npid.by_assigned.keys([false]).first
-	       person.npid = npid.national_id
+	       person.npid = (npid.national_id rescue "")
 	       person.save
 	    end
 	    `bundle exec rails r bin/generate_barcode #{person.npid.present?? person.npid : '123456'} #{person.id} #{SETTINGS['barcodes_path']}`
@@ -55,7 +55,7 @@ class DeathRegistrationNumber< ActiveRecord::Base
 	def self.create_qr_barcode(person)
 	    if person.npid.blank?
 	       npid = Npid.by_assigned.keys([false]).first
-	       person.npid = npid.national_id
+	       person.npid = (npid.national_id rescue "")
 	       person.save
 	    end
 	    `bundle exec rails r bin/generate_qr_code #{person.id} #{SETTINGS['qrcodes_path']}`    

@@ -244,14 +244,14 @@ function getCases() {
       url = ("/add_more_reprint_or_amended/"+current_page+"&district=<%=params[:district]%>")
   }else{
        var status = ""
-      <% @statuses.each {|s|%>
+       <% @statuses.each {|s|%>
         if (status == ""){
-            status = "<%= s.split(/\s+/).join('_')%>";
+            status = status + "statuses[]=<%= s.split(/\s+/).join('_')%>"
         }else{
-            status += ("|" + "<%= s.split(/\s+/).join('_')%>");
-        }
-      <% } %>
-      url = ("/add_more_open_cases/"+current_page + "?statuses=" + status+"&district=<%=params[:district]%>")
+           status = status + "&statuses[]=<%= s.split(/\s+/).join('_')%>"
+        }     
+     <% } %>
+     url = ("/add_more_open_cases/"+current_page + "?" + status+"&district=<%=params[:district]%>")
   }
  
 

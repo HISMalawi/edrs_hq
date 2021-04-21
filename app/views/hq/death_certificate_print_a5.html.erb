@@ -50,19 +50,20 @@
        }}
    
   </style>
+  <script type="text/javascript" src="/js/qrcode/qrcode.min.js"></script>
 </head>
 
 <body style="color: #000;">
     <% @long_cert = false %>
     <% 
 
-      if SETTINGS['print_qrcode']
-              raw = File.read("#{SETTINGS['qrcodes_path']}QR#{@person.id}.png")
-              @data = Base64.encode64(raw)
-      else
-              raw = File.read("#{SETTINGS['barcodes_path']}#{@person.id}.png")
-              @data = Base64.encode64(raw)
-      end
+      # if SETTINGS['print_qrcode']
+      #         raw = File.read("#{SETTINGS['qrcodes_path']}QR#{@person.id}.png")
+      #         @data = Base64.encode64(raw)
+      # else
+      #         raw = File.read("#{SETTINGS['barcodes_path']}#{@person.id}.png")
+      #         @data = Base64.encode64(raw)
+      # end
 
     %>
     
@@ -73,7 +74,7 @@
              
 <div id="mainc">             
   <div id="barcode">
-    <p style="text-align: center !important;font-size: 12px;"> <img src ="data:image/png;base64,<%= @data%>" />
+    <p id="code" style="text-align: center !important;font-size: 12px;"> 
 
     <% if SETTINGS['print_qrcode'] %>
         <br/></p>
@@ -245,6 +246,19 @@
       </tr>
     </table>
   </div>
- </div>  
+ </div> 
+ <script type="text/javascript">
+      var qrcode = new QRCode(document.getElementById("code"), {
+        width : 150,
+        height : 150
+      });
+
+      function makeCode () {		
+
+        qrcode.makeCode("<%=PersonService.qr_code_data(@person.id, @person)%>");
+      }
+
+      makeCode();
+</script> 
 </body>
 </html>

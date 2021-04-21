@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   before_filter :check_user, :check_cron_jobs,:check_databases, :except => ['login', 'logout', 'death_certificate','dispatch_preview',
                                                                             "deaths","deaths_by_cause","covid_cases", "death_aggregates",
                                                                             "causes_aggregates","by_district_registered_and_gender",
-                                                                            "manner_of_death" ,"age_disag_by_gender"]
+                                                                            "manner_of_death" ,"age_disag_by_gender","verify_certificate"]
   
   def has_role(role)
     current_user.activities_by_level("HQ").include?(role.strip)
@@ -25,9 +25,9 @@ class ApplicationController < ActionController::Base
           if (defined? PersonIdentifier.can_assign_drn).nil?
             PersonIdentifier.can_assign_drn = true
           end
-          if SuckerPunch::Queue.stats["AssignDrn"]["workers"]["idle"].to_i == 1
-            AssignDrn.perform_in(15)
-          end
+          # if SuckerPunch::Queue.stats["AssignDrn"]["workers"]["idle"].to_i == 1
+          #   #AssignDrn.perform_in(15)
+          # end
         end
         
     end
@@ -311,7 +311,7 @@ class ApplicationController < ActionController::Base
   def create_barcode(person)
     if person.npid.blank?
        npid = Npid.by_assigned.keys([false]).first
-       person.npid = npid.national_id
+       person.npid = (npid.national_id rescue "")
        person.save
     end
     `bundle exec rails r bin/generate_barcode #{person.npid.present?? person.npid : '123456'} #{person.id} #{SETTINGS['barcodes_path']}`
@@ -320,7 +320,7 @@ class ApplicationController < ActionController::Base
   def create_qr_barcode(person)
     if person.npid.blank?
        npid = Npid.by_assigned.keys([false]).first
-       person.npid = npid.national_id
+       person.npid = (npid.national_id rescue "")
        person.save
     end
     `bundle exec rails r bin/generate_qr_code #{person.id} #{SETTINGS['qrcodes_path']}`    

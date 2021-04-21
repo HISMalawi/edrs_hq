@@ -124,7 +124,9 @@ header = 		[   "First name",
 					"Coder's Final Code",
 					"Reason Differnt from Tentantive",
 					"Supervisors's Final Code",
-					"Reason Supervisor's code is different"]
+					"Reason Supervisor's code is different",
+					"Name of the Coder",
+					"Date Coded"]
 file = "#{Rails.root}/db/cause_of_death-#{Time.now}.csv"
 
 
@@ -142,98 +144,109 @@ pages = count / pagesize
 page = 1
 
 id = []
+while page <= pages 
+	# sql = "SELECT person_id FROM people WHERE cause_of_death1 IS NOT NULL"
+	# connection = ActiveRecord::Base.connection
+	# data = connection.select_all(sql).as_json
+	begin
+		data = Person.all.page(page).per(200)
+		# data.each do |sqlid|
+		# 		person = Person.find(sqlid['person_id'])
+		data.each do |person|
+				next if person.blank?
+				next if person.icd_10_1.blank?
+				migrated = "No"
+				source_id = (person.source_id rescue nil)
+				if source_id.present?
+					migrated = "Yes"
+				end
 
-sql = "SELECT person_id FROM people WHERE cause_of_death1 IS NOT NULL"
-connection = ActiveRecord::Base.connection
-data = connection.select_all(sql).as_json
-data.each do |sqlid|
-		person = Person.find(sqlid['person_id'])
-		next if person.blank?
-		migrated = "No"
-		source_id = (person.source_id rescue nil)
-		if source_id.present?
-			migrated = "Yes"
+				next if migrated == "Yes"
+
+				record_status = PersonRecordStatus.by_person_recent_status.key(person.id).last
+
+				status = record_status.status rescue nil
+				
+				date_printed = ""
+				printed = ""
+				if ["HQ PRINTED", "HQ DISPATCHED"].include?(status)
+					printed = "Yes"
+				end
+
+				if migrated =="No" && ["HQ PRINTED", "HQ DISPATCHED"].include?(status)
+					date_printed = record_status.created_at.to_time.strftime("%Y-%m-%d  %H:%M:%S")
+				end
+
+				next if id.include?(person.id)
+
+				icd = PersonICDCode.by_person_id.key(person.id).first
+				next if icd.blank?
+		#		raise icd.inspect
+
+				next if person.cause_of_death1.blank?
+				#next if person.icd_10_1.blank?other_manner_of_death
+				
+				#raise person.inspect
+				id << person.id
+
+				#raise person.cause_of_death_conditions.inspect if person.cause_of_death_conditions.present?
+				coder = User.find(person.coder)
+				row = [	"###########",
+							"###########",
+							"###########", 
+							person.birthdate.to_time.strftime("%Y-%m-%d"),
+							person.date_of_death.to_time.strftime("%Y-%m-%d"),
+							person.gender,
+							person.registration_type,	
+							person.place_of_death,
+							person.place_of_death_district,
+							person.hospital_of_death,
+							person.place_of_registration,
+							(person.barcode rescue ""),
+							(person.den rescue ""),
+							person.coded_at.to_time.strftime("%Y-%m-%d"),
+							(person.cause_of_death1 rescue ""),
+							(person.icd_10_1 rescue " "),
+							(person.cause_of_death2 rescue ""),
+							(person.icd_10_2 rescue " "),
+							(person.cause_of_death3 rescue ""),
+							(person.icd_10_3 rescue " "),
+							(person.cause_of_death4 rescue ""),
+							(person.icd_10_4 rescue " "),
+							(person.cause_of_death_conditions["1"]["cause"] rescue ""),
+							(person.cause_of_death_conditions["1"]["icd_code"] rescue ""),
+							(person.cause_of_death_conditions["2"]["cause"] rescue ""),
+							(person.cause_of_death_conditions["2"]["icd_code"] rescue ""),
+							(person.cause_of_death_conditions["3"]["cause"] rescue ""),
+							(person.cause_of_death_conditions["3"]["icd_code"] rescue ""),
+							person.autopsy_requested,
+							person.autopsy_used_for_certification,
+							person.manner_of_death,
+							person.other_manner_of_death,
+							person.death_by_accident,
+							person.other_death_by_accident,
+							person.certifier_name,
+							person.certifier_license_number,
+							person.certifier_signed,
+							person.date_certifier_signed,
+							person.position_of_certifier,
+							person.other_position_of_certifier,
+							(icd.tentative_code rescue ""),
+							(icd.reason_tentative_differ_from_underlying rescue ""),
+							(icd.final_code.present? ? icd.final_code : person.icd_10_code),
+							(icd.reason_final_differ_from_tentative rescue ""),
+							(icd.final_code_reviewed rescue ""),
+							(icd.reason_final_code_changed rescue ""),
+							"#{coder.first_name rescue ''} #{coder.last_name rescue ''}",
+							person.coded_at.to_time.strftime("%Y-%m-%d")]
+				puts row.to_s
+
+				write_csv_content(file, row)
+				puts person.id
+
 		end
-
-		next if migrated == "Yes"
-
-		record_status = PersonRecordStatus.by_person_recent_status.key(person.id).last
-
-		status = record_status.status rescue nil
-		
-		date_printed = ""
-		printed = ""
-		if ["HQ PRINTED", "HQ DISPATCHED"].include?(status)
-			printed = "Yes"
-		end
-
-		if migrated =="No" && ["HQ PRINTED", "HQ DISPATCHED"].include?(status)
-			date_printed = record_status.created_at.to_time.strftime("%Y-%m-%d  %H:%M:%S")
-		end
-
-		next if id.include?(person.id)
-
-		icd = PersonICDCode.by_person_id.key(person.id).first
-		next if icd.blank?
-#		raise icd.inspect
-
-		next if person.cause_of_death1.blank?
-		#next if person.icd_10_1.blank?other_manner_of_death
-		
-		#raise person.inspect
-		id << person.id
-
-		#raise person.cause_of_death_conditions.inspect if person.cause_of_death_conditions.present?
-
-		row = [	"###########",
-					"###########",
-					"###########", 
-					person.birthdate.to_time.strftime("%Y-%m-%d"),
-					person.date_of_death.to_time.strftime("%Y-%m-%d"),
-					person.gender,
-					person.registration_type,	
-					person.place_of_death,
-					person.place_of_death_district,
-					person.hospital_of_death,
-					person.place_of_registration,
-					(person.barcode rescue ""),
-					(person.den rescue ""),
-					person.coded_at.to_time.strftime("%Y-%m-%d"),
-					(person.cause_of_death1 rescue ""),
-					(person.icd_10_1 rescue " "),
-					(person.cause_of_death2 rescue ""),
-					(person.icd_10_2 rescue " "),
-					(person.cause_of_death3 rescue ""),
-					(person.icd_10_3 rescue " "),
-					(person.cause_of_death4 rescue ""),
-					(person.icd_10_4 rescue " "),
-					(person.cause_of_death_conditions["1"]["cause"] rescue ""),
-					(person.cause_of_death_conditions["1"]["icd_code"] rescue ""),
-					(person.cause_of_death_conditions["2"]["cause"] rescue ""),
-					(person.cause_of_death_conditions["2"]["icd_code"] rescue ""),
-					(person.cause_of_death_conditions["3"]["cause"] rescue ""),
-					(person.cause_of_death_conditions["3"]["icd_code"] rescue ""),
-					person.autopsy_requested,
-					person.autopsy_used_for_certification,
-					person.manner_of_death,
-					person.other_manner_of_death,
-					person.death_by_accident,
-					person.other_death_by_accident,
-					person.certifier_name,
-					person.certifier_license_number,
-					person.certifier_signed,
-					person.date_certifier_signed,
-					person.position_of_certifier,
-					person.other_position_of_certifier,
-					(icd.tentative_code rescue ""),
-					(icd.reason_tentative_differ_from_underlying rescue ""),
-					(icd.final_code.present? ? icd.final_code : person.icd_10_code),
-					(icd.reason_final_differ_from_tentative rescue ""),
-					(icd.final_code_reviewed rescue ""),
-					(icd.reason_final_code_changed rescue "")]
-		puts row.to_s
-
-		write_csv_content(file, row)
-		puts person.id
-
+		page = page + 1
+	rescue
+		 puts "Retrying "
+	end
 end

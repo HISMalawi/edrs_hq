@@ -1070,8 +1070,8 @@
     }
 
     function clearLockAndRedirect(){
-        var next_url = "<%= params[:next_url].present? ? params[:next_url] : '/' %>";
-        window.location.href = "/case/unlock_record?lock_id=<%= @lock.id %>&next_url="+next_url
+      var next_url = "<%= params[:next_url].present? ? params[:next_url] : '/' %>";
+      window.location.href = next_url
     }
 
     function setPrinter(printer_name){

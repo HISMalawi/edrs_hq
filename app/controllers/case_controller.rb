@@ -1,5 +1,14 @@
 class CaseController < ApplicationController
-  before_filter :get_districts
+  before_filter :get_districts, :set_next_status
+
+  def set_next_status
+
+      @next_state ={
+          "Data Verifier" => ["HQ COMPLETE", "HQ INCOMPLETE TBA"],
+          "Data Supervisor" => ["HQ CONFLICT", "HQ INCOMPLETE"],
+          "Data Manager" => ["HQ CAN PRINT", "HQ CONFIRMED INCOMPLETE"]
+      }
+  end
   def save_barcode
     person = Person.find(params[:id])
     barcode = PersonIdentifier.new
@@ -19,7 +28,7 @@ class CaseController < ApplicationController
     @statuses = ["HQ ACTIVE"]
     @page = 0
     session[:return_url] = request.path
-    @drn_available = true
+    @drn = false
     render :template => "case/default"
   end
 
@@ -201,6 +210,13 @@ class CaseController < ApplicationController
     @title = "Approve for Printing"
     @statuses = ["HQ COMPLETE"]
     @districts = []
+  
+    @next_state ={
+              "Data Verifier" => ["HQ COMPLETE", "HQ INCOMPLETE TBA"],
+              "Data Supervisor" => ["HQ CONFLICT", "HQ INCOMPLETE"],
+              "Data Manager" => ["HQ CAN PRINT", "HQ CONFIRMED INCOMPLETE"]
+          }
+  
     District.all.each do |d| 
       next if d.name.blank?
       next if d.name.include?("City")
@@ -296,64 +312,33 @@ class CaseController < ApplicationController
   end
 
   def ajax_change_status
-
+    
     next_status = params[:next_status].gsub(/\-/, ' ') rescue nil
 
     render :text => "Error!" and return if next_status.blank?
-    person = Person.find(params[:person_id])
+    person = Record.find(params[:person_id])
     
     if ["HQ CAN PRINT", "HQ RE PRINT", "HQ APPROVED", "HQ REAPPROVED"].include?(next_status)
-      
-      drn = PersonIdentifier.by_person_record_id_and_identifier_type.key([params[:person_id], "DEATH REGISTRATION NUMBER"]).last
-      if drn.blank?
-        last_run_time = File.mtime("#{Rails.root}/public/sentinel").to_time
-        job_interval = SETTINGS['ben_assignment_interval']
-        job_interval = 1.5 if job_interval.blank?
-        job_interval = job_interval.to_f
-        now = Time.now
-        if (now - last_run_time).to_f > job_interval
-          AssignDrn.perform_in(1)
-        end
-
-        if PersonRecordStatus.nextstatus.present?
-           PersonRecordStatus.nextstatus[params[:person_id]] = next_status
-        else
-          PersonRecordStatus.nextstatus = {}
-          PersonRecordStatus.nextstatus[params[:person_id]] = next_status
-        end
-
-        PersonRecordStatus.change_status(Person.find(params[:person_id]),"MARKED HQ APPROVAL",(params[:comment].present? ? params[:comment] : nil))
+        RecordIdentifier.assign_drn(person,User.current_user.id)
+        #RecordStatus.change_status(person,"MARKED HQ APPROVAL",(params[:comment].present? ? params[:comment] : nil))
+        RecordStatus.change_status(person,next_status,(params[:comment].present? ? params[:comment] : nil))
         render :text => "ok" and return
-      else
-          if SETTINGS['print_qrcode']
-              if !File.exist?("#{SETTINGS['qrcodes_path']}QR#{person.id}.png")
-                  create_qr_barcode(person)
-                  sleep(2)
-                  redirect_to request.fullpath and return
-              end
-          else
-              if !File.exist?("#{SETTINGS['barcodes_path']}#{person.id}.png")
-                  create_barcode(person)
-                  sleep(2)
-                  redirect_to request.fullpath and return
-              end         
-          end
-      end
     end
 
     comment = params[:comment]
     comment = "Marked as complete" if next_status == "HQ COMPLETE"
-    PersonRecordStatus.change_status(Person.find(params[:person_id]), next_status,comment)
+   
+    RecordStatus.change_status(person, next_status,comment)
 
     if next_status == "HQ COMPLETE"
-      @person = Person.find(params[:person_id])
+      @person = Record.find(params[:person_id])
       if ((search_similar_record(@person).count > 1) rescue false)
 
-        status = PersonRecordStatus.by_person_recent_status.key(params[:person_id]).last
-        status.voided  = true
+        status = RecordStatus.where(person_record_id: params[:person_id]).order(:created_at).last
+        status.voided  = 1
         status.save
 
-        PersonRecordStatus.create(
+        RecordStatus.create(
             :person_record_id => params[:person_id],
             :district_code => person.district_code,
             :prev_status => status.status,
@@ -544,68 +529,70 @@ class CaseController < ApplicationController
     render :template => "case/default"
   end
 
-  def more_open_cases
+  def more_open_cases_back
     cases = []
     offset = params[:page_number].to_i * 40
     district_code_query = (params[:district].present? ? "AND district_code ='#{DistrictRecord.where(name:params[:district]).first.id}'" : "")
 
     sql = "SELECT person_record_id, status FROM person_record_status WHERE voided = 0 AND status 
-          IN ('#{params[:statuses].split("|").collect{|status| status.gsub(/\_/, " ").upcase}.join("','")}') #{district_code_query}
-           LIMIT 40 OFFSET #{offset}"
+          IN ('#{params[:statuses].collect{|status| status.gsub(/\_/, " ").upcase}.join("','")}') #{district_code_query}
+           LIMIT 200 OFFSET #{offset}"
 
     connection = ActiveRecord::Base.connection
     data = connection.select_all(sql).as_json
 
     cases = []
 
-    #raise data.inspect
     data.each do |row|
-          person = Person.find(row["person_record_id"])
+          person = Record.find(row["person_record_id"])
           next if person.blank?
           next if person.first_name.blank?  && person.last_name.blank?
-          unless params[:statuses].split("|").collect{|status| status.gsub(/\_/, " ").upcase}.include?(person.status)
-             RecordStatus.where("person_record_id= '#{row['person_record_id']}' AND status IN('#{params[:statuses].split('|').collect{|status| status.gsub(/\_/, ' ').upcase}.join("','")}')").each do |s|
-                s.voided = 1 
-                s.save
-             end
-             next
-          end
           cases << fields_for_data_table(person)
     end
 
     render text: cases.to_json and return
+   
+  end
 
-=begin
-    RecordStatus.where("voided = 0 AND status IN ('#{params[:statuses].split("|").collect{|status| status.gsub(/\_/, " ").upcase}.join("','")}') #{district_code_query}" ).offset(offset).limit(40).each do |status|
-            person = status.person
-            cases << fields_for_data_table(person)
-    end
-    if params[:district].present?
-        district_code = District.by_name.key(params[:district]).first.id
-        keys = []
-        ((params[:statuses].split("|") rescue []) || []).each{|status|
-          next if status.blank?
-          keys << [ district_code,status.gsub(/\_/, " ").upcase]
-        }
+  def more_open_cases
+    cases = []
+    page = (params[:start].to_i / params[:length].to_i) + 1
+    offset = page * params[:length].to_i
+    district_code_query = (params[:district].present? ? "AND p.district_code ='#{DistrictRecord.where(name:params[:district]).first.id}'" : "")
     
-        (PersonRecordStatus.by_district_code_and_record_status.keys(keys).page(params[:page_number]).per(40) || []).each do |status|      
-            person = status.person
-            cases << fields_for_data_table(person)
-        end 
-    else
-        keys = []
-        ((params[:statuses].split("|") rescue []) || []).each{|status|
-          next if status.blank?
-          keys << status.gsub(/\_/, " ").upcase
-        }
-    
-        (PersonRecordStatus.by_record_status.keys(keys).page(params[:page_number]).per(40) || []).each do |status|      
-            person = status.person
-            cases << fields_for_data_table(person)
-        end 
+    search_val = params[:search][:value] rescue nil
+    search_val = '_' if search_val.blank?
+
+    sql = "SELECT person_record_id, status FROM person_record_status s INNER JOIN people p ON s.person_record_id = p.person_id 
+           WHERE s.voided = 0 AND status IN ('#{params[:statuses].collect{|status| status.gsub(/\_/, " ").upcase}.join("','")}') 
+           AND concat_ws('_', p.first_name,p.last_name, p.middle_name,p.hospital_of_death,p.gender,p.place_of_death_ta,
+           p.place_of_death_village,p.place_of_death_district) REGEXP \"#{search_val}\" #{district_code_query}
+           LIMIT #{params[:length].to_i} OFFSET #{offset}"
+
+    connection = ActiveRecord::Base.connection
+    data = connection.select_all(sql).as_json
+
+    cases = []
+    records = {}
+    data.each do |row|
+          person = Record.find(row["person_record_id"])
+          next if person.blank?
+          next if person.first_name.blank?  && person.last_name.blank?
+          records[person.id] = person_selective_fields(person)
+          cases << data_table_entry(person,params[:drn])
     end
-     render text: cases.to_json and return
-=end
+    sql = "SELECT COUNT(distinct person_record_id) as total FROM person_record_status WHERE voided = 0 AND status 
+          IN ('#{params[:statuses].collect{|status| status.gsub(/\_/, " ").upcase}.join("','")}') #{district_code_query}"
+    
+    total = connection.select_all(sql).as_json.last["total"].to_i rescue 0
+    render :text => {
+          "draw" => params[:draw].to_i,
+          "recordsTotal" => total,
+          "recordsFiltered" => total,
+          "records" => records,
+          "data" => cases}.to_json and return
+
+    #render text: cases.to_json and return
    
   end
 
@@ -613,7 +600,7 @@ class CaseController < ApplicationController
 
       offset = params[:page_number].to_i * 40
       sql = "SELECT c.person_record_id FROM person_record_status c INNER JOIN person_record_status p ON p.person_record_id = c.person_record_id
-             WHERE c.status IN ('#{params[:statuses].split('|').join("','")}') AND p.status IN ('#{params[:prev_statuses].split('|').join("','")}') AND p.voided = 1 
+             WHERE c.status IN ('#{params[:statuses].join("','")}') AND p.status IN ('#{params[:prev_statuses].join("','")}') AND p.voided = 1 
              LIMIT 40 OFFSET #{offset}"
 
       connection = ActiveRecord::Base.connection
@@ -622,13 +609,25 @@ class CaseController < ApplicationController
       cases = []
 
       data.each do |row|
-          person = Person.find(row["person_record_id"])
+          person = Record.find(row["person_record_id"])
           cases << fields_for_data_table(person)
       end
 
       render text: cases.to_json and return
   end
-
+  def data_table_entry(person, drn=false)
+     row = []
+    
+     if drn.present? && drn=="true"
+        row << person.drn
+     end
+       row = row + [person.den,
+                    "#{person.first_name} #{person.middle_name rescue ''} #{person.last_name} (#{person.gender.first})",
+                    person.birthdate.strftime("%d/%b/%Y"),
+                    person.date_of_death.strftime("%d/%b/%Y"),
+                    place_of_death(person), 
+                    person.id]
+  end
   def fields_for_data_table(person)
 
     begin
@@ -740,13 +739,17 @@ class CaseController < ApplicationController
 
   def show
 
-    @person = Person.find(params[:person_id])
+    @person = Record.find(params[:person_id])
     @results = []
-    begin
-        @person.save
-        PersonRecordStatus.by_person_recent_status.key(params[:id]).last.save
-    rescue Exception => e
-      
+    if @person.blank?
+      @person = Person.find(params[:person_id])
+
+      begin
+          @person.save
+          PersonRecordStatus.by_person_recent_status.key(params[:id]).last.save
+      rescue Exception => e
+        
+      end
     end
 
     if  ["HQ POTENTIAL DUPLICATE TBA","HQ NOT DUPLICATE TBA","HQ POTENTIAL DUPLICATE","HQ DUPLICATE"].include? @person.status 
@@ -755,16 +758,7 @@ class CaseController < ApplicationController
         redirect_to "/person/ammend_case?id=#{@person.id}"
     end
 
-    @lock = MyLock.by_person_id.key(params[:person_id]).last
-    if @lock.blank?
-        @lock = MyLock.create(:person_id => params[:person_id],:user_id => User.current_user.id)
-    end
-
-    if User.current_user.id != @lock.user_id
-        @locked = true
-    else
-        @locked = false
-    end
+    @locked = false
 
     if SETTINGS["potential_duplicate"]
           record = {}
@@ -806,7 +800,7 @@ class CaseController < ApplicationController
                               :change_log => change_log
               })
 
-              PersonRecordStatus.change_status(@person,"HQ POTENTIAL DUPLICATE TBA")
+              RecordStatus.change_status(@person,"HQ POTENTIAL DUPLICATE TBA")
             else
             end
           end
@@ -816,26 +810,14 @@ class CaseController < ApplicationController
     #raise PersonRecordStatus.by_person_recent_status.key(@person.id).last.status.inspect
   
 
-    if @person.status.blank?
-        last_status = PersonRecordStatus.by_person_record_id.key(@person.id).each.sort_by{|d| d.created_at}.last
-        
-        states = {
-                    "HQ ACTIVE" =>"HQ COMPLETE",
-                    "HQ COMPLETE" => "MARKED HQ APPROVAL",
-                    "MARKED HQ APPROVAL" => "HQ CAN PRINT",
-                    "HQ PRINTED" => "HQ DISPATCHED"
-                 }
-        if states[last_status.status].blank?
-          PersonRecordStatus.change_status(@person, "HQ COMPLETE")
-        else  
-          PersonRecordStatus.change_status(@person, states[last_status.status])
-        end
-        
-        redirect_to request.fullpath and return
+    if RecordStatus.where(person_record_id: @person.id, voided: 0).last.status.blank?
+      @status = RecordStatus.new
+      @status.status = "WAIT SYNC"
+    else
+      @status = RecordStatus.where(person_record_id: @person.id, voided: 0).last rescue nil
     end
-   
 
-    @status = PersonRecordStatus.by_person_recent_status.key(@person.id).last rescue nil
+       
     if params[:status].present?
         if @status.status.to_s.squish != params[:status].squish
           (RecordStatus.where(person_record_id: @person.id, status: params[:status]) rescue [] ).each do |state|
@@ -874,9 +856,9 @@ class CaseController < ApplicationController
   end
 
   def show_duplicate
-      @person = Person.find(params[:id])
+      @person = Record.find(params[:id])
 
-      @status = PersonRecordStatus.by_person_recent_status.key(params[:id]).last
+      @status = RecordStatus.where(person_record_id: params[:id]).last
 
       @person_place_details = place_details(@person)
 
@@ -933,13 +915,12 @@ class CaseController < ApplicationController
   
   def find
       person = Person.find(params[:id])
-      person["status"] = PersonRecordStatus.by_person_recent_status.key(params[:id]).last.status
+      person["status"] = RecordStatus.where(person_record_id:params[:id]).last.status
       render :text => person_selective_fields(person).to_json
   end
 
   def person_selective_fields(person)
-
-      den = PersonIdentifier.by_person_record_id_and_identifier_type.key([person.id,"DEATH ENTRY NUMBER"]).first
+      den = RecordIdentifier.where(person_record_id: person.id,identifier_type:"DEATH ENTRY NUMBER").first
 
       return {
                       id: person.id,
@@ -978,6 +959,7 @@ class CaseController < ApplicationController
                       nationality: person.nationality
                      }
   end
+
 
   def get_districts
     @districts = []

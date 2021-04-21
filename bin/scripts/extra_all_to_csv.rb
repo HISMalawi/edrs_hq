@@ -142,17 +142,18 @@ def calculate_age_to_death(birthdate, date_of_death=Time.now, person_id=nil)
 	
     date_of_death = date_of_death.to_time
     different = date_of_death - birthdate
-    if (different / 1.year).round(1).to_i >= 1
-        return "#{(different / 1.year).round(1).to_i} Y" 
-    elsif (different / 1.month).round(1) >= 1
-        return "#{(different / 1.month).round(1).to_i} M"
-    elsif (different / 1.week).round(1) >= 1
-        return "#{(different / 1.week).round(1).to_s} W"
-    elsif (different / 1.day).round(1) >= 1
-        return "#{(different / 1.day).round(1).to_i} D"
-    else
-        return "0 D"
-    end
+	return "#{(different / 1.day).round(1).to_i} D"
+    # if (different / 1.year).round(1).to_i >= 1
+    #     return "#{(different / 1.year).round(1).to_i} Y" 
+    # elsif (different / 1.month).round(1) >= 1
+    #     return "#{(different / 1.month).round(1).to_i} M"
+    # elsif (different / 1.week).round(1) >= 1
+    #     return "#{(different / 1.week).round(1).to_s} W"
+    # elsif (different / 1.day).round(1) >= 1
+    #     return "#{(different / 1.day).round(1).to_i} D"
+    # else
+    #     return "0 D"
+    # end
 end
 #`bundle exec rake edrs:build_mysql`
 
@@ -170,6 +171,7 @@ header = [  "First name",
 			"Age",
 			"Date Reported",
 			"Date Entered in EDRS",
+			"Date Registered",
 			"Sex",
 			"Registration Type",
 			"Place of Registration",
@@ -236,6 +238,8 @@ header = [  "First name",
 			"Informant phone Number",
 			"Informant Signed",
 			"Date Informant Signed",
+			"Relationship to the Deceased",
+			"Flagged as COVID 19 Related?",
 			"Date Coded",
 			"Condition (a)",
 			"Code (a)",			
@@ -272,7 +276,7 @@ header = [  "First name",
 			"Reason Supervisor's code is different",
 			"Final Code"
 			]
-write_csv_header("#{Rails.root}/db/data-with-causes#{start_date}-#{end_date}.csv", header)
+write_csv_header("/home/emkambankhani/Dump/data-with-causes#{start_date}-#{end_date}.csv", header)
 
 
 count = Person.count
@@ -280,7 +284,7 @@ count = Person.count
 
 puts count
 
-pagesize = 200
+pagesize = 42873
 pages = count / pagesize
 
 page = 1
@@ -297,16 +301,18 @@ while page <= pages
 
 		date_reported = (person.informant_signature_date.present?? person.informant_signature_date.to_time.strftime("%Y-%m-%d") : 'N/A')
 
-		date_entered_in_system = person.created_at.to_time.strftime("%Y-%m-%d  %H:%M:%S")
+		date_entered_in_system = person.created_at.to_time.strftime("%Y-%m-%d")
 
 		migrated = "No"
 		if person.source_id.present?
 			migrated = "Yes"
-			old_record = JSON.parse(RestClient.get "http://admin:password@192.168.48.131:5900/edrs_hq/#{person.source_id}")
-			date_entered_in_system = old_record["created_at"].to_time.strftime("%Y-%m-%d  %H:%M:%S")
+			old_record = JSON.parse(RestClient.get "http://admin:password@0.0.0.0:5984/edrs_old/#{person.source_id}") rescue nil
+			if old_record.present?
+				date_entered_in_system = old_record["created_at"].to_time.strftime("%Y-%m-%d")
+			end
 		end
 
-		record_status = PersonRecordStatus.by_person_recent_status.key(person.id).first
+		record_status = PersonRecordStatus.by_person_recent_status.key(person.id).first rescue nil
 
 
 		status = record_status.status rescue nil
@@ -351,10 +357,18 @@ while page <= pages
 
 		next if id.include?(person.id)
 
-        icd = PersonICDCode.by_person_id.key(person.id).first
+		date_registered = ""
+		PersonRecordStatus.by_person_record_id_and_status.key([person.id, "HQ ACTIVE"]).each.sort_by{|d| d.created_at}.each do |d|
+			if d.created_at.present?
+				date_registered = (d.created_at.strftime("%Y-%m-%d") rescue "")
+				break;
+			end
+		end
+
+        icd = PersonICDCode.by_person_id.key(person.id).first rescue nil
 		
 		id << person.id
-
+		puts person.id
 		coder = User.find(person.coder)
 		if coder.present?
 			coders_name = "#{coder.first_name} #{coder.last_name}"
@@ -411,7 +425,11 @@ while page <= pages
 			birthdate = person.birthdate.to_time.strftime("%Y-%m-%d")
 		end
 		
-		
+		covid_flag = "No"
+		# covid_record = Covid.by_person_record_id.key(person.id).first rescue nil
+		# if covid_record.present?
+		# 	covid_flag = "Yes"
+		# end
 
 		row = [	person.first_name,
 					person.middle_name,
@@ -427,6 +445,7 @@ while page <= pages
 					age,
 					date_reported,
 					date_entered_in_system,
+					date_registered,
 					person.gender,
 					person.registration_type,
 					person.place_of_registration,
@@ -493,6 +512,8 @@ while page <= pages
 					phone_number_format(person.informant_phone_number),
 					person.informant_signed,
 					date_reported,
+					(person.informant_relationship_to_deceased rescue 'Other'),
+					covid_flag,
 					(person.coded_at.to_time.strftime("%Y-%m-%d") rescue ""),
 					(person.cause_of_death1 rescue ""),
 					(person.icd_10_1 rescue " "),
@@ -530,11 +551,11 @@ while page <= pages
 					(final_code rescue "")
 					]
 
-				write_csv_content("#{Rails.root}/db/data-with-causes#{start_date}-#{end_date}.csv", row)
+				write_csv_content("/home/emkambankhani/Dump/data-with-causes#{start_date}-#{end_date}.csv", row)
 
 	end
 	puts page
 	page = page + 1
-	
+	sleep(10)
 
 end
