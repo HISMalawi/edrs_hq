@@ -268,7 +268,7 @@ class CaseController < ApplicationController
     @page = 0
     session[:return_url] = request.path
     @available_printers = SETTINGS["printer_name"].split(',')
-    render :template => "case/default_batch"
+    render :template => "case/default"
   end
 
   def re_print
