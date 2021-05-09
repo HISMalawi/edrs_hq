@@ -10,7 +10,7 @@ class HqController < ApplicationController
 
     @targettext = "Logout"
 
-    @user = User.find_by_username(session[:current_user_id])
+    @user = UserModel.find(session[:current_user_id]) rescue nil
 
     @districts = {}
     DistrictRecord.all.each do |d| 
