@@ -6,7 +6,7 @@ class RecordIdentifier < ActiveRecord::Base
 		return Record.find(self.person_record_id)
 	end
 	def set_id
-		self.person_record_status_id = SecureRandom.uuid
+		self.person_identifier_id = SecureRandom.uuid
 	end
 	def push_to_couchDB
 		data =  Pusher.database.get(self.id) rescue {}
