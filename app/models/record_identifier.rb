@@ -1,10 +1,13 @@
 class RecordIdentifier < ActiveRecord::Base
 	after_commit :push_to_couchDB
+	before_create :set_id
 	self.table_name = "person_identifier"
 	def person
 		return Record.find(self.person_record_id)
 	end
-
+	def set_id
+		self.person_record_status_id = SecureRandom.uuid
+	end
 	def push_to_couchDB
 		data =  Pusher.database.get(self.id) rescue {}
 		
@@ -32,6 +35,7 @@ class RecordIdentifier < ActiveRecord::Base
 		if drn_record.blank?
 		  begin
 			drn_record = DeathRegistrationNumber.generate_drn(person)
+			drn_record.save
 			if SETTINGS['print_qrcode']
 				if !File.exist?("#{SETTINGS['qrcodes_path']}QR#{person.id}.png")
 				  self.create_qr_barcode(person)

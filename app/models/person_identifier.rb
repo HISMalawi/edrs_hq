@@ -115,6 +115,7 @@ class PersonIdentifier < CouchRest::Model::Base
     if drn_record.blank?
       begin
         drn_record = DeathRegistrationNumber.generate_drn(person)
+        drn_record.save
         if SETTINGS['print_qrcode']
             if !File.exist?("#{SETTINGS['qrcodes_path']}QR#{person.id}.png")
               self.create_qr_barcode(person)
