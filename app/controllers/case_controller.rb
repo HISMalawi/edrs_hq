@@ -49,9 +49,9 @@ class CaseController < ApplicationController
     @page = 0
     @drn = true
     @dispatch = true
-
+    @batch = true
     @districts = []
-    District.all.each do |d| 
+    DistrictRecord.all.each do |d| 
       next if d.name.blank?
       next if d.name.include?("City")
       @districts << d.name 
@@ -70,12 +70,12 @@ class CaseController < ApplicationController
     @dispatch = true
 
     @districts = []
-    District.all.each do |d| 
+    DistrictRecord.all.each do |d| 
       next if d.name.blank?
       next if d.name.include?("City")
       @districts << d.name 
     end
-   
+    @batch = true
     session[:return_url] = request.path
     @available_printers = SETTINGS["printer_name"].split(',')
     render :template => "case/default"    
@@ -87,9 +87,9 @@ class CaseController < ApplicationController
     @page = 0
     @drn = true
     @dispatch = true
-
+    @batch = true
     @districts = []
-    District.all.each do |d| 
+    DistrictRecord.all.each do |d| 
       next if d.name.blank?
       next if d.name.include?("City")
       @districts << d.name 
@@ -272,7 +272,7 @@ class CaseController < ApplicationController
     @drn = true
     @statuses = ["HQ CAN PRINT","HQ CAN PRINT AMENDED","HQ CAN PRINT LOST","HQ CAN PRINT DAMAGED"]
     @districts = []
-    District.all.each do |d| 
+    DistrictRecord.all.each do |d| 
       next if d.name.blank?
       next if d.name.include?("City")
       @districts << d.name 
@@ -280,6 +280,7 @@ class CaseController < ApplicationController
     @page = 0
     session[:return_url] = request.path
     @available_printers = SETTINGS["printer_name"].split(',')
+    @batch = true
     render :template => "case/default"
   end
 
@@ -568,23 +569,28 @@ class CaseController < ApplicationController
 
   def more_open_cases
     cases = []
-    page = (params[:start].to_i / params[:length].to_i) + 1
+    page = (params[:start].to_i / params[:length].to_i)
     offset = page * params[:length].to_i
     district_code_query = (params[:district].present? ? "AND p.district_code ='#{DistrictRecord.where(name:params[:district]).first.id}'" : "")
     
     search_val = params[:search][:value] rescue nil
-    search_val = '_' if search_val.blank?
+    if search_val.present?
+        search_query = "AND (p.first_name LIKE '%#{search_val}%' || 
+                        p.last_name LIKE '%#{search_val}%' || p.middle_name LIKE '%#{search_val}%' 
+                        || p.hospital_of_death LIKE '%#{search_val}%' || p.gender LIKE '%#{search_val}%' 
+                        || p.place_of_death_ta LIKE '%#{search_val}%' || p.place_of_death_village LIKE '%#{search_val}%' 
+                        || p.place_of_death_district LIKE '%#{search_val}%' || i.identifier LIKE '%#{search_val}%')"
+    else
+      search_query = ""
+    end
 
     sql = "SELECT person_id, status FROM person_record_status s INNER JOIN people p ON s.person_record_id = p.person_id 
            INNER JOIN person_identifier i ON i.person_record_id = p.person_id
            WHERE i.identifier_type='DEATH ENTRY NUMBER' AND s.voided = 0 AND status IN ('#{params[:statuses].collect{|status| status.gsub(/\_/, " ").upcase}.join("','")}') 
-           AND concat_ws('_', p.first_name,p.last_name, p.middle_name,p.hospital_of_death,p.gender,p.place_of_death_ta,
-           p.place_of_death_village,p.place_of_death_district) REGEXP \"#{search_val}\" #{district_code_query}"
-    if search_val == "_"
-      sql =  "#{sql} LIMIT #{params[:length].to_i} OFFSET #{offset}"
-    else
-    end
-    #raise sql.to_s
+           #{search_query} #{district_code_query}"
+ 
+    sql =  "#{sql} LIMIT #{params[:length].to_i} OFFSET #{offset}"
+
     connection = ActiveRecord::Base.connection
     data = connection.select_all(sql).as_json
 

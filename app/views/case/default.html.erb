@@ -46,6 +46,11 @@
             return document.getElementsByClassName(clas)[0];
     }
 </script>
+<form id="dispatch_form" method="post" class="hidden">
+      <input type="hidden" name="printer_name" id="printer_name">
+      <input type="hidden" name="next_url" value="<%=request.path%>">
+
+</form>
 <div id="containt_table">
     <h3><%= @title.humanize rescue ''%></h3>
     <table style="width:30%;float:right;margin-right:5% ">
@@ -224,6 +229,14 @@
   </div>
 </div>
 </div>
+
+<div style="position: fixed; top: 45%; left: 50%; background: #ffffff" >
+  <% if @dispatch.present? && @dispatch %>
+      <button id="print_btn" class="btn btn-success pull-right hidden " onclick="loadPopup('printers')">Dispatch Selected</button>
+  <%else%>
+    <button id="print_btn" class="btn btn-success pull-right hidden"  onclick="loadPopup('printers')">Print Selected</button>
+  <%end%> 
+</div>
 <script>
       var popups =  ["#completeness", "#printers", "#comments","#action_modal","#duplicate_modal","#approve_modal","#wait"]
       for(var i = 0 ; i < popups.length ; i++){
@@ -283,9 +296,11 @@
                                   
                                     <% if @enable_action.present? && @enable_action %>
                                     json['data'][i][last_index] += '&nbsp; <button id="check'+person_id+'" onclick="approveRecord(\''+person_id+'\')"' +' class="action-btn btn btn-primary btn-xs ' + clas + '"><i class="fa fa-check"></i></button>';
+                                    <%end%>
+                                    <% if @batch.present? && @batch %>
                                     json['data'][i][last_index] += "&nbsp;<input type = 'checkbox' id='"+person_id+"' onclick='checkRecord(this)'/>";
-                                   
-                                  <%end%>
+                                    <%end%>
+                                  
                     
                                     details[person_id] = json["records"][person_id]
       
@@ -431,6 +446,37 @@
          $("#shield").css('display','none')
       }
 
+      function updateValue(obj){
+        obj.getElementsByTagName('input')[0].checked = true
+      }
+      function setPrinter(printer_name){
+            printer = printer_name;
+      }
+      var selected = {}
+      var printer = ""
+      function checkRecord(element){
+            if(eval(element.checked)){
+              <%if @dispatch.present? && @dispatch %>
+                  if(district.length > 0){
+                      selected[element.id] = true
+                      $("#print_btn").removeClass("hidden")
+                  }else{
+                    element.checked = false;
+                    loadPopup('messagebox');
+                    __$("title").innerHTML = "District not selected"
+                    __$("message").innerHTML = "Please select district to proceed!"
+                  }
+              <%else%>
+                  selected[element.id] = true
+                  $("#print_btn").removeClass("hidden")
+              <%end%>
+            }else{
+                delete selected[element.id];
+                if(Object.keys(selected).length == 0){
+                  $("#print_btn").addClass("hidden")
+                }
+            }
+      }
       function rejectRecordToDC(){
         $("#shield").show()
         __$("action_modal").style.display = "block";
@@ -553,4 +599,63 @@
           }
       })
   }
+
+  function printSelected(){
+      if(printer.length > 0){
+        var ids = Object.keys(selected);
+        var param_selected = "";
+
+          __$("printer_name").value = printer;
+
+          var form = __$("dispatch_form");
+          form.setAttribute("method","post");
+          form.setAttribute("action","hq/do_print_these");
+
+          for(var i = 0; i < ids.length; i++){
+            var input = document.createElement("input");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "selected[]");
+            input.value = ids[i];
+            form.appendChild(input);
+
+          }
+
+          form.submit();
+
+      }else{
+
+          loadPopup('printers');
+
+      }
+      
+  }
+
+    function dispatchSelected(){
+          if(printer.length > 0){
+            var dispatch_url =  "hq/do_dispatch_these"
+            var ids = Object.keys(selected);
+
+            __$("printer_name").value = printer
+
+            var form = __$("dispatch_form");
+            form.setAttribute("method","post");
+            form.setAttribute("action",dispatch_url);
+
+            for(var i = 0; i < ids.length; i++){
+              var input = document.createElement("input");
+              input.setAttribute("type", "hidden");
+              input.setAttribute("name", "ids[]");
+              input.value = ids[i];
+              form.appendChild(input);
+
+            }
+
+            form.submit();
+
+          }else{
+
+              loadPopup('printers');
+
+          }
+    }
 </script>
