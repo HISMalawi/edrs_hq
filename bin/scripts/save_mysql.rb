@@ -134,7 +134,7 @@ while page <= pages
 	puts page
 	page = page + 1
 end
-
+=begin
 couch_mysql_path =  "#{Rails.root}/config/couchdb.yml"
 db_settings = YAML.load_file(couch_mysql_path)
 
@@ -155,7 +155,7 @@ last_seq = CouchdbSequence.last
 last_seq = CouchdbSequence.new if last_seq.blank?
 last_seq.seq = a["last_seq"].to_i
 last_seq.save
-
+=end
 
 
 #Include Couch sequence code

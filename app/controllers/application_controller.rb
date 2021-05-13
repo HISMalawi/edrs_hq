@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   def has_role(role)
     current_user.activities_by_level("HQ").include?(role.strip)
   end
-
+  
   def check_cron_jobs
     last_run_time = File.mtime("#{Rails.root}/public/sentinel").to_time
     job_interval = SETTINGS['drn_assignment_interval']

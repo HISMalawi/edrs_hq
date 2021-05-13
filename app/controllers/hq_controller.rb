@@ -90,18 +90,32 @@ class HqController < ApplicationController
                 results << person
               end
           else
-              Barcode.by_barcode.key(params[:barcode]).each do |barcode|
+            (BarcodeRecord.where(barcode: params[:barcode]) || []).each do |barcode|
               results << barcode.person
+            end
+            if results.blank?
+              (Barcode.by_barcode.key(params[:barcode]) || []).each do |barcode|
+                  results << barcode.person
+              end
+            end
           end
-
-        end
       when "den"
-        PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH ENTRY NUMBER"]).each do |identifier|
-          results << identifier.person
+        (RecordIdentifier.where(identifier: params[:den]) || []).each do |identifier|
+            results << identifier.person
+        end 
+        if results.blank?
+          (PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH ENTRY NUMBER"]) || []).each do |identifier|
+            results << identifier.person
+          end
         end
       when "drn"
-        PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH REGISTRATION NUMBER"]).each do |identifier|
+        RecordIdentifier.where(identifier: params[:drn]).each do |identifier|
           results << identifier.person
+        end
+        if results.blank?
+          (PersonIdentifier.by_identifier_and_identifier_type.key([params[:drn], "DEATH REGISTRATION NUMBER"]) ||[]).each do |identifier|
+            results << identifier.person
+          end
         end
       when "details_of_deceased"
         last_name = params[:last_name].encrypt

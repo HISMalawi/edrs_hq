@@ -280,11 +280,12 @@
                                     var clas = "nonid";
 
                                     json['data'][i][last_index] = '<button onclick="javascript:location=\'/show/' + person_id + '?next_url=<%= request.fullpath %> \'"     ' +' class="action-btn btn btn-success btn-xs ' + clas + '"><i class="fa fa-eye"></i></button>';
-
+                                  
+                                    <% if @enable_action.present? && @enable_action %>
                                     json['data'][i][last_index] += '&nbsp; <button id="check'+person_id+'" onclick="approveRecord(\''+person_id+'\')"' +' class="action-btn btn btn-primary btn-xs ' + clas + '"><i class="fa fa-check"></i></button>';
                                     json['data'][i][last_index] += "&nbsp;<input type = 'checkbox' id='"+person_id+"' onclick='checkRecord(this)'/>";
                                    
-
+                                  <%end%>
                     
                                     details[person_id] = json["records"][person_id]
       
