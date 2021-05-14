@@ -192,7 +192,7 @@ class HqController < ApplicationController
       }
     end
 
-    render :template => "case/default"
+    render :template => "case/default_bak"
   end
 
   def cause_of_death_list

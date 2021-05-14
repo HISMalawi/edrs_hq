@@ -341,7 +341,7 @@ class CaseController < ApplicationController
     comment = params[:comment]
     comment = "Marked as complete" if next_status == "HQ COMPLETE"
    
-    RecordStatus.change_status(person, next_status,comment)
+    
 
     if next_status == "HQ COMPLETE"
       @person = Record.find(params[:person_id])
@@ -361,6 +361,11 @@ class CaseController < ApplicationController
         )
       end
     end
+    if next_status == "HQ DUPLICATE"
+        
+    end
+
+    RecordStatus.change_status(person, next_status,comment)
 
     render :text => "ok" and return
   end
