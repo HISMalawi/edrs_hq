@@ -840,10 +840,10 @@ class CaseController < ApplicationController
 
     #raise PersonRecordStatus.by_person_recent_status.key(@person.id).last.status.inspect
   
+    @status = RecordStatus.where(person_record_id: @person.id, voided: 0).last rescue nil
 
-    if RecordStatus.where(person_record_id: @person.id, voided: 0).last.status.blank?
-      @status = RecordStatus.new
-      @status.status = "WAIT SYNC"
+    if @status.blank?
+      @status = RecordStatus.where(person_record_id: @person.id).order(:created_at).last
     else
       @status = RecordStatus.where(person_record_id: @person.id, voided: 0).last rescue nil
     end
