@@ -421,7 +421,7 @@ class HqController < ApplicationController
     # end
 
     @date_registered = @person.created_at
-    PersonRecordStatus.by_person_record_id.key(@person.id).each.sort_by{|s| s.created_at}.each do |state|
+    RecordStatus.where(person_record_id: @person.id).order(:created_at).each do |state|
       if state.status == "HQ ACTIVE"
           @date_registered = state.created_at
           break;
