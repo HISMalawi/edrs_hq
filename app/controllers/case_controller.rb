@@ -31,6 +31,9 @@ class CaseController < ApplicationController
       if role =="Data Manager" && ["HQ COMPLETE", "HQ CAN PRINT"].include?(status)
           action = true
       end
+      if role =="Data Supervisor" && ["HQ INCOMPLETE TBA"].include?(status)
+          action = true
+      end
       return action
   end
   def open
@@ -253,6 +256,7 @@ class CaseController < ApplicationController
     @title = "Incomplete Cases"
     @statuses = ["HQ INCOMPLETE TBA"]
     @page = 0
+    @enable_action = user_action(User.current_user.role, @statuses.first)
     session[:return_url] = request.path
 
     render :template => "case/default"

@@ -57,3 +57,14 @@ ActiveRecord::Base.connection.select_all(sql).each_with_index do |pids,i|
 	remove_redu_states(pids['person_id'])
 	puts "#{i} records corrected" if i % 200 == 0
 end
+
+
+query = "SELECT person_record_id, count(person_record_id) as count FROM person_record_status WHERE voided = 0 GROUP BY person_record_id ORDER BY count DESC;"
+ActiveRecord::Base.connection.select_all(query).each_with_index do |pids_count,i|
+    next if pids_count['count'].to_i  == 1
+    RecordStatus.where(person_record_id: pids_count['person_record_id'], voided: 0).order("created_at DESC").each_with_index do |s,i|
+        next if i == 0
+        s.voided = 1
+        s.save
+    end
+end
