@@ -94,7 +94,7 @@ class HqController < ApplicationController
               results << barcode.person
             end
             if results.blank?
-              (Barcode.by_barcode.key(params[:barcode]) || []).each do |barcode|
+              (Barcode.by_barcode.key(params[:barcode]) rescue []).each do |barcode|
                   results << barcode.person
               end
             end
@@ -104,7 +104,7 @@ class HqController < ApplicationController
             results << identifier.person
         end 
         if results.blank?
-          (PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH ENTRY NUMBER"]) || []).each do |identifier|
+          (PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH ENTRY NUMBER"]) rescue []).each do |identifier|
             results << identifier.person
           end
         end
@@ -113,8 +113,8 @@ class HqController < ApplicationController
           results << identifier.person
         end
         if results.blank?
-          (PersonIdentifier.by_identifier_and_identifier_type.key([params[:drn], "DEATH REGISTRATION NUMBER"]) ||[]).each do |identifier|
-            results << identifier.person
+          (PersonIdentifier.by_identifier_and_identifier_type.key([params[:drn], "DEATH REGISTRATION NUMBER"]) rescue []).each do |identifier|
+            results << identifier.person 
           end
         end
       when "details_of_deceased"
