@@ -450,15 +450,17 @@ class HqController < ApplicationController
     elsif paper_size == "A5"
        zoom = 0.6
     end
+
+    printed_ids = []
      
     selected.each do |key|
-
-      person = Person.find(key.strip)
+      next if printed_ids.include?(key.strip)
+      person = Record.find(key.strip)
 
       next if person.den.blank?
 
       next if person.drn.blank?
-
+=begin
       if SETTINGS['print_qrcode']
             if !File.exist?("#{SETTINGS['qrcodes_path']}QR#{person.id}.png")
             create_qr_barcode(person)
@@ -470,7 +472,7 @@ class HqController < ApplicationController
             sleep(1)
           end         
       end
-
+=end
       next if person.blank?
       RecordStatus.change_status(person,"HQ PRINTED", "Printed at HQ")
       id = person.id
@@ -486,7 +488,7 @@ class HqController < ApplicationController
 
 
       Kernel.system "lp -d #{params[:printer_name]} #{SETTINGS['certificates_path']}#{id}.pdf\n"
-
+      printed_ids << key.strip
    end
     
    redirect_to params[:next_url] and return
