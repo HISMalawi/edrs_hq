@@ -67,7 +67,7 @@ class HqController < ApplicationController
   def quality_check
       if params[:verdict] == "No"
           person = Person.by_npid.key(params[:certificate_barcode]).last
-          PersonRecordStatus.change_status(person,"HQ RE PRINT",(params[:reason].present? ? params[:reason] : nil))
+          RecordStatus.change_status(person,"HQ RE PRINT",(params[:reason].present? ? params[:reason] : nil))
       end
       redirect_to "/hq/quality_reopen"
   end
@@ -361,7 +361,7 @@ class HqController < ApplicationController
 
   def death_certificate_preview
    
-    @person = Person.find(params[:id])
+    @person = Record.find(params[:id])
 
 
     @place_of_death = place_of_death(@person)
@@ -370,7 +370,7 @@ class HqController < ApplicationController
     @den = @person.den
 
     @date_registered = @person.created_at
-    PersonRecordStatus.by_person_record_id.key(@person.id).each.sort_by{|s| s.created_at}.each do |state|
+    RecordStatus.where(person_record_id: @person.id).order(:created_at) do |state|
       if state.status == "HQ ACTIVE"
           @date_registered = state.created_at
           break;
@@ -472,7 +472,7 @@ class HqController < ApplicationController
       end
 
       next if person.blank?
-      PersonRecordStatus.change_status(person,"HQ PRINTED", "Printed at HQ")
+      RecordStatus.change_status(person,"HQ PRINTED", "Printed at HQ")
       id = person.id
       
       output_file = "#{SETTINGS['certificates_path']}#{id}.pdf"
@@ -539,7 +539,7 @@ class HqController < ApplicationController
         if @district.blank?
             @district = District.find(person.district_code).name
         end
-        registered = PersonRecordStatus.by_person_record_id_and_status.key([person.id,"HQ ACTIVE"]).first
+        registered = RecordStatus.where(person_record_id: person.id, status: "HQ ACTIVE").order(:created_at).first
         if registered.present?
           date_registered = registered.created_at
         else
@@ -555,7 +555,7 @@ class HqController < ApplicationController
             'place_of_death'      => place_of_death(person),
             'date_registered'     => (date_registered.to_date.strftime('%d/%b/%Y') rescue nil)
         }
-        PersonRecordStatus.change_status(person,"HQ DISPATCHED", "Dispatched at HQ")
+        RecordStatus.change_status(person,"HQ DISPATCHED", "Dispatched at HQ")
       end
 
       render :layout => false
@@ -636,12 +636,11 @@ class HqController < ApplicationController
 
     sent.each do |id, states|
         if params[:district].blank?
-          results[id] = PersonRecordStatus.by_status.keys(states).each.count
+          results[id] = RecordStatus.where("status IN ('#{states.join("','")}')").count
         else
           district = params[:district].gsub("_", "-")
-          code = District.by_name.key(district).last.id rescue ""
-          states = states.collect{|s| code+"_"+s}
-          results[id] = PersonRecordStatus.by_district_code_and_status.keys(states).each.count
+          code = DistrictRecord.where(name: district).last.id rescue ""
+          results[id] = RecordStatus.where("district_code='#{code}' AND status IN('#{states.join("','")}')").count
         end
     end
 
@@ -871,11 +870,11 @@ class HqController < ApplicationController
 
 
   def get_comments
-    @person = Person.find(params[:person_id])
+    @person = Record.find(params[:person_id])
     @comments = []
 
-    PersonRecordStatus.by_person_record_id.key(params[:person_id]).each.sort_by {|k| k["created_at"]}.each do |status|
-      user = User.find(status.creator)
+    RecordStatus.where(person_record_id: params[:person_id]).order(:created_at) do |status|
+      user = UserModel.find(status.creator)
       next if user.blank?
       next if status.comment.blank?
       user_name = (user.first_name + " " + user.last_name)
@@ -896,7 +895,7 @@ class HqController < ApplicationController
   end
 
   def ajax_save_comment
-    @person = Person.find(params[:person_id])
+    @person = Record.find(params[:person_id])
 
     audit =  Audit.create(
       "reason" => params['comment'],
