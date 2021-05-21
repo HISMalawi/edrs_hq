@@ -776,8 +776,9 @@ class CaseController < ApplicationController
       @person = Person.find(params[:person_id])
 
       begin
-          @person.save
-          PersonRecordStatus.by_person_recent_status.key(params[:id]).last.save
+          @person.insert_update_into_mysql
+          status PersonRecordStatus.by_person_recent_status.key(params[:id]).last rescue nil
+          status.insert_update_into_mysql if status.present?
       rescue Exception => e
         
       end
@@ -858,8 +859,8 @@ class CaseController < ApplicationController
         end
     end
     @statuses = [(@status.status rescue nil)]
-
-    if @status ="HQ PRINTED"
+    
+    if @status == "HQ PRINTED"
         @dispatch = true 
     end
 
@@ -883,6 +884,7 @@ class CaseController < ApplicationController
     @available_printers = SETTINGS["printer_name"].split(',') rescue []
     
     @tasks = ActionMatrix.read(@current_user.role, @statuses)
+      
     @covid = Covid.by_person_record_id.key(params[:person_id]).first
   end
 

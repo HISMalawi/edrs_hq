@@ -139,7 +139,7 @@
             <td style="border-right:none"><b>Registration Category : </b></td>
             <td colspan="2" style="color:#4775a1; border-left:none"><%= @person.registration_type%></td>
             <td colspan="2" style="border-right:none"><b>Record Status : </b></td>
-            <td colspan="2" style="color:#4775a1;border-left:none"><%= @person.status == "HQ CAN PRINT" ? "CAN PRINT" : @person.status%></td>
+            <td colspan="2" style="color:#4775a1;border-left:none"><%= @status.status == "HQ CAN PRINT" ? "CAN PRINT" : @status.status%></td>
             <td style="border-right:none"><b>DEN : </b></td>
             <td style="color:#4775a1;border-left:none"><%= @person.den rescue ''%></td>
             <td style="border-right:none"><b>DRN : </b></td>

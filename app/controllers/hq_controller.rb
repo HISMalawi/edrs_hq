@@ -94,8 +94,16 @@ class HqController < ApplicationController
               results << barcode.person
             end
             if results.blank?
-              (Barcode.by_barcode.key(params[:barcode]) rescue []).each do |barcode|
-                  results << barcode.person
+              barcode = []
+              begin
+                 barcode = Barcode.by_barcode.key(params[:barcode]) rescue []
+              rescue
+              end
+              barcode.each do |barcode|
+                  barcode.insert_update_into_mysql
+                  person = barcode.person
+                  person.insert_update_into_mysql
+                  results << person
               end
             end
           end
@@ -104,8 +112,17 @@ class HqController < ApplicationController
             results << identifier.person
         end 
         if results.blank?
-          (PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH ENTRY NUMBER"]) rescue []).each do |identifier|
-            results << identifier.person
+          den  = []
+          begin
+              den = PersonIdentifier.by_identifier_and_identifier_type.key([params[:den], "DEATH ENTRY NUMBER"]) rescue []
+              
+          rescue
+          end
+          den.each do |identifier|
+            identifier.insert_update_into_mysql
+            person = identifier.person
+            person.insert_update_into_mysql
+            results << person
           end
         end
       when "drn"
@@ -113,8 +130,16 @@ class HqController < ApplicationController
           results << identifier.person
         end
         if results.blank?
-          (PersonIdentifier.by_identifier_and_identifier_type.key([params[:drn], "DEATH REGISTRATION NUMBER"]) rescue []).each do |identifier|
-            results << identifier.person 
+          drn  = []
+          begin
+              drn = PersonIdentifier.by_identifier_and_identifier_type.key([params[:drn], "DEATH REGISTRATION NUMBER"]) rescue []
+          rescue
+          end
+         drn.each do |identifier|
+            identifier.insert_update_into_mysql
+            person = identifier.person
+            person.insert_update_into_mysql
+            results << person
           end
         end
       when "details_of_deceased"
