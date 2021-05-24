@@ -525,7 +525,7 @@ class HqController < ApplicationController
   end
 
   def do_dispatch_these
-
+  
     write_file("#{Rails.root}/tmp/dispatch.txt", params[:ids].join(",").to_s)
 
     print_url ="/dispatch_preview"
@@ -536,17 +536,14 @@ class HqController < ApplicationController
 
     input_url = "#{CONFIG["protocol"]}://#{request.env["SERVER_NAME"]}:#{request.env["SERVER_PORT"]}/dispatch_preview"
 
-    t4 = Thread.new {
-        Kernel.system "wkhtmltopdf  --orientation landscape --page-size A4 #{input_url} #{output_file}"
+    
+    
+    Kernel.system "wkhtmltopdf  --orientation landscape --page-size A4 #{input_url} #{output_file}"
         #PDFKit.new(input_url, :page_size => 'A4',:orientation => 'Landscape').to_file(output_file)
 
-        sleep(4)
+    sleep(2)
 
-        Kernel.system "lp -d #{params[:printer_name]} #{output_file}\n"
-
-        sleep(5)
-        
-    }
+    Kernel.system "lp -d #{params[:printer_name]} #{output_file}\n"
 
     sleep(1)
     

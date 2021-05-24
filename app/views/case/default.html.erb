@@ -609,7 +609,7 @@
 
           var form = __$("dispatch_form");
           form.setAttribute("method","post");
-          form.setAttribute("action","hq/do_print_these");
+          form.setAttribute("action","/hq/do_print_these");
           
           for(var i = 0; i < ids.length; i++){
             var input = document.createElement("input");
@@ -632,7 +632,7 @@
 
     function dispatchSelected(){
           if(printer.length > 0){
-            var dispatch_url =  "hq/do_dispatch_these"
+            var dispatch_url =  "/hq/do_dispatch_these"
             var ids = Object.keys(selected);
 
             __$("printer_name").value = printer
