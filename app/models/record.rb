@@ -1,6 +1,10 @@
 class Record < ActiveRecord::Base
 	after_commit :push_to_couchDB
+	before_create :set_id
 	self.table_name = "people"
+	def set_id
+		self.person_id = SecureRandom.uuid if self.person_id.blank?
+	end
 	def status
 		status = RecordStatus.where(person_record_id:self.person_id , voided: 0).limit(5).order("created_at DESC").first.status rescue nil
 	end

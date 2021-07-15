@@ -593,7 +593,7 @@ class CaseController < ApplicationController
       search_query = ""
     end
 
-    sql = "SELECT person_id, status FROM person_record_status s INNER JOIN people p ON s.person_record_id = p.person_id 
+    sql = "SELECT distinct person_id, status FROM person_record_status s INNER JOIN people p ON s.person_record_id = p.person_id 
            INNER JOIN person_identifier i ON i.person_record_id = p.person_id
            WHERE i.identifier_type='DEATH ENTRY NUMBER' AND s.voided = 0 AND status IN ('#{params[:statuses].collect{|status| status.gsub(/\_/, " ").upcase}.join("','")}') 
            #{search_query} #{district_code_query}"
@@ -612,7 +612,7 @@ class CaseController < ApplicationController
           records[person.id] = person_selective_fields(person)
           cases << data_table_entry(person,params[:drn])
     end
-    sql = "SELECT COUNT(distinct person_record_id) as total FROM person_record_status WHERE voided = 0 AND status 
+    sql = "SELECT COUNT(distinct person_record_id) as total FROM person_record_status p WHERE voided = 0 AND status 
           IN ('#{params[:statuses].collect{|status| status.gsub(/\_/, " ").upcase}.join("','")}') #{district_code_query}"
     
     total = connection.select_all(sql).as_json.last["total"].to_i rescue 0
@@ -657,6 +657,7 @@ class CaseController < ApplicationController
                     person.birthdate.strftime("%d/%b/%Y"),
                     person.date_of_death.strftime("%d/%b/%Y"),
                     place_of_death(person), 
+
                     person.id]
   end
   def fields_for_data_table(person)

@@ -570,7 +570,7 @@
           <% if ( has_role("Add cause of death") || has_role("Authorise printing") || has_role("Manage incomplete records")) && @covid.present? %>
             <div onclick= "covidInfoPop()" class="dynamic-button btn btn-small btn-primary pull-right"><span>View COVID-19 Info </span></div>
           <%end%>
-          <% if comment == true && false%>
+          <% if comment == true %>
             <div onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary"><span>View Trail</span></div>
           <% end %>
           <div id="comment_div" onclick= "ajaxPullComments()" class="dynamic-button btn btn-small btn-primary pull-right primary" style="visibility: hidden;"><span>View Trail</span></div>

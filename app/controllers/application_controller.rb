@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   before_filter :check_user, :check_cron_jobs,:check_databases, :except => ['login', 'logout', 'death_certificate','dispatch_preview',
                                                                             "deaths","deaths_by_cause","covid_cases", "death_aggregates",
                                                                             "causes_aggregates","by_district_registered_and_gender",
-                                                                            "manner_of_death" ,"age_disag_by_gender","verify_certificate"]
+                                                                            "manner_of_death" ,"age_disag_by_gender","verify_certificate","dc_sync"]
   
   def has_role(role)
     current_user.activities_by_level("HQ").include?(role.strip)
@@ -73,7 +73,19 @@ class ApplicationController < ActionController::Base
                                   created_at DATETIME DEFAULT NULL,
                                   updated_at DATETIME DEFAULT NULL,
                                   PRIMARY KEY (audit_record_id)) ENGINE=InnoDB DEFAULT CHARSET=latin1;;"          
-    SimpleSQL.query_exec(create_audit_trail_table);     
+    SimpleSQL.query_exec(create_audit_trail_table); 
+    
+    create_coder_stats = "CREATE TABLE IF NOT EXISTS coder_stats (
+                                  _id varchar(200) NOT NULL,
+                                  coder_id varchar(200) NOT NULL,
+                                  random_number int(11) NOT NULL,
+                                  number_of_records_coded int(11) NOT NULL,
+                                  sampled int(11) NOT NULL,
+                                  reviewed int(11) NOT NULL,
+                                  type varchar(20) NOT NULL,
+                                  PRIMARY KEY (_id)
+                                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;"
+    SimpleSQL.query_exec(create_coder_stats); 
   end
 
   def place_details(person)

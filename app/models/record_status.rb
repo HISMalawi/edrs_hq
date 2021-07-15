@@ -6,7 +6,7 @@ class RecordStatus < ActiveRecord::Base
 		return Person.find(self.person_record_id)
 	end
 	def set_id
-		self.person_record_status_id = SecureRandom.uuid
+		self.person_record_status_id = SecureRandom.uuid if self.person_record_status_id.blank?
 	end
 	def self.change_status(person, currentstatus,comment=nil, creator = nil)
 		new_status = RecordStatus.create({

@@ -266,6 +266,10 @@ Rails.application.routes.draw do
   ################## External Verification #############################
   post "/api/v1/verify_certificate" => "api#verify_certificate"
 
+  ################## Sync ##############################################
+  post "/dc_sync" => "api#dc_sync"
+  post "/api/v1/dc_sync" => "api#dc_sync"
+
   # The priority is based upoindexation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

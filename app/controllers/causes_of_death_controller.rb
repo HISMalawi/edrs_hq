@@ -163,10 +163,10 @@ class CausesOfDeathController < ApplicationController
     
 
     params["coded_at"] = Time.now
-    person_icd_code = PersonICDCode.by_person_id.key(@person.id).first
+    person_icd_code = PersonICDCodes.where(person_id: @person.id).first
 
     if person_icd_code.blank?
-      person_icd_code = PersonICDCode.create({
+      person_icd_code = PersonICDCodes.create({
                   :person_id => @person.id,
                   :tentative_code => params[:icd_10_code]  ,
                   :reason_tentative_differ_from_underlying => params[:reason_tentative_differ_from_underlying],
@@ -174,18 +174,17 @@ class CausesOfDeathController < ApplicationController
                   :reason_final_differ_from_tentative => params[:reason_final_differ_from_tentative]
         })
     else
-      person_icd_code.update_attributes({
-                  :tentative_code => params[:icd_10_code]  ,
-                  :reason_tentative_differ_from_underlying => params[:reason_tentative_differ_from_underlying],
-                  :final_code =>params[:final_icd_10_code],
-                  :reason_final_differ_from_tentative => params[:reason_final_differ_from_tentative]
-        })
+      person_icd_code.tentative_code = params[:icd_10_code]
+      person_icd_code.reason_tentative_differ_from_underlying = params[:reason_tentative_differ_from_underlying]
+      person_icd_code.final_code = params[:final_icd_10_code]
+      person_icd_code.reason_final_differ_from_tentative = params[:reason_final_differ_from_tentative]
+      person_icd_code.save
     end
     @person.update_attributes(params)
 
-    coder_stat = CoderStat.by_coder_id.key(User.current_user.id).first
+    coder_stat = CoderStats.where(coder_id: User.current_user.id).first
     if coder_stat.blank?
-      CoderStat.create({
+      CoderStats.create({
               coder_id: User.current_user.id, 
               number_of_records_coded: 1, 
               random_number: Random.rand(1..20),
@@ -195,24 +194,29 @@ class CausesOfDeathController < ApplicationController
     else
       random_number = coder_stat.random_number
       number_of_records_coded = coder_stat.number_of_records_coded.to_i + 1
-      if (number_of_records_coded - random_number) % 20 == 0
-          sample = ProficiencySample.by_coder_id.key(User.current_user.id).first
-          if sample.blank?
-            sample = ProficiencySample.new
-            sample.coder_id = User.current_user.id
-            sample.sample = [@person.id]
-            sample.reviewed = []
-            sample.save
-          else
-            sampled  = sample.sample
-            sampled << @person.id
-            sample.update_attributes({sample: sampled})          
-          end
+      if (number_of_records_coded - random_number) % 20 == 0 || true
+           data = {
+                   coder_id: User.current_user.id,
+                   person_record_id: @person.id,
+
+           }
+          ProficiencySampleRecord.created_or_update_sample(data)
+          # sample = ProficiencySample.by_coder_id.key(User.current_user.id).first
+          # if sample.blank?
+          #   sample = ProficiencySample.new
+          #   sample.coder_id = User.current_user.id
+          #   sample.sample = [@person.id]
+          #   sample.reviewed = []
+          #   sample.save
+          # else
+          #   sampled  = sample.sample
+          #   sampled << @person.id
+          #   sample.update_attributes({sample: sampled})          
+          # end
       end
-      coder_stat.update_attributes({
-                              number_of_records_coded: number_of_records_coded,
-                              sampled: (coder_stat.sampled.to_i + 1)
-                              })
+      coder_stat.number_of_records_coded = number_of_records_coded
+      coder_stat.sampled = (coder_stat.sampled.to_i + 1)
+      coder_stat.save
     end
 
     flash[:success] = "Record updated successfully"

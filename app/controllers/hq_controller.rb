@@ -221,6 +221,7 @@ class HqController < ApplicationController
   end
 
   def cause_of_death_list
+      
       query = "SELECT cause_of_death1 as cause_condition FROM people WHERE cause_of_death1 LIKE '%#{params[:q]}%' 
                UNION 
                SELECT cause_of_death2 as cause_condition FROM people WHERE cause_of_death2 LIKE '%#{params[:q]}%'
@@ -229,6 +230,8 @@ class HqController < ApplicationController
                UNION 
                SELECT cause_of_death4 as cause_condition FROM people WHERE cause_of_death4 LIKE '%#{params[:q]}%'
                ORDER BY cause_condition  LIMIT 15 OFFSET #{params[:page].to_i * 15}";
+      
+     
 
       connection = ActiveRecord::Base.connection
       data = connection.select_all(query).as_json
@@ -894,11 +897,10 @@ class HqController < ApplicationController
 
 
   def get_comments
-    @person = Record.find(params[:person_id])
-    @comments = []
-
-    RecordStatus.where(person_record_id: params[:person_id]).order(:created_at) do |status|
-      user = UserModel.find(status.creator)
+ 
+    @comments = []    
+    RecordStatus.where(person_record_id: params[:person_id]).order(:created_at).each do |status|
+      user = User.find(status.creator)
       next if user.blank?
       next if status.comment.blank?
       user_name = (user.first_name + " " + user.last_name)
@@ -917,6 +919,7 @@ class HqController < ApplicationController
 
     render :text => @comments.to_json
   end
+
 
   def ajax_save_comment
     @person = Record.find(params[:person_id])
